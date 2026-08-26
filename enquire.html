@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en" data-root="" data-page="enquire.html" data-dock="off">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enquire — Coravida</title>
+<meta name="description" content="Reserve Tiffany Blanc 14 for a day, a sunset or twelve nights at anchor. Choose a voyage, tell us your dates, and the crew will come back within a day.">
+<meta property="og:title" content="Enquire — Coravida">
+<meta property="og:description" content="Choose a voyage, tell us your dates, and the crew will come back within a day.">
+<meta property="og:image" content="assets/img/sandbank-boat.jpg">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/img/favicon.png" type="image/png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+</head>
+<body class="page--light">
+<a class="skip" href="#main">Skip to content</a>
+<div data-chrome="header"></div>
+
+<main id="main">
+
+  <section class="phero">
+    <div class="wrap wrap--narrow phero__in stack stack--lg">
+      <p class="eyebrow" data-rv>Enquire</p>
+      <h1 class="d-l" data-rv data-rv-d="1">Reserve the vessel</h1>
+      <p class="lede" data-rv data-rv-d="2">Four short steps. Nothing is charged and no date is held until we have written back.</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:clamp(2rem,4vw,3rem)">
+    <div class="wrap wrap--narrow">
+
+      <ul class="steps" data-rv style="margin-bottom:clamp(2.5rem,5vw,4rem)">
+        <li class="is-active"><b>01</b> Voyage</li>
+        <li><b>02</b> Dates</li>
+        <li><b>03</b> Details</li>
+        <li><b>04</b> Review</li>
+      </ul>
+
+      <form id="enquire" novalidate>
+
+        <!-- 01 — voyage ------------------------------------------------- -->
+        <div class="step is-active">
+          <div class="stack stack--lg">
+            <div class="stack stack--sm">
+              <p class="eyebrow">Step one</p>
+              <h2 class="d-m">Which voyage?</h2>
+            </div>
+            <div class="chips">
+              <input type="radio" id="v1" name="voyage" value="a-day-at-sea" checked>
+              <label for="v1">A Day at Sea · 8 hours</label>
+              <input type="radio" id="v2" name="voyage" value="sandbank-sunset">
+              <label for="v2">Sandbank &amp; Sunset · 5 hours</label>
+              <input type="radio" id="v3" name="voyage" value="the-manta-passage">
+              <label for="v3">The Manta Passage · full day</label>
+              <input type="radio" id="v4" name="voyage" value="reef-and-wreck">
+              <label for="v4">Reef &amp; Wreck · diving</label>
+              <input type="radio" id="v5" name="voyage" value="two-nights-north">
+              <label for="v5">Two Nights North · 2 nights</label>
+              <input type="radio" id="v6" name="voyage" value="twelve-nights-at-anchor">
+              <label for="v6">Twelve Nights at Anchor · 12 nights</label>
+            </div>
+            <p class="note">Every voyage is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.</p>
+            <div class="cta__acts" style="justify-content:flex-start">
+              <button class="pill" type="button" data-next>Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 02 — dates -------------------------------------------------- -->
+        <div class="step">
+          <div class="stack stack--lg">
+            <div class="stack stack--sm">
+              <p class="eyebrow">Step two</p>
+              <h2 class="d-m">When, and how many?</h2>
+            </div>
+            <div class="fgrid fgrid--2">
+              <div class="field">
+                <label for="date">Preferred date</label>
+                <input type="date" id="date" name="date" required>
+              </div>
+              <div class="field">
+                <label for="alt">Alternative date</label>
+                <input type="date" id="alt" name="alt">
+              </div>
+            </div>
+            <div class="fgrid fgrid--2">
+              <div class="field">
+                <label for="guests">Guests</label>
+                <select id="guests" name="guests" required>
+                  <option value="2">2 guests</option>
+                  <option value="4" selected>4 guests</option>
+                  <option value="6">6 guests</option>
+                  <option value="8">8 guests</option>
+                  <option value="10">10 guests</option>
+                  <option value="12">12 guests</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="pickup">Departure point</label>
+                <select id="pickup" name="pickup">
+                  <option>Hulhumalé Marina</option>
+                  <option>Velana International Airport jetty</option>
+                  <option>Malé, west harbour</option>
+                  <option>A resort in North or South Malé Atoll</option>
+                </select>
+              </div>
+            </div>
+            <div class="cta__acts" style="justify-content:flex-start">
+              <button class="pill pill--ghost" type="button" data-prev>Back</button>
+              <button class="pill" type="button" data-next>Continue</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 03 — details ------------------------------------------------ -->
+        <div class="step">
+          <div class="stack stack--lg">
+            <div class="stack stack--sm">
+              <p class="eyebrow">Step three</p>
+              <h2 class="d-m">Anything to add?</h2>
+            </div>
+            <div class="chips">
+              <input type="checkbox" id="x1" name="extra" value="chef" data-label="Private chef" data-price="320">
+              <label for="x1">Private chef · 320</label>
+              <input type="checkbox" id="x2" name="extra" value="photographer" data-label="Photographer" data-price="450">
+              <label for="x2">Photographer · 450</label>
+              <input type="checkbox" id="x3" name="extra" value="breakfast" data-label="Floating breakfast" data-price="180">
+              <label for="x3">Floating breakfast · 180</label>
+              <input type="checkbox" id="x4" name="extra" value="sandbank" data-label="Sandbank set-up" data-price="260">
+              <label for="x4">Sandbank set-up · 260</label>
+              <input type="checkbox" id="x5" name="extra" value="toys" data-label="Seabob and paddleboards" data-price="210">
+              <label for="x5">Seabob &amp; paddleboards · 210</label>
+              <input type="checkbox" id="x6" name="extra" value="transfers" data-label="Transfers" data-price="120">
+              <label for="x6">Transfers · 120</label>
+            </div>
+
+            <div class="fgrid fgrid--2">
+              <div class="field">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" autocomplete="name" required>
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" autocomplete="email" required>
+              </div>
+            </div>
+            <div class="fgrid fgrid--2">
+              <div class="field">
+                <label for="phone">Telephone or WhatsApp</label>
+                <input type="tel" id="phone" name="phone" autocomplete="tel">
+              </div>
+              <div class="field">
+                <label for="staying">Where are you staying?</label>
+                <input type="text" id="staying" name="staying" placeholder="Resort, guesthouse or hotel">
+              </div>
+            </div>
+            <div class="field">
+              <label for="notes">Anything we should know</label>
+              <textarea id="notes" name="notes" placeholder="Diet, diving certification, occasion, children aboard"></textarea>
+            </div>
+            <div class="cta__acts" style="justify-content:flex-start">
+              <button class="pill pill--ghost" type="button" data-prev>Back</button>
+              <button class="pill" type="button" data-next>Review</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 04 — review ------------------------------------------------- -->
+        <div class="step">
+          <div class="stack stack--lg">
+            <div class="stack stack--sm">
+              <p class="eyebrow">Step four</p>
+              <h2 class="d-m">Does this look right?</h2>
+            </div>
+            <div class="summary">
+              <div class="summary__row"><span class="k">Voyage</span><span data-sum-voyage>—</span></div>
+              <div class="summary__row"><span class="k">Where</span><span data-sum-area>—</span></div>
+              <div class="summary__row"><span class="k">Date</span><span data-sum-date>—</span></div>
+              <div class="summary__row"><span class="k">Guests</span><span data-sum-guests>—</span></div>
+              <div class="summary__row"><span class="k">Add-ons</span><span data-sum-extras>—</span></div>
+              <div class="summary__total"><span class="k">Indicative total</span><span class="v" data-sum-total>—</span></div>
+            </div>
+            <p class="note">An indication only, in US dollars, for the whole vessel. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.</p>
+            <div class="cta__acts" style="justify-content:flex-start">
+              <button class="pill pill--ghost" type="button" data-prev>Back</button>
+              <button class="pill" type="submit">Send the enquiry</button>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="ok" id="enquireOk">
+        <div class="stack stack--lg">
+          <p class="eyebrow">Received</p>
+          <h2 class="d-l">We have it</h2>
+          <p class="lede measure" style="margin-inline:auto">The crew reply within a day, usually sooner. If your dates are tight, call the marina office.</p>
+          <div class="cta__acts">
+            <a class="pill" href="index.html">Back to the harbour</a>
+            <a class="pill pill--ghost" href="tel:+9607771234">+960 777 1234</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section--tight">
+    <div class="wrap">
+      <div class="fig fig--169" data-rv><img src="assets/img/sandbank-boat.jpg" alt="A boat resting beside a sandbank in clear shallow water" loading="lazy"></div>
+    </div>
+  </section>
+
+</main>
+
+<div data-chrome="footer"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/site.js"></script>
+</body>
+</html>
