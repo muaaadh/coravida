@@ -3,46 +3,37 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page not found — Coravida</title>
-<meta name="description" content="That page is not at this address. Return to the Coravida harbour page, or see the voyages aboard Tiffany Blanc 14.">
-<meta property="og:title" content="Page not found — Coravida">
-<meta property="og:description" content="That page is not at this address. Everything else is still here.">
-<meta property="og:image" content="assets/img/horizon-dusk.jpg">
+<title>Not found — Coravida</title>
+<meta name="description" content="That page is not at this address.">
+<meta property="og:title" content="Not found — Coravida">
+<meta property="og:description" content="That page is not at this address.">
+<meta property="og:image" content="assets/img/aerial-anchor-1600.webp">
 <meta property="og:type" content="website">
 <link rel="icon" href="assets/img/favicon.png" type="image/png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/fonts/montserrat-300.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body class="page--light">
+<body class="light-page">
 <a class="skip" href="#main">Skip to content</a>
 <div data-chrome="header"></div>
 
 <main id="main">
-
-  <!-- Not found -------------------------------------------------------- -->
   <section class="phero">
-    <div class="wrap wrap--narrow phero__in stack stack--lg">
-        <p class="eyebrow" data-rv>404</p>
-        <h1 class="d-l" data-rv data-rv-d="1">This one drifted</h1>
-        <p class="lede" data-rv data-rv-d="2">The page you asked for is not at this address. Everything else is still here.</p>
-        <div class="cta__acts" data-rv data-rv-d="3">
-          <a class="pill" href="index.html">Back to the harbour</a>
-          <a class="pill pill--ghost" href="voyages.html">See the voyages</a>
-        </div>
-      </div>
-      </section>
-
-  <!-- Horizon ---------------------------------------------------------- -->
-  <section class="section--tight">
-    <div class="wrap">
-      <div class="fig fig--169" data-rv>
-        <img src="assets/img/horizon-dusk.jpg" alt="A pale horizon at dusk over open water" loading="lazy">
+    <div class="wrap narrow stack-l">
+      <p class="eyebrow" data-rv>404</p>
+      <h1 class="d2" data-rv data-d="1">This one drifted</h1>
+      <p class="lede measure" style="margin-inline:auto" data-rv data-d="2">The page you asked for is not at this address.</p>
+      <div class="acts" data-rv data-d="3">
+        <a class="btn" href="index.html">Back to the harbour</a>
+        <a class="btn btn--ghost" href="voyages.html">See the voyages</a>
       </div>
     </div>
   </section>
 
+  <section class="section--sm" style="padding-bottom:var(--sec)">
+    <div class="wrap"><div class="fig r169 fig--z"><img src="assets/img/aerial-anchor-1600.webp" srcset="assets/img/aerial-anchor-900.webp 900w, assets/img/aerial-anchor-1600.webp 1600w, assets/img/aerial-anchor-2200.webp 2200w" sizes="100vw" alt="Tiffany Blanc 14 alone at anchor above a reef edge" loading="lazy" decoding="async"></div></div>
+  </section>
 </main>
 
 <div data-chrome="footer"></div>
