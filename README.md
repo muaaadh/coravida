@@ -26,7 +26,6 @@ carries the whole layer — no library:
 
 | Behaviour | Hook |
 |---|---|
-| Inertia scrolling — the wheel is lerped rather than jumped | desktop pointers only; keyboard, scrollbar and anchors hand control straight back |
 | A shoreline washes the navy block onto the page: four wave layers drifting at different speeds, a foam line among them, the whole thing rising 30px as it enters view | injected by `site.js` into the closing navy section, or the footer where there isn't one |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
 | Sections fade and lift, staggered | `data-a="up\|fade\|scale"` inside a `data-stagger` parent, which numbers the children |
@@ -41,18 +40,31 @@ carries the whole layer — no library:
 All of it is disabled under `prefers-reduced-motion`, where every element resolves to its
 end state and the waves stand still.
 
-Three traps worth recording:
+Two traps worth recording:
 
 > An element hidden with `clip-path: inset(0 0 100% 0)` is also invisible to
 > `IntersectionObserver`, so it can never reveal itself. The wipe uses a curtain
 > pseudo-element instead.
 >
-> Scroll events lag behind the `scrollTo` calls that cause them, so an inertia loop cannot
-> tell its own scrolls from anyone else's by comparing positions. It ignores scroll events
-> while it is driving, and `keydown` / `pointerdown` / `hashchange` hand control back.
->
 > Splitting a headline into words for measurement changes where it wraps unless the spaces
 > stay outside the word boxes as real text nodes.
+
+## The header
+
+A floating glass capsule, inset from all three edges and fully rounded. It carries a real
+`backdrop-filter` blur with a saturation lift, an inner top highlight and a soft drop
+shadow, so it reads as a piece of glass sitting over the page rather than a bar stuck to
+it. Three states, all on the same element:
+
+| | |
+|---|---|
+| Over a film hero | 10% white, white contents, drop-shadowed for legibility |
+| Scrolled | 74% white, navy contents, the page visibly blurred behind it |
+| On a light page before scroll | 60% white with a hairline, so it reads on white |
+
+Corners are soft everywhere else too — a single `--r` token (12–20px, fluid) rounds every
+photograph, the gallery tiles, the lightbox and the summary panel. Scrolling is the
+browser's own; nothing hijacks the wheel.
 
 ## Speed
 

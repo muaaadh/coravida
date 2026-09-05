@@ -11,7 +11,6 @@
   var SAVE = (navigator.connection && (navigator.connection.saveData ||
               /^([23]g|slow-2g)$/.test(navigator.connection.effectiveType || ""))) || false;
   var TOUCH = window.matchMedia("(hover: none)").matches;
-  var syncScroll = function () {};
 
   function u(p) { return ROOT + p; }
   function el(h) { var t = document.createElement("template"); t.innerHTML = h.trim(); return t.content.firstElementChild; }
@@ -325,36 +324,6 @@
     run();
   }
 
-  /* ---- Inertia scrolling ------------------------------------------------ */
-  function inertia() {
-    if (SLOW || TOUCH || !window.matchMedia("(pointer: fine)").matches) return;
-    var target = window.scrollY || 0, cur = target, running = false;
-    function max() { return Math.max(0, document.documentElement.scrollHeight - window.innerHeight); }
-    function frame() {
-      cur += (target - cur) * 0.11;
-      if (Math.abs(target - cur) < 0.4) { cur = target; running = false; }
-      window.scrollTo(0, cur);
-      if (running) requestAnimationFrame(frame);
-    }
-    window.addEventListener("wheel", function (e) {
-      if (document.body.classList.contains("lock")) return;
-      if (e.ctrlKey || e.metaKey) return;
-      if (e.target.closest && e.target.closest(".rail__track, .menu__body, textarea")) return;
-      e.preventDefault();
-      var d = e.deltaY * (e.deltaMode === 1 ? 18 : e.deltaMode === 2 ? window.innerHeight : 1);
-      target = Math.max(0, Math.min(max(), target + d));
-      if (!running) { running = true; requestAnimationFrame(frame); }
-    }, { passive: false });
-    // while we are driving, ignore the scroll events we cause; otherwise follow along
-    syncScroll = function () { target = cur = window.scrollY || 0; running = false; };
-    window.addEventListener("scroll", function () { if (!running) { target = cur = window.scrollY || 0; } }, { passive: true });
-    window.addEventListener("resize", syncScroll, { passive: true });
-    // anything else that can move the page hands control back
-    ["keydown", "pointerdown", "hashchange"].forEach(function (ev) {
-      window.addEventListener(ev, function () { setTimeout(syncScroll, 80); setTimeout(syncScroll, 520); }, { passive: true });
-    });
-  }
-
   /* ---- Counters -------------------------------------------------------- */
   function counters() {
     var vals = $$(".stats .v");
@@ -541,7 +510,6 @@
       marks.forEach(function (m, k) { m.classList.toggle("on", k === at); m.classList.toggle("done", k < at); });
       if (at === steps.length - 1) sum();
       window.scrollTo({ top: f.getBoundingClientRect().top + window.scrollY - 140, behavior: SLOW ? "auto" : "smooth" });
-      setTimeout(syncScroll, 700);
     }
     function ok() {
       var need = $$("[required]", steps[at]);
@@ -558,7 +526,7 @@
       try { var a = JSON.parse(localStorage.getItem("cv.enquiries") || "[]"); a.push(d); localStorage.setItem("cv.enquiries", JSON.stringify(a)); } catch (x) {}
       f.hidden = true;
       var o = $("#enquireOk");
-      if (o) { o.classList.add("on"); o.scrollIntoView({ behavior: SLOW ? "auto" : "smooth", block: "center" }); setTimeout(syncScroll, 700); }
+      if (o) { o.classList.add("on"); o.scrollIntoView({ behavior: SLOW ? "auto" : "smooth", block: "center" }); }
     });
     go(0);
   }
@@ -576,7 +544,7 @@
 
   function boot() {
     chrome(); header(); menu(); video(); lines(); reveals(); scrollFx(); counters();
-    rails(); filters(); lightbox(); accordion(); enquiry(); forms(); transition(); inertia();
+    rails(); filters(); lightbox(); accordion(); enquiry(); forms(); transition();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
