@@ -31,10 +31,10 @@ function img(name, alt, { r = "", sizes = "100vw", eager = false } = {}) {
     (eager ? ' fetchpriority="high" decoding="async"' : ' loading="lazy" decoding="async"') + ">";
 }
 /* animated figure: clip-wipe reveal + inner scale */
-function fig(name, alt, { ratio = "r43", href = null, r = "", sizes = "(min-width:960px) 58vw, 100vw", z = true, eager = false, anim = "clip", i = null } = {}) {
+function fig(name, alt, { ratio = "r43", href = null, r = "", sizes = "(min-width:960px) 58vw, 100vw", z = true, eager = false, anim = "clip", i = null, par = null } = {}) {
   const inner = img(name, alt, { r, sizes, eager });
   const cls = `fig ${ratio}${z ? " fig--z" : ""}`;
-  const a = anim ? ` data-a="${anim}"${i !== null ? ` style="--i:${i}"` : ""}` : "";
+  const a = (anim ? ` data-a="${anim}"${i !== null ? ` style="--i:${i}"` : ""}` : "") + (par ? ` data-par="${par}"` : "");
   return href ? `<a class="${cls}" href="${href}"${a}>${inner}</a>` : `<div class="${cls}"${a}>${inner}</div>`;
 }
 const link = (href, text) => `<a class="link" href="${href}">${text} ${ARROW}</a>`;
@@ -125,7 +125,7 @@ function home() {
   const mqRun = mqWords.map(w => `<span>${w}<i>&mdash;</i></span>`).join("");
 
   const main = `  <section class="hero">
-    <div class="hero__bg">
+    <div class="hero__bg" data-par="0.06">
       ${img("poster-hero", "Tiffany Blanc 14 underway off Malé", { sizes: "100vw", eager: true })}
       <video data-src="hero" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
@@ -141,7 +141,7 @@ function home() {
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">One vessel</p>
       <h2 class="d2 measure--wide lines" style="margin-inline:auto">The sea, at your own pace</h2>
-      <p class="lede measure" data-a="up">Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.</p>
+      <p class="lede measure" data-scrub>Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.</p>
       <p data-a="up">${link("vessel.html", "Discover the vessel")}</p>
     </div>
   </section>
@@ -155,7 +155,7 @@ ${cards}
   </section>
 
   <section class="mq" aria-hidden="true">
-    <div class="mq__t">${mqRun}${mqRun}</div>
+    <div class="mq__s"><div class="mq__t">${mqRun}${mqRun}</div></div>
   </section>
 
   <section class="band">
@@ -222,7 +222,7 @@ function vessel() {
   </section>`).join("\n\n");
 
   const main = `  <section class="hero hero--mid">
-    <div class="hero__bg">
+    <div class="hero__bg" data-par="0.06">
       ${img("poster-anchor", "Tiffany Blanc 14 at anchor above a reef edge", { sizes: "100vw", eager: true })}
       <video data-src="anchor" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
@@ -237,7 +237,7 @@ function vessel() {
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">Fourteen metres</p>
       <h2 class="d2 measure--wide lines" style="margin-inline:auto">Built for long, flat water</h2>
-      <p class="lede measure" data-a="up">A flybridge cruiser stripped back and refitted in 2025, run by a crew of three. Twelve aboard for the day, four asleep on the water.</p>
+      <p class="lede measure" data-scrub>A flybridge cruiser stripped back and refitted in 2025, run by a crew of three. Twelve aboard for the day, four asleep on the water.</p>
     </div>
   </section>
 
@@ -304,7 +304,7 @@ function voyages() {
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">Voyages</p>
       <h1 class="d1 lines">Five ways to leave the harbour</h1>
-      <p class="lede" data-a="up">Every voyage is a private charter of the whole vessel, crew included, out of Hulhumal&eacute; Marina.</p>
+      <p class="lede" data-scrub>Every voyage is a private charter of the whole vessel, crew included, out of Hulhumal&eacute; Marina.</p>
     </div>
   </section>
 
@@ -351,7 +351,7 @@ function voyagePages() {
         </a>`).join("\n");
 
     const main = `  <section class="hero hero--mid">
-    <div class="hero__bg">${img(v.img, v.alt, { r, sizes: "100vw", eager: true })}</div>
+    <div class="hero__bg" data-par="0.06">${img(v.img, v.alt, { r, sizes: "100vw", eager: true })}</div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${v.kind} &middot; ${v.area}</p>
       <h1 class="d1 lines">${v.title}</h1>
@@ -363,7 +363,7 @@ function voyagePages() {
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">The voyage</p>
       <h2 class="d2 measure--wide lines" style="margin-inline:auto">${v.line}</h2>
-      <p class="lede measure" data-a="up">${v.intro}</p>
+      <p class="lede measure" data-scrub>${v.intro}</p>
     </div>
   </section>
 
@@ -496,7 +496,7 @@ function about() {
   </section>
 
   <section class="section--sm">
-    <div class="wrap">${fig("aerial-marina", "Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air", { ratio: "r169", sizes: "100vw", eager: true })}</div>
+    <div class="wrap">${fig("aerial-marina", "Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air", { ratio: "r169", sizes: "100vw", eager: true, par: "0.05" })}</div>
   </section>
 
   <section class="section">
@@ -507,7 +507,7 @@ function about() {
           <h2 class="d2 lines">One vessel is the point</h2>
         </div>
         <div class="stack-l" data-stagger>
-          <p class="lede measure--wide" data-a="up">We run a single boat rather than a fleet, so the vessel you were shown is the vessel you sail on. Nothing is shared and nothing is subcontracted.</p>
+          <p class="lede measure--wide" data-scrub>We run a single boat rather than a fleet, so the vessel you were shown is the vessel you sail on. Nothing is shared and nothing is subcontracted.</p>
           <p class="lede measure--wide" data-a="up">Three crew take her out, and it is the same three every sailing &mdash; a captain who reads the weather, a chef, and a deckhand who has the ladder down before you ask.</p>
         </div>
       </div>
@@ -637,7 +637,7 @@ function contact() {
   <section class="section--sm" style="padding-bottom:var(--sec)">
     <div class="wrap">
       <figure style="margin:0">
-        ${fig("aerial-marina", "Tiffany Blanc 14 leaving Hulhumalé Marina", { ratio: "r169", sizes: "100vw" })}
+        ${fig("aerial-marina", "Tiffany Blanc 14 leaving Hulhumalé Marina", { ratio: "r169", sizes: "100vw", par: "0.05" })}
         <figcaption class="cap" data-a="up"><span class="k">Hulhumal&eacute; Marina</span><span class="d4">Ten minutes from Velana International Airport</span></figcaption>
       </figure>
     </div>
@@ -777,7 +777,7 @@ function notfound() {
   </section>
 
   <section class="section--sm" style="padding-bottom:var(--sec)">
-    <div class="wrap">${fig("aerial-anchor", "Tiffany Blanc 14 alone at anchor above a reef edge", { ratio: "r169", sizes: "100vw" })}</div>
+    <div class="wrap">${fig("aerial-anchor", "Tiffany Blanc 14 alone at anchor above a reef edge", { ratio: "r169", sizes: "100vw", par: "0.05" })}</div>
   </section>`;
 
   page({

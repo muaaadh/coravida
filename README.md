@@ -26,20 +26,33 @@ carries the whole layer — no library:
 
 | Behaviour | Hook |
 |---|---|
+| Inertia scrolling — the wheel is lerped rather than jumped | desktop pointers only; keyboard, scrollbar and anchors hand control straight back |
+| A shoreline washes the navy block onto the page: four wave layers drifting at different speeds, a foam line among them, the whole thing rising 30px as it enters view | injected by `site.js` into the closing navy section, or the footer where there isn't one |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
 | Sections fade and lift, staggered | `data-a="up\|fade\|scale"` inside a `data-stagger` parent, which numbers the children |
 | Photographs reveal under a curtain wipe while the image settles from 1.12× | `data-a="clip"` |
-| Full-bleed film and stills drift against the scroll | `data-par="0.1"`, rAF, only while on screen |
+| Hero film and full-bleed stills drift against the scroll | `data-par="0.06"`, rAF, only while on screen |
+| One paragraph per page lights word by word as it passes | `data-scrub` |
+| The marquee skews with scroll velocity and eases back | `.mq__s`, capped at 2.2° |
 | Statistics count up as they enter | any `.stats .v` whose value is numeric |
-| Scroll progress line, page-to-page fade, hero zoom-out on load | built in |
-| Buttons fill from below, links sweep an underline, the rail can be dragged | CSS + pointer events |
+| Scroll-progress line, page-to-page fade, hero zoom-out on load, cards that lift, buttons that fill from below, links that sweep an underline, a draggable rail | built in |
+| Headlines never orphan a word | `text-wrap: balance`, measured before the line split |
 
 All of it is disabled under `prefers-reduced-motion`, where every element resolves to its
-end state.
+end state and the waves stand still.
 
-> One trap worth recording: an element hidden with `clip-path: inset(0 0 100% 0)` is also
-> invisible to `IntersectionObserver`, so it can never reveal itself. The wipe is done with
-> a curtain pseudo-element instead.
+Three traps worth recording:
+
+> An element hidden with `clip-path: inset(0 0 100% 0)` is also invisible to
+> `IntersectionObserver`, so it can never reveal itself. The wipe uses a curtain
+> pseudo-element instead.
+>
+> Scroll events lag behind the `scrollTo` calls that cause them, so an inertia loop cannot
+> tell its own scrolls from anyone else's by comparing positions. It ignores scroll events
+> while it is driving, and `keydown` / `pointerdown` / `hashchange` hand control back.
+>
+> Splitting a headline into words for measurement changes where it wraps unless the spaces
+> stay outside the word boxes as real text nodes.
 
 ## Speed
 
