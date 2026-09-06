@@ -39,7 +39,12 @@
       document.body.insertBefore(menuEl(), document.body.firstChild);
     }
     var f = $('[data-chrome="footer"]');
-    if (f) { var ft = footerEl(); f.replaceWith(ft); wave(ft); }
+    if (f) {
+      var ft = footerEl(); f.replaceWith(ft);
+      var prev = ft.previousElementSibling;
+      if (prev && prev.tagName === "MAIN") prev = prev.lastElementChild;
+      sea((prev && prev.classList && prev.classList.contains("section--navy")) ? prev : ft);
+    }
     document.body.appendChild(el('<div class="prog" id="prog" aria-hidden="true"></div>'));
     if (!SLOW) document.body.appendChild(el('<div class="veil" id="veil" aria-hidden="true"></div>'));
   }
@@ -85,27 +90,54 @@
     );
   }
 
-  /* ---- Shoreline -------------------------------------------------------- */
-  function svgWave(d, fill, stroke) {
-    var body = stroke
-      ? '<path d="' + d + '" fill="none" stroke="' + stroke + '" stroke-width="2.5"/>'
-      : '<path d="' + d + '" fill="' + fill + '"/>';
-    return "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 120' preserveAspectRatio='none'%3E" +
-      encodeURIComponent(body).replace(/'/g, "%27") + "%3C/svg%3E\")";
+  /* ---- The sea ---------------------------------------------------------- */
+  /* One 1440-unit period, tiled twice inside a 2880 viewBox, so a -50% shift
+     loops seamlessly. Each layer drifts at its own speed and direction. */
+  var PERIOD = 1440, SEAH = 240;
+  function crest(y0, segs) {
+    var d = "M0," + y0, x;
+    for (var t = 0; t < 2; t++) {
+      var o = t * PERIOD;
+      for (var i = 0; i < segs.length; i++) {
+        var g = segs[i];
+        d += " C" + (g[0] + o) + "," + g[1] + " " + (g[2] + o) + "," + g[3] + " " + (g[4] + o) + "," + g[5];
+      }
+    }
+    return d;
   }
-  function wave(footer) {
-    // the navy block the wave belongs to: the CTA that closes the page, else the footer
-    var prev = footer.previousElementSibling;
-    if (prev && prev.tagName === "MAIN") prev = prev.lastElementChild;
-    var host = (prev && prev.classList && prev.classList.contains("section--navy")) ? prev : footer;
-    var navy = "#03224D";
-    var w = el('<div class="wave" aria-hidden="true"><span class="w1"></span><span class="w2"></span><span class="w3"></span><span class="wf"></span></div>');
-    $(".w1", w).style.backgroundImage = svgWave("M0,54 C190,104 360,14 620,46 C880,78 1030,10 1200,54 L1200,120 L0,120 Z", navy);
-    $(".w2", w).style.backgroundImage = svgWave("M0,66 C170,22 310,108 540,70 C790,30 980,106 1200,66 L1200,120 L0,120 Z", navy);
-    $(".w3", w).style.backgroundImage = svgWave("M0,82 C230,120 420,44 640,78 C890,114 1040,48 1200,82 L1200,120 L0,120 Z", navy);
-    $(".wf", w).style.backgroundImage = svgWave("M0,88 C230,126 420,50 640,84 C890,120 1040,54 1200,88", null, "rgba(255,255,255,.55)");
+  var LAYERS = [
+    { y: 88,  s: [[150,36,250,126,390,96],[520,68,610,140,740,110],[880,82,970,40,1090,66],[1220,90,1330,128,1440,88]] },
+    { y: 114, s: [[110,166,270,62,410,104],[550,144,630,60,770,94],[910,128,1020,56,1160,88],[1300,118,1360,150,1440,114]] },
+    { y: 146, s: [[160,192,290,96,430,136],[570,176,670,100,810,132],[950,166,1070,92,1210,124],[1350,158,1400,178,1440,146]] }
+  ];
+  function sea(host) {
+    var fill = function (d) { return d + " L" + (PERIOD * 2) + "," + SEAH + " L0," + SEAH + " Z"; };
+    var body = "";
+    LAYERS.forEach(function (L, i) {
+      body += '<g class="sea__l l' + (i + 1) + '"><path class="wv" d="' + fill(crest(L.y, L.s)) + '"/></g>';
+    });
+    var front = crest(LAYERS[2].y, LAYERS[2].s);
+    // light refracting down through the surface
+    body += '<g class="sea__l l3 sea__rg"><path class="sea__refr" d="' + fill(front) + '"/></g>';
+    // chromatic split along the crest: three channels, a hair apart
+    body += '<g class="sea__l l3 sea__chr">' +
+      '<path class="ch r" d="' + front + '"/>' +
+      '<path class="ch g" d="' + front + '"/>' +
+      '<path class="ch b" d="' + front + '"/>' +
+      '<path class="ch f" d="' + front + '"/></g>';
+    var w = el('<div class="sea" aria-hidden="true"><svg viewBox="0 0 ' + (PERIOD * 2) + " " + SEAH +
+      '" preserveAspectRatio="none">' +
+      '<defs><linearGradient id="cvRefr" gradientUnits="userSpaceOnUse" x1="0" y1="126" x2="0" y2="240">' +
+      '<stop offset="0" stop-color="#D8ECFF" stop-opacity=".16"/>' +
+      '<stop offset=".16" stop-color="#8CBEEA" stop-opacity=".05"/>' +
+      '<stop offset=".55" stop-color="#3E7FC4" stop-opacity=".012"/>' +
+      '<stop offset="1" stop-color="#03224D" stop-opacity="0"/></linearGradient></defs>' +
+      body + "</svg></div>");
+    var cx = "background-image:url(" + u("assets/img/caustics.webp") + ")";
+    var deep = el('<div class="sea-deep" aria-hidden="true"><i style="' + cx + '"></i><i style="' + cx + '"></i></div>');
     var cs = getComputedStyle(host);
     if (cs.position === "static") host.style.position = "relative";
+    host.insertBefore(deep, host.firstChild);
     host.insertBefore(w, host.firstChild);
     if (SLOW || !("IntersectionObserver" in window)) return w.classList.add("in");
     var io = new IntersectionObserver(function (es) {
@@ -240,6 +272,94 @@
         nodes.forEach(function (n) { var was = n.classList.contains("in"); splitLines(n); if (was) n.classList.add("in"); });
       }, 200);
     }, { passive: true });
+  }
+
+  /* ---- Section index ---------------------------------------------------- */
+  function sectionIndex() {
+    var secs = $$("[data-idx]");
+    if (secs.length < 3) return;
+    var rail = el('<nav class="idx" aria-hidden="true"><ul>' + secs.map(function (n, i) {
+      return "<li data-g=\"" + i + '"><span>' + n.getAttribute("data-idx") + "</span><i></i></li>";
+    }).join("") + "</ul></nav>");
+    document.body.appendChild(rail);
+    var items = $$("li", rail), ticking = false;
+    items.forEach(function (li, i) {
+      li.addEventListener("click", function () {
+        window.scrollTo({ top: secs[i].getBoundingClientRect().top + window.scrollY - 40, behavior: SLOW ? "auto" : "smooth" });
+      });
+    });
+    function frame() {
+      ticking = false;
+      var vh = window.innerHeight, at = -1, dark = false;
+      secs.forEach(function (n, i) {
+        var r = n.getBoundingClientRect();
+        if (r.top <= vh * 0.42 && r.bottom > vh * 0.42) { at = i; dark = n.hasAttribute("data-idx-dark"); }
+      });
+      items.forEach(function (li, i) { li.classList.toggle("on", i === at); });
+      rail.classList.toggle("on", at > -1);
+      rail.classList.toggle("dark", dark);
+    }
+    function run() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+    window.addEventListener("scroll", run, { passive: true });
+    window.addEventListener("resize", run, { passive: true });
+    run();
+  }
+
+  /* ---- Pinned horizontal run -------------------------------------------- */
+  function pinned() {
+    $$("[data-pin]").forEach(function (sec) {
+      var track = $(".pin__track", sec);
+      if (!track) return;
+      var travel = 0, ticking = false;
+      function measure() {
+        if (window.innerWidth < 900 || SLOW) { sec.style.height = ""; track.style.transform = ""; travel = 0; return; }
+        travel = Math.max(0, track.scrollWidth - window.innerWidth);
+        sec.style.height = (window.innerHeight + travel) + "px";
+        frame();
+      }
+      function frame() {
+        ticking = false;
+        if (!travel) return;
+        var r = sec.getBoundingClientRect();
+        var p = Math.max(0, Math.min(1, -r.top / (sec.offsetHeight - window.innerHeight)));
+        track.style.transform = "translate3d(" + (-p * travel).toFixed(1) + "px,0,0)";
+      }
+      function run() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
+      window.addEventListener("scroll", run, { passive: true });
+      window.addEventListener("resize", measure, { passive: true });
+      if (document.readyState === "complete") measure();
+      else window.addEventListener("load", measure);
+      measure();
+    });
+  }
+
+  /* ---- Voyage index: the photograph follows the cursor ------------------- */
+  function voyageIndex() {
+    var vx = $(".vx");
+    if (!vx || TOUCH || !window.matchMedia("(min-width: 900px)").matches) return;
+    var thumb = el('<div class="vx__thumb"><img alt=""></div>');
+    document.body.appendChild(thumb);
+    var img = $("img", thumb), x = 0, y = 0, tx = 0, ty = 0, live = false, raf = null;
+    function loop() {
+      x += (tx - x) * 0.14; y += (ty - y) * 0.14;
+      thumb.style.left = x + "px"; thumb.style.top = y + "px";
+      if (live || Math.abs(tx - x) > 0.5) raf = requestAnimationFrame(loop);
+      else raf = null;
+    }
+    $$(".vx__row", vx).forEach(function (row) {
+      row.addEventListener("pointerenter", function () {
+        var src = row.getAttribute("data-thumb");
+        if (src && img.getAttribute("src") !== src) img.src = src;
+        img.alt = row.getAttribute("data-alt") || "";
+        live = true; thumb.classList.add("on");
+        if (!raf) raf = requestAnimationFrame(loop);
+      });
+      row.addEventListener("pointerleave", function () { live = false; thumb.classList.remove("on"); });
+    });
+    vx.addEventListener("pointermove", function (e) {
+      tx = e.clientX; ty = e.clientY;
+      if (!raf) raf = requestAnimationFrame(loop);
+    });
   }
 
   /* ---- Reveals --------------------------------------------------------- */
@@ -545,6 +665,7 @@
   function boot() {
     chrome(); header(); menu(); video(); lines(); reveals(); scrollFx(); counters();
     rails(); filters(); lightbox(); accordion(); enquiry(); forms(); transition();
+    sectionIndex(); pinned(); voyageIndex();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

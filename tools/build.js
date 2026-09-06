@@ -107,22 +107,21 @@ function home() {
   const feat = ["a-day-at-sea", "sandbank-sunset", "twelve-nights-at-anchor"].map(s => v.find(x => x.slug === s));
   const cards = feat.map((x, i) => `        <a class="card" href="voyages/${x.slug}.html" data-stagger>
           ${fig(x.img, x.alt, { ratio: "r34", sizes: "(min-width:760px) 31vw, 100vw", i })}
-          <div class="card__m" data-a="up" style="--i:${i}"><div class="kv"><span>${x.duration}</span><span>${x.guests}</span></div>
-            <h3 class="d4">${x.title}</h3><p class="small">${x.line}</p>
-            <p class="small" style="color:var(--body)">From ${money(x.from)}</p></div>
+          <div class="card__m" data-a="up" style="--i:${i}">
+            <h3 class="d4">${x.title}</h3>
+            <div class="kv"><span>${x.duration}</span><span>From ${money(x.from)}</span></div></div>
         </a>`).join("\n");
 
-  const detail = [
-    ["champagne", "Sparkling wine poured over a fruit platter on the gunwale", "Poured on the way out"],
-    ["platter", "A tray of fruit and sparkling wine set on the bow", "Set before departure"],
-    ["floats", "Two guests drifting on floats in deep blue water", "Nowhere to be"]
-  ].map(([n, a, c], i) => `        <figure style="margin:0">
-          ${fig(n, a, { ratio: "r43", sizes: "(min-width:760px) 31vw, 100vw", i })}
-          <figcaption class="cap" data-a="up" style="--i:${i}"><span class="k">${c}</span></figcaption>
-        </figure>`).join("\n");
-
-  const mqWords = ["Hulhumal&eacute; Marina", "North Mal&eacute; Atoll", "Twelve guests", "One vessel", "Crew of three", "Since 2019"];
-  const mqRun = mqWords.map(w => `<span>${w}<i>&mdash;</i></span>`).join("");
+  const RUN = [
+    ["champagne", "Sparkling wine poured over a fruit platter on the gunwale"],
+    ["floats", "Two guests drifting on floats in deep blue water"],
+    ["snorkellers", "Two snorkellers over the reef in clear water"],
+    ["platter-macro", "Passionfruit, strawberries and blueberries on a tray"],
+    ["boarding", "Guests boarding Tiffany Blanc 14 from the water"],
+    ["pineapple", "A pineapple held over sparkling water"],
+    ["aerial-bow", "The bow of Tiffany Blanc 14 from directly above"],
+    ["sandbank-2", "The long walk out along a sandbank"]
+  ].map(([n, a], i) => `        <div class="pin__i">${fig(n, a, { sizes: "34vw", i: i % 3 })}</div>`).join("\n");
 
   const main = `  <section class="hero">
     <div class="hero__bg" data-par="0.06">
@@ -137,44 +136,54 @@ function home() {
     <div class="hero__cue" aria-hidden="true"><i></i>Scroll</div>
   </section>
 
-  <section class="section center">
+  <section class="section center" data-idx="Overview">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">One vessel</p>
+      <p class="eyebrow" data-a="up"><b>01</b> One vessel</p>
       <h2 class="d2 measure--wide lines" style="margin-inline:auto">The sea, at your own pace</h2>
       <p class="lede measure" data-scrub>Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.</p>
       <p data-a="up">${link("vessel.html", "Discover the vessel")}</p>
     </div>
   </section>
 
-  <section class="section--sm" style="padding-top:0">
-    <div class="wrap">
+  <section class="section--sm" style="padding-top:0" data-idx="Voyages">
+    <div class="wrap stack-l">
+      <p class="eyebrow" data-a="up"><b>02</b> Voyages</p>
       <div class="g3">
 ${cards}
       </div>
     </div>
   </section>
 
-  <section class="mq" aria-hidden="true">
-    <div class="mq__s"><div class="mq__t">${mqRun}${mqRun}</div></div>
+  <section class="pin" data-pin data-idx="Aboard">
+    <div class="pin__stick">
+      <div class="pin__track">
+        <div class="pin__lead stack-l" data-stagger>
+          <p class="eyebrow" data-a="up"><b>03</b> Aboard</p>
+          <h2 class="d3 lines">What the day is made of</h2>
+          <p class="small" data-a="up">Scroll on &mdash;</p>
+        </div>
+${RUN}
+      </div>
+    </div>
   </section>
 
-  <section class="band">
+  <section class="band" data-idx="Below" data-idx-dark>
     <div class="band__bg" data-par="0.1">
       ${img("poster-ray", "", { sizes: "100vw" })}
       <video data-src="ray" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="band__in wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Below</p>
+      <p class="eyebrow" data-a="up"><b>04</b> Below</p>
       <h2 class="d2 lines">And then the water opens</h2>
       <p class="lede" data-a="up">Reefs, channels, and whatever is passing through them that morning.</p>
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-idx="The vessel">
     <div class="wrap">
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">The vessel</p>
+          <p class="eyebrow" data-a="up"><b>05</b> The vessel</p>
           <h2 class="d2 lines">Tiffany Blanc 14</h2>
           <p class="lede" data-a="up">Fourteen metres, refitted in 2025. Twelve aboard for the day, four asleep on the water.</p>
           <p data-a="up">${link("vessel.html", "Go aboard")}</p>
@@ -183,14 +192,6 @@ ${cards}
           ${fig("vessel-guests", "Tiffany Blanc 14 at anchor with guests aboard and swimmers alongside", { ratio: "r43", sizes: "(min-width:960px) 58vw, 100vw" })}
           ${stats(CV.vessel.stats)}
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section--sm" style="padding-bottom:var(--sec)">
-    <div class="wrap">
-      <div class="g3">
-${detail}
       </div>
     </div>
   </section>
@@ -208,11 +209,11 @@ ${cta()}`;
 /* -------------------------------------------------------------- VESSEL -- */
 function vessel() {
   const V = CV.vessel;
-  const decks = V.decks.map((d, i) => `  <section class="section${i % 2 ? " section--mist" : ""}">
+  const decks = V.decks.map((d, i) => `  <section class="section${i % 2 ? " section--mist" : ""}" data-idx="${d.t}">
     <div class="wrap">
       <div class="split${i % 2 ? " split--f" : ""}">
         <div class="split__t stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">${d.n}</p>
+          <p class="eyebrow" data-a="up"><b>${d.n}</b> ${d.t === "The water" ? "Overboard" : "Deck"}</p>
           <h2 class="d3 lines">${d.t}</h2>
           <p class="lede" data-a="up">${d.d}</p>
         </div>
@@ -233,7 +234,7 @@ function vessel() {
     </div>
   </section>
 
-  <section class="section center">
+  <section class="section center" data-idx="The vessel">
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">Fourteen metres</p>
       <h2 class="d2 measure--wide lines" style="margin-inline:auto">Built for long, flat water</h2>
@@ -247,11 +248,11 @@ function vessel() {
 
 ${decks}
 
-  <section class="section">
+  <section class="section" data-idx="On paper">
     <div class="wrap">
       <div class="g2">
         <div class="stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">Specification</p>
+          <p class="eyebrow" data-a="up"><b>05</b> Specification</p>
           <h2 class="d3 lines">On paper</h2>
           ${dl(V.spec.map(s => [s.k, s.v]))}
         </div>
@@ -264,7 +265,7 @@ ${decks}
     </div>
   </section>
 
-  <section class="band">
+  <section class="band" data-idx="Capacity" data-idx-dark>
     <div class="band__bg" data-par="0.1">${img("aerial-anchor", "", { sizes: "100vw" })}</div>
     <div class="band__in wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">Capacity</p>
@@ -284,21 +285,12 @@ ${cta()}`;
 
 /* ------------------------------------------------------------- VOYAGES -- */
 function voyages() {
-  const rows = CV.voyages.map((v, i) => `  <section class="section${i % 2 ? " section--mist" : ""}">
-    <div class="wrap">
-      <div class="split${i % 2 ? " split--f" : ""}">
-        <div class="split__t stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">${v.kind}</p>
-          <h2 class="d2 lines">${v.title}</h2>
-          <p class="lede" data-a="up">${v.line}</p>
-          <div class="kv" data-a="up"><span>${v.duration}</span><span>${v.guests}</span><span>${v.season}</span></div>
-          <p class="small" data-a="up">From ${money(v.from)} &middot; the whole vessel</p>
-          <p data-a="up">${link(`voyages/${v.slug}.html`, "See the voyage")}</p>
-        </div>
-        ${fig(v.img, v.alt, { ratio: "r32", href: `voyages/${v.slug}.html`, sizes: "(min-width:960px) 58vw, 100vw" })}
-      </div>
-    </div>
-  </section>`).join("\n\n");
+  const rows = CV.voyages.map((v, i) => `        <a class="vx__row" href="voyages/${v.slug}.html" data-thumb="assets/img/${v.img}-900.webp" data-alt="${esc(v.alt)}" data-a="up" style="--i:${Math.min(i,4)}">
+          <span class="vx__n">${String(i + 1).padStart(2, "0")}</span>
+          <span class="vx__t">${v.title}</span>
+          <span class="vx__m">${v.duration} &middot; ${v.guests} &middot; ${money(v.from)}</span>
+          <div class="vx__mob">${fig(v.img, v.alt, { ratio: "r169", sizes: "100vw", anim: null, z: false })}</div>
+        </a>`).join("\n");
 
   const main = `  <section class="phero">
     <div class="wrap narrow stack-l" data-stagger>
@@ -308,11 +300,22 @@ function voyages() {
     </div>
   </section>
 
-${rows}
+  <section class="section--sm">
+    <div class="wrap">${fig("aerial-underway", "Tiffany Blanc 14 underway on deep blue water off Malé", { ratio: "r169", sizes: "100vw", eager: true, par: "0.05" })}</div>
+  </section>
 
-  <section class="section">
+  <section class="section" data-idx="The five">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Rates</p>
+      <p class="eyebrow" data-a="up"><b>01</b> The five</p>
+      <div class="vx">
+${rows}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--mist" data-idx="Rates">
+    <div class="wrap narrow stack-l" data-stagger>
+      <p class="eyebrow" data-a="up"><b>02</b> Rates</p>
       <h2 class="d2 lines">What it costs to leave</h2>
       <p class="lede measure" data-a="up">Whole-vessel rates in US dollars. Crew, fuel within the itinerary and harbour dues are included.</p>
       ${dl(CV.voyages.map(v => [`<a href="voyages/${v.slug}.html">${v.title}</a>`,
@@ -320,9 +323,9 @@ ${rows}
     </div>
   </section>
 
-  <section class="section section--mist">
+  <section class="section" data-idx="Add-ons">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Add-ons</p>
+      <p class="eyebrow" data-a="up"><b>03</b> Add-ons</p>
       <h2 class="d3 lines">Things we can arrange</h2>
       ${dl(CV.addons.map(a => [a.t, `${a.d} <span class="num">${money(a.p)}</span>`]))}
       <p class="note" data-a="up">A fifty percent deposit confirms a date; the balance is due seven days before departure. If the captain calls off a sailing for weather, you move the date or take the money back.</p>
@@ -499,11 +502,11 @@ function about() {
     <div class="wrap">${fig("aerial-marina", "Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air", { ratio: "r169", sizes: "100vw", eager: true, par: "0.05" })}</div>
   </section>
 
-  <section class="section">
+  <section class="section" data-idx="The company">
     <div class="wrap">
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">The company</p>
+          <p class="eyebrow" data-a="up"><b>01</b> The company</p>
           <h2 class="d2 lines">One vessel is the point</h2>
         </div>
         <div class="stack-l" data-stagger>
@@ -521,11 +524,11 @@ function about() {
     ])}</div>
   </section>
 
-  <section class="section">
+  <section class="section" data-idx="The crew">
     <div class="wrap">
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">The crew</p>
+          <p class="eyebrow" data-a="up"><b>02</b> The crew</p>
           <h2 class="d3 lines">Three people, every sailing</h2>
         </div>
         ${dl([
@@ -537,11 +540,11 @@ function about() {
     </div>
   </section>
 
-  <section class="section section--mist">
+  <section class="section section--mist" data-idx="The reef">
     <div class="wrap">
       <div class="split split--f">
         <div class="split__t stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">Reef and rubbish</p>
+          <p class="eyebrow" data-a="up"><b>03</b> Reef and rubbish</p>
           <h2 class="d3 lines">What we do about it</h2>
           ${list(["No single-use plastic aboard.", "Reef-safe sunscreen supplied.", "We anchor on sand, never on coral."])}
         </div>
@@ -550,7 +553,7 @@ function about() {
     </div>
   </section>
 
-  <section class="band">
+  <section class="band" data-idx="Weather" data-idx-dark>
     <div class="band__bg" data-par="0.1">${img("sandbank-2", "", { sizes: "100vw" })}</div>
     <div class="band__in wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">Weather</p>
@@ -583,11 +586,11 @@ function contact() {
     </div>
   </section>
 
-  <section class="section">
+  <section class="section" data-idx="Reach us">
     <div class="wrap">
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">Reach us</p>
+          <p class="eyebrow" data-a="up"><b>01</b> Reach us</p>
           ${dl([
             ["Telephone", `<a href="${CV.brand.phoneHref}">${CV.brand.phone}</a>`],
             ["WhatsApp", `<a href="${CV.brand.whatsappHref}" rel="noopener">${CV.brand.phone}</a>`],
@@ -626,9 +629,9 @@ function contact() {
     </div>
   </section>
 
-  <section class="section section--mist">
+  <section class="section section--mist" data-idx="Questions">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Questions</p>
+      <p class="eyebrow" data-a="up"><b>02</b> Questions</p>
       <h2 class="d2 lines">Before you sail</h2>
       ${faq}
     </div>

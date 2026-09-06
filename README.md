@@ -26,21 +26,27 @@ carries the whole layer — no library:
 
 | Behaviour | Hook |
 |---|---|
-| A shoreline washes the navy block onto the page: four wave layers drifting at different speeds, a foam line among them, the whole thing rising 30px as it enters view | injected by `site.js` into the closing navy section, or the footer where there isn't one |
+| **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` into the closing navy section, or the footer where there isn't one |
+| **A pinned run.** The page holds still and eight photographs travel left as you scroll, on mixed aspect ratios. Falls back to a swipeable rail below 900px. | `data-pin` |
+| **A section index.** A small glass capsule on the right edge; the tick for the section you are in lengthens and names itself. Click to jump. Inverts over dark sections. | `data-idx="Name"`, `data-idx-dark` |
+| **The voyage index.** Five numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
 | Sections fade and lift, staggered | `data-a="up\|fade\|scale"` inside a `data-stagger` parent, which numbers the children |
 | Photographs reveal under a curtain wipe while the image settles from 1.12× | `data-a="clip"` |
-| Hero film and full-bleed stills drift against the scroll | `data-par="0.06"`, rAF, only while on screen |
+| Hero film and full-bleed stills drift against the scroll | `data-par` |
 | One paragraph per page lights word by word as it passes | `data-scrub` |
-| The marquee skews with scroll velocity and eases back | `.mq__s`, capped at 2.2° |
 | Statistics count up as they enter | any `.stats .v` whose value is numeric |
 | Scroll-progress line, page-to-page fade, hero zoom-out on load, cards that lift, buttons that fill from below, links that sweep an underline, a draggable rail | built in |
 | Headlines never orphan a word | `text-wrap: balance`, measured before the line split |
 
 All of it is disabled under `prefers-reduced-motion`, where every element resolves to its
-end state and the waves stand still.
+end state and the sea stands still.
 
-Two traps worth recording:
+The caustics are a 512px seamless tile generated with ImageMagick (tiled noise → blur →
+`EdgeIn` morphology → levels), 2 KB as WebP, drifting on two layers so the repeat never
+reads.
+
+Three traps worth recording:
 
 > An element hidden with `clip-path: inset(0 0 100% 0)` is also invisible to
 > `IntersectionObserver`, so it can never reveal itself. The wipe uses a curtain
@@ -48,6 +54,11 @@ Two traps worth recording:
 >
 > Splitting a headline into words for measurement changes where it wraps unless the spaces
 > stay outside the word boxes as real text nodes.
+>
+> `img, svg { max-width: 100% }` in the reset silently clamps an SVG you have sized at
+> `200%` for a seamless loop — it needs `max-width: none`. And a `fill` rule matching
+> `.parent path` beats a class on the path itself, which will quietly replace a gradient
+> with a flat colour.
 
 ## The header
 
