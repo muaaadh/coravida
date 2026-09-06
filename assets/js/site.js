@@ -622,7 +622,9 @@
       $("[data-s-g]").textContent = g ? g + (g === 1 ? " guest" : " guests") : "—";
       $("[data-s-e]").textContent = ex.length ? ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ") : "None";
       var add = ex.reduce(function (s, i) { return s + Number(i.getAttribute("data-price") || 0); }, 0);
-      $("[data-s-t]").textContent = v ? money(v.from + add) : "—";
+      $("[data-s-t]").textContent = !v ? "—"
+        : v.from == null ? (add ? money(add) + " + charter" : "On request")
+        : money(v.from + add);
     }
     function go(n) {
       at = Math.max(0, Math.min(steps.length - 1, n));

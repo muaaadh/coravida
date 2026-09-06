@@ -22,93 +22,90 @@ window.CV = (function () {
 
   var nav = [
     { label: "The Vessel", href: "vessel.html" },
-    { label: "Voyages",    href: "voyages.html" },
+    { label: "Excursions", href: "excursions.html" },
     { label: "Gallery",    href: "gallery.html" },
     { label: "About",      href: "about.html" },
     { label: "Contact",    href: "contact.html" }
   ];
 
+  /* The four excursions Coravida runs, as supplied by the client.
+     `from` is null until they confirm rates — the pages read "On request". */
   var voyages = [
     {
-      slug: "a-day-at-sea", title: "A Day at Sea", kind: "Day charter",
-      duration: "8 hours", guests: "Up to 12", season: "Year round",
-      area: "North Malé Atoll", from: 1450,
+      slug: "island-and-snorkelling", title: "Island & Snorkelling", kind: "Full day",
+      duration: "9.5 hours", guests: "Up to 12", season: "Year round",
+      area: "North Malé Atoll", departs: "08:30 · Hulhumalé", from: null,
+      img: "sandbank", alt: "The Himmafushi sandbank at low water",
+      line: "Fish Tank, the Himmafushi sandbank, the island itself, and home under the sunset.",
+      intro: "A full day north. Snorkelling at Fish Tank while the water is clearest, a long stop on the sandbank, then time to walk Himmafushi before the run home.",
+      plan: [
+        { t: "08:30", h: "Hulhumalé", d: "A scenic run out from the jetty." },
+        { t: "09:00", h: "Fish Tank", d: "Snorkelling over the reef, among the tropical fish the site is named for." },
+        { t: "11:00", h: "Himmafushi sandbank", d: "Swim, snorkel and the turquoise lagoon. The best of the light for photographs." },
+        { t: "12:30", h: "Lunch", d: "Lunch aboard, and free time." },
+        { t: "13:30", h: "Himmafushi", d: "Ashore on a local island — the community, the shops and the harbour." },
+        { t: "15:30", h: "Free time", d: "More swimming and snorkelling, or the deck." },
+        { t: "16:30", h: "Sunset cruise", d: "Back towards Hulhumalé as the light goes." },
+        { t: "18:00", h: "Hulhumalé", d: "Alongside." }
+      ],
+      has: ["Boat excursion", "Snorkelling at Fish Tank", "Himmafushi sandbank", "Himmafushi local island visit", "Sunset cruise", "Swimming and snorkelling time", "Photo stops"],
+      shots: ["fish-tank", "sandbank-2", "aerial-marina"]
+    },
+    {
+      slug: "reef-and-sandbank", title: "Reef & Sandbank", kind: "Half day",
+      duration: "4 hours", guests: "Up to 12", season: "Year round",
+      area: "North Malé Atoll", departs: "09:00 · Hulhumalé", from: null,
+      img: "snorkel-reef", alt: "A snorkeller over a shallow reef in clear turquoise water",
+      line: "Fish Tank, a white sandbank, and a dolphin cruise home.",
+      intro: "The short version of a good day. Straight out to Fish Tank, an hour on the sand, and a cruise back with an eye out for dolphins.",
+      plan: [
+        { t: "09:00", h: "Hulhumalé", d: "Out from the jetty." },
+        { t: "09:30", h: "Fish Tank", d: "Snorkelling with the tropical fish in clear water." },
+        { t: "11:00", h: "Sandbank", d: "White sand, shallow water, and time to swim." },
+        { t: "12:00", h: "Dolphin cruise", d: "A slow run back, watching for pods along the way." },
+        { t: "13:00", h: "Hulhumalé", d: "Alongside." }
+      ],
+      has: ["Boat trip", "Fish Tank snorkelling", "Sandbank visit", "Swimming and relaxation", "Dolphin cruise back to Hulhumalé"],
+      shots: ["fish-tank", "sandbank", "float-blue"]
+    },
+    {
+      slug: "shark-point-and-gulhi", title: "Shark Point & Gulhi", kind: "Full day",
+      duration: "9 hours", guests: "Up to 12", season: "Year round",
+      area: "South Malé Atoll", departs: "09:00 · Hulhumalé", from: null,
+      img: "reef-fish", alt: "Reef fish over coral in the South Malé Atoll",
+      line: "Three snorkelling stops, a sandbank, and Gulhi before the sun goes.",
+      intro: "South for the day. Reef sharks at Embudu, the coral garden off Taj, a sandbank at midday, and Gulhi in the afternoon before the run home.",
+      plan: [
+        { t: "09:00", h: "Hulhumalé jetty", d: "South across the atoll." },
+        { t: "10:00", h: "Shark Point, Embudu", d: "Snorkelling alongside reef sharks on the village reef." },
+        { t: "11:15", h: "Coral garden", d: "The reef off Taj — coral and tropical fish in shallow water." },
+        { t: "12:15", h: "Sandbank", d: "White sand and a clear lagoon. Swimming and photographs." },
+        { t: "13:00", h: "Gulhi", d: "Ashore on a local island." },
+        { t: "13:30", h: "Lunch", d: "Lunch, and time to sit." },
+        { t: "14:30", h: "Coral life", d: "One more snorkelling stop on the way back north." },
+        { t: "16:30", h: "Sunset cruise", d: "Back towards Hulhumalé with the light behind." },
+        { t: "18:00", h: "Hulhumalé jetty", d: "Alongside." }
+      ],
+      has: ["Full-day boat excursion", "Three snorkelling locations", "Shark Point snorkelling", "Coral garden snorkelling", "Sandbank visit", "Gulhi local island visit", "Lunch", "Sunset cruise"],
+      shots: ["ray-sand", "snorkellers", "sandbank"]
+    },
+    {
+      slug: "sunset-adventure", title: "Sunset Adventure", kind: "Half day",
+      duration: "4.5 hours", guests: "Up to 12", season: "Year round",
+      area: "South Malé Atoll", departs: "13:30 · Hulhumalé", from: null,
       img: "aerial-underway", alt: "Tiffany Blanc 14 underway on deep blue water off Malé",
-      line: "The whole vessel, a full day, and a route drawn the morning you sail.",
-      intro: "Eight hours between the reefs of North Malé. Snorkelling where the water is clearest, lunch at anchor, and as much or as little of a plan as you want.",
+      line: "Shark Point, a sandbank, and the sun going down on the way home.",
+      intro: "An afternoon south. Reef sharks while the light is still high, a sandbank as it drops, and the whole run home under the sunset.",
       plan: [
-        { t: "09:00", h: "Hulhumalé Marina", d: "Boarding, briefing, and a slow run out past the harbour wall." },
-        { t: "10:30", h: "First reef", d: "Snorkelling on a sheltered thila, gear and guide aboard." },
-        { t: "13:00", h: "Lunch at anchor", d: "A table served in the cockpit while the boat swings on the tide." },
-        { t: "15:30", h: "Sandbank", d: "An hour of dry sand and shallow water, weather permitting." },
-        { t: "17:00", h: "Alongside", d: "Back at the marina for the evening." }
+        { t: "13:30", h: "Hulhumalé jetty", d: "South towards the atoll rim." },
+        { t: "14:15", h: "Shark Point", d: "Snorkelling on the reef, among the sharks and everything else it holds." },
+        { t: "15:30", h: "Sandbank", d: "White sand, a clear lagoon, and the best hour for photographs." },
+        { t: "16:30", h: "Evening snack", d: "A light snack and refreshments aboard." },
+        { t: "17:00", h: "Sunset cruise", d: "North again, slowly, with the sun going down." },
+        { t: "18:00", h: "Hulhumalé jetty", d: "Alongside." }
       ],
-      has: ["Private use of the vessel", "Captain and two crew", "Fuel and harbour dues", "Snorkelling equipment", "Lunch, soft drinks and water", "Towels and sunscreen"],
-      shots: ["swim-boat", "sandbank", "champagne"]
-    },
-    {
-      slug: "sandbank-sunset", title: "Sandbank & Sunset", kind: "Half day",
-      duration: "5 hours", guests: "Up to 12", season: "Year round",
-      area: "South Malé Atoll", from: 950,
-      img: "sandbank", alt: "A bare sandbank at low water under a bright sky",
-      line: "Out at four, on the sand by five, back under the last of the light.",
-      intro: "The short version of a good day. A bare sandbank while the tide is low, then a slow run home as the sky turns over.",
-      plan: [
-        { t: "16:00", h: "Departure", d: "Straight out to the atoll's southern rim." },
-        { t: "17:00", h: "Sandbank", d: "Swimming, photographs, and a table set on the sand." },
-        { t: "18:30", h: "Underway", d: "Canapés and sparkling wine on the flybridge as the sun drops." },
-        { t: "21:00", h: "Alongside", d: "Return to Hulhumalé." }
-      ],
-      has: ["Private use of the vessel", "Captain and two crew", "Sandbank set-up", "Canapés and sparkling wine", "Snorkelling equipment", "Towels"],
-      shots: ["sandbank-2", "champagne", "float-blue"]
-    },
-    {
-      slug: "the-manta-passage", title: "The Manta Passage", kind: "Full day",
-      duration: "10 hours", guests: "Up to 10", season: "June – November",
-      area: "Baa Atoll", from: 1950,
-      img: "ray", alt: "An eagle ray gliding through clear blue water",
-      line: "North to Baa in the season the plankton turns and the rays follow.",
-      intro: "A long crossing for one reason. When the current runs right the bay fills with feeding rays, and there is nothing else like it in the ocean.",
-      plan: [
-        { t: "06:30", h: "Departure", d: "Early run north while the sea is flat." },
-        { t: "10:00", h: "Baa Atoll", d: "Ranger check-in and a first snorkel on the outer reef." },
-        { t: "11:30", h: "In the water", d: "With the rays, subject to ranger clearance." },
-        { t: "14:00", h: "Lunch", d: "At anchor in a sheltered lagoon." },
-        { t: "16:30", h: "Return", d: "South again, arriving early evening." }
-      ],
-      has: ["Private use of the vessel", "Captain, guide and crew", "Marine park fees", "Snorkelling equipment", "Breakfast, lunch and refreshments", "Towels"],
-      shots: ["ray-sand", "snorkellers", "swim-boat"]
-    },
-    {
-      slug: "two-nights-north", title: "Two Nights North", kind: "Overnight",
-      duration: "2 nights", guests: "4 guests · 2 cabins", season: "Year round",
-      area: "Northern atolls", from: 4200,
-      img: "aerial-close", alt: "Tiffany Blanc 14 from the air with guests on deck",
-      line: "Both cabins, two anchorages, and the engines off before dark.",
-      intro: "The shortest way to sleep on the water. Two quiet anchorages, and mornings that begin wherever the boat happened to stop.",
-      plan: [
-        { t: "Day one", h: "North", d: "Board at midday, cross north, and anchor for the night off an uninhabited island." },
-        { t: "Day two", h: "Further out", d: "Dawn snorkel, a long lunch, and a second anchorage." },
-        { t: "Day three", h: "Home", d: "Breakfast underway and alongside Hulhumalé by noon." }
-      ],
-      has: ["Exclusive use of both cabins", "Captain, chef and crew", "All meals and soft drinks", "Snorkelling equipment", "Fuel, dues and linen", "Airport transfers in Malé"],
-      shots: ["salon", "aerial-bow", "platter"]
-    },
-    {
-      slug: "twelve-nights-at-anchor", title: "Twelve Nights at Anchor", kind: "Signature charter",
-      duration: "12 nights", guests: "4 guests · 2 cabins", season: "February – April",
-      area: "Northern atolls", from: 21000,
-      img: "aerial-anchor", alt: "Tiffany Blanc 14 alone at anchor above a reef edge",
-      line: "One vessel, four guests, and the northern atolls at their calmest.",
-      intro: "Our longest itinerary, run only in the northeast season when the sea flattens out. Twelve nights, no fixed route, and a crew who know which channels are worth waiting for.",
-      plan: [
-        { t: "Nights 1–3", h: "North Malé", d: "Reefs, channels and the first long swims." },
-        { t: "Nights 4–7", h: "Baa and Raa", d: "Uninhabited anchorages and empty sandbanks." },
-        { t: "Nights 8–10", h: "Outer atolls", d: "Outer passages, weather permitting." },
-        { t: "Nights 11–12", h: "South", d: "A slow return, ending at Hulhumalé." }
-      ],
-      has: ["Exclusive use of the vessel", "Captain, chef and two crew", "All meals, soft drinks and house wine", "Snorkelling and fishing equipment", "Fuel, dues and marine park fees", "Laundry and airport transfers"],
-      shots: ["aerial-marina", "floats", "pineapple"]
+      has: ["Boat excursion", "Shark Point snorkelling", "Sandbank visit", "Evening snack and refreshments", "Sunset cruise", "Swimming and snorkelling"],
+      shots: ["ray-sand", "sandbank-2", "champagne"]
     }
   ];
 

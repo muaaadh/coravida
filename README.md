@@ -29,7 +29,7 @@ carries the whole layer — no library:
 | **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` into the closing navy section, or the footer where there isn't one |
 | **A pinned run.** The page holds still and eight photographs travel left as you scroll, on mixed aspect ratios. Falls back to a swipeable rail below 900px. | `data-pin` |
 | **A section index.** A small glass capsule on the right edge; the tick for the section you are in lengthens and names itself. Click to jump. Inverts over dark sections. | `data-idx="Name"`, `data-idx-dark` |
-| **The voyage index.** Five numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
+| **The excursion index.** Four numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
 | Sections fade and lift, staggered | `data-a="up\|fade\|scale"` inside a `data-stagger` parent, which numbers the children |
 | Photographs reveal under a curtain wipe while the image settles from 1.12× | `data-a="clip"` |
@@ -95,10 +95,10 @@ before the hero film begins loading. The 8-second hero loop is 4.5 MB at 1080p, 
 
 | File | What it is |
 |---|---|
-| `index.html` | Home — film hero, positioning, three voyages, film interlude, the vessel, details |
+| `index.html` | Home — film hero, positioning, three excursions, a pinned photographic run, film interlude, the vessel |
 | `vessel.html` | Tiffany Blanc 14 — four decks, specification, what is aboard |
-| `voyages.html` | Five voyages as editorial rows, then rates and add-ons |
-| `voyages/<slug>.html` | One page per voyage (5) |
+| `excursions.html` | The four excursions as a numbered index, then rates and add-ons |
+| `excursions/<slug>.html` | One page per excursion (4), each with its hour-by-hour timeline |
 | `gallery.html` | Filterable mosaic with a lightbox |
 | `about.html` | The company, the crew, the reef |
 | `contact.html` | Details, message form, FAQ |
@@ -107,8 +107,8 @@ before the hero film begins loading. The 8-second hero loop is 4.5 MB at 1080p, 
 
 ## Changing the content
 
-Everything is in **`assets/js/data.js`** — brand facts, navigation, the five voyages
-(itineraries, inclusions, prices), add-ons, the vessel, gallery captions, FAQ.
+Everything is in **`assets/js/data.js`** — brand facts, navigation, the four excursions
+(hour-by-hour itineraries, inclusions), add-ons, the vessel, gallery captions, FAQ.
 
 Every HTML page is generated from it:
 
@@ -134,17 +134,49 @@ Sources, all shot for Coravida in August 2026:
 To re-cut a clip or re-export a still, `ffmpeg` and `cwebp` are all that is needed — the
 exact commands used are in the git history for this commit.
 
+## The four excursions
+
+These are the client's real products, with their own timings and stops:
+
+| | | |
+|---|---|---|
+| **Island & Snorkelling** | Full day, 9.5 h | Fish Tank → Himmafushi sandbank → lunch → Himmafushi island → sunset cruise |
+| **Reef & Sandbank** | Half day, 4 h | Fish Tank → sandbank → dolphin cruise home |
+| **Shark Point & Gulhi** | Full day, 9 h | Shark Point (Embudu) → coral garden → sandbank → Gulhi → lunch → coral snorkel → sunset cruise |
+| **Sunset Adventure** | Half day, 4.5 h | Shark Point → sandbank → evening snack → sunset cruise |
+
+Each page runs the itinerary as a timeline — the time in the margin, a rule with a dot per
+stop, the stop and one line about it.
+
+**No rates were supplied**, so `from` is `null` on all four and every price reads
+"On request"; the enquiry form shows the same, and add-ons total as "USD n + charter". Set
+`from` in `data.js` and the figures appear everywhere at once.
+
+## Photographs
+
+`bash tools/images.sh` rebuilds every photograph from the August 2026 shoot: three widths
+each, WebP, quality 84–88, and each capped at what its source can honestly give —
+
+- **GoPro stills and video** (4000px / 5.3K) → up to 2800px
+- **Sony ARW previews** (1616px) → 1616px, no upscaling
+- **DJI drone** → 1920px; those files are the app's 1080p proxies, so that is the ceiling
+
+One gap: **there is no sunset photograph in the shoot** — everything was shot between
+08:45 and 10:00, or underwater. Three of the four excursions end on a sunset cruise, so
+that hour is worth shooting.
+
 ## Still placeholder
 
-Confirm with the client before launch: the vessel specification in `CV.vessel`, every
-price (voyages and add-ons), the contact details in `CV.brand`, and the 2019 founding year.
+Confirm with the client before launch: the vessel specification in `CV.vessel`, the
+excursion rates and the six add-on prices, the contact details in `CV.brand`, and the 2019
+founding year.
 Both forms are demonstrations — they show a confirmation and write to `localStorage`
 (`cv.enquiries`), and send nothing.
 
 ## Structure
 
 ```
-index.html  vessel.html  voyages.html  gallery.html
+index.html  vessel.html  excursions.html  gallery.html
 about.html  contact.html  enquire.html  404.html
 voyages/*.html            5 voyage pages — generated
 assets/
@@ -155,6 +187,7 @@ assets/
   video/                  three clips, three tiers each
   fonts/                  Montserrat 300, Inter 400/500
 tools/build.js            regenerates every page
+tools/images.sh           rebuilds every photograph from the shoot
 ```
 
 Checked at 390, 768, 1024 and 1440px across all 13 pages: no horizontal overflow, no
