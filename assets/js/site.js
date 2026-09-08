@@ -5,14 +5,32 @@
   "use strict";
 
   var CV = window.CV || {}, B = CV.brand || {};
-  var ROOT = document.documentElement.getAttribute("data-root") || "";
-  var PAGE = document.documentElement.getAttribute("data-page") || "";
+  var DOC = document.documentElement;
+  var ROOT = DOC.getAttribute("data-root") || "";       // to the site root, for assets
+  var BASE = DOC.getAttribute("data-base") || "";       // to the locale root, for links
+  var PAGE = DOC.getAttribute("data-page") || "";
+  var PATH = DOC.getAttribute("data-path") || "index.html";
+  var LOC  = DOC.getAttribute("data-locale") || "en";
+  var LANGS = [
+    { code: "en", dir: "",    label: "English", short: "EN" },
+    { code: "ru", dir: "ru/", label: "\u0420\u0443\u0441\u0441\u043a\u0438\u0439", short: "RU" },
+    { code: "zh", dir: "zh/", label: "\u4e2d\u6587", short: "\u4e2d\u6587" },
+    { code: "de", dir: "de/", label: "Deutsch", short: "DE" }
+  ];
+  /* every string this file writes onto the page; English is the fallback */
+  var UI = CV.ui || {};
+  function t(k, en) { return UI[k] || en; }
   var SLOW = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var SAVE = (navigator.connection && (navigator.connection.saveData ||
               /^([23]g|slow-2g)$/.test(navigator.connection.effectiveType || ""))) || false;
   var TOUCH = window.matchMedia("(hover: none)").matches;
 
-  function u(p) { return ROOT + p; }
+  function u(p) { return ROOT + p; }                    // an asset, from the site root
+  function pg(p) { return BASE + p; }                   // a page, in the current language
+  function inLang(code) {                               // this same page, in another language
+    var l = LANGS.filter(function (x) { return x.code === code; })[0];
+    return ROOT + (l ? l.dir : "") + PATH;
+  }
   function el(h) { var t = document.createElement("template"); t.innerHTML = h.trim(); return t.content.firstElementChild; }
   function $(s, c) { return (c || document).querySelector(s); }
   function $$(s, c) { return Array.prototype.slice.call((c || document).querySelectorAll(s)); }
@@ -20,6 +38,7 @@
   var ARROW = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M9.5 2.5H4M9.5 2.5V8" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/></svg>';
   var L = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M7.5 1.5 3 6l4.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
   var R = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5 9 6l-4.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
+  var CHEV = '<svg class="chev" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
   var X = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
 
   /* ---- Chrome ---------------------------------------------------------- */
@@ -28,13 +47,14 @@
     if (h) {
       h.replaceWith(el(
         '<header class="hdr" id="hdr"><div class="hdr__in">' +
-          '<div class="hdr__l"><button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i>Menu</button></div>' +
-          '<div class="hdr__m"><a class="hdr__logo" href="' + u("index.html") + '" aria-label="' + B.name + ' — home">' +
+          '<div class="hdr__l"><button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu">' +
+            '<i aria-hidden="true"></i>' + t("menu", "Menu") + "</button></div>" +
+          '<div class="hdr__m"><a class="hdr__logo" href="' + pg("index.html") + '" aria-label="' + B.name + '">' +
             '<img class="light" src="' + u("assets/img/logo-mark-white.webp") + '" alt="' + B.name + '" width="66" height="28">' +
             '<img class="dark" src="' + u("assets/img/logo-mark.webp") + '" alt="' + B.name + '" width="66" height="28"></a></div>' +
-          '<div class="hdr__r"><span class="hdr__lang">EN</span>' +
-            '<a class="btn btn--white" href="' + u("enquire.html") + '">Enquire</a></div>' +
-        '</div></header>'
+          '<div class="hdr__r">' + langEl() +
+            '<a class="btn btn--white" href="' + pg("enquire.html") + '">' + t("enquire", "Enquire") + "</a></div>" +
+        "</div></header>"
       ));
       document.body.insertBefore(menuEl(), document.body.firstChild);
     }
@@ -47,23 +67,54 @@
     }
   }
 
+  /* ---- Language --------------------------------------------------------- */
+  /* Every page exists in all four; data-path is the same file inside each. */
+  function langEl() {
+    var now = LANGS.filter(function (l) { return l.code === LOC; })[0] || LANGS[0];
+    var opts = LANGS.map(function (l) {
+      return '<li><a lang="' + (l.code === "zh" ? "zh-Hans" : l.code) + '" href="' + inLang(l.code) + '"' +
+        (l.code === LOC ? ' class="on" aria-current="true"' : "") + ">" + l.label + "</a></li>";
+    }).join("");
+    return '<div class="lang" id="lang">' +
+      '<button class="lang__b" type="button" id="langB" aria-expanded="false" aria-controls="langM" aria-label="' +
+        t("language", "Language") + '"><span>' + now.short + "</span>" + CHEV + "</button>" +
+      '<ul class="lang__m" id="langM">' + opts + "</ul></div>";
+  }
+  function language() {
+    var w = $("#lang"), b = $("#langB");
+    if (!w || !b) return;
+    function shut() { w.classList.remove("open"); b.setAttribute("aria-expanded", "false"); }
+    b.addEventListener("click", function (e) {
+      e.stopPropagation();
+      b.setAttribute("aria-expanded", w.classList.toggle("open") ? "true" : "false");
+    });
+    document.addEventListener("click", function (e) { if (!w.contains(e.target)) shut(); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") shut(); });
+  }
+
   function menuEl() {
     var links = (CV.nav || []).map(function (n) {
-      return '<li><a' + (PAGE && n.href.indexOf(PAGE) === 0 ? ' class="here"' : "") + ' href="' + u(n.href) + '">' + n.label + "</a></li>";
+      return '<li><a' + (PAGE && n.href.indexOf(PAGE) === 0 ? ' class="here"' : "") +
+        ' href="' + pg(n.href) + '">' + n.label + "</a></li>";
+    }).join("");
+    var langs = LANGS.map(function (l) {
+      return '<a href="' + inLang(l.code) + '"' + (l.code === LOC ? ' class="on"' : "") + ">" + l.label + "</a>";
     }).join("");
     return el(
-      '<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>' +
+      '<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="' + t("menuLabel", "Menu") + '" hidden>' +
         '<div class="menu__bar"><div class="hdr__in">' +
-          '<div class="hdr__l"><button class="menu__x" type="button" id="menuX">' + X + "Close</button></div>" +
-          '<div class="hdr__m"><a class="hdr__logo" href="' + u("index.html") + '" aria-label="' + B.name + '"><img src="' + u("assets/img/logo-mark.webp") + '" alt="' + B.name + '" width="66" height="28"></a></div>' +
-          '<div class="hdr__r"><a class="btn" href="' + u("enquire.html") + '">Enquire</a></div>' +
+          '<div class="hdr__l"><button class="menu__x" type="button" id="menuX">' + X + t("close", "Close") + "</button></div>" +
+          '<div class="hdr__m"><a class="hdr__logo" href="' + pg("index.html") + '" aria-label="' + B.name + '">' +
+            '<img src="' + u("assets/img/logo-mark.webp") + '" alt="' + B.name + '" width="66" height="28"></a></div>' +
+          '<div class="hdr__r"><a class="btn" href="' + pg("enquire.html") + '">' + t("enquire", "Enquire") + "</a></div>" +
         "</div></div>" +
         '<div class="menu__body"><div>' +
-          '<nav class="menu__nav" aria-label="Primary"><ul>' + links + "</ul></nav>" +
+          '<nav class="menu__nav" aria-label="' + t("primary", "Primary") + '"><ul>' + links + "</ul></nav>" +
           '<div class="menu__foot">' +
             '<a class="small" href="' + B.phoneHref + '">' + B.phone + "</a>" +
             '<a class="small" href="mailto:' + B.email + '">' + B.email + "</a>" +
             '<span class="small">' + B.marina + "</span>" +
+            '<div class="menu__lang">' + langs + "</div>" +
           "</div>" +
         "</div></div>" +
       "</div>"
@@ -71,20 +122,21 @@
   }
 
   function footerEl() {
-    var links = (CV.nav || []).map(function (n) { return '<li><a href="' + u(n.href) + '">' + n.label + "</a></li>"; }).join("") +
-      '<li><a href="' + u("enquire.html") + '">Enquire</a></li>';
+    var links = (CV.nav || []).map(function (n) { return '<li><a href="' + pg(n.href) + '">' + n.label + "</a></li>"; }).join("") +
+      '<li><a href="' + pg("enquire.html") + '">' + t("enquire", "Enquire") + "</a></li>";
     return el(
       '<footer class="ftr"><div class="wrap"><div class="ftr__top">' +
         '<div data-a="up"><img src="' + u("assets/img/logo-full-white.webp") + '" alt="' + B.name + '" width="90" height="46" loading="lazy">' +
-          '<p class="small" style="margin-top:1.4rem;max-width:24ch;color:rgba(255,255,255,.55)">' + B.tagline + ".</p></div>" +
-        '<div data-a="up"><h4>Explore</h4><ul>' + links + "</ul></div>" +
-        '<div data-a="up"><h4>Coravida</h4><ul>' +
+          '<p class="small ftr__tag">' + B.tagline + ".</p></div>" +
+        '<div data-a="up"><h4>' + t("explore", "Explore") + "</h4><ul>" + links + "</ul></div>" +
+        '<div data-a="up"><h4>' + B.name + "</h4><ul>" +
           '<li><a href="' + B.phoneHref + '">' + B.phone + "</a></li>" +
           '<li><a href="mailto:' + B.email + '">' + B.email + "</a></li>" +
           "<li>" + B.marina + "</li><li>" + (B.address || []).join(", ") + "</li><li>" + B.hours + "</li>" +
         "</ul></div>" +
-      "</div><div class=\"ftr__b\"><span>© " + B.year + " " + B.legal + "</span><span>" + B.vessel + "</span>" +
-      '<span>Site by <a href="https://dheemi.com" rel="noopener">Dheemi Studio</a></span></div></div></footer>'
+      '</div><div class="ftr__b"><span>© ' + B.year + " " + B.legal + "</span><span>" + B.vessel + "</span>" +
+      '<span>' + t("siteBy", "Site by") + ' <a href="https://dheemi.com" rel="noopener">Dheemi Studio</a></span>' +
+      "</div></div></footer>"
     );
   }
 
@@ -350,6 +402,8 @@
   function lines() {
     var nodes = $$(".lines");
     if (!nodes.length) return;
+    // Han text has no spaces to split on, so the headline rises as one block
+    if (/^(zh|ja|ko)/.test(LOC)) return nodes.forEach(function (n) { n.classList.add("lines--whole"); });
     nodes.forEach(splitLines);
     var w = window.innerWidth, t;
     window.addEventListener("resize", function () {
@@ -377,16 +431,16 @@
     if (!M || !M.tracks || !M.tracks.length) return;
     var wrap = el(
       '<div class="mus" id="mus">' +
-        '<button class="mus__b" type="button" id="musB" aria-expanded="false" aria-controls="musP" aria-label="Music">' + BARS + "</button>" +
-        '<div class="mus__p" id="musP" role="group" aria-label="Music player">' +
+        '<button class="mus__b" type="button" id="musB" aria-expanded="false" aria-controls="musP" aria-label="' + t("music", "Music") + '">' + BARS + "</button>" +
+        '<div class="mus__p" id="musP" role="group" aria-label="' + t("player", "Music player") + '">' +
           '<p class="mus__line">' + M.line + "</p>" +
           '<div><div class="mus__t" id="musT"></div><div class="mus__by" id="musBy"></div></div>' +
-          '<div class="mus__bar" id="musBar" role="slider" aria-label="Seek" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="musFill"></i></div>' +
+          '<div class="mus__bar" id="musBar" role="slider" aria-label="' + t("seek", "Seek") + '" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="musFill"></i></div>' +
           '<div class="mus__c">' +
-            '<button type="button" id="musPrev" aria-label="Previous track">' + ICON.prev + "</button>" +
+            '<button type="button" id="musPrev" aria-label="' + t("prev", "Previous track") + '">' + ICON.prev + "</button>" +
             '<button class="play" type="button" id="musPlay" aria-label="Play">' + ICON.play + "</button>" +
-            '<button type="button" id="musNext" aria-label="Next track">' + ICON.next + "</button>" +
-            '<button class="mus__x" type="button" id="musX" aria-label="Close player">' + ICON.x + "</button>" +
+            '<button type="button" id="musNext" aria-label="' + t("next", "Next track") + '">' + ICON.next + "</button>" +
+            '<button class="mus__x" type="button" id="musX" aria-label="' + t("closePlayer", "Close player") + '">' + ICON.x + "</button>" +
           "</div>" +
         "</div>" +
       "</div>");
@@ -420,7 +474,7 @@
     function setPlaying(on) {
       wrap.classList.toggle("playing", on);
       elPlay.innerHTML = on ? ICON.pause : ICON.play;
-      elPlay.setAttribute("aria-label", on ? "Pause" : "Play");
+      elPlay.setAttribute("aria-label", on ? t("pause", "Pause") : t("play", "Play"));
       store("on", on ? "1" : "0");
     }
     audio.addEventListener("play", function () { setPlaying(true); });
@@ -457,6 +511,27 @@
       if (e.key === "ArrowRight") audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
       if (e.key === "ArrowLeft") audio.currentTime = Math.max(0, audio.currentTime - 5);
     });
+
+    /* One quiet invitation, five seconds, once per visit. It never appears if
+       the player is already open or already playing, and any use kills it. */
+    function nudge() {
+      if (SLOW || read("open") === "1" || read("on") === "1" || read("nudged") === "1") return;
+      var n = el('<div class="mus__n" role="status"><span>' +
+        t("nudge", "Turn the sound on") + "</span>" +
+        '<i class="mus__nq" aria-hidden="true"></i></div>');
+      wrap.appendChild(n);
+      var out;
+      function go() {
+        clearTimeout(out);
+        n.classList.remove("in");
+        setTimeout(function () { n.remove(); }, 600);
+        store("nudged", "1");
+      }
+      setTimeout(function () { n.classList.add("in"); out = setTimeout(go, 5000); }, 2200);
+      wrap.addEventListener("click", go, { once: true });
+      n.addEventListener("click", function () { $("#musB").click(); });
+    }
+    nudge();
 
     /* carry across a page change: the browser will usually allow the resume
        because the gesture happened on the previous page of the same site */
@@ -532,10 +607,11 @@
     var pars = $$("[data-par]");
     if (SLOW || !pars.length) return;
     onFrame.push(function (y, vh) {
+      var damp = window.innerWidth < 700 ? 0.55 : 1;   // gentler on a phone
       for (var i = 0; i < pars.length; i++) {
         var n = pars[i], r = n.getBoundingClientRect();
         if (r.bottom < -vh * 0.25 || r.top > vh * 1.25) continue;
-        var f = parseFloat(n.getAttribute("data-par")) || 0.1;
+        var f = (parseFloat(n.getAttribute("data-par")) || 0.1) * damp;
         n.style.transform = "translate3d(0," + (-(r.top + r.height / 2 - vh / 2) * f).toFixed(2) + "px,0)";
       }
     });
@@ -584,7 +660,13 @@
       var t = $(".rail__track", rail), p = $("[data-prev]", rail), n = $("[data-next]", rail);
       if (!t) return;
       function step() { var i = $(".rail__item", t); return i ? i.getBoundingClientRect().width + 24 : 400; }
-      function sync() { if (!p || !n) return; p.disabled = t.scrollLeft < 8; n.disabled = t.scrollLeft + t.clientWidth >= t.scrollWidth - 8; }
+      function sync() {
+        var end = t.scrollLeft + t.clientWidth >= t.scrollWidth - 8;
+        rail.classList.toggle("end", end);          // the edge fade goes with it
+        if (!p || !n) return;
+        p.disabled = t.scrollLeft < 8;
+        n.disabled = end;
+      }
       p && p.addEventListener("click", function () { t.scrollBy({ left: -step(), behavior: SLOW ? "auto" : "smooth" }); });
       n && n.addEventListener("click", function () { t.scrollBy({ left: step(), behavior: SLOW ? "auto" : "smooth" }); });
       t.addEventListener("scroll", sync, { passive: true });
@@ -610,25 +692,34 @@
 
   /* ---- Lightbox -------------------------------------------------------- */
   function lightbox() {
-    var t = $$("[data-lb]"); if (!t.length) return;
-    var box = el('<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image viewer" hidden>' +
-      '<button class="lb__x" type="button" data-x aria-label="Close">' + X + "</button>" +
-      '<button class="lb__p" type="button" data-p aria-label="Previous">' + L + "</button>" +
+    var trg = $$("[data-lb]"); if (!trg.length) return;
+    var box = el('<div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="' + t("viewer", "Image viewer") + '" hidden>' +
+      '<button class="lb__x" type="button" data-x aria-label="' + t("close", "Close") + '">' + X + "</button>" +
+      '<button class="lb__p" type="button" data-p aria-label="' + t("prevImage", "Previous") + '">' + L + "</button>" +
       '<img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="">' +
-      '<button class="lb__n" type="button" data-n aria-label="Next">' + R + "</button>" +
+      '<button class="lb__n" type="button" data-n aria-label="' + t("nextImage", "Next") + '">' + R + "</button>" +
       '<p class="lb__c"></p></div>');
     document.body.appendChild(box);
     var img = $("img", box), cap = $(".lb__c", box), i = 0, from = null;
-    function vis() { return t.filter(function (x) { var f = x.closest("[data-cat]"); return !f || !f.hidden; }); }
-    function show(n) {
-      var l = vis(); if (!l.length) return;
-      i = (n + l.length) % l.length;
-      img.src = l[i].getAttribute("data-lb");
-      img.alt = l[i].getAttribute("data-alt") || "";
-      cap.textContent = l[i].getAttribute("data-cap") || "";
+
+    function show(n, dir) {
+      i = (n + trg.length) % trg.length;
+      if (dir && !SLOW) {                       // a short slide in the direction of travel
+        img.style.transition = "none";
+        img.style.transform = "translateX(" + (dir * 26) + "px) scale(1)";
+        img.style.opacity = "0";
+        requestAnimationFrame(function () {
+          img.style.transition = "";
+          img.style.transform = "";
+          img.style.opacity = "";
+        });
+      }
+      img.src = trg[i].getAttribute("data-lb");
+      img.alt = trg[i].getAttribute("data-alt") || "";
+      cap.textContent = trg[i].getAttribute("data-cap") || "";
     }
     function open(x) {
-      from = x; show(vis().indexOf(x)); box.hidden = false;
+      from = x; show(trg.indexOf(x)); box.hidden = false;
       requestAnimationFrame(function () { box.classList.add("open"); });
       document.body.classList.add("lock"); $("[data-x]", box).focus();
     }
@@ -636,17 +727,31 @@
       box.classList.remove("open"); document.body.classList.remove("lock");
       setTimeout(function () { box.hidden = true; }, 340); from && from.focus();
     }
-    t.forEach(function (x) { x.addEventListener("click", function (e) { e.preventDefault(); open(x); }); });
+    trg.forEach(function (x) { x.addEventListener("click", function (e) { e.preventDefault(); open(x); }); });
     $("[data-x]", box).addEventListener("click", close);
-    $("[data-p]", box).addEventListener("click", function () { show(i - 1); });
-    $("[data-n]", box).addEventListener("click", function () { show(i + 1); });
+    $("[data-p]", box).addEventListener("click", function () { show(i - 1, -1); });
+    $("[data-n]", box).addEventListener("click", function () { show(i + 1, 1); });
     box.addEventListener("click", function (e) { if (e.target === box) close(); });
     document.addEventListener("keydown", function (e) {
       if (box.hidden) return;
       if (e.key === "Escape") close();
-      if (e.key === "ArrowLeft") show(i - 1);
-      if (e.key === "ArrowRight") show(i + 1);
+      if (e.key === "ArrowLeft") show(i - 1, -1);
+      if (e.key === "ArrowRight") show(i + 1, 1);
     });
+
+    /* on a phone the arrows are not the instinct — the thumb is */
+    var x0 = 0, y0 = 0, live = false;
+    box.addEventListener("touchstart", function (e) {
+      if (e.touches.length !== 1) return;
+      live = true; x0 = e.touches[0].clientX; y0 = e.touches[0].clientY;
+    }, { passive: true });
+    box.addEventListener("touchend", function (e) {
+      if (!live) return;
+      live = false;
+      var dx = e.changedTouches[0].clientX - x0, dy = e.changedTouches[0].clientY - y0;
+      if (Math.abs(dx) > 48 && Math.abs(dx) > Math.abs(dy) * 1.4) show(i + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
+      else if (dy > 90 && Math.abs(dy) > Math.abs(dx) * 1.4) close();
+    }, { passive: true });
   }
 
   /* ---- Accordion ------------------------------------------------------- */
@@ -680,10 +785,10 @@
       $("[data-s-a]").textContent = v ? v.area + " · " + v.duration : "—";
       $("[data-s-d]").textContent = d ? new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "—";
       $("[data-s-g]").textContent = g ? g + (g === 1 ? " guest" : " guests") : "—";
-      $("[data-s-e]").textContent = ex.length ? ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ") : "None";
+      $("[data-s-e]").textContent = ex.length ? ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ") : t("none", "None");
       var add = ex.reduce(function (s, i) { return s + Number(i.getAttribute("data-price") || 0); }, 0);
       $("[data-s-t]").textContent = !v ? "—"
-        : v.from == null ? (add ? money(add) + " + charter" : "On request")
+        : v.from == null ? (add ? money(add) + " + charter" : t("onRequest", "On request"))
         : money(v.from + add);
     }
     function go(n, quiet) {
@@ -726,7 +831,7 @@
 
   function boot() {
     chrome(); header(); menu(); heroCycle(); video(); lines(); reveals(); scrollFx(); counters();
-    rails(); lightbox(); accordion(); enquiry(); forms(); voyageIndex(); player(); driver(); ready();
+    rails(); lightbox(); accordion(); enquiry(); forms(); voyageIndex(); player(); language(); driver(); ready();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ru" data-root="../" data-base="" data-page="enquire.html" data-path="enquire.html" data-locale="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Заявка — Coravida</title>
+<meta name="description" content="Зарезервируйте Tiffany Blanc 14 на день, на закат или на двенадцать ночей на якоре.">
+<meta property="og:title" content="Заявка — Coravida">
+<meta property="og:description" content="Зарезервируйте Tiffany Blanc 14 на день, на закат или на двенадцать ночей на якоре.">
+<meta property="og:image" content="../assets/img/vessel-guests-1600.webp">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/img/favicon.png" type="image/png">
+<link rel="preload" href="../assets/fonts/montserrat-300.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="alternate" hreflang="en" href="https://muaaadh.github.io/coravida/enquire.html">
+<link rel="alternate" hreflang="ru" href="https://muaaadh.github.io/coravida/ru/enquire.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://muaaadh.github.io/coravida/zh/enquire.html">
+<link rel="alternate" hreflang="de" href="https://muaaadh.github.io/coravida/de/enquire.html">
+<link rel="alternate" hreflang="x-default" href="https://muaaadh.github.io/coravida/enquire.html">
+</head>
+<body>
+<a class="skip" href="#main">Перейти к содержанию</a>
+<div data-chrome="header"></div>
+
+<main id="main">
+  <section class="hero hero--mid">
+    <div class="hero__bg" data-par="0.06">
+      <img src="../assets/img/vessel-guests-1200.webp" srcset="../assets/img/vessel-guests-900.webp 900w, ../assets/img/vessel-guests-1200.webp 1200w, ../assets/img/vessel-guests-1600.webp 1600w, ../assets/img/vessel-guests-2800.webp 2800w" sizes="100vw" width="1200" height="900" alt="Tiffany Blanc 14 на якоре с гостями на борту" fetchpriority="high" decoding="async">
+    </div>
+    <div class="hero__in stack" data-stagger>
+      <p class="eyebrow" data-a="fade">Заявка</p>
+      <h1 class="d1 lines">Забронировать судно</h1>
+      <p class="lede lede--light" data-a="up">Четыре коротких шага. Ничего не списывается и ни одна дата не бронируется, пока мы не ответим.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap narrow">
+      <ul class="steps" data-a="up">
+        <li class="on">Экскурсия</li><li>Даты</li><li>Данные</li><li>Проверка</li>
+      </ul>
+
+      <form id="enquire" novalidate>
+        <div class="step on">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">Шаг первый</p><h2 class="d3">Какая экскурсия?</h2></div>
+            <div class="chips">
+              <input type="radio" id="v0" name="excursion" value="island-and-snorkelling" checked>
+              <label for="v0">Остров и снорклинг &middot; Полный день</label>
+              <input type="radio" id="v1" name="excursion" value="reef-and-sandbank">
+              <label for="v1">Риф и коса &middot; Полдня</label>
+              <input type="radio" id="v2" name="excursion" value="shark-point-and-gulhi">
+              <label for="v2">Шарк-Пойнт и Гулхи &middot; Полный день</label>
+              <input type="radio" id="v3" name="excursion" value="sunset-adventure">
+              <label for="v3">Закатное приключение &middot; Полдня</label>
+            </div>
+            <p class="note">Каждая экскурсия — частный чартер всего судна. Если ни одна не подходит, выберите ближайшую и напишите нам на третьем шаге.</p>
+            <div class="acts"><button class="btn" type="button" data-next>Далее</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">Шаг второй</p><h2 class="d3">Когда и сколько вас?</h2></div>
+            <div class="fg fg2">
+              <div class="field"><label for="d1">Желаемая дата</label><input type="date" id="d1" name="date" required></div>
+              <div class="field"><label for="d2">Запасная дата</label><input type="date" id="d2" name="alt"></div>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="g">Гости</label><select id="g" name="guests" required>
+                <option value="2">2 гостей</option><option value="4" selected>4 гостей</option><option value="6">6 гостей</option>
+                <option value="8">8 гостей</option><option value="10">10 гостей</option><option value="12">12 гостей</option>
+              </select></div>
+              <div class="field"><label for="p">Место посадки</label><select id="p" name="pickup">
+                <option>Марина Хулхумале</option><option>Причал международного аэропорта Велана</option>
+                <option>Мале, западная гавань</option><option>Отель на Северном или Южном Мале Атолле</option>
+              </select></div>
+            </div>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Назад</button><button class="btn" type="button" data-next>Далее</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">Шаг третий</p><h2 class="d3">Что-нибудь добавить?</h2></div>
+            <div class="chips">
+              <input type="checkbox" id="x0" name="extra" value="-" data-label="Личный повар на борту" data-price="320">
+              <label for="x0">Личный повар на борту &middot; 320</label>
+              <input type="checkbox" id="x1" name="extra" value="-" data-label="Фотограф" data-price="450">
+              <label for="x1">Фотограф &middot; 450</label>
+              <input type="checkbox" id="x2" name="extra" value="-" data-label="Плавучий завтрак" data-price="180">
+              <label for="x2">Плавучий завтрак &middot; 180</label>
+              <input type="checkbox" id="x3" name="extra" value="-" data-label="Сервировка на косе" data-price="260">
+              <label for="x3">Сервировка на косе &middot; 260</label>
+              <input type="checkbox" id="x4" name="extra" value="-" data-label="Дайвинг" data-price="210">
+              <label for="x4">Дайвинг &middot; 210</label>
+              <input type="checkbox" id="x5" name="extra" value="-" data-label="Трансферы из аэропорта и отелей" data-price="120">
+              <label for="x5">Трансферы из аэропорта и отелей &middot; 120</label>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="nm">Имя</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
+              <div class="field"><label for="em">Эл. почта</label><input type="email" id="em" name="email" autocomplete="email" required></div>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="ph">Телефон или WhatsApp</label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
+              <div class="field"><label for="st">Где вы остановились?</label><input type="text" id="st" name="staying" placeholder="Отель, гестхаус или курорт"></div>
+            </div>
+            <div class="field"><label for="no">Что нам стоит знать</label><textarea id="no" name="notes" placeholder="Питание, сертификация по дайвингу, повод, дети на борту"></textarea></div>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Назад</button><button class="btn" type="button" data-next>Проверка</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">Шаг четвёртый</p><h2 class="d3">Всё верно?</h2></div>
+            <div class="sum">
+              <div class="sum__r"><span class="k">Экскурсия</span><span data-s-v>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Откуда</span><span data-s-a>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Дата</span><span data-s-d>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Гости</span><span data-s-g>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Дополнительно</span><span data-s-e>&mdash;</span></div>
+              <div class="sum__t"><span class="k">Ориентировочная сумма</span><span class="v" data-s-t>&mdash;</span></div>
+            </div>
+            <p class="note">Только ориентир, в долларах США, за всё судно. Окончательную сумму мы подтверждаем письменно до того, как что-либо бронируется. Эта форма — демонстрация и ничего не отправляет.</p>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Назад</button><button class="btn" type="submit">Отправить заявку</button></div>
+          </div>
+        </div>
+      </form>
+
+      <div class="ok" id="enquireOk">
+        <div class="stack-l">
+          <p class="eyebrow">Получено</p>
+          <h2 class="d2">Заявка у нас</h2>
+          <p class="lede measure">Экипаж отвечает в течение суток, обычно раньше. Если даты горят, позвоните в офис марины.</p>
+          <div class="acts"><a class="btn" href="index.html">Вернуться в гавань</a><a class="btn btn--ghost" href="tel:+9607771234">+960 777 1234</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-chrome="footer"></div>
+<script src="../assets/js/data.ru.js"></script>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

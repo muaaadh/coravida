@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de" data-root="../" data-base="" data-page="enquire.html" data-path="enquire.html" data-locale="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anfragen — Coravida</title>
+<meta name="description" content="Reservieren Sie die Tiffany Blanc 14 für einen Tag, einen Sonnenuntergang oder zwölf Nächte vor Anker.">
+<meta property="og:title" content="Anfragen — Coravida">
+<meta property="og:description" content="Reservieren Sie die Tiffany Blanc 14 für einen Tag, einen Sonnenuntergang oder zwölf Nächte vor Anker.">
+<meta property="og:image" content="../assets/img/vessel-guests-1600.webp">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/img/favicon.png" type="image/png">
+<link rel="preload" href="../assets/fonts/montserrat-300.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="alternate" hreflang="en" href="https://muaaadh.github.io/coravida/enquire.html">
+<link rel="alternate" hreflang="ru" href="https://muaaadh.github.io/coravida/ru/enquire.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://muaaadh.github.io/coravida/zh/enquire.html">
+<link rel="alternate" hreflang="de" href="https://muaaadh.github.io/coravida/de/enquire.html">
+<link rel="alternate" hreflang="x-default" href="https://muaaadh.github.io/coravida/enquire.html">
+</head>
+<body>
+<a class="skip" href="#main">Zum Inhalt springen</a>
+<div data-chrome="header"></div>
+
+<main id="main">
+  <section class="hero hero--mid">
+    <div class="hero__bg" data-par="0.06">
+      <img src="../assets/img/vessel-guests-1200.webp" srcset="../assets/img/vessel-guests-900.webp 900w, ../assets/img/vessel-guests-1200.webp 1200w, ../assets/img/vessel-guests-1600.webp 1600w, ../assets/img/vessel-guests-2800.webp 2800w" sizes="100vw" width="1200" height="900" alt="Tiffany Blanc 14 vor Anker mit Gästen an Bord" fetchpriority="high" decoding="async">
+    </div>
+    <div class="hero__in stack" data-stagger>
+      <p class="eyebrow" data-a="fade">Anfragen</p>
+      <h1 class="d1 lines">Das Schiff reservieren</h1>
+      <p class="lede lede--light" data-a="up">Vier kurze Schritte. Es wird nichts abgebucht und kein Termin reserviert, bis wir geantwortet haben.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap narrow">
+      <ul class="steps" data-a="up">
+        <li class="on">Ausflug</li><li>Termine</li><li>Angaben</li><li>Prüfen</li>
+      </ul>
+
+      <form id="enquire" novalidate>
+        <div class="step on">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">Schritt eins</p><h2 class="d3">Welcher Ausflug?</h2></div>
+            <div class="chips">
+              <input type="radio" id="v0" name="excursion" value="island-and-snorkelling" checked>
+              <label for="v0">Insel & Schnorcheln &middot; Ganzer Tag</label>
+              <input type="radio" id="v1" name="excursion" value="reef-and-sandbank">
+              <label for="v1">Riff & Sandbank &middot; Halber Tag</label>
+              <input type="radio" id="v2" name="excursion" value="shark-point-and-gulhi">
+              <label for="v2">Shark Point & Gulhi &middot; Ganzer Tag</label>
+              <input type="radio" id="v3" name="excursion" value="sunset-adventure">
+              <label for="v3">Sonnenuntergangs-Abenteuer &middot; Halber Tag</label>
+            </div>
+            <p class="note">Jeder Ausflug ist ein Privatcharter des ganzen Schiffes. Passt keiner davon, wählen Sie den nächstliegenden und schreiben Sie es uns in Schritt drei.</p>
+            <div class="acts"><button class="btn" type="button" data-next>Weiter</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">Schritt zwei</p><h2 class="d3">Wann, und wie viele?</h2></div>
+            <div class="fg fg2">
+              <div class="field"><label for="d1">Wunschtermin</label><input type="date" id="d1" name="date" required></div>
+              <div class="field"><label for="d2">Ausweichtermin</label><input type="date" id="d2" name="alt"></div>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="g">Gäste</label><select id="g" name="guests" required>
+                <option value="2">2 Gäste</option><option value="4" selected>4 Gäste</option><option value="6">6 Gäste</option>
+                <option value="8">8 Gäste</option><option value="10">10 Gäste</option><option value="12">12 Gäste</option>
+              </select></div>
+              <div class="field"><label for="p">Abfahrtsort</label><select id="p" name="pickup">
+                <option>Hulhumalé Marina</option><option>Steg des Velana International Airport</option>
+                <option>Malé, Westhafen</option><option>Ein Resort im Nord- oder Süd-Malé-Atoll</option>
+              </select></div>
+            </div>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Zurück</button><button class="btn" type="button" data-next>Weiter</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">Schritt drei</p><h2 class="d3">Noch etwas dazu?</h2></div>
+            <div class="chips">
+              <input type="checkbox" id="x0" name="extra" value="privatkoch-an-bord" data-label="Privatkoch an Bord" data-price="320">
+              <label for="x0">Privatkoch an Bord &middot; 320</label>
+              <input type="checkbox" id="x1" name="extra" value="fotograf" data-label="Fotograf" data-price="450">
+              <label for="x1">Fotograf &middot; 450</label>
+              <input type="checkbox" id="x2" name="extra" value="schwimmendes-fr-hst-ck" data-label="Schwimmendes Frühstück" data-price="180">
+              <label for="x2">Schwimmendes Frühstück &middot; 180</label>
+              <input type="checkbox" id="x3" name="extra" value="aufbau-auf-der-sandbank" data-label="Aufbau auf der Sandbank" data-price="260">
+              <label for="x3">Aufbau auf der Sandbank &middot; 260</label>
+              <input type="checkbox" id="x4" name="extra" value="tauchen" data-label="Tauchen" data-price="210">
+              <label for="x4">Tauchen &middot; 210</label>
+              <input type="checkbox" id="x5" name="extra" value="flughafen-und-resorttransfers" data-label="Flughafen- und Resorttransfers" data-price="120">
+              <label for="x5">Flughafen- und Resorttransfers &middot; 120</label>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="nm">Name</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
+              <div class="field"><label for="em">E-Mail</label><input type="email" id="em" name="email" autocomplete="email" required></div>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="ph">Telefon oder WhatsApp</label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
+              <div class="field"><label for="st">Wo wohnen Sie?</label><input type="text" id="st" name="staying" placeholder="Resort, Guesthouse oder Hotel"></div>
+            </div>
+            <div class="field"><label for="no">Was wir wissen sollten</label><textarea id="no" name="notes" placeholder="Ernährung, Tauchbrevet, Anlass, Kinder an Bord"></textarea></div>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Zurück</button><button class="btn" type="button" data-next>Prüfen</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">Schritt vier</p><h2 class="d3">Stimmt das so?</h2></div>
+            <div class="sum">
+              <div class="sum__r"><span class="k">Ausflug</span><span data-s-v>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Von wo</span><span data-s-a>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Datum</span><span data-s-d>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Gäste</span><span data-s-g>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Zusatzleistungen</span><span data-s-e>&mdash;</span></div>
+              <div class="sum__t"><span class="k">Richtwert gesamt</span><span class="v" data-s-t>&mdash;</span></div>
+            </div>
+            <p class="note">Nur ein Richtwert, in US-Dollar, für das ganze Schiff. Den endgültigen Betrag bestätigen wir schriftlich, bevor etwas reserviert wird. Dieses Formular ist eine Demonstration und sendet nichts.</p>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Zurück</button><button class="btn" type="submit">Anfrage senden</button></div>
+          </div>
+        </div>
+      </form>
+
+      <div class="ok" id="enquireOk">
+        <div class="stack-l">
+          <p class="eyebrow">Eingegangen</p>
+          <h2 class="d2">Sie ist bei uns</h2>
+          <p class="lede measure">Die Crew antwortet innerhalb eines Tages, meist früher. Wird die Zeit knapp, rufen Sie im Marinabüro an.</p>
+          <div class="acts"><a class="btn" href="index.html">Zurück in den Hafen</a><a class="btn btn--ghost" href="tel:+9607771234">+960 777 1234</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-chrome="footer"></div>
+<script src="../assets/js/data.de.js"></script>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

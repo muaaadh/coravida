@@ -9,8 +9,9 @@ Live at **https://muaaadh.github.io/coravida/**
 
 ## What this build is
 
-Twelve pages of the client's own photography and film — the August 2026 drone, GoPro and
-Sony shoot, plus 4K stock for the hero film. Three ideas run through it:
+Twelve pages in four languages — forty-eight files — built from the client's own
+photography and film (the August 2026 drone, GoPro and Sony shoot) plus 4K stock for the
+hero. Three ideas run through it:
 
 - **Roomier.** One idea per screen, one vertical scale (`--s1…--s6`, `--sec`), and far
   less copy. The home page is five sections; the gallery is one.
@@ -18,6 +19,44 @@ Sony shoot, plus 4K stock for the hero film. Three ideas run through it:
   reserved for state — a running track, an open accordion, a live timeline row — so it
   still means something when it appears.
 - **Faster.** 1.2 MB on a phone, 48–76 ms to first paint. Details below.
+
+## Four languages
+
+English, **Русский**, **中文** and **Deutsch** — 48 pages, not 12. Each language is a real
+directory of real files (`/`, `/ru/`, `/zh/`, `/de/`), so every page has its own URL, its
+own `<title>`, its own `lang` attribute and a full set of `hreflang` alternates. Nothing
+is translated in the browser, and there is no flash of English.
+
+English is the source. Each language adds one file under `tools/i18n/`:
+
+```js
+module.exports = {
+  ui:      { "The sea, at your own pace": "Das Meer, in Ihrem Tempo", … },  // keyed by the English
+  chrome:  { menu: "Menü", enquire: "Anfragen", … },                        // what site.js says
+  content: { voyages: [{ title: "Insel & Schnorcheln", … }], … }            // a deep override
+};
+```
+
+`tools/build.js` merges each override onto the English data model, writes the merged result
+to `assets/js/data.<code>.js`, and generates that language's pages. Anything a locale does
+not translate **falls back to English rather than to a hole**, and the build prints what is
+missing:
+
+```
+ru: 4 untranslated
+   ¬ Chef
+   ¬ Berth
+```
+
+Two roots keep the links honest: `data-root` points at the site root (for assets, which are
+shared by all four languages) and `data-base` at the language root (for page links). The
+switcher in the header carries `data-path`, the same file inside every language, so
+switching language holds your place instead of dropping you on the home page.
+
+Chinese gets its own type: Montserrat and Inter carry Latin and Cyrillic but no CJK, so
+`:root[lang^="zh"]` swaps in the system Han faces and drops the tightened tracking, the
+uppercasing and the word-space line splitting — all Latin conventions. German gets
+`hyphens: auto`, because its compounds are long enough to break a narrow column on their own.
 
 ## The hero film
 
@@ -53,6 +92,12 @@ until you open it. It plays four Creative Commons tracks chosen for the room the
 
 Nothing autoplays. `preload="none"` means an untouched player costs zero bytes.
 
+**One invitation, then silence.** Two seconds after the page settles, a small glass pill
+appears beside the button — *Turn the sound on* — and removes itself five seconds later.
+It is skipped entirely if the player is already open or already playing, any interaction
+kills it early, and `sessionStorage` makes sure it appears once per visit rather than once
+per page.
+
 ## Motion
 
 Everything moves as it arrives, and nothing moves for its own sake. `assets/js/site.js`
@@ -77,6 +122,22 @@ skipped would never appear at all.
 
 All of it is disabled under `prefers-reduced-motion`, where every element resolves to its
 end state and the sea stands still.
+
+### On a phone
+
+Touch gets the same motion, not a stripped-back version — and the things a cursor does for
+free are built back:
+
+| | |
+|---|---|
+| **Press, not hover.** Every control answers to a press instead: cards settle by 1.5%, buttons by 3%, chips and language pills tint. The desktop hover states are switched off so none of them can stick after a tap. |
+| **Swipe.** The lightbox takes a swipe — left and right to move, down to close — and its images slide in the direction of travel. |
+| **The excursion index**, which follows the cursor on a desktop, becomes a stack of cards: each photograph gets the same curtain wipe the desktop cards get, plus a chevron so the row reads as a link. |
+| **The rail** fades its right edge while there is more to scroll to, and stops fading at the end. |
+| **Parallax at 55%** below 700px — at full strength it reads as jitter rather than depth. |
+| **16px form fields**, because anything smaller makes iOS Safari zoom the page on focus. |
+| **44px tap targets** minimum; the lightbox controls are 52. |
+| **The language switcher** moves out of the header, where there is no room for it, into the menu as a row of pills. |
 
 The caustics are a 512px seamless tile generated with ImageMagick (tiled noise → blur →
 `EdgeIn` morphology → levels), 2 KB as WebP, drifting on two layers so the repeat never
@@ -137,13 +198,14 @@ Deliberately small, because a large one is how a site stops being clean:
 | Video | H.264 in four tiers — 1440 / 1080 / 720 / 540 — chosen at runtime from viewport × DPR and capped per clip at what its source can honestly give. |
 | Video loading | A WebP poster paints first; the clip is fetched after `load`. Skipped entirely under `prefers-reduced-motion` or Save-Data. |
 | Audio | Nothing until the player is pressed. |
-| CSS / JS | 34 KB and 35 KB uncompressed — **8.6 KB and 10.1 KB gzipped**. One file each, no libraries. |
+| CSS / JS | 42 KB and 41 KB uncompressed — **10.6 KB and 11.5 KB gzipped**. One file each, no libraries. |
+| Languages | A localised page costs about **10 KB** more than the English one, and that is all of it — same CSS, same JS, same photographs. |
 
 Measured cold with no cache on the home page:
 
 | | Desktop 1440 @2× | Phone 390 @3× |
 |---|---|---|
-| First view | 3.96 MB | **1.20 MB** |
+| First view | 3.97 MB | **1.21 MB** |
 | First contentful paint | 48 ms | 72 ms |
 | Requests | 17 | 16 |
 
@@ -164,6 +226,9 @@ readable at 760 KB before it arrives.
 | `enquire.html` | Four-step charter enquiry with a live indicative total |
 | `404.html` | Not found |
 
+The same twelve exist again under `/ru/`, `/zh/` and `/de/`. `sitemap.xml` lists all
+44 indexable URLs with their language alternates, and is regenerated by the build.
+
 ## Changing the content
 
 Everything is in **`assets/js/data.js`** — brand facts, the hero clips and their interval,
@@ -173,7 +238,7 @@ add-ons, the vessel, gallery captions, FAQ.
 Every HTML page is generated from it:
 
 ```sh
-node tools/build.js      # rewrites all 12 pages
+node tools/build.js      # rewrites all 48 pages, in all four languages
 ```
 
 Edit `data.js`, run the build, commit. Header, menu, footer, sea and player are injected by
@@ -233,18 +298,23 @@ that hour is worth shooting.
 index.html  vessel.html  excursions.html  gallery.html
 about.html  contact.html  enquire.html  404.html
 excursions/*.html         4 excursion pages — generated
+ru/  zh/  de/             the same twelve pages again — generated
 assets/
   css/site.css            the design system
-  js/data.js              all content — edit this
-  js/site.js              chrome, sea, hero cycle, player, reveals, rail, lightbox, forms
+  js/data.js              all content, in English — edit this
+  js/data.{ru,zh,de}.js   merged per language — generated, do not edit
+  js/site.js              chrome, language, sea, hero cycle, player, reveals, lightbox, forms
   img/                    WebP, four widths each, plus the logo lockups
   video/                  five clips, up to four tiers each
   audio/                  four CC tracks
   fonts/                  Montserrat 300, Inter 400/500
-tools/build.js            regenerates every page
+sitemap.xml               44 URLs with alternates — generated
+tools/i18n/{ru,zh,de}.js  the translations — edit these
+tools/build.js            regenerates every page in every language
 tools/images.sh           rebuilds every photograph from the shoot
 tools/hero.sh             rebuilds the hero clips and their posters
 ```
 
-Checked at 390, 768, 1024 and 1440px across all 12 pages: no horizontal overflow, no
-broken images, no missing alt text, no console errors, and the sea renders on every one.
+Checked at 390 and 1440px across all 48 pages — 72 renders: no horizontal overflow, no
+console errors, no 404s, no broken images, no missing alt text, `hreflang` on every page,
+the sea on every page, and no English left where there should not be any.

@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="zh-Hans" data-root="../" data-base="" data-page="enquire.html" data-path="enquire.html" data-locale="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>预订咨询 — Coravida</title>
+<meta name="description" content="预订 Tiffany Blanc 14 — 一天、一场日落，或十二个停泊的夜晚。">
+<meta property="og:title" content="预订咨询 — Coravida">
+<meta property="og:description" content="预订 Tiffany Blanc 14 — 一天、一场日落，或十二个停泊的夜晚。">
+<meta property="og:image" content="../assets/img/vessel-guests-1600.webp">
+<meta property="og:type" content="website">
+<link rel="icon" href="../assets/img/favicon.png" type="image/png">
+<link rel="preload" href="../assets/fonts/montserrat-300.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../assets/css/site.css">
+<link rel="alternate" hreflang="en" href="https://muaaadh.github.io/coravida/enquire.html">
+<link rel="alternate" hreflang="ru" href="https://muaaadh.github.io/coravida/ru/enquire.html">
+<link rel="alternate" hreflang="zh-Hans" href="https://muaaadh.github.io/coravida/zh/enquire.html">
+<link rel="alternate" hreflang="de" href="https://muaaadh.github.io/coravida/de/enquire.html">
+<link rel="alternate" hreflang="x-default" href="https://muaaadh.github.io/coravida/enquire.html">
+</head>
+<body>
+<a class="skip" href="#main">跳到主要内容</a>
+<div data-chrome="header"></div>
+
+<main id="main">
+  <section class="hero hero--mid">
+    <div class="hero__bg" data-par="0.06">
+      <img src="../assets/img/vessel-guests-1200.webp" srcset="../assets/img/vessel-guests-900.webp 900w, ../assets/img/vessel-guests-1200.webp 1200w, ../assets/img/vessel-guests-1600.webp 1600w, ../assets/img/vessel-guests-2800.webp 2800w" sizes="100vw" width="1200" height="900" alt="Tiffany Blanc 14 停泊，客人在船上" fetchpriority="high" decoding="async">
+    </div>
+    <div class="hero__in stack" data-stagger>
+      <p class="eyebrow" data-a="fade">预订咨询</p>
+      <h1 class="d1 lines">预订这艘船</h1>
+      <p class="lede lede--light" data-a="up">四个简短步骤。在我们回复之前，不会扣款，也不会占用任何日期。</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap narrow">
+      <ul class="steps" data-a="up">
+        <li class="on">行程</li><li>日期</li><li>资料</li><li>确认</li>
+      </ul>
+
+      <form id="enquire" novalidate>
+        <div class="step on">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">第一步</p><h2 class="d3">选择哪条行程？</h2></div>
+            <div class="chips">
+              <input type="radio" id="v0" name="excursion" value="island-and-snorkelling" checked>
+              <label for="v0">海岛与浮潜 &middot; 全日</label>
+              <input type="radio" id="v1" name="excursion" value="reef-and-sandbank">
+              <label for="v1">礁石与沙洲 &middot; 半日</label>
+              <input type="radio" id="v2" name="excursion" value="shark-point-and-gulhi">
+              <label for="v2">鲨鱼点与古尔希 &middot; 全日</label>
+              <input type="radio" id="v3" name="excursion" value="sunset-adventure">
+              <label for="v3">日落之旅 &middot; 半日</label>
+            </div>
+            <p class="note">每条行程都是整船包船。若都不合适，请选择最接近的一条，并在第三步告诉我们。</p>
+            <div class="acts"><button class="btn" type="button" data-next>继续</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">第二步</p><h2 class="d3">什么时候，几个人？</h2></div>
+            <div class="fg fg2">
+              <div class="field"><label for="d1">首选日期</label><input type="date" id="d1" name="date" required></div>
+              <div class="field"><label for="d2">备选日期</label><input type="date" id="d2" name="alt"></div>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="g">人数</label><select id="g" name="guests" required>
+                <option value="2">2 人</option><option value="4" selected>4 人</option><option value="6">6 人</option>
+                <option value="8">8 人</option><option value="10">10 人</option><option value="12">12 人</option>
+              </select></div>
+              <div class="field"><label for="p">上船地点</label><select id="p" name="pickup">
+                <option>胡鲁马累码头</option><option>维拉纳国际机场码头</option>
+                <option>马累西港</option><option>北马累或南马累环礁的度假村</option>
+              </select></div>
+            </div>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>返回</button><button class="btn" type="button" data-next>继续</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">第三步</p><h2 class="d3">还需要什么？</h2></div>
+            <div class="chips">
+              <input type="checkbox" id="x0" name="extra" value="-" data-label="船上私厨" data-price="320">
+              <label for="x0">船上私厨 &middot; 320</label>
+              <input type="checkbox" id="x1" name="extra" value="-" data-label="摄影师" data-price="450">
+              <label for="x1">摄影师 &middot; 450</label>
+              <input type="checkbox" id="x2" name="extra" value="-" data-label="漂浮早餐" data-price="180">
+              <label for="x2">漂浮早餐 &middot; 180</label>
+              <input type="checkbox" id="x3" name="extra" value="-" data-label="沙洲布置" data-price="260">
+              <label for="x3">沙洲布置 &middot; 260</label>
+              <input type="checkbox" id="x4" name="extra" value="-" data-label="潜水" data-price="210">
+              <label for="x4">潜水 &middot; 210</label>
+              <input type="checkbox" id="x5" name="extra" value="-" data-label="机场与度假村接送" data-price="120">
+              <label for="x5">机场与度假村接送 &middot; 120</label>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="nm">姓名</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
+              <div class="field"><label for="em">电子邮箱</label><input type="email" id="em" name="email" autocomplete="email" required></div>
+            </div>
+            <div class="fg fg2">
+              <div class="field"><label for="ph">电话或 WhatsApp</label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
+              <div class="field"><label for="st">你住在哪里？</label><input type="text" id="st" name="staying" placeholder="度假村、民宿或酒店"></div>
+            </div>
+            <div class="field"><label for="no">有什么需要我们知道的</label><textarea id="no" name="notes" placeholder="饮食、潜水执照、场合、随行儿童"></textarea></div>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>返回</button><button class="btn" type="button" data-next>确认</button></div>
+          </div>
+        </div>
+
+        <div class="step">
+          <div class="stack-l">
+            <div class="stack-s"><p class="eyebrow">第四步</p><h2 class="d3">以下信息是否正确？</h2></div>
+            <div class="sum">
+              <div class="sum__r"><span class="k">行程</span><span data-s-v>&mdash;</span></div>
+              <div class="sum__r"><span class="k">从哪里出发</span><span data-s-a>&mdash;</span></div>
+              <div class="sum__r"><span class="k">日期</span><span data-s-d>&mdash;</span></div>
+              <div class="sum__r"><span class="k">人数</span><span data-s-g>&mdash;</span></div>
+              <div class="sum__r"><span class="k">附加服务</span><span data-s-e>&mdash;</span></div>
+              <div class="sum__t"><span class="k">参考总价</span><span class="v" data-s-t>&mdash;</span></div>
+            </div>
+            <p class="note">仅为参考价，以美元计，整船价格。在占用任何日期之前，我们都会以书面确认最终金额。此表单为演示用途，不会发送任何内容。</p>
+            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>返回</button><button class="btn" type="submit">发送咨询</button></div>
+          </div>
+        </div>
+      </form>
+
+      <div class="ok" id="enquireOk">
+        <div class="stack-l">
+          <p class="eyebrow">已收到</p>
+          <h2 class="d2">已经收到</h2>
+          <p class="lede measure">船员会在一天内回复，通常更快。若日期紧张，请致电码头办公室。</p>
+          <div class="acts"><a class="btn" href="index.html">回到港口</a><a class="btn btn--ghost" href="tel:+9607771234">+960 777 1234</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div data-chrome="footer"></div>
+<script src="../assets/js/data.zh.js"></script>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>
