@@ -12,7 +12,7 @@ mkdir -p "$OUT"
 
 # name|max width|quality   (max width is capped at what the source can honestly give)
 emit () { # $1 source file  $2 name  $3 maxw  $4 quality
-  for w in 900 1600 "$3"; do
+  for w in 900 1200 1600 "$3"; do
     if [ "$w" -gt "$3" ]; then continue; fi
     $CVT "$1" -auto-orient -resize "${w}x>" -strip PNG24:- 2>/dev/null \
       | cwebp -quiet -q "$4" -m 6 -sharp_yuv -o "$OUT/$2-$w.webp" -- - 2>/dev/null

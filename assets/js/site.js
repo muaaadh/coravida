@@ -30,10 +30,10 @@
         '<header class="hdr" id="hdr"><div class="hdr__in">' +
           '<div class="hdr__l"><button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu"><i aria-hidden="true"></i>Menu</button></div>' +
           '<div class="hdr__m"><a class="hdr__logo" href="' + u("index.html") + '" aria-label="' + B.name + ' — home">' +
-            '<img class="light" src="' + u("assets/img/logo-mark-white.png") + '" alt="' + B.name + '" width="66" height="28">' +
-            '<img class="dark" src="' + u("assets/img/logo-mark.png") + '" alt="' + B.name + '" width="66" height="28"></a></div>' +
+            '<img class="light" src="' + u("assets/img/logo-mark-white.webp") + '" alt="' + B.name + '" width="66" height="28">' +
+            '<img class="dark" src="' + u("assets/img/logo-mark.webp") + '" alt="' + B.name + '" width="66" height="28"></a></div>' +
           '<div class="hdr__r"><span class="hdr__lang">EN</span>' +
-            '<a class="btn btn--white" href="' + u("enquire.html") + '">Book</a></div>' +
+            '<a class="btn btn--white" href="' + u("enquire.html") + '">Enquire</a></div>' +
         '</div></header>'
       ));
       document.body.insertBefore(menuEl(), document.body.firstChild);
@@ -45,8 +45,6 @@
       if (prev && prev.tagName === "MAIN") prev = prev.lastElementChild;
       sea((prev && prev.classList && prev.classList.contains("section--navy")) ? prev : ft);
     }
-    document.body.appendChild(el('<div class="prog" id="prog" aria-hidden="true"></div>'));
-    if (!SLOW) document.body.appendChild(el('<div class="veil" id="veil" aria-hidden="true"></div>'));
   }
 
   function menuEl() {
@@ -57,8 +55,8 @@
       '<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>' +
         '<div class="menu__bar"><div class="hdr__in">' +
           '<div class="hdr__l"><button class="menu__x" type="button" id="menuX">' + X + "Close</button></div>" +
-          '<div class="hdr__m"><a class="hdr__logo" href="' + u("index.html") + '" aria-label="' + B.name + '"><img src="' + u("assets/img/logo-mark.png") + '" alt="' + B.name + '" width="66" height="28"></a></div>' +
-          '<div class="hdr__r"><a class="btn" href="' + u("enquire.html") + '">Book</a></div>' +
+          '<div class="hdr__m"><a class="hdr__logo" href="' + u("index.html") + '" aria-label="' + B.name + '"><img src="' + u("assets/img/logo-mark.webp") + '" alt="' + B.name + '" width="66" height="28"></a></div>' +
+          '<div class="hdr__r"><a class="btn" href="' + u("enquire.html") + '">Enquire</a></div>' +
         "</div></div>" +
         '<div class="menu__body"><div>' +
           '<nav class="menu__nav" aria-label="Primary"><ul>' + links + "</ul></nav>" +
@@ -77,7 +75,7 @@
       '<li><a href="' + u("enquire.html") + '">Enquire</a></li>';
     return el(
       '<footer class="ftr"><div class="wrap"><div class="ftr__top">' +
-        '<div data-a="up"><img src="' + u("assets/img/logo-full-white.png") + '" alt="' + B.name + '" width="90" height="46" loading="lazy">' +
+        '<div data-a="up"><img src="' + u("assets/img/logo-full-white.webp") + '" alt="' + B.name + '" width="90" height="46" loading="lazy">' +
           '<p class="small" style="margin-top:1.4rem;max-width:24ch;color:rgba(255,255,255,.55)">' + B.tagline + ".</p></div>" +
         '<div data-a="up"><h4>Explore</h4><ul>' + links + "</ul></div>" +
         '<div data-a="up"><h4>Coravida</h4><ul>' +
@@ -147,26 +145,29 @@
   }
 
   /* ---- Header + progress ----------------------------------------------- */
-  function header() {
-    var h = $("#hdr"), pr = $("#prog"), last = 0, ticking = false;
-    function frame() {
-      ticking = false;
-      var y = window.scrollY || 0;
-      var max = document.documentElement.scrollHeight - window.innerHeight;
-      if (pr) pr.style.transform = "scaleX(" + (max > 0 ? Math.min(1, y / max) : 0) + ")";
-      if (h) {
-        h.classList.toggle("solid", y > 40);
-        if (y > 460 && y > last + 4 && !document.body.classList.contains("lock")) h.classList.add("up");
-        else if (y < last - 4 || y < 140) h.classList.remove("up");
-      }
-      last = y;
-    }
-    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
-    frame(); window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll, { passive: true });
+  /* One scroll driver. Everything that reacts to the scroll position reads
+     the same frame: the header state, the reveals, and the parallax. */
+  var onFrame = [], ticking = false;
+  function tick() { ticking = false; var y = window.scrollY || 0, vh = window.innerHeight; for (var i = 0; i < onFrame.length; i++) onFrame[i](y, vh); }
+  function run() { if (!ticking) { ticking = true; requestAnimationFrame(tick); } }
+  function driver() {
+    window.addEventListener("scroll", run, { passive: true });
+    window.addEventListener("resize", run, { passive: true });
+    run();
   }
 
-  /* ---- Menu ------------------------------------------------------------ */
+  function header() {
+    var h = $("#hdr");
+    if (!h) return;
+    var last = 0;
+    onFrame.push(function (y) {
+      h.classList.toggle("solid", y > 40);
+      if (y > 460 && y > last + 4 && !document.body.classList.contains("lock")) h.classList.add("up");
+      else if (y < last - 4 || y < 140) h.classList.remove("up");
+      last = y;
+    });
+  }
+
   function menu() {
     var m = $("#menu"), b = $("#burger"), x = $("#menuX");
     if (!m || !b) return;
@@ -197,31 +198,118 @@
     });
   }
 
-  /* ---- Video ----------------------------------------------------------- */
-  function start(v) {
-    if (v.dataset.started) return;
-    v.dataset.started = "1";
+  /* ---- Video ------------------------------------------------------------ */
+  function tier(max) {
     var w = window.innerWidth * (window.devicePixelRatio > 1.5 ? 1.4 : 1);
-    v.src = u("assets/video/" + v.getAttribute("data-src") + (w > 1200 ? "-1080" : w > 700 ? "-720" : "-540") + ".mp4");
+    var t = w > 1900 ? 1440 : w > 1200 ? 1080 : w > 700 ? 720 : 540;
+    return Math.min(t, max || 1080);
+  }
+  function load(v, base, max) {
+    if (v.dataset.started) return v;
+    v.dataset.started = "1";
+    v.src = u("assets/video/" + base + "-" + tier(max) + ".mp4");
+    v.load();
+    return v;
+  }
+  function fadeIn(v) {
+    if (v.readyState >= 3) { v.classList.add("on"); var p = v.play(); if (p && p.catch) p.catch(function () {}); return; }
     v.addEventListener("canplay", function () {
       v.classList.add("on");
-      var p = v.play();
-      if (p && p.catch) p.catch(function () { v.classList.remove("on"); });
+      var p = v.play(); if (p && p.catch) p.catch(function () { v.classList.remove("on"); });
     }, { once: true });
-    v.load();
   }
+
+  /* the hero holds one clip, then hands over to the next */
+  function heroCycle() {
+    var stage = $("[data-hero]"); if (!stage) return;
+    var slides = $$(".hero__s", stage);
+    if (slides.length < 2) return startOne();
+    var vids = slides.map(function (s) { return $("video", s); });
+    var at = 0, timer = null;
+    var still = SLOW || SAVE;
+
+    function startOne() {
+      var v = vids[0];
+      if (v && !still) fadeIn(load(v, v.getAttribute("data-src"), +v.getAttribute("data-max")));
+    }
+    if (still) {                             // the posters carry it
+      slides.forEach(function (sl) {
+        var p = $("img[data-src]", sl);
+        if (!p) return;
+        p.src = p.getAttribute("data-src");
+        if (p.getAttribute("data-srcset")) p.srcset = p.getAttribute("data-srcset");
+      });
+      return;
+    }
+
+    function poster(slide) {                 // release the held-back still
+      var p = $("img[data-src]", slide);
+      if (!p) return;
+      p.src = p.getAttribute("data-src");
+      if (p.getAttribute("data-srcset")) p.srcset = p.getAttribute("data-srcset");
+      p.removeAttribute("data-src"); p.removeAttribute("data-srcset");
+    }
+
+    function show(n) {
+      var prev = at; at = (n + slides.length) % slides.length;
+      slides[at].classList.add("on");
+      if (prev !== at) slides[prev].classList.remove("on");
+      poster(slides[at]);
+      var v = vids[at];
+      if (v) { load(v, v.getAttribute("data-src"), +v.getAttribute("data-max")); v.currentTime = 0; fadeIn(v); }
+      var nxi = (at + 1) % slides.length, nx = vids[nxi];   // fetch the next one while this plays
+      setTimeout(function () {
+        if (!seen) return;
+        poster(slides[nxi]);
+        if (nx) load(nx, nx.getAttribute("data-src"), +nx.getAttribute("data-max"));
+      }, 1400);
+      queue();
+    }
+    function queue() {
+      clearTimeout(timer);
+      timer = setTimeout(function () { show(at + 1); }, (CV.hero && CV.hero.interval) || 6000);
+    }
+    var seen = true;
+    function halt() { clearTimeout(timer); vids.forEach(function (v) { v && v.pause(); }); }
+    function resume() {
+      var v = vids[at];
+      if (v && v.dataset.started) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      queue();
+    }
+    function go() { show(0); }
+    if (document.readyState === "complete") setTimeout(go, 150);
+    else window.addEventListener("load", function () { setTimeout(go, 150); });
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) halt(); else if (seen) resume();
+    });
+    // scrolled past the hero: stop cycling, and stop fetching clips nobody will see
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          seen = e.isIntersecting;
+          if (seen) { if (!document.hidden) resume(); } else halt();
+        });
+      }, { threshold: 0.05 }).observe(stage);
+    }
+  }
+
+  /* single clips elsewhere: page heroes and the mid-page band */
   function video() {
-    var vids = $$("video[data-src]");
+    var vids = $$("video[data-src]").filter(function (v) { return !v.closest("[data-hero]"); });
     if (!vids.length || SLOW || SAVE) return;
     var eager = vids.filter(function (v) { return v.hasAttribute("data-eager"); });
     var lazy = vids.filter(function (v) { return !v.hasAttribute("data-eager"); });
-    function go() { eager.forEach(start); }
+    function go() { eager.forEach(function (v) { fadeIn(load(v, v.getAttribute("data-src"), +v.getAttribute("data-max"))); }); }
     if (document.readyState === "complete") setTimeout(go, 150);
     else window.addEventListener("load", function () { setTimeout(go, 150); });
     if (!lazy.length) return;
-    if (!("IntersectionObserver" in window)) return lazy.forEach(start);
+    if (!("IntersectionObserver" in window)) return lazy.forEach(function (v) { fadeIn(load(v, v.getAttribute("data-src"), +v.getAttribute("data-max"))); });
     var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { start(e.target); io.unobserve(e.target); } });
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        fadeIn(load(e.target, e.target.getAttribute("data-src"), +e.target.getAttribute("data-max")));
+        io.unobserve(e.target);
+      });
     }, { rootMargin: "400px 0px" });
     lazy.forEach(function (v) { io.observe(v); });
   }
@@ -274,63 +362,117 @@
     }, { passive: true });
   }
 
-  /* ---- Section index ---------------------------------------------------- */
-  function sectionIndex() {
-    var secs = $$("[data-idx]");
-    if (secs.length < 3) return;
-    var rail = el('<nav class="idx" aria-hidden="true"><ul>' + secs.map(function (n, i) {
-      return "<li data-g=\"" + i + '"><span>' + n.getAttribute("data-idx") + "</span><i></i></li>";
-    }).join("") + "</ul></nav>");
-    document.body.appendChild(rail);
-    var items = $$("li", rail), ticking = false;
-    items.forEach(function (li, i) {
-      li.addEventListener("click", function () {
-        window.scrollTo({ top: secs[i].getBoundingClientRect().top + window.scrollY - 40, behavior: SLOW ? "auto" : "smooth" });
-      });
-    });
-    function frame() {
-      ticking = false;
-      var vh = window.innerHeight, at = -1, dark = false;
-      secs.forEach(function (n, i) {
-        var r = n.getBoundingClientRect();
-        if (r.top <= vh * 0.42 && r.bottom > vh * 0.42) { at = i; dark = n.hasAttribute("data-idx-dark"); }
-      });
-      items.forEach(function (li, i) { li.classList.toggle("on", i === at); });
-      rail.classList.toggle("on", at > -1);
-      rail.classList.toggle("dark", dark);
-    }
-    function run() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
-    window.addEventListener("scroll", run, { passive: true });
-    window.addEventListener("resize", run, { passive: true });
-    run();
-  }
+  /* ---- The player -------------------------------------------------------- */
+  var ICON = {
+    play: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2.5 1.4v9.2L10 6z"/></svg>',
+    pause: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><rect x="2.4" y="1.6" width="2.7" height="8.8" rx=".5"/><rect x="6.9" y="1.6" width="2.7" height="8.8" rx=".5"/></svg>',
+    prev: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M10 1.8v8.4L3.6 6z"/><rect x="1.6" y="1.8" width="1.5" height="8.4" rx=".4"/></svg>',
+    next: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 1.8v8.4L8.4 6z"/><rect x="8.9" y="1.8" width="1.5" height="8.4" rx=".4"/></svg>',
+    x: '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>'
+  };
+  var BARS = '<span class="mus__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>';
 
-  /* ---- Pinned horizontal run -------------------------------------------- */
-  function pinned() {
-    $$("[data-pin]").forEach(function (sec) {
-      var track = $(".pin__track", sec);
-      if (!track) return;
-      var travel = 0, ticking = false;
-      function measure() {
-        if (window.innerWidth < 900 || SLOW) { sec.style.height = ""; track.style.transform = ""; travel = 0; return; }
-        travel = Math.max(0, track.scrollWidth - window.innerWidth);
-        sec.style.height = (window.innerHeight + travel) + "px";
-        frame();
-      }
-      function frame() {
-        ticking = false;
-        if (!travel) return;
-        var r = sec.getBoundingClientRect();
-        var p = Math.max(0, Math.min(1, -r.top / (sec.offsetHeight - window.innerHeight)));
-        track.style.transform = "translate3d(" + (-p * travel).toFixed(1) + "px,0,0)";
-      }
-      function run() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
-      window.addEventListener("scroll", run, { passive: true });
-      window.addEventListener("resize", measure, { passive: true });
-      if (document.readyState === "complete") measure();
-      else window.addEventListener("load", measure);
-      measure();
+  function player() {
+    var M = CV.music;
+    if (!M || !M.tracks || !M.tracks.length) return;
+    var wrap = el(
+      '<div class="mus" id="mus">' +
+        '<button class="mus__b" type="button" id="musB" aria-expanded="false" aria-controls="musP" aria-label="Music">' + BARS + "</button>" +
+        '<div class="mus__p" id="musP" role="group" aria-label="Music player">' +
+          '<p class="mus__line">' + M.line + "</p>" +
+          '<div><div class="mus__t" id="musT"></div><div class="mus__by" id="musBy"></div></div>' +
+          '<div class="mus__bar" id="musBar" role="slider" aria-label="Seek" tabindex="0" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="musFill"></i></div>' +
+          '<div class="mus__c">' +
+            '<button type="button" id="musPrev" aria-label="Previous track">' + ICON.prev + "</button>" +
+            '<button class="play" type="button" id="musPlay" aria-label="Play">' + ICON.play + "</button>" +
+            '<button type="button" id="musNext" aria-label="Next track">' + ICON.next + "</button>" +
+            '<button class="mus__x" type="button" id="musX" aria-label="Close player">' + ICON.x + "</button>" +
+          "</div>" +
+        "</div>" +
+      "</div>");
+    document.body.appendChild(wrap);
+
+    var audio = new Audio();
+    audio.preload = "none";
+    audio.volume = 0.55;
+    var i = 0, ready = false;
+    var elT = $("#musT"), elBy = $("#musBy"), elFill = $("#musFill"), elPlay = $("#musPlay"), elBar = $("#musBar");
+
+    function store(k, v) { try { sessionStorage.setItem("cv.mus." + k, v); } catch (e) {} }
+    function read(k) { try { return sessionStorage.getItem("cv.mus." + k); } catch (e) { return null; } }
+
+    function paint() {
+      var t = M.tracks[i];
+      elT.textContent = t.title;
+      elBy.innerHTML = t.by + ' &middot; <a href="' + t.at + '" target="_blank" rel="noopener">' + t.lic + "</a>";
+    }
+    function cue(n, autoplay) {
+      i = (n + M.tracks.length) % M.tracks.length;
+      audio.src = u("assets/audio/" + M.tracks[i].file + ".mp3");
+      ready = true; store("i", i); paint();
+      if (autoplay) play();
+    }
+    function play() {
+      if (!ready) return cue(i, true);
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () { setPlaying(false); });
+    }
+    function setPlaying(on) {
+      wrap.classList.toggle("playing", on);
+      elPlay.innerHTML = on ? ICON.pause : ICON.play;
+      elPlay.setAttribute("aria-label", on ? "Pause" : "Play");
+      store("on", on ? "1" : "0");
+    }
+    audio.addEventListener("play", function () { setPlaying(true); });
+    audio.addEventListener("pause", function () { setPlaying(false); });
+    audio.addEventListener("ended", function () { cue(i + 1, true); });
+    audio.addEventListener("timeupdate", function () {
+      if (!audio.duration) return;
+      var p = audio.currentTime / audio.duration;
+      elFill.style.width = (p * 100).toFixed(2) + "%";
+      elBar.setAttribute("aria-valuenow", Math.round(p * 100));
+      store("t", audio.currentTime.toFixed(1));
     });
+
+    $("#musB").addEventListener("click", function () {
+      var open = wrap.classList.toggle("open");
+      $("#musB").setAttribute("aria-expanded", open ? "true" : "false");
+      store("open", open ? "1" : "0");
+      if (open && !ready) cue(i, false);
+    });
+    $("#musX").addEventListener("click", function () {
+      wrap.classList.remove("open"); $("#musB").setAttribute("aria-expanded", "false"); store("open", "0");
+    });
+    elPlay.addEventListener("click", function () { audio.paused ? play() : audio.pause(); });
+    $("#musPrev").addEventListener("click", function () { cue(i - 1, !audio.paused || wrap.classList.contains("playing")); });
+    $("#musNext").addEventListener("click", function () { cue(i + 1, !audio.paused || wrap.classList.contains("playing")); });
+    function seek(e) {
+      if (!audio.duration) return;
+      var r = elBar.getBoundingClientRect();
+      audio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * audio.duration;
+    }
+    elBar.addEventListener("click", seek);
+    elBar.addEventListener("keydown", function (e) {
+      if (!audio.duration) return;
+      if (e.key === "ArrowRight") audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+      if (e.key === "ArrowLeft") audio.currentTime = Math.max(0, audio.currentTime - 5);
+    });
+
+    /* carry across a page change: the browser will usually allow the resume
+       because the gesture happened on the previous page of the same site */
+    var wasI = parseInt(read("i") || "0", 10);
+    if (wasI >= 0 && wasI < M.tracks.length) i = wasI;
+    paint();
+    if (read("open") === "1") { wrap.classList.add("open"); $("#musB").setAttribute("aria-expanded", "true"); }
+    if (read("on") === "1") {
+      cue(i, false);
+      var at = parseFloat(read("t") || "0");
+      audio.addEventListener("loadedmetadata", function () {
+        if (at > 0 && at < audio.duration) audio.currentTime = at;
+      }, { once: true });
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () { setPlaying(false); });
+    }
   }
 
   /* ---- Voyage index: the photograph follows the cursor ------------------- */
@@ -364,87 +506,41 @@
 
   /* ---- Reveals --------------------------------------------------------- */
   function reveals() {
-    // auto-stagger siblings that share a parent
+    // a stagger root numbers its own children, unless the build already did
     $$("[data-stagger]").forEach(function (p) {
-      $$("[data-a]", p).forEach(function (n, i) { n.style.setProperty("--i", i); });
+      $$("[data-a]", p).forEach(function (n, i) {
+        if (!n.style.getPropertyValue("--i")) n.style.setProperty("--i", Math.min(i, 6));
+      });
     });
-    var nodes = $$("[data-a], .lines");
-    if (!("IntersectionObserver" in window) || SLOW) return nodes.forEach(function (n) { n.classList.add("in"); });
-    var io = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
-    nodes.forEach(function (n) {
-      // anything already above the fold reveals immediately
-      if (n.getBoundingClientRect().top < window.innerHeight * 0.9) {
-        setTimeout(function () { n.classList.add("in"); }, 120);
-      } else io.observe(n);
+    var waiting = $$("[data-a], .lines");
+    if (SLOW) return waiting.forEach(function (n) { n.classList.add("in"); });
+    // a sweep rather than an observer: a fast flick can outrun a threshold,
+    // and anything left behind would never appear at all
+    onFrame.push(function (y, vh) {
+      if (!waiting.length) return;
+      var line = vh * 0.92, keep = [];
+      for (var i = 0; i < waiting.length; i++) {
+        if (waiting[i].getBoundingClientRect().top < line) waiting[i].classList.add("in");
+        else keep.push(waiting[i]);
+      }
+      waiting = keep;
     });
   }
 
   /* ---- Scroll effects: parallax, word scrub, marquee skew --------------- */
   function scrollFx() {
-    var pars = $$("[data-par]"), scrubs = $$("[data-scrub]"), mq = $(".mq__s");
-    if (SLOW) return;
-
-    // split scrub paragraphs into words
-    scrubs.forEach(function (n) {
-      var txt = n.textContent.trim();
-      n.textContent = "";
-      txt.split(/\s+/).forEach(function (word, i, arr) {
-        var sp = document.createElement("span");
-        sp.className = "wd";
-        sp.textContent = word + (i < arr.length - 1 ? " " : "");
-        n.appendChild(sp);
-      });
+    var pars = $$("[data-par]");
+    if (SLOW || !pars.length) return;
+    onFrame.push(function (y, vh) {
+      for (var i = 0; i < pars.length; i++) {
+        var n = pars[i], r = n.getBoundingClientRect();
+        if (r.bottom < -vh * 0.25 || r.top > vh * 1.25) continue;
+        var f = parseFloat(n.getAttribute("data-par")) || 0.1;
+        n.style.transform = "translate3d(0," + (-(r.top + r.height / 2 - vh / 2) * f).toFixed(2) + "px,0)";
+      }
     });
-
-    var live = [], ticking = false, lastY = window.scrollY || 0, vel = 0;
-    var watch = pars.concat(scrubs);
-    if (("IntersectionObserver" in window) && watch.length) {
-      var io = new IntersectionObserver(function (es) {
-        es.forEach(function (e) {
-          var i = live.indexOf(e.target);
-          if (e.isIntersecting) { if (i < 0) live.push(e.target); }
-          else if (i > -1) live.splice(i, 1);
-        });
-        run();
-      }, { rootMargin: "25% 0px" });
-      watch.forEach(function (n) { io.observe(n); });
-    } else live = watch;
-
-    function frame() {
-      ticking = false;
-      var vh = window.innerHeight, y = window.scrollY || 0;
-      vel = vel * 0.82 + (y - lastY) * 0.18;
-      lastY = y;
-      if (mq) mq.style.setProperty("--sk", Math.max(-2.2, Math.min(2.2, vel * 0.055)).toFixed(2) + "deg");
-      live.forEach(function (n) {
-        var r = n.getBoundingClientRect();
-        if (n.hasAttribute("data-par")) {
-          var f = parseFloat(n.getAttribute("data-par")) || 0.1;
-          var mid = r.top + r.height / 2 - vh / 2;
-          n.style.transform = "translate3d(0," + (-mid * f).toFixed(2) + "px,0)";
-        } else {
-          var words = n.querySelectorAll(".wd");
-          if (!words.length) return;
-          var p = (vh * 0.86 - r.top) / (vh * 0.52);
-          p = Math.max(0, Math.min(1, p));
-          var lit = p * words.length;
-          for (var k = 0; k < words.length; k++) {
-            var o = Math.max(0, Math.min(1, lit - k));
-            words[k].style.opacity = (0.16 + 0.84 * o).toFixed(3);
-          }
-        }
-      });
-      if (Math.abs(vel) > 0.4) run();
-    }
-    function run() { if (!ticking) { ticking = true; requestAnimationFrame(frame); } }
-    window.addEventListener("scroll", run, { passive: true });
-    window.addEventListener("resize", run, { passive: true });
-    run();
   }
 
-  /* ---- Counters -------------------------------------------------------- */
   function counters() {
     var vals = $$(".stats .v");
     if (!vals.length) return;
@@ -512,19 +608,6 @@
     });
   }
 
-  /* ---- Filters --------------------------------------------------------- */
-  function filters() {
-    var bar = $("[data-filters]"); if (!bar) return;
-    var items = $$("[data-cat]");
-    $$("button", bar).forEach(function (b) {
-      b.addEventListener("click", function () {
-        var f = b.getAttribute("data-filter");
-        $$("button", bar).forEach(function (o) { o.classList.toggle("on", o === b); });
-        items.forEach(function (i) { i.hidden = !(f === "all" || i.getAttribute("data-cat") === f); });
-      });
-    });
-  }
-
   /* ---- Lightbox -------------------------------------------------------- */
   function lightbox() {
     var t = $$("[data-lb]"); if (!t.length) return;
@@ -578,31 +661,8 @@
     });
   }
 
-  /* ---- Page transition ------------------------------------------------- */
-  function transition() {
-    var v = $("#veil");
-    if (!v) { document.body.classList.add("loaded"); return; }
-    requestAnimationFrame(function () {
-      document.body.classList.add("loaded");
-      setTimeout(function () { v.classList.add("gone"); }, 40);
-    });
-    document.addEventListener("click", function (e) {
-      var a = e.target.closest && e.target.closest("a[href]");
-      if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
-      var href = a.getAttribute("href") || "";
-      if (a.target === "_blank" || a.hasAttribute("download")) return;
-      if (/^(mailto:|tel:|#|https?:\/\/(?!localhost))/.test(href) && a.hostname !== location.hostname) return;
-      if (href.charAt(0) === "#" || /^(mailto:|tel:)/.test(href)) return;
-      if (a.hostname && a.hostname !== location.hostname) return;
-      if (a.pathname === location.pathname && a.search === location.search) return;
-      e.preventDefault();
-      v.classList.remove("gone"); v.classList.add("back");
-      setTimeout(function () { location.href = a.href; }, 340);
-    });
-    window.addEventListener("pageshow", function (e) {
-      if (e.persisted) { v.classList.remove("back"); v.classList.add("gone"); }
-    });
-  }
+  /* ---- Ready ------------------------------------------------------------- */
+  function ready() { requestAnimationFrame(function () { document.body.classList.add("loaded"); }); }
 
   /* ---- Enquiry --------------------------------------------------------- */
   function enquiry() {
@@ -626,12 +686,12 @@
         : v.from == null ? (add ? money(add) + " + charter" : "On request")
         : money(v.from + add);
     }
-    function go(n) {
+    function go(n, quiet) {
       at = Math.max(0, Math.min(steps.length - 1, n));
       steps.forEach(function (s, k) { s.classList.toggle("on", k === at); });
       marks.forEach(function (m, k) { m.classList.toggle("on", k === at); m.classList.toggle("done", k < at); });
       if (at === steps.length - 1) sum();
-      window.scrollTo({ top: f.getBoundingClientRect().top + window.scrollY - 140, behavior: SLOW ? "auto" : "smooth" });
+      if (!quiet) window.scrollTo({ top: f.getBoundingClientRect().top + window.scrollY - 140, behavior: SLOW ? "auto" : "smooth" });
     }
     function ok() {
       var need = $$("[required]", steps[at]);
@@ -650,7 +710,7 @@
       var o = $("#enquireOk");
       if (o) { o.classList.add("on"); o.scrollIntoView({ behavior: SLOW ? "auto" : "smooth", block: "center" }); }
     });
-    go(0);
+    go(0, true);
   }
 
   function forms() {
@@ -665,9 +725,8 @@
   }
 
   function boot() {
-    chrome(); header(); menu(); video(); lines(); reveals(); scrollFx(); counters();
-    rails(); filters(); lightbox(); accordion(); enquiry(); forms(); transition();
-    sectionIndex(); pinned(); voyageIndex();
+    chrome(); header(); menu(); heroCycle(); video(); lines(); reveals(); scrollFx(); counters();
+    rails(); lightbox(); accordion(); enquiry(); forms(); voyageIndex(); player(); driver(); ready();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

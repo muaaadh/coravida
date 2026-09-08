@@ -20,6 +20,36 @@ window.CV = (function () {
     year: new Date().getFullYear()
   };
 
+  /* ---- Hero film -------------------------------------------------------
+     The two aerials are licensed stock; the third is the real vessel.
+     `interval` is how long each clip holds before the next — 5000-7000 reads
+     well. Both fields are what the admin backend will edit. */
+  var hero = {
+    interval: 6000,
+    clips: [
+      { src: "reef",   poster: "poster-reef",   max: 1440,
+        alt: "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows" },
+      { src: "island", poster: "poster-island", max: 1440,
+        alt: "A palm-ringed island alone in deep blue water, seen from the air" },
+      { src: "vessel", poster: "poster-vessel", max: 1080,
+        alt: "Tiffany Blanc 14 underway on deep blue water off Malé" }
+    ]
+  };
+
+  /* ---- The player ------------------------------------------------------
+     Creative-Commons tracks, trimmed to 2:30 and matched to -18 LUFS so
+     nothing jumps between them. The player credits each one as it plays;
+     swap in licensed tracks before launch and keep the same shape. */
+  var music = {
+    line: "Feel the essence of the Maldives",
+    tracks: [
+      { file: "essence",     title: "An Opus in Bb",     by: "Blue Dot Sessions", lic: "CC BY 4.0",    at: "https://www.jamendo.com/track/1365397" },
+      { file: "lagoon",      title: "Cavern",            by: "Scorbutics",        lic: "CC BY-SA 3.0", at: "https://www.jamendo.com/track/1162812" },
+      { file: "horizon",     title: "Ada Hayden Sunset", by: "Ryan Sheeler",      lic: "CC BY 4.0",    at: "https://www.jamendo.com/track/1321658" },
+      { file: "trade-winds", title: "Marimbo",           by: "The Fish Who Saved the Planet", lic: "CC BY 4.0", at: "https://www.jamendo.com/track/1307442" }
+    ]
+  };
+
   var nav = [
     { label: "The Vessel", href: "vessel.html" },
     { label: "Excursions", href: "excursions.html" },
@@ -149,6 +179,7 @@ window.CV = (function () {
 
   var gallery = [
     { img: "vessel-guests", cat: "vessel",  cap: "Tiffany Blanc 14 · North Malé" },
+    { img: "atoll-pair",    cat: "islands", cap: "Two atolls, from altitude" },
     { img: "ray",           cat: "water",   cap: "Eagle ray, mid-morning" },
     { img: "sandbank",      cat: "islands", cap: "Sandbank at low water" },
     { img: "champagne",     cat: "aboard",  cap: "Poured on the gunwale" },
@@ -164,6 +195,8 @@ window.CV = (function () {
     { img: "aerial-marina", cat: "islands", cap: "Leaving Hulhumalé" },
     { img: "platter-macro", cat: "aboard",  cap: "Passionfruit and strawberries" },
     { img: "boarding",      cat: "vessel",  cap: "Back aboard" },
+    { img: "beach-aerial",  cat: "islands", cap: "A boat drawn up on the sand" },
+    { img: "palm-shore",    cat: "islands", cap: "Where the palms meet the shallows" },
     { img: "aerial-bow",    cat: "vessel",  cap: "Bow, from directly above" },
     { img: "swim-boat",     cat: "water",   cap: "Swimming off the platform" },
     { img: "pineapple",     cat: "aboard",  cap: "Held over the water" },
@@ -179,5 +212,5 @@ window.CV = (function () {
     { q: "How do we hold a date?", a: "A fifty percent deposit confirms the booking; the balance is due seven days before departure. Bank transfer and card are both accepted." }
   ];
 
-  return { brand: brand, nav: nav, voyages: voyages, addons: addons, vessel: vessel, gallery: gallery, faq: faq };
+  return { brand: brand, hero: hero, music: music, nav: nav, voyages: voyages, addons: addons, vessel: vessel, gallery: gallery, faq: faq };
 })();

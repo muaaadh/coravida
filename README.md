@@ -7,17 +7,51 @@ Live at **https://muaaadh.github.io/coravida/**
 
 ---
 
-## What changed in this build
+## What this build is
 
-Everything on the site is now **Coravida's own photography and film** — the August 2026
-drone, GoPro and Sony shoot. No stock. The site was also rebuilt around three ideas:
+Twelve pages of the client's own photography and film — the August 2026 drone, GoPro and
+Sony shoot, plus 4K stock for the hero film. Three ideas run through it:
 
-- **Roomier.** One idea per screen, a much larger vertical rhythm (`--sec` runs to 12rem),
-  and far less copy. Sixteen pages became thirteen; Experiences and Rates folded into
-  Voyages, where they are actually read.
-- **Quieter.** White ground, occasional full-bleed film, one navy close. The alternating
-  grey banding, the floating dock and the hero tab switcher are gone.
-- **Faster.** Details below.
+- **Roomier.** One idea per screen, one vertical scale (`--s1…--s6`, `--sec`), and far
+  less copy. The home page is five sections; the gallery is one.
+- **Quieter.** White ground, occasional full-bleed film, one navy close. Marine blue is
+  reserved for state — a running track, an open accordion, a live timeline row — so it
+  still means something when it appears.
+- **Faster.** 1.2 MB on a phone, 48–76 ms to first paint. Details below.
+
+## The hero film
+
+Three clips cycle behind the headline — a reef, an island, the vessel underway — each
+cross-fading into the next. **The interval is content, not code:** `CV.hero.interval` in
+`assets/js/data.js`, in milliseconds, which is what an admin backend would edit.
+
+```js
+var hero = {
+  interval: 6000,                                     // 5–7s reads well
+  clips: [ { src: "reef", poster: "poster-reef", max: 1440, alt: "…" }, … ]
+};
+```
+
+Each clip is encoded at four widths and the tier is chosen at runtime from viewport × DPR,
+capped at `max` — `vessel` came from a 1080p source, so it never claims more. Nothing is
+fetched until the page has loaded; the next clip and **its poster** are fetched 1.4 s into
+the current one, and only while the hero is still on screen. Scroll past it, or switch
+tabs, and both the cycling and the fetching stop.
+
+## The music player
+
+A floating glass card, bottom right, above a 52px button that is the only thing visible
+until you open it. It plays four Creative Commons tracks chosen for the room they leave —
+"Feel the essence of the Maldives" sits at the top of the panel.
+
+| | |
+|---|---|
+| Tracks | `CV.music.tracks` — file, title, artist, licence, source URL. The licence links out. |
+| Format | MP3, 96 kbps, trimmed to 2:30 with a 1.2 s fade in and a 3.5 s fade out, so the hand-off between tracks is clean. 1.8 MB each, fetched **only when you press play**. |
+| Across pages | Track, position, playing state and whether the panel was open all persist in `sessionStorage` and resume on the next page. |
+| While playing | The button pulses a slow marine ring and the equaliser bars move. |
+
+Nothing autoplays. `preload="none"` means an untouched player costs zero bytes.
 
 ## Motion
 
@@ -27,17 +61,19 @@ carries the whole layer — no library:
 | Behaviour | Hook |
 |---|---|
 | **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` into the closing navy section, or the footer where there isn't one |
-| **A pinned run.** The page holds still and eight photographs travel left as you scroll, on mixed aspect ratios. Falls back to a swipeable rail below 900px. | `data-pin` |
-| **A section index.** A small glass capsule on the right edge; the tick for the section you are in lengthens and names itself. Click to jump. Inverts over dark sections. | `data-idx="Name"`, `data-idx-dark` |
 | **The excursion index.** Four numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
-| Sections fade and lift, staggered | `data-a="up\|fade\|scale"` inside a `data-stagger` parent, which numbers the children |
+| Sections fade and lift, staggered | `data-a="up\|fade"` inside `data-stagger`, which numbers any child the build did not |
 | Photographs reveal under a curtain wipe while the image settles from 1.12× | `data-a="clip"` |
 | Hero film and full-bleed stills drift against the scroll | `data-par` |
-| One paragraph per page lights word by word as it passes | `data-scrub` |
 | Statistics count up as they enter | any `.stats .v` whose value is numeric |
-| Scroll-progress line, page-to-page fade, hero zoom-out on load, cards that lift, buttons that fill from below, links that sweep an underline, a draggable rail | built in |
+| Cards lift, buttons fill from below, links sweep an underline, the rail drags | built in |
 | Headlines never orphan a word | `text-wrap: balance`, measured before the line split |
+
+**One scroll driver.** The header state, the reveals and the parallax are all callbacks on
+a single rAF-throttled scroll frame (`onFrame`). The reveals are a *sweep*, not an
+`IntersectionObserver` threshold — a fast flick can outrun a threshold, and anything it
+skipped would never appear at all.
 
 All of it is disabled under `prefers-reduced-motion`, where every element resolves to its
 end state and the sea stands still.
@@ -46,7 +82,7 @@ The caustics are a 512px seamless tile generated with ImageMagick (tiled noise �
 `EdgeIn` morphology → levels), 2 KB as WebP, drifting on two layers so the repeat never
 reads.
 
-Three traps worth recording:
+Traps worth recording:
 
 > An element hidden with `clip-path: inset(0 0 100% 0)` is also invisible to
 > `IntersectionObserver`, so it can never reveal itself. The wipe uses a curtain
@@ -59,6 +95,10 @@ Three traps worth recording:
 > `200%` for a seamless loop — it needs `max-width: none`. And a `fill` rule matching
 > `.parent path` beats a class on the path itself, which will quietly replace a gradient
 > with a flat colour.
+>
+> `overflow: hidden` on the footer clips the sea, which is drawn *above* its own host —
+> the footer is `position: relative` with no clip, and `:has(+ .section--navy)` gives the
+> section above it back the 115px the sea takes.
 
 ## The header
 
@@ -77,29 +117,48 @@ Corners are soft everywhere else too — a single `--r` token (12–20px, fluid)
 photograph, the gallery tiles, the lightbox and the summary panel. Scrolling is the
 browser's own; nothing hijacks the wheel.
 
+## The design system
+
+Deliberately small, because a large one is how a site stops being clean:
+
+| | |
+|---|---|
+| Colour | Navy `#03224D`, marine `#0C6FDB`, ocean `#0046B1`, mist `#F5F8FB`. **One** body grey (`--body`, 5.7:1 on white) and **one** hairline. |
+| Type | Montserrat 300 for display, Inter 400/500 for everything else. Four display sizes (`.d1–.d4`) and **one** micro-caps label rule, shared by 17 selectors. |
+| Space | `--s1…--s6` for vertical rhythm, `--sec` for section padding, `--gut` for the page gutter. No spacing lives in the HTML — the only inline styles in the whole build are stagger indices. |
+| Reveals | Three: `up`, `fade`, `clip`. |
+
 ## Speed
 
 | | |
 |---|---|
 | Fonts | Self-hosted woff2 (Montserrat 300, Inter 400/500), preloaded, `font-display:swap`. No Google Fonts round-trip. |
-| Images | WebP only, three widths each (900 / 1600 / 2200) served through `srcset` + `sizes`. 34 photographs total **4.2 MB**, against 15 MB of JPEG before. |
-| Video | H.264 in three tiers — 1080p / 720p / 540p — chosen at runtime from viewport width and DPR. Encoded at ~4.2 Mbps with light denoise and an unsharp pass; the drone source is a 7.8 Mbps 1080p proxy, so that is close to its ceiling. |
-| Video loading | A WebP poster paints first. The hero clip is fetched **after `load`**; the mid-page clip only when it comes within 300px of the viewport. Skipped entirely under `prefers-reduced-motion` or Save-Data. |
-| CSS / JS | 23 KB and 17 KB uncompressed, one file each, no libraries. |
+| Images | WebP only, four widths each (900 / 1200 / 1600 / 2200) through `srcset` + `sizes`, each carrying its own `width`/`height` read from the WebP header at build time, so nothing shifts as they land. 32 photographs, 21 MB on disk. |
+| Video | H.264 in four tiers — 1440 / 1080 / 720 / 540 — chosen at runtime from viewport × DPR and capped per clip at what its source can honestly give. |
+| Video loading | A WebP poster paints first; the clip is fetched after `load`. Skipped entirely under `prefers-reduced-motion` or Save-Data. |
+| Audio | Nothing until the player is pressed. |
+| CSS / JS | 34 KB and 35 KB uncompressed — **8.6 KB and 10.1 KB gzipped**. One file each, no libraries. |
 
-Measured cold, no cache, on the home page: first contentful paint around 70 ms and **760 KB**
-before the hero film begins loading. The 8-second hero loop is 4.5 MB at 1080p, 2.1 MB at
-720p and 1.1 MB at 540p, and none of it is fetched until the page has finished loading.
+Measured cold with no cache on the home page:
+
+| | Desktop 1440 @2× | Phone 390 @3× |
+|---|---|---|
+| First view | 3.96 MB | **1.20 MB** |
+| First contentful paint | 48 ms | 72 ms |
+| Requests | 17 | 16 |
+
+Of the desktop figure, 3.1 MB is the 1440p hero film itself; the page is complete and
+readable at 760 KB before it arrives.
 
 ## Pages
 
 | File | What it is |
 |---|---|
-| `index.html` | Home — film hero, positioning, three excursions, a pinned photographic run, film interlude, the vessel |
+| `index.html` | Home — film hero, the offer and three excursions, film interlude, the vessel |
 | `vessel.html` | Tiffany Blanc 14 — four decks, specification, what is aboard |
-| `excursions.html` | The four excursions as a numbered index, then rates and add-ons |
+| `excursions.html` | The four excursions as a numbered index, then what a charter covers and add-ons |
 | `excursions/<slug>.html` | One page per excursion (4), each with its hour-by-hour timeline |
-| `gallery.html` | Filterable mosaic with a lightbox |
+| `gallery.html` | Mosaic with a lightbox |
 | `about.html` | The company, the crew, the reef |
 | `contact.html` | Details, message form, FAQ |
 | `enquire.html` | Four-step charter enquiry with a live indicative total |
@@ -107,32 +166,38 @@ before the hero film begins loading. The 8-second hero loop is 4.5 MB at 1080p, 
 
 ## Changing the content
 
-Everything is in **`assets/js/data.js`** — brand facts, navigation, the four excursions
-(hour-by-hour itineraries, inclusions), add-ons, the vessel, gallery captions, FAQ.
+Everything is in **`assets/js/data.js`** — brand facts, the hero clips and their interval,
+the music tracks, navigation, the four excursions (hour-by-hour itineraries, inclusions),
+add-ons, the vessel, gallery captions, FAQ.
 
 Every HTML page is generated from it:
 
 ```sh
-node tools/build.js      # rewrites all 13 pages
+node tools/build.js      # rewrites all 12 pages
 ```
 
-Edit `data.js`, run the build, commit. Header, menu and footer are injected by
+Edit `data.js`, run the build, commit. Header, menu, footer, sea and player are injected by
 `assets/js/site.js`, so they change in one place. Pages that open on white carry
 `class="light-page"` on `<body>` so the header renders navy instead of white.
 
 ## Media
 
-Sources, all shot for Coravida in August 2026:
+Client footage, all shot for Coravida in August 2026:
 
-- **DJI drone** — `Images/Safari - 001/*.mp4`. The hero film, the anchored film, and five
-  aerial stills are cut from these.
+- **DJI drone** — `Images/Safari - 001/*.mp4`. The anchored film and five aerial stills.
+  These files are the app's 1080p proxies, so 1920px is their honest ceiling.
 - **GoPro** — stills in `gopro pics - 001`, underwater film in `gopro videos - 001`. The
   ray interlude is cut from `GX013576`.
-- **Sony (ARW)** — the champagne, platter, pineapple and float stills. The embedded
-  full-size previews were extracted; if you need more resolution, develop the RAWs.
+- **Sony (ARW)** — the champagne, platter, pineapple and float stills, from the embedded
+  full-size previews. Develop the RAWs if you need more.
 
-To re-cut a clip or re-export a still, `ffmpeg` and `cwebp` are all that is needed — the
-exact commands used are in the git history for this commit.
+Stock, licensed for commercial use: the three hero clips (4K) and the four music tracks
+(Creative Commons BY / BY-SA — the attribution is in the player, and must stay there).
+
+```sh
+bash tools/images.sh     # every photograph, from the shoot
+bash tools/hero.sh       # the hero clips, all four tiers, plus posters
+```
 
 ## The four excursions
 
@@ -152,43 +217,34 @@ stop, the stop and one line about it.
 "On request"; the enquiry form shows the same, and add-ons total as "USD n + charter". Set
 `from` in `data.js` and the figures appear everywhere at once.
 
-## Photographs
+## Still to confirm with the client
 
-`bash tools/images.sh` rebuilds every photograph from the August 2026 shoot: three widths
-each, WebP, quality 84–88, and each capped at what its source can honestly give —
+The vessel specification in `CV.vessel`, the excursion rates and the six add-on prices, the
+contact details in `CV.brand`, and the 2019 founding year. Both forms are demonstrations —
+they show a confirmation and write to `localStorage` (`cv.enquiries`), and send nothing.
 
-- **GoPro stills and video** (4000px / 5.3K) → up to 2800px
-- **Sony ARW previews** (1616px) → 1616px, no upscaling
-- **DJI drone** → 1920px; those files are the app's 1080p proxies, so that is the ceiling
-
-One gap: **there is no sunset photograph in the shoot** — everything was shot between
+One gap in the shoot: **there is no sunset photograph** — everything was shot between
 08:45 and 10:00, or underwater. Three of the four excursions end on a sunset cruise, so
 that hour is worth shooting.
-
-## Still placeholder
-
-Confirm with the client before launch: the vessel specification in `CV.vessel`, the
-excursion rates and the six add-on prices, the contact details in `CV.brand`, and the 2019
-founding year.
-Both forms are demonstrations — they show a confirmation and write to `localStorage`
-(`cv.enquiries`), and send nothing.
 
 ## Structure
 
 ```
 index.html  vessel.html  excursions.html  gallery.html
 about.html  contact.html  enquire.html  404.html
-voyages/*.html            5 voyage pages — generated
+excursions/*.html         4 excursion pages — generated
 assets/
   css/site.css            the design system
   js/data.js              all content — edit this
-  js/site.js              chrome, video, reveals, rail, lightbox, forms
-  img/                    WebP, three widths each, plus the logo lockups
-  video/                  three clips, three tiers each
+  js/site.js              chrome, sea, hero cycle, player, reveals, rail, lightbox, forms
+  img/                    WebP, four widths each, plus the logo lockups
+  video/                  five clips, up to four tiers each
+  audio/                  four CC tracks
   fonts/                  Montserrat 300, Inter 400/500
 tools/build.js            regenerates every page
 tools/images.sh           rebuilds every photograph from the shoot
+tools/hero.sh             rebuilds the hero clips and their posters
 ```
 
-Checked at 390, 768, 1024 and 1440px across all 13 pages: no horizontal overflow, no
-broken images, no missing alt text, no console errors.
+Checked at 390, 768, 1024 and 1440px across all 12 pages: no horizontal overflow, no
+broken images, no missing alt text, no console errors, and the sea renders on every one.

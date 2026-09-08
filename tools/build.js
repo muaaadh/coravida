@@ -24,14 +24,55 @@ const ARROW = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="
 const CHEVL = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M7.5 1.5 3 6l4.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
 const CHEVR = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5 9 6l-4.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
 
+/* the webp header, so every <img> can carry its own intrinsic size */
+const POSTER = 1600;   // film stills: the clip takes over before a larger tier pays
+const dimCache = new Map();
+function dims(file) {
+  if (dimCache.has(file)) return dimCache.get(file);
+  let d = null;
+  try {
+    const b = fs.readFileSync(path.join(IMGDIR, file));
+    const fmt = b.toString("ascii", 12, 16);
+    if (fmt === "VP8X") d = { w: 1 + b.readUIntLE(24, 3), h: 1 + b.readUIntLE(27, 3) };
+    else if (fmt === "VP8 ") d = { w: b.readUInt16LE(26) & 0x3fff, h: b.readUInt16LE(28) & 0x3fff };
+    else if (fmt === "VP8L") {
+      const n = b.readUInt32LE(21);
+      d = { w: 1 + (n & 0x3fff), h: 1 + ((n >> 14) & 0x3fff) };
+    }
+  } catch (e) { /* the tier is simply not built yet */ }
+  dimCache.set(file, d);
+  return d;
+}
+
+/* every width that actually exists for a name, smallest first */
+const tiers = new Map();
+for (const f of have) {
+  const m = /^(.+)-(\d+)\.webp$/.exec(f);
+  if (!m) continue;
+  (tiers.get(m[1]) || tiers.set(m[1], []).get(m[1])).push(+m[2]);
+}
+tiers.forEach(a => a.sort((x, y) => x - y));
+
 /* responsive <img> */
-function img(name, alt, { r = "", sizes = "100vw", eager = false } = {}) {
-  const set = [900, 1600, 2200].filter(w => have.has(`${name}-${w}.webp`));
-  const src = `${r}assets/img/${name}-${set[Math.min(1, set.length - 1)]}.webp`;
+function img(name, alt, { r = "", sizes = "100vw", eager = false, cap = 0 } = {}) {
+  let set = tiers.get(name) || [];
+  if (!set.length) throw new Error("no image tiers for " + name);
+  // a still the film replaces within a second does not need the largest tier
+  if (cap) { const under = set.filter(w => w <= cap); if (under.length) set = under; }
+  const pick = set[Math.min(1, set.length - 1)];
+  const src = `${r}assets/img/${name}-${pick}.webp`;
   const srcset = set.map(w => `${r}assets/img/${name}-${w}.webp ${w}w`).join(", ");
-  return `<img src="${src}" srcset="${srcset}" sizes="${sizes}" alt="${esc(alt)}"` +
+  const d = dims(`${name}-${pick}.webp`);
+  return `<img src="${src}" srcset="${srcset}" sizes="${sizes}"` +
+    (d ? ` width="${d.w}" height="${d.h}"` : "") + ` alt="${esc(alt)}"` +
     (eager ? ' fetchpriority="high" decoding="async"' : ' loading="lazy" decoding="async"') + ">";
 }
+/* a poster the browser must not fetch until its clip is cued */
+function held(name) {
+  return img(name, "", { sizes: "100vw", cap: POSTER })
+    .replace(/ src="/, ' data-src="').replace(/ srcset="/, ' data-srcset="');
+}
+
 /* animated figure: clip-wipe reveal + inner scale */
 function fig(name, alt, { ratio = "r43", href = null, r = "", sizes = "(min-width:960px) 58vw, 100vw", z = true, eager = false, anim = "clip", i = null, par = null } = {}) {
   const inner = img(name, alt, { r, sizes, eager });
@@ -85,12 +126,8 @@ ${main}
 
 const cta = (r = "", h = "Tell us when, and we will tell you where") => `  <section class="section section--navy center">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Hulhumal&eacute; Marina</p>
       <h2 class="d2 lines">${h}</h2>
-      <div class="acts" data-a="up">
-        <a class="btn btn--white" href="${r}enquire.html">Reserve the vessel</a>
-        <a class="btn btn--line" href="${r}contact.html">Contact us</a>
-      </div>
+      <div class="acts" data-a="up"><a class="btn btn--white" href="${r}enquire.html">Enquire</a></div>
     </div>
   </section>`;
 
@@ -107,85 +144,60 @@ const list = items => `<ul class="stack-s" data-stagger>` + items.map((t, i) =>
 function home() {
   const v = CV.voyages;
   const feat = ["island-and-snorkelling", "shark-point-and-gulhi", "sunset-adventure"].map(s => v.find(x => x.slug === s));
-  const cards = feat.map((x, i) => `        <a class="card" href="excursions/${x.slug}.html" data-stagger>
+  const cards = feat.map((x, i) => `        <a class="card" href="excursions/${x.slug}.html" data-a="up" style="--i:${i}">
           ${fig(x.img, x.alt, { ratio: "r34", sizes: "(min-width:760px) 31vw, 100vw", i })}
-          <div class="card__m" data-a="up" style="--i:${i}">
+          <div class="card__m">
             <h3 class="d4">${x.title}</h3>
             <div class="kv"><span>${x.kind}</span><span>${x.duration}</span></div></div>
         </a>`).join("\n");
 
-  const RUN = [
-    ["champagne", "Sparkling wine poured over a fruit platter on the gunwale"],
-    ["floats", "Two guests drifting on floats in deep blue water"],
-    ["snorkellers", "Two snorkellers over the reef in clear water"],
-    ["platter-macro", "Passionfruit, strawberries and blueberries on a tray"],
-    ["boarding", "Guests boarding Tiffany Blanc 14 from the water"],
-    ["pineapple", "A pineapple held over sparkling water"],
-    ["aerial-bow", "The bow of Tiffany Blanc 14 from directly above"],
-    ["sandbank-2", "The long walk out along a sandbank"]
-  ].map(([n, a], i) => `        <div class="pin__i">${fig(n, a, { sizes: "34vw", i: i % 3 })}</div>`).join("\n");
+  const slides = CV.hero.clips.map((c, i) => `        <div class="hero__s">
+          ${i === 0 ? img(c.poster, c.alt, { sizes: "100vw", eager: true, cap: POSTER }) : held(c.poster)}
+          <video data-src="${c.src}" data-max="${c.max}" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+        </div>`).join("\n");
 
-  const main = `  <section class="hero">
+  const main = `  <section class="hero" data-hero>
     <div class="hero__bg" data-par="0.06">
-      ${img("poster-hero", "Tiffany Blanc 14 underway off Malé", { sizes: "100vw", eager: true })}
-      <video data-src="hero" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+${slides}
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">Coravida &middot; Maldives</p>
       <h1 class="d1 lines">A quieter way through the atolls</h1>
       <p data-a="up">${linkL("excursions.html", "The excursions")}</p>
     </div>
-    <div class="hero__cue" aria-hidden="true"><i></i>Scroll</div>
   </section>
 
-  <section class="section center" data-idx="Overview">
-    <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up"><b>01</b> One vessel</p>
-      <h2 class="d2 measure--wide lines" style="margin-inline:auto">The sea, at your own pace</h2>
-      <p class="lede measure" data-scrub>Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.</p>
-      <p data-a="up">${link("vessel.html", "Discover the vessel")}</p>
-    </div>
-  </section>
-
-  <section class="section--sm" style="padding-top:0" data-idx="Excursions">
-    <div class="wrap stack-l">
-      <p class="eyebrow" data-a="up"><b>02</b> Excursions</p>
-      <div class="g3">
+  <section class="section">
+    <div class="wrap stack-xl">
+      <div class="lead stack-l" data-stagger>
+        <p class="eyebrow" data-a="up">One vessel</p>
+        <h2 class="d2 lines">The sea, at your own pace</h2>
+        <p class="lede measure" data-a="up">Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.</p>
+        <p data-a="up">${link("vessel.html", "Discover the vessel")}</p>
+      </div>
+      <div class="g3" data-stagger>
 ${cards}
       </div>
     </div>
   </section>
 
-  <section class="pin" data-pin data-idx="Aboard">
-    <div class="pin__stick">
-      <div class="pin__track">
-        <div class="pin__lead stack-l" data-stagger>
-          <p class="eyebrow" data-a="up"><b>03</b> Aboard</p>
-          <h2 class="d3 lines">What the day is made of</h2>
-          <p class="small" data-a="up">Scroll on &mdash;</p>
-        </div>
-${RUN}
-      </div>
-    </div>
-  </section>
-
-  <section class="band" data-idx="Below" data-idx-dark>
+  <section class="band">
     <div class="band__bg" data-par="0.1">
-      ${img("poster-ray", "", { sizes: "100vw" })}
-      <video data-src="ray" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      ${img("poster-ray", "", { sizes: "100vw", cap: POSTER })}
+      <video data-src="ray" data-max="1080" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="band__in wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up"><b>04</b> Below</p>
+      <p class="eyebrow" data-a="up">Below</p>
       <h2 class="d2 lines">And then the water opens</h2>
       <p class="lede" data-a="up">Reefs, channels, and whatever is passing through them that morning.</p>
     </div>
   </section>
 
-  <section class="section" data-idx="The vessel">
+  <section class="section">
     <div class="wrap">
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up"><b>05</b> The vessel</p>
+          <p class="eyebrow" data-a="up">The vessel</p>
           <h2 class="d2 lines">Tiffany Blanc 14</h2>
           <p class="lede" data-a="up">Fourteen metres, refitted in 2025. Twelve aboard for the day, four asleep on the water.</p>
           <p data-a="up">${link("vessel.html", "Go aboard")}</p>
@@ -201,9 +213,9 @@ ${RUN}
 ${cta()}`;
 
   page({
-    file: "index.html", pageAttr: "index.html", og: "vessel-guests",
+    file: "index.html", pageAttr: "index.html", og: "poster-island",
     title: "Coravida — Private charters through the Maldivian atolls",
-    desc: "Private day charters and overnight voyages aboard Tiffany Blanc 14, a 14-metre flybridge cruiser berthed at Hulhumalé Marina, Malé.",
+    desc: "Private day charters and overnight excursions aboard Tiffany Blanc 14, a 14-metre flybridge cruiser berthed at Hulhumalé Marina, Malé.",
     main
   });
 }
@@ -211,11 +223,10 @@ ${cta()}`;
 /* -------------------------------------------------------------- VESSEL -- */
 function vessel() {
   const V = CV.vessel;
-  const decks = V.decks.map((d, i) => `  <section class="section${i % 2 ? " section--mist" : ""}" data-idx="${d.t}">
+  const decks = V.decks.map((d, i) => `  <section class="section${i % 2 ? " section--mist" : ""}">
     <div class="wrap">
       <div class="split${i % 2 ? " split--f" : ""}">
         <div class="split__t stack-l" data-stagger>
-          <p class="eyebrow" data-a="up"><b>${d.n}</b> ${d.t === "The water" ? "Overboard" : "Deck"}</p>
           <h2 class="d3 lines">${d.t}</h2>
           <p class="lede" data-a="up">${d.d}</p>
         </div>
@@ -226,35 +237,34 @@ function vessel() {
 
   const main = `  <section class="hero hero--mid">
     <div class="hero__bg" data-par="0.06">
-      ${img("poster-anchor", "Tiffany Blanc 14 at anchor above a reef edge", { sizes: "100vw", eager: true })}
-      <video data-src="anchor" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      ${img("poster-anchor", "Tiffany Blanc 14 at anchor above a reef edge", { sizes: "100vw", eager: true, cap: POSTER })}
+      <video data-src="anchor" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">The vessel</p>
       <h1 class="d1 lines">Tiffany Blanc 14</h1>
-      <p data-a="up">${linkL("enquire.html", "Reserve the vessel")}</p>
+      <p data-a="up">${linkL("enquire.html", "Enquire")}</p>
     </div>
   </section>
 
-  <section class="section center" data-idx="The vessel">
-    <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Fourteen metres</p>
-      <h2 class="d2 measure--wide lines" style="margin-inline:auto">Built for long, flat water</h2>
-      <p class="lede measure" data-scrub>A flybridge cruiser stripped back and refitted in 2025, run by a crew of three. Twelve aboard for the day, four asleep on the water.</p>
+  <section class="section center">
+    <div class="wrap stack-xl">
+      <div class="narrow stack-l" data-stagger>
+        <p class="eyebrow" data-a="up">Fourteen metres</p>
+        <h2 class="d2 measure--wide lines">Built for long, flat water</h2>
+        <p class="lede measure" data-a="up">A flybridge cruiser stripped back and refitted in 2025, run by a crew of three. Twelve aboard for the day, four asleep on the water.</p>
+      </div>
+      ${stats(V.stats)}
     </div>
-  </section>
-
-  <section class="section--sm" style="padding-top:0">
-    <div class="wrap">${stats(V.stats)}</div>
   </section>
 
 ${decks}
 
-  <section class="section" data-idx="On paper">
+  <section class="section">
     <div class="wrap">
       <div class="g2">
         <div class="stack-l" data-stagger>
-          <p class="eyebrow" data-a="up"><b>05</b> Specification</p>
+          <p class="eyebrow" data-a="up">Specification</p>
           <h2 class="d3 lines">On paper</h2>
           ${dl(V.spec.map(s => [s.k, s.v]))}
         </div>
@@ -264,14 +274,6 @@ ${decks}
           ${list(V.aboard)}
         </div>
       </div>
-    </div>
-  </section>
-
-  <section class="band" data-idx="Capacity" data-idx-dark>
-    <div class="band__bg" data-par="0.1">${img("aerial-anchor", "", { sizes: "100vw" })}</div>
-    <div class="band__in wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Capacity</p>
-      <h2 class="d2 lines">Twelve aboard for the day. Four asleep on the water.</h2>
     </div>
   </section>
 
@@ -286,7 +288,7 @@ ${cta()}`;
 }
 
 /* ------------------------------------------------------------- VOYAGES -- */
-function voyages() {
+function excursions() {
   const rows = CV.voyages.map((v, i) => `        <a class="vx__row" href="excursions/${v.slug}.html" data-thumb="assets/img/${v.img}-900.webp" data-alt="${esc(v.alt)}" data-a="up" style="--i:${Math.min(i,4)}">
           <span class="vx__n">${String(i + 1).padStart(2, "0")}</span>
           <span class="vx__t">${v.title}</span>
@@ -298,36 +300,34 @@ function voyages() {
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">Excursions</p>
       <h1 class="d1 lines">Four ways to leave the harbour</h1>
-      <p class="lede" data-scrub>Every voyage is a private charter of the whole vessel, crew included, out of Hulhumal&eacute; Marina.</p>
+      <p class="lede" data-a="up">Four ways out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.</p>
     </div>
   </section>
 
   <section class="section--sm">
-    <div class="wrap">${fig("aerial-underway", "Tiffany Blanc 14 underway on deep blue water off Malé", { ratio: "r169", sizes: "100vw", eager: true, par: "0.05" })}</div>
+    <div class="wrap">${fig("beach-aerial", "A boat drawn up on white sand, the reef running out into deep blue", { ratio: "r169", sizes: "100vw", eager: true, par: "0.05" })}</div>
   </section>
 
-  <section class="section" data-idx="The four">
+  <section class="section">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up"><b>01</b> The four</p>
+      <p class="eyebrow" data-a="up">The four</p>
       <div class="vx">
 ${rows}
       </div>
     </div>
   </section>
 
-  <section class="section section--mist" data-idx="Rates">
+  <section class="section section--mist">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up"><b>02</b> Rates</p>
+      <p class="eyebrow" data-a="up">Rates</p>
       <h2 class="d2 lines">What it costs to leave</h2>
       <p class="lede measure" data-a="up">Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included. Rates are quoted on enquiry against your dates and guest count.</p>
-      ${dl(CV.voyages.map(v => [`<a href="excursions/${v.slug}.html">${v.title}</a>`,
-        `${v.kind} &middot; ${v.duration} &middot; ${v.guests} &middot; <span class="num">${rateShort(v)}</span>`]), " dl--lead")}
     </div>
   </section>
 
-  <section class="section" data-idx="Add-ons">
+  <section class="section">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up"><b>03</b> Add-ons</p>
+      <p class="eyebrow" data-a="up">Add-ons</p>
       <h2 class="d3 lines">Things we can arrange</h2>
       ${dl(CV.addons.map(a => [a.t, `${a.d} <span class="num">${money(a.p)}</span>`]))}
       <p class="note" data-a="up">A fifty percent deposit confirms a date; the balance is due seven days before departure. If the captain calls off a sailing for weather, you move the date or take the money back.</p>
@@ -345,7 +345,7 @@ ${cta()}`;
 }
 
 /* -------------------------------------------------- VOYAGE DETAIL PAGES -- */
-function voyagePages() {
+function excursionPages() {
   CV.voyages.forEach(v => {
     const r = "../";
     const others = CV.voyages.filter(x => x.slug !== v.slug);
@@ -360,25 +360,24 @@ function voyagePages() {
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${v.kind} &middot; ${v.area}</p>
       <h1 class="d1 lines">${v.title}</h1>
-      <p data-a="up">${linkL(r + "enquire.html", "Reserve this excursion")}</p>
+      <p data-a="up">${linkL(r + "enquire.html", "Enquire")}</p>
     </div>
   </section>
 
   <section class="section center">
-    <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">The voyage</p>
-      <h2 class="d2 measure--wide lines" style="margin-inline:auto">${v.line}</h2>
-      <p class="lede measure" data-scrub>${v.intro}</p>
-    </div>
-  </section>
-
-  <section class="section--sm" style="padding-top:0">
-    <div class="wrap">${stats([
+    <div class="wrap stack-xl">
+      <div class="narrow stack-l" data-stagger>
+        <p class="eyebrow" data-a="up">The excursion</p>
+        <h2 class="d2 measure--wide lines">${v.line}</h2>
+        <p class="lede measure" data-a="up">${v.intro}</p>
+      </div>
+      ${stats([
       { v: v.duration.split(" ")[0], u: v.duration.split(" ").slice(1).join(" "), k: "Duration" },
       { v: (String(v.guests).match(/\d+/) || ["12"])[0], u: "", k: "Guests" },
       { v: v.departs.split(" · ")[0], u: "", k: "Departs" },
       { v: v.plan[v.plan.length - 1].t, u: "", k: "Returns" }
-    ])}</div>
+    ])}
+    </div>
   </section>
 
   <section class="section section--mist">
@@ -424,7 +423,7 @@ ${shots}
   </section>
 
   <section class="section">
-    <div class="wrap" style="margin-bottom:clamp(2rem,4vw,3rem)">
+    <div class="wrap head-wrap">
       <div class="head">
         <div class="stack-s" data-stagger>
           <p class="eyebrow" data-a="up">Also aboard</p>
@@ -444,7 +443,7 @@ ${rail}
 ${cta(r)}`;
 
     page({
-      file: `excursions/${v.slug}.html`, pageAttr: "voyages.html", r,
+      file: `excursions/${v.slug}.html`, pageAttr: "excursions.html", r,
       og: v.img, title: `${v.title} — Coravida`,
       desc: `${v.line} ${v.kind}, ${v.duration}, ${v.area}. A private charter of Tiffany Blanc 14 from Hulhumalé Marina.`,
       main
@@ -454,9 +453,7 @@ ${cta(r)}`;
 
 /* ------------------------------------------------------------- GALLERY -- */
 function gallery() {
-  const cats = [["all", "Everything"], ["vessel", "The vessel"], ["aboard", "Aboard"], ["water", "The water"], ["islands", "Islands"]];
-  const bar = cats.map(([k, l], i) => `        <button type="button" data-filter="${k}"${i === 0 ? ' class="on"' : ""}>${l}</button>`).join("\n");
-  const items = CV.gallery.map((g, i) => `        <figure data-cat="${g.cat}" data-a="up" style="--i:${i % 3}">
+  const items = CV.gallery.map((g, i) => `        <figure data-a="up" style="--i:${i % 3}">
           <button type="button" data-lb="assets/img/${g.img}-1600.webp" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="Open: ${esc(g.cap)}">
             ${img(g.img, g.cap, { sizes: "(min-width:1100px) 31vw, (min-width:700px) 47vw, 100vw", eager: i < 3 })}
           </button>
@@ -470,14 +467,8 @@ function gallery() {
     </div>
   </section>
 
-  <section class="section--sm">
-    <div class="wrap"><div class="filters" data-filters data-a="up">
-${bar}
-    </div></div>
-  </section>
-
-  <section class="section" style="padding-top:0">
-    <div class="wrap"><div class="mosaic">
+  <section class="section">
+    <div class="wrap"><div class="mosaic" data-stagger>
 ${items}
     </div></div>
   </section>
@@ -506,33 +497,26 @@ function about() {
     <div class="wrap">${fig("aerial-marina", "Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air", { ratio: "r169", sizes: "100vw", eager: true, par: "0.05" })}</div>
   </section>
 
-  <section class="section" data-idx="The company">
+  <section class="section">
     <div class="wrap">
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up"><b>01</b> The company</p>
+          <p class="eyebrow" data-a="up">The company</p>
           <h2 class="d2 lines">One vessel is the point</h2>
         </div>
         <div class="stack-l" data-stagger>
-          <p class="lede measure--wide" data-scrub>We run a single boat rather than a fleet, so the vessel you were shown is the vessel you sail on. Nothing is shared and nothing is subcontracted.</p>
+          <p class="lede measure--wide" data-a="up">We run a single boat rather than a fleet, so the vessel you were shown is the vessel you sail on. Nothing is shared and nothing is subcontracted.</p>
           <p class="lede measure--wide" data-a="up">Three crew take her out, and it is the same three every sailing &mdash; a captain who reads the weather, a chef, and a deckhand who has the ladder down before you ask.</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section section--mist">
-    <div class="wrap">${stats([
-      { v: "2019", u: "", k: "Founded" }, { v: "1", u: "", k: "Vessel" },
-      { v: "3", u: "", k: "Crew" }, { v: "12", u: "", k: "Guests" }
-    ])}</div>
-  </section>
-
-  <section class="section" data-idx="The crew">
+  <section class="section">
     <div class="wrap">
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up"><b>02</b> The crew</p>
+          <p class="eyebrow" data-a="up">The crew</p>
           <h2 class="d3 lines">Three people, every sailing</h2>
         </div>
         ${dl([
@@ -544,24 +528,16 @@ function about() {
     </div>
   </section>
 
-  <section class="section section--mist" data-idx="The reef">
+  <section class="section section--mist">
     <div class="wrap">
       <div class="split split--f">
         <div class="split__t stack-l" data-stagger>
-          <p class="eyebrow" data-a="up"><b>03</b> Reef and rubbish</p>
+          <p class="eyebrow" data-a="up">Reef and rubbish</p>
           <h2 class="d3 lines">What we do about it</h2>
           ${list(["No single-use plastic aboard.", "Reef-safe sunscreen supplied.", "We anchor on sand, never on coral."])}
         </div>
         ${fig("ray-sand", "A stingray moving across pale sand in shallow water", { ratio: "r43", sizes: "(min-width:960px) 58vw, 100vw" })}
       </div>
-    </div>
-  </section>
-
-  <section class="band" data-idx="Weather" data-idx-dark>
-    <div class="band__bg" data-par="0.1">${img("sandbank-2", "", { sizes: "100vw" })}</div>
-    <div class="band__in wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Weather</p>
-      <h2 class="d2 lines">The sea decides the day. We only decide when to leave.</h2>
     </div>
   </section>
 
@@ -590,11 +566,11 @@ function contact() {
     </div>
   </section>
 
-  <section class="section" data-idx="Reach us">
+  <section class="section">
     <div class="wrap">
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up"><b>01</b> Reach us</p>
+          <p class="eyebrow" data-a="up">Reach us</p>
           ${dl([
             ["Telephone", `<a href="${CV.brand.phoneHref}">${CV.brand.phone}</a>`],
             ["WhatsApp", `<a href="${CV.brand.whatsappHref}" rel="noopener">${CV.brand.phone}</a>`],
@@ -624,7 +600,7 @@ function contact() {
             <div class="stack-l">
               <p class="eyebrow">Received</p>
               <h2 class="d2">Thank you</h2>
-              <p class="lede measure" style="margin-inline:auto">The crew reply within a day, usually sooner.</p>
+              <p class="lede measure">The crew reply within a day, usually sooner.</p>
               <div class="acts"><a class="btn btn--ghost" href="index.html">Back to the harbour</a></div>
             </div>
           </div>
@@ -633,17 +609,17 @@ function contact() {
     </div>
   </section>
 
-  <section class="section section--mist" data-idx="Questions">
+  <section class="section section--mist">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up"><b>02</b> Questions</p>
+      <p class="eyebrow" data-a="up">Questions</p>
       <h2 class="d2 lines">Before you sail</h2>
       ${faq}
     </div>
   </section>
 
-  <section class="section--sm" style="padding-bottom:var(--sec)">
+  <section class="section--sm section--tail">
     <div class="wrap">
-      <figure style="margin:0">
+      <figure>
         ${fig("aerial-marina", "Tiffany Blanc 14 leaving Hulhumalé Marina", { ratio: "r169", sizes: "100vw", par: "0.05" })}
         <figcaption class="cap" data-a="up"><span class="k">Hulhumal&eacute; Marina</span><span class="d4">Ten minutes from Velana International Airport</span></figcaption>
       </figure>
@@ -662,33 +638,36 @@ ${cta("", "Or simply tell us your dates")}`;
 
 /* ------------------------------------------------------------- ENQUIRE -- */
 function enquire() {
-  const chips = CV.voyages.map((v, i) => `              <input type="radio" id="v${i}" name="voyage" value="${v.slug}"${i === 0 ? " checked" : ""}>
+  const chips = CV.voyages.map((v, i) => `              <input type="radio" id="v${i}" name="excursion" value="${v.slug}"${i === 0 ? " checked" : ""}>
               <label for="v${i}">${v.title} &middot; ${v.kind}</label>`).join("\n");
   const extras = CV.addons.map((a, i) => `              <input type="checkbox" id="x${i}" name="extra" value="${a.t.toLowerCase().replace(/[^a-z]+/g, "-")}" data-label="${esc(a.t)}" data-price="${a.p}">
               <label for="x${i}">${a.t} &middot; ${a.p}</label>`).join("\n");
 
-  const main = `  <section class="phero">
-    <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Enquire</p>
+  const main = `  <section class="hero hero--mid">
+    <div class="hero__bg" data-par="0.06">
+      ${img("vessel-guests", "Tiffany Blanc 14 at anchor with guests aboard", { sizes: "100vw", eager: true })}
+    </div>
+    <div class="hero__in stack" data-stagger>
+      <p class="eyebrow" data-a="fade">Enquire</p>
       <h1 class="d1 lines">Reserve the vessel</h1>
-      <p class="lede" data-a="up">Four short steps. Nothing is charged and no date is held until we have written back.</p>
+      <p class="lede lede--light" data-a="up">Four short steps. Nothing is charged and no date is held until we have written back.</p>
     </div>
   </section>
 
-  <section class="section" style="padding-top:clamp(2rem,4vw,3rem)">
+  <section class="section">
     <div class="wrap narrow">
-      <ul class="steps" data-a="up" style="margin-bottom:clamp(2.5rem,5vw,4rem)">
-        <li class="on"><b>01</b> Voyage</li><li><b>02</b> Dates</li><li><b>03</b> Details</li><li><b>04</b> Review</li>
+      <ul class="steps" data-a="up">
+        <li class="on">Excursion</li><li>Dates</li><li>Details</li><li>Review</li>
       </ul>
 
       <form id="enquire" novalidate>
         <div class="step on">
           <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Step one</p><h2 class="d3">Which voyage?</h2></div>
+            <div class="stack-s"><p class="eyebrow">Step one</p><h2 class="d3">Which excursion?</h2></div>
             <div class="chips">
 ${chips}
             </div>
-            <p class="note">Every voyage is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.</p>
+            <p class="note">Every excursion is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.</p>
             <div class="acts"><button class="btn" type="button" data-next>Continue</button></div>
           </div>
         </div>
@@ -737,7 +716,7 @@ ${extras}
           <div class="stack-l">
             <div class="stack-s"><p class="eyebrow">Step four</p><h2 class="d3">Does this look right?</h2></div>
             <div class="sum">
-              <div class="sum__r"><span class="k">Voyage</span><span data-s-v>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Excursion</span><span data-s-v>&mdash;</span></div>
               <div class="sum__r"><span class="k">Where</span><span data-s-a>&mdash;</span></div>
               <div class="sum__r"><span class="k">Date</span><span data-s-d>&mdash;</span></div>
               <div class="sum__r"><span class="k">Guests</span><span data-s-g>&mdash;</span></div>
@@ -754,7 +733,7 @@ ${extras}
         <div class="stack-l">
           <p class="eyebrow">Received</p>
           <h2 class="d2">We have it</h2>
-          <p class="lede measure" style="margin-inline:auto">The crew reply within a day, usually sooner. If your dates are tight, call the marina office.</p>
+          <p class="lede measure">The crew reply within a day, usually sooner. If your dates are tight, call the marina office.</p>
           <div class="acts"><a class="btn" href="index.html">Back to the harbour</a><a class="btn btn--ghost" href="${CV.brand.phoneHref}">${CV.brand.phone}</a></div>
         </div>
       </div>
@@ -762,7 +741,7 @@ ${extras}
   </section>`;
 
   page({
-    file: "enquire.html", pageAttr: "enquire.html", light: true, og: "vessel-guests",
+    file: "enquire.html", pageAttr: "enquire.html", og: "vessel-guests",
     title: "Enquire — Coravida",
     desc: "Reserve Tiffany Blanc 14 for a day, a sunset or twelve nights at anchor.",
     main
@@ -775,15 +754,15 @@ function notfound() {
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">404</p>
       <h1 class="d2 lines">This one drifted</h1>
-      <p class="lede measure" style="margin-inline:auto" data-a="up">The page you asked for is not at this address.</p>
+      <p class="lede measure" data-a="up">The page you asked for is not at this address.</p>
       <div class="acts" data-a="up">
         <a class="btn" href="index.html">Back to the harbour</a>
-        <a class="btn btn--ghost" href="excursions.html">See the voyages</a>
+        <a class="btn btn--ghost" href="excursions.html">See the excursions</a>
       </div>
     </div>
   </section>
 
-  <section class="section--sm" style="padding-bottom:var(--sec)">
+  <section class="section--sm section--tail">
     <div class="wrap">${fig("aerial-anchor", "Tiffany Blanc 14 alone at anchor above a reef edge", { ratio: "r169", sizes: "100vw", par: "0.05" })}</div>
   </section>`;
 
@@ -793,5 +772,5 @@ function notfound() {
   });
 }
 
-home(); vessel(); voyages(); voyagePages(); gallery(); about(); contact(); enquire(); notfound();
+home(); vessel(); excursions(); excursionPages(); gallery(); about(); contact(); enquire(); notfound();
 console.log("done");

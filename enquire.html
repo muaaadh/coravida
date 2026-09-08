@@ -14,40 +14,43 @@
 <link rel="preload" href="assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body class="light-page">
+<body>
 <a class="skip" href="#main">Skip to content</a>
 <div data-chrome="header"></div>
 
 <main id="main">
-  <section class="phero">
-    <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">Enquire</p>
+  <section class="hero hero--mid">
+    <div class="hero__bg" data-par="0.06">
+      <img src="assets/img/vessel-guests-1200.webp" srcset="assets/img/vessel-guests-900.webp 900w, assets/img/vessel-guests-1200.webp 1200w, assets/img/vessel-guests-1600.webp 1600w, assets/img/vessel-guests-2800.webp 2800w" sizes="100vw" width="1200" height="900" alt="Tiffany Blanc 14 at anchor with guests aboard" fetchpriority="high" decoding="async">
+    </div>
+    <div class="hero__in stack" data-stagger>
+      <p class="eyebrow" data-a="fade">Enquire</p>
       <h1 class="d1 lines">Reserve the vessel</h1>
-      <p class="lede" data-a="up">Four short steps. Nothing is charged and no date is held until we have written back.</p>
+      <p class="lede lede--light" data-a="up">Four short steps. Nothing is charged and no date is held until we have written back.</p>
     </div>
   </section>
 
-  <section class="section" style="padding-top:clamp(2rem,4vw,3rem)">
+  <section class="section">
     <div class="wrap narrow">
-      <ul class="steps" data-a="up" style="margin-bottom:clamp(2.5rem,5vw,4rem)">
-        <li class="on"><b>01</b> Voyage</li><li><b>02</b> Dates</li><li><b>03</b> Details</li><li><b>04</b> Review</li>
+      <ul class="steps" data-a="up">
+        <li class="on">Excursion</li><li>Dates</li><li>Details</li><li>Review</li>
       </ul>
 
       <form id="enquire" novalidate>
         <div class="step on">
           <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Step one</p><h2 class="d3">Which voyage?</h2></div>
+            <div class="stack-s"><p class="eyebrow">Step one</p><h2 class="d3">Which excursion?</h2></div>
             <div class="chips">
-              <input type="radio" id="v0" name="voyage" value="island-and-snorkelling" checked>
+              <input type="radio" id="v0" name="excursion" value="island-and-snorkelling" checked>
               <label for="v0">Island & Snorkelling &middot; Full day</label>
-              <input type="radio" id="v1" name="voyage" value="reef-and-sandbank">
+              <input type="radio" id="v1" name="excursion" value="reef-and-sandbank">
               <label for="v1">Reef & Sandbank &middot; Half day</label>
-              <input type="radio" id="v2" name="voyage" value="shark-point-and-gulhi">
+              <input type="radio" id="v2" name="excursion" value="shark-point-and-gulhi">
               <label for="v2">Shark Point & Gulhi &middot; Full day</label>
-              <input type="radio" id="v3" name="voyage" value="sunset-adventure">
+              <input type="radio" id="v3" name="excursion" value="sunset-adventure">
               <label for="v3">Sunset Adventure &middot; Half day</label>
             </div>
-            <p class="note">Every voyage is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.</p>
+            <p class="note">Every excursion is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.</p>
             <div class="acts"><button class="btn" type="button" data-next>Continue</button></div>
           </div>
         </div>
@@ -107,7 +110,7 @@
           <div class="stack-l">
             <div class="stack-s"><p class="eyebrow">Step four</p><h2 class="d3">Does this look right?</h2></div>
             <div class="sum">
-              <div class="sum__r"><span class="k">Voyage</span><span data-s-v>&mdash;</span></div>
+              <div class="sum__r"><span class="k">Excursion</span><span data-s-v>&mdash;</span></div>
               <div class="sum__r"><span class="k">Where</span><span data-s-a>&mdash;</span></div>
               <div class="sum__r"><span class="k">Date</span><span data-s-d>&mdash;</span></div>
               <div class="sum__r"><span class="k">Guests</span><span data-s-g>&mdash;</span></div>
@@ -124,7 +127,7 @@
         <div class="stack-l">
           <p class="eyebrow">Received</p>
           <h2 class="d2">We have it</h2>
-          <p class="lede measure" style="margin-inline:auto">The crew reply within a day, usually sooner. If your dates are tight, call the marina office.</p>
+          <p class="lede measure">The crew reply within a day, usually sooner. If your dates are tight, call the marina office.</p>
           <div class="acts"><a class="btn" href="index.html">Back to the harbour</a><a class="btn btn--ghost" href="tel:+9607771234">+960 777 1234</a></div>
         </div>
       </div>
