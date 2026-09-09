@@ -550,55 +550,6 @@
     }
   }
 
-  /* ---- The feature: one frame, driven by the list beside it -------------- */
-  function feature() {
-    var box = $("[data-feat]"); if (!box) return;
-    var rows = $$("[data-feat-r]", box), imgs = $$("[data-feat-f]", box);
-    if (rows.length < 2 || rows.length !== imgs.length) return;
-    var at = 0;
-
-    function wake(m) {                          // release a frame that was held back
-      if (!m.getAttribute("data-src")) return;
-      m.src = m.getAttribute("data-src");
-      if (m.getAttribute("data-srcset")) m.srcset = m.getAttribute("data-srcset");
-      m.removeAttribute("data-src"); m.removeAttribute("data-srcset");
-    }
-    function wakeAll() { imgs.forEach(wake); }
-    if (document.readyState === "complete") setTimeout(wakeAll, 1200);
-    else window.addEventListener("load", function () { setTimeout(wakeAll, 1200); });
-
-    function show(n) {
-      if (n === at || n < 0 || n >= rows.length) return;
-      at = n;
-      rows.forEach(function (r, i) { r.classList.toggle("on", i === at); });
-      wake(imgs[at]);
-      imgs.forEach(function (m, i) { m.classList.toggle("on", i === at); });
-    }
-
-    /* a cursor picks the row it is over */
-    rows.forEach(function (r, i) {
-      r.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") show(i); });
-      r.addEventListener("focus", function () { show(i); });
-    });
-
-    /* a thumb has no cursor, so the row nearest the middle of what is left of
-       the screen below the sticky frame wins */
-    if (window.matchMedia("(hover: none), (max-width: 899px)").matches) {
-      onFrame.push(function (y, vh) {
-        var fr = $(".feat__f", box);
-        if (!fr) return;
-        var line = fr.getBoundingClientRect().bottom + (vh - fr.getBoundingClientRect().bottom) * 0.35;
-        var best = 0, near = Infinity;
-        for (var i = 0; i < rows.length; i++) {
-          var r = rows[i].getBoundingClientRect();
-          var d = Math.abs(r.top + r.height / 2 - line);
-          if (d < near) { near = d; best = i; }
-        }
-        show(best);
-      });
-    }
-  }
-
   /* ---- Voyage index: the photograph follows the cursor ------------------- */
   function voyageIndex() {
     var vx = $(".vx");
@@ -888,7 +839,7 @@
 
   function boot() {
     chrome(); header(); menu(); heroCycle(); video(); lines(); reveals(); scrollFx(); counters();
-    rails(); lightbox(); accordion(); enquiry(); forms(); voyageIndex(); feature(); player(); language(); driver(); ready();
+    rails(); lightbox(); accordion(); enquiry(); forms(); voyageIndex(); player(); language(); driver(); ready();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

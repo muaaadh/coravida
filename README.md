@@ -11,7 +11,9 @@ Live at **https://muaaadh.github.io/coravida/**
 
 Twelve pages in four languages — forty-eight files — built from the client's own
 photography and film (the August 2026 drone, GoPro and Sony shoot) plus 4K stock for the
-hero. Three ideas run through it:
+hero. Coravida presents **a small fleet**; Tiffany Blanc 14 is the flagship and the only
+vessel with data behind it, so it is the one the vessel page details. Three ideas run
+through it:
 
 - **Roomier.** One idea per screen, one vertical scale (`--s1…--s6`, `--sec`), and far
   less copy. The home page is five sections; the gallery is one.
@@ -122,7 +124,6 @@ carries the whole layer — no library:
 
 | Behaviour | Hook |
 |---|---|
-| **The feature.** One tall photograph beside a typographic index of three excursions. Point at a row, or scroll it into place on a phone, and the frame cross-fades to that excursion while a marine rule draws across the row. The frame on show is on the critical path; the other two arrive a second after `load`. | `data-feat`, `.feat` |
 | **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` into the closing navy section, or the footer where there isn't one |
 | **The excursion index.** Four numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
@@ -202,7 +203,7 @@ Deliberately small, because a large one is how a site stops being clean:
 
 | | |
 |---|---|
-| Colour | Navy `#03224D`, marine `#0C6FDB`, ocean `#0046B1`, mist `#F5F8FB`. **One** body grey (`--body`, 5.7:1 on white) and **one** hairline. |
+| Colour | Navy `#03224D`, marine `#0C6FDB`, ocean `#0046B1`, mist `#F5F8FB`. **One** body grey (`--body`, 5.7:1 on white) and **one** hairline. The primary button is the one place the brand blue fills a shape — a marine-to-ocean gradient, white on it at 4.9:1 — and on navy it inverts to a white pill with ocean text at 8.4:1. Selected chips and the current language pill take the same fill. |
 | Type | Montserrat 300 for display, Inter 400/500 for everything else. Four display sizes (`.d1–.d4`) and **one** micro-caps label rule, shared by 17 selectors. |
 | Space | `--s1…--s6` for vertical rhythm, `--sec` for section padding, `--gut` for the page gutter. No spacing lives in the HTML — the only inline styles in the whole build are stagger indices. |
 | Reveals | Three: `up`, `fade`, `clip`. |
@@ -223,9 +224,9 @@ Measured cold with no cache on the home page:
 
 | | Desktop 1440 @2× | Phone 390 @3× |
 |---|---|---|
-| First view | 3.97 MB | **1.21 MB** |
+| First view | 3.80 MB | **0.84 MB** |
 | First contentful paint | 48 ms | 72 ms |
-| Requests | 17 | 16 |
+| Requests | 14 | 14 |
 
 Of the desktop figure, 3.1 MB is the 1440p hero film itself; the page is complete and
 readable at 760 KB before it arrives.
@@ -234,7 +235,7 @@ readable at 760 KB before it arrives.
 
 | File | What it is |
 |---|---|
-| `index.html` | Home — film hero, the offer beside a cross-fading feature, film interlude, the vessel |
+| `index.html` | Home — film hero, the offer and three excursions, film interlude, the flagship |
 | `vessel.html` | Tiffany Blanc 14 — four decks, specification, what is aboard |
 | `excursions.html` | The four excursions as a numbered index, then what a charter covers and add-ons |
 | `excursions/<slug>.html` | One page per excursion (4), each with its hour-by-hour timeline |

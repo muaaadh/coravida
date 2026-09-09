@@ -51,7 +51,7 @@ window.CV = (function () {
   };
 
   var nav = [
-    { label: "The Vessel", href: "vessel.html" },
+    { label: "Our Vessels", href: "vessel.html" },
     { label: "Excursions", href: "excursions.html" },
     { label: "Gallery",    href: "gallery.html" },
     { label: "About",      href: "about.html" },

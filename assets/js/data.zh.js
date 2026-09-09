@@ -80,7 +80,7 @@
  },
  "nav": [
   {
-   "label": "关于船",
+   "label": "我们的船",
    "href": "vessel.html"
   },
   {

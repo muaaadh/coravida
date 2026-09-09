@@ -6,6 +6,28 @@ module.exports = {
 
 /* ---- strings the generator prints ------------------------------------- */
 ui: {
+  "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
+    "Небольшой флот из марины Хулхумале и экипаж, который знает каждое судно в нём.",
+  "Charters":
+    "Чартеры",
+  "Coravida runs a small fleet out of Hulhumalé Marina, crewed by the same people on every sailing.":
+    "Coravida держит небольшой флот в марине Хулхумале, и на каждом выходе работают одни и те же люди.",
+  "Discover our vessels":
+    "Наши суда",
+  "Our flagship. Fourteen metres, refitted in 2025 — twelve aboard for the day, four asleep on the water.":
+    "Наш флагман. Четырнадцать метров, обновлён в 2025 году — двенадцать человек днём, четверо ночуют на воде.",
+  "Our vessels":
+    "Наши суда",
+  "Our vessels, the atolls, and what is under them.":
+    "Наши суда, атоллы и то, что под ними.",
+  "Private charters out of Hulhumal&eacute; Marina. One party aboard, a crew of three, and a route drawn the morning you sail.":
+    "Частные чартеры из марины Хулхумале. Одна компания на борту, экипаж из трёх человек и маршрут, который рисуют утром выхода.",
+  "Reserve a vessel":
+    "Забронировать судно",
+  "The boat you were shown is the boat you sail on":
+    "Судно, которое вам показали, — то самое, на котором вы пойдёте",
+  "We keep the fleet small on purpose. The boat you were shown is the boat you sail on, nothing is shared with another party, and nothing is subcontracted.":
+    "Мы намеренно держим флот небольшим. Судно, которое вам показали, — то самое, на котором вы пойдёте: ничего общего с другой компанией и ничего на субподряде.",
   "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
     "Обе цены — за всё судно для компании из семи человек. Любое другое число на борту считаем по запросу.",
   "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
@@ -248,7 +270,7 @@ content: {
     address: ["M. Veraa", "Мале 20026", "Мальдивская Республика"]
   },
   nav: [
-    { label: "Судно" }, { label: "Экскурсии" }, { label: "Галерея" },
+    { label: "Наши суда" }, { label: "Экскурсии" }, { label: "Галерея" },
     { label: "О нас" }, { label: "Контакты" }
   ],
   music: { line: "Почувствуйте суть Мальдив" },

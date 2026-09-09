@@ -5,6 +5,28 @@
 module.exports = {
 
 ui: {
+  "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
+    "Eine kleine Flotte ab Hulhumalé Marina — und eine Crew, die jedes Boot darin kennt.",
+  "Charters":
+    "Charter",
+  "Coravida runs a small fleet out of Hulhumalé Marina, crewed by the same people on every sailing.":
+    "Coravida betreibt eine kleine Flotte ab Hulhumalé Marina, auf jeder Fahrt mit denselben Leuten an Bord.",
+  "Discover our vessels":
+    "Unsere Schiffe",
+  "Our flagship. Fourteen metres, refitted in 2025 — twelve aboard for the day, four asleep on the water.":
+    "Unser Flaggschiff. Vierzehn Meter, 2025 refittet — zwölf an Bord für den Tag, vier schlafen auf dem Wasser.",
+  "Our vessels":
+    "Unsere Schiffe",
+  "Our vessels, the atolls, and what is under them.":
+    "Unsere Schiffe, die Atolle und was darunter liegt.",
+  "Private charters out of Hulhumal&eacute; Marina. One party aboard, a crew of three, and a route drawn the morning you sail.":
+    "Privatcharter ab Hulhumalé Marina. Eine Gesellschaft an Bord, eine dreiköpfige Crew und eine Route, die am Morgen der Fahrt gezeichnet wird.",
+  "Reserve a vessel":
+    "Ein Schiff reservieren",
+  "The boat you were shown is the boat you sail on":
+    "Das Boot, das Sie gesehen haben, ist das Boot, auf dem Sie fahren",
+  "We keep the fleet small on purpose. The boat you were shown is the boat you sail on, nothing is shared with another party, and nothing is subcontracted.":
+    "Wir halten die Flotte bewusst klein. Das Boot, das Sie gesehen haben, ist das Boot, auf dem Sie fahren — nichts wird mit einer anderen Gesellschaft geteilt und nichts weitervergeben.",
   "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
     "Beide Preise gelten für sieben Personen und das ganze Schiff. Jede andere Zahl an Bord wird auf Anfrage kalkuliert.",
   "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
@@ -244,7 +266,7 @@ content: {
     address: ["M. Veraa", "Malé 20026", "Republik Malediven"]
   },
   nav: [
-    { label: "Das Schiff" }, { label: "Ausflüge" }, { label: "Galerie" },
+    { label: "Unsere Schiffe" }, { label: "Ausflüge" }, { label: "Galerie" },
     { label: "Über uns" }, { label: "Kontakt" }
   ],
   music: { line: "Spüren Sie das Wesen der Malediven" },

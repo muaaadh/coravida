@@ -80,7 +80,7 @@
  },
  "nav": [
   {
-   "label": "Судно",
+   "label": "Наши суда",
    "href": "vessel.html"
   },
   {

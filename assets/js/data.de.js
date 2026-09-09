@@ -80,7 +80,7 @@
  },
  "nav": [
   {
-   "label": "Das Schiff",
+   "label": "Unsere Schiffe",
    "href": "vessel.html"
   },
   {

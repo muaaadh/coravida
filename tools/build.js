@@ -196,23 +196,13 @@ function home() {
   at(0);
   const v = CV.voyages;
   const feat = ["island-and-snorkelling", "shark-point-and-gulhi", "sunset-adventure"].map(s => v.find(x => x.slug === s));
-  /* One large frame that cross-fades, driven by the list beside it — the three
-     equal rectangles read as a product grid and this does not. */
-  const frames = feat.map((x, i) => {
-    let m = img(x.img, i === 0 ? x.alt : "", { sizes: "(min-width:900px) 46vw, 100vw" })
-      .replace("<img ", `<img class="feat__i${i === 0 ? " on" : ""}" data-feat-f="${i}" `);
-    // only the frame on show is on the critical path; the rest arrive after load
-    if (i) m = m.replace(/ src="/, ' data-src="').replace(/ srcset="/, ' data-srcset="');
-    return "          " + m;
-  }).join("\n");
-
-  const rows = feat.map((x, i) => `          <li><a class="feat__row${i === 0 ? " on" : ""}" href="excursions/${x.slug}.html"
-            data-feat-r="${i}" data-a="up" style="--i:${i}">
-            <span class="feat__n">${String(i + 1).padStart(2, "0")}</span>
-            <span class="feat__h d4">${x.title}</span>
-            <span class="feat__m">${x.kind} &middot; ${x.duration} &middot; ${rate(x)}</span>
-            ${ARROW}
-          </a></li>`).join("\n");
+  const ways = feat.map((x, i) => `            <li data-a="up" style="--i:${i}">
+              <a class="way" href="excursions/${x.slug}.html">
+                <span class="way__t d4">${x.title}</span>
+                <span class="way__m">${x.kind} &middot; ${x.duration} &middot; ${rate(x)}</span>
+                ${ARROW}
+              </a>
+            </li>`).join("\n");
 
   const slides = CV.hero.clips.map((c, i) => `        <div class="hero__s">
           ${i === 0 ? img(c.poster, c.alt, { sizes: "100vw", eager: true, cap: POSTER }) : held(c.poster)}
@@ -232,25 +222,17 @@ ${slides}
 
   <section class="section">
     <div class="wrap">
-      <div class="feat" data-feat>
-        <div class="feat__head stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">${T("One vessel")}</p>
+      <div class="split">
+        <div class="split__t stack-l" data-stagger>
+          <p class="eyebrow" data-a="up">${T("Charters")}</p>
           <h2 class="d2 lines">${T("The sea, at your own pace")}</h2>
-          <p class="lede measure" data-a="up">${T("Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.")}</p>
+          <p class="lede" data-a="up">${T("Private charters out of Hulhumal&eacute; Marina. One party aboard, a crew of three, and a route drawn the morning you sail.")}</p>
+          <ul class="ways" data-stagger>
+${ways}
+          </ul>
+          <p data-a="up">${link("vessel.html", T("Discover our vessels"))}</p>
         </div>
-
-        <div class="feat__v">
-          <div class="feat__f" data-a="clip">
-${frames}
-          </div>
-        </div>
-
-        <div class="feat__side stack-l">
-          <ol class="feat__list" data-stagger>
-${rows}
-          </ol>
-          <p data-a="up">${link("vessel.html", T("Discover the vessel"))}</p>
-        </div>
+        ${fig(feat[0].img, feat[0].alt, { ratio: "r45", sizes: "(min-width:960px) 58vw, 100vw" })}
       </div>
     </div>
   </section>
@@ -267,19 +249,17 @@ ${rows}
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="split">
-        <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">${T("The vessel")}</p>
-          <h2 class="d2 lines">${T("Tiffany Blanc 14")}</h2>
-          <p class="lede" data-a="up">${T("Fourteen metres, refitted in 2025. Twelve aboard for the day, four asleep on the water.")}</p>
-          <p data-a="up">${link("vessel.html", T("Go aboard"))}</p>
-        </div>
-        <div class="stack-l">
-          ${fig("vessel-guests", T("Tiffany Blanc 14 at anchor with guests aboard and swimmers alongside"), { ratio: "r43", sizes: "(min-width:960px) 58vw, 100vw" })}
-          ${stats(CV.vessel.stats)}
-        </div>
+  <section class="section center">
+    <div class="wrap stack-xl">
+      <div class="narrow stack-l" data-stagger>
+        <p class="eyebrow" data-a="up">${T("Our vessels")}</p>
+        <h2 class="d2 lines">${T("Tiffany Blanc 14")}</h2>
+        <p class="lede measure" data-a="up">${T("Our flagship. Fourteen metres, refitted in 2025 — twelve aboard for the day, four asleep on the water.")}</p>
+      </div>
+      ${fig("vessel-guests", T("Tiffany Blanc 14 at anchor with guests aboard and swimmers alongside"), { ratio: "r169", sizes: "100vw" })}
+      <div class="stack-l">
+        ${stats(CV.vessel.stats)}
+        <p data-a="up">${link("vessel.html", T("Go aboard"))}</p>
       </div>
     </div>
   </section>
@@ -316,7 +296,7 @@ function vessel() {
       <video data-src="anchor" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
-      <p class="eyebrow" data-a="fade">${T("The vessel")}</p>
+      <p class="eyebrow" data-a="fade">${T("Our vessels")}</p>
       <h1 class="d1 lines">${T("Tiffany Blanc 14")}</h1>
       <p data-a="up">${linkL("enquire.html", T("Enquire"))}</p>
     </div>
@@ -548,7 +528,7 @@ function gallery() {
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">${T("Gallery")}</p>
       <h1 class="d1 lines">${T("What we came back with")}</h1>
-      <p class="lede" data-a="up">${T("The vessel, the atolls, and what is under them.")}</p>
+      <p class="lede" data-a="up">${T("Our vessels, the atolls, and what is under them.")}</p>
     </div>
   </section>
 
@@ -575,7 +555,7 @@ function about() {
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">${T("About")}</p>
       <h1 class="d1 lines">${T("A small operation, run properly")}</h1>
-      <p class="lede" data-a="up">${T("One vessel out of Hulhumal&eacute; Marina, and the same crew aboard every time.")}</p>
+      <p class="lede" data-a="up">${T("A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.")}</p>
     </div>
   </section>
 
@@ -588,10 +568,10 @@ function about() {
       <div class="split">
         <div class="split__t sticky stack-l" data-stagger>
           <p class="eyebrow" data-a="up">${T("The company")}</p>
-          <h2 class="d2 lines">${T("One vessel is the point")}</h2>
+          <h2 class="d2 lines">${T("The boat you were shown is the boat you sail on")}</h2>
         </div>
         <div class="stack-l" data-stagger>
-          <p class="lede measure--wide" data-a="up">${T("We run a single boat rather than a fleet, so the vessel you were shown is the vessel you sail on. Nothing is shared and nothing is subcontracted.")}</p>
+          <p class="lede measure--wide" data-a="up">${T("We keep the fleet small on purpose. The boat you were shown is the boat you sail on, nothing is shared with another party, and nothing is subcontracted.")}</p>
           <p class="lede measure--wide" data-a="up">${T("Three crew take her out, and it is the same three every sailing &mdash; a captain who reads the weather, a chef, and a deckhand who has the ladder down before you ask.")}</p>
         </div>
       </div>
@@ -632,7 +612,7 @@ ${cta()}`;
   page({
     file: "about.html", pageAttr: "about.html", light: true, og: "aerial-marina",
     title: T("About — Coravida"),
-    desc: T("Coravida runs one vessel out of Hulhumalé Marina with the same crew of three on every sailing."),
+    desc: T("Coravida runs a small fleet out of Hulhumalé Marina, crewed by the same people on every sailing."),
     main
   });
 }
@@ -737,7 +717,7 @@ function enquire() {
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${T("Enquire")}</p>
-      <h1 class="d1 lines">${T("Reserve the vessel")}</h1>
+      <h1 class="d1 lines">${T("Reserve a vessel")}</h1>
       <p class="lede lede--light" data-a="up">${T("Four short steps. Nothing is charged and no date is held until we have written back.")}</p>
     </div>
   </section>

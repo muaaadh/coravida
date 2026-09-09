@@ -107,18 +107,32 @@ figure{margin:0}
 .link--light{color:#fff}
 .link--light::before{background:rgba(255,255,255,.3)}
 
-.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;height:46px;padding-inline:2rem;border-radius:999px;background:var(--navy);color:#fff;border:1px solid var(--navy);white-space:nowrap;overflow:hidden;isolation:isolate;transition:color .4s var(--e),border-color .4s var(--e)}
-.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--ocean);transform:translateY(101%);transition:transform .55s var(--eo)}
+/* The primary action carries the brand blue rather than the navy — it is the
+   one place on a mostly white page where the colour is allowed to do work. */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;height:46px;
+  padding-inline:2rem;border-radius:999px;white-space:nowrap;overflow:hidden;isolation:isolate;
+  background:linear-gradient(180deg,var(--marine),var(--ocean));color:#fff;border:1px solid transparent;
+  box-shadow:0 6px 18px rgba(12,111,219,.24);
+  transition:color .4s var(--e),box-shadow .45s var(--e),transform .5s var(--eo)}
+.btn::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--navy);
+  transform:translateY(101%);transition:transform .55s var(--eo)}
+.btn:hover{box-shadow:0 10px 26px rgba(3,34,77,.26);transform:translateY(-1px)}
 .btn:hover::before{transform:translateY(0)}
-.btn--ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn:active{transform:translateY(0)}
+
+/* the quiet one, for a second action beside the first */
+.btn--ghost{background:none;color:var(--ink);border-color:var(--line);box-shadow:none}
 .btn--ghost::before{background:var(--navy)}
-.btn--ghost:hover{color:#fff;border-color:var(--navy)}
-.btn--white{background:#fff;color:var(--navy);border-color:#fff}
-.btn--white::before{background:var(--navy)}
-.btn--white:hover{color:#fff}
-.btn--line{background:transparent;color:#fff;border-color:rgba(255,255,255,.28)}
+.btn--ghost:hover{color:#fff;border-color:var(--navy);box-shadow:0 8px 22px rgba(3,34,77,.18)}
+
+/* on navy, the blue would disappear, so the fill inverts */
+.btn--white{background:#fff;color:var(--ocean);border-color:#fff;box-shadow:0 6px 20px rgba(2,16,36,.22)}
+.btn--white::before{background:linear-gradient(180deg,var(--marine),var(--ocean))}
+.btn--white:hover{color:#fff;border-color:transparent}
+
+.btn--line{background:none;color:#fff;border-color:rgba(255,255,255,.28);box-shadow:none}
 .btn--line::before{background:#fff}
-.btn--line:hover{color:var(--navy);border-color:#fff}
+.btn--line:hover{color:var(--ocean);border-color:#fff}
 .acts{display:flex;flex-wrap:wrap;gap:.75rem}
 .center .acts{justify-content:center}
 
@@ -148,8 +162,9 @@ figure{margin:0}
 .hdr.solid .hdr__logo .light{display:none}
 .hdr.solid .hdr__logo .dark{display:block}
 .hdr.solid .hdr__logo img{filter:none}
-.hdr.solid .btn--white{background:var(--navy);color:#fff;border-color:var(--navy)}
-.hdr.solid .btn--white::before{background:var(--ocean)}
+.hdr.solid .btn--white{background:linear-gradient(180deg,var(--marine),var(--ocean));color:#fff;
+  border-color:transparent;box-shadow:0 4px 14px rgba(12,111,219,.28)}
+.hdr.solid .btn--white::before{background:var(--navy)}
 .hdr.up{transform:translateY(calc(-100% - var(--hgap) - 6px))}
 .light-page .hdr:not(.solid){background:rgba(255,255,255,.6);border-color:rgba(3,34,77,.07);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 28px rgba(3,34,77,.07)}
@@ -157,8 +172,9 @@ figure{margin:0}
 .light-page .hdr:not(.solid) .hdr__logo .light{display:none}
 .light-page .hdr:not(.solid) .hdr__logo .dark{display:block}
 .light-page .hdr:not(.solid) .hdr__logo img{filter:none}
-.light-page .hdr:not(.solid) .btn--white{background:var(--navy);color:#fff;border-color:var(--navy)}
-.light-page .hdr:not(.solid) .btn--white::before{background:var(--ocean)}
+.light-page .hdr:not(.solid) .btn--white{background:linear-gradient(180deg,var(--marine),var(--ocean));
+  color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(12,111,219,.28)}
+.light-page .hdr:not(.solid) .btn--white::before{background:var(--navy)}
 
 /* --- Chinese ------------------------------------------------------------ */
 /* Montserrat and Inter carry Latin and Cyrillic but no CJK, so Chinese gets
@@ -212,7 +228,7 @@ figure{margin:0}
 .menu__lang a{padding:.45rem .9rem;border-radius:999px;border:1px solid var(--line);font-size:.75rem;
   color:var(--body);transition:background .3s,color .3s,border-color .3s}
 .menu__lang a:hover{border-color:var(--navy);color:var(--navy)}
-.menu__lang a.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.menu__lang a.on{background:linear-gradient(180deg,var(--marine),var(--ocean));border-color:transparent;color:#fff}
 
 /* --- Menu --------------------------------------------------------------- */
 .menu{position:fixed;inset:0;z-index:100;display:grid;grid-template-rows:var(--hdr) 1fr;visibility:hidden;transition:visibility .6s}
@@ -282,7 +298,7 @@ figure{margin:0}
 .fig{display:block;position:relative;overflow:hidden;background:var(--mist);border-radius:var(--r)}
 .fig img{width:100%;height:100%;object-fit:cover;transition:transform 1.6s var(--eo),filter .7s var(--e)}
 .fig--z:hover img{transform:scale(1.045)}
-.r43{aspect-ratio:4/3}.r32{aspect-ratio:3/2}.r11{aspect-ratio:1/1}.r34{aspect-ratio:3/4}.r169{aspect-ratio:16/9}.r23{aspect-ratio:2/3}
+.r43{aspect-ratio:4/3}.r45{aspect-ratio:4/5}.r32{aspect-ratio:3/2}.r11{aspect-ratio:1/1}.r34{aspect-ratio:3/4}.r169{aspect-ratio:16/9}.r23{aspect-ratio:2/3}
 .cap{margin-top:1.25rem;display:grid;gap:.35rem}
 
 /* --- Grids -------------------------------------------------------------- */
@@ -303,65 +319,28 @@ figure{margin:0}
 .rail__item{flex:0 0 auto;width:min(78vw,420px);scroll-snap-align:start}
 .rail__nav{display:flex;gap:.5rem}
 .rail__nav button{width:44px;height:44px;border-radius:999px;border:1px solid var(--line);display:grid;place-items:center;transition:background .35s var(--e),border-color .35s,color .35s}
-.rail__nav button:hover{background:var(--navy);border-color:var(--navy);color:#fff}
+.rail__nav button:hover{background:var(--marine);border-color:var(--marine);color:#fff}
 .rail__nav button[disabled]{opacity:.22;pointer-events:none}
 .rail__nav svg{width:12px;height:12px}
 .head{display:flex;align-items:flex-end;justify-content:space-between;gap:2rem;flex-wrap:wrap}
 
-/* --- The feature ---------------------------------------------------------
-   One tall photograph that cross-fades, and a typographic index that drives
-   it. On a phone the frame sticks under the header while the list scrolls
-   past it, so the picture always belongs to the row you are reading. */
-.feat{display:grid;gap:clamp(1.75rem,4vw,3rem);grid-template-columns:1fr}
-.feat__f{position:relative;aspect-ratio:16/10;max-height:38svh;border-radius:var(--r);
-  overflow:hidden;background:var(--mist)}
-.feat__i{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:0;transform:scale(1.05);
-  transition:opacity .85s var(--e),transform 1.6s var(--eo)}
-.feat__i.on{opacity:1;transform:none}
-
-.feat__list{display:block}
-.feat__row{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;
-  gap:.4rem clamp(.9rem,2.2vw,1.6rem);padding:clamp(1rem,2.2vw,1.35rem) 0;
-  border-top:1px solid var(--line);position:relative}
-.feat__list li:last-child .feat__row{border-bottom:1px solid var(--line)}
-/* the active row draws a marine rule across its own top edge */
-.feat__row::before{content:"";position:absolute;left:0;top:-1px;height:2px;width:0;
-  background:var(--marine);transition:width .7s var(--eo)}
-.feat__row.on::before{width:100%}
-.feat__n{font-family:var(--ui);font-size:.5625rem;font-weight:500;letter-spacing:.22em;
-  color:var(--body);transition:color .4s}
-.feat__h{grid-column:2;color:var(--ink);transition:color .4s var(--e),transform .6s var(--eo)}
-.feat__m{grid-column:2;grid-row:2;font-family:var(--ui);font-size:.625rem;font-weight:500;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--body);transition:color .4s}
-.feat__row svg{grid-column:3;grid-row:1/-1;align-self:center;width:12px;height:12px;
-  color:var(--body);opacity:.45;transition:opacity .4s,transform .6s var(--eo),color .4s}
-.feat__row.on .feat__n,.feat__row.on .feat__m{color:var(--ink)}
-.feat__row.on .feat__h{color:var(--marine)}
-.feat__row.on svg{opacity:1;color:var(--marine)}
+/* --- Ways ---------------------------------------------------------------
+   Three excursions as plain rows under the photograph. No state, no preview,
+   nothing to learn — the title, what it is, and what it costs. */
+.ways{display:block}
+.way{display:grid;grid-template-columns:1fr auto;align-items:center;gap:.3rem 1rem;
+  padding:clamp(.9rem,2vw,1.15rem) 0;border-top:1px solid var(--line)}
+.ways li:last-child .way{border-bottom:1px solid var(--line)}
+.way__t{color:var(--ink);transition:color .35s var(--e),transform .5s var(--eo)}
+.way__m{grid-column:1;grid-row:2;font-family:var(--ui);font-size:.625rem;font-weight:500;
+  letter-spacing:.16em;text-transform:uppercase;color:var(--body)}
+.way svg{grid-column:2;grid-row:1/-1;width:12px;height:12px;color:var(--marine);
+  opacity:.55;transition:opacity .35s,transform .5s var(--eo)}
 @media(hover:hover){
-  .feat__row:hover .feat__h{transform:translateX(6px)}
-  .feat__row:hover svg{transform:translate(3px,-3px)}
+  .way:hover .way__t{color:var(--marine);transform:translateX(5px)}
+  .way:hover svg{opacity:1;transform:translate(3px,-3px)}
 }
-@media(hover:none){ .feat__row:active .feat__h{transform:translateX(6px)} }
-
-@media(min-width:900px){
-  .feat{grid-template-columns:.92fr 1.08fr;
-    grid-template-areas:"head vis" "side vis";
-    column-gap:clamp(2.5rem,5vw,6rem);row-gap:clamp(1.75rem,3.5vw,2.75rem);align-items:start}
-  .feat__head{grid-area:head}
-  .feat__side{grid-area:side}
-  .feat__v{grid-area:vis}
-  .feat__f{aspect-ratio:4/5;max-height:none}
-  .feat__v{position:sticky;top:calc(var(--hdr) + clamp(1rem,3vh,2.5rem))}
-}
-@media(max-width:899px){
-  .feat__v{position:sticky;top:calc(var(--hdr) + .5rem);z-index:2}
-}
-@media(prefers-reduced-motion:reduce){
-  .feat__v{position:static}
-  .feat__i{transition:none}
-}
+@media(hover:none){ .way:active .way__t{color:var(--marine);transform:translateX(5px)} }
 
 /* --- Rates ---------------------------------------------------------------- */
 .rates{display:grid;gap:0;max-width:26rem}
@@ -494,7 +473,7 @@ figure{margin:0}
 .chips input{position:absolute;opacity:0;pointer-events:none}
 .chips label{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:.7rem 1.35rem;cursor:pointer;transition:background .35s,color .35s,border-color .35s}
 .chips label:hover{border-color:var(--navy);color:var(--navy)}
-.chips input:checked+label{background:var(--navy);border-color:var(--navy);color:#fff}
+.chips input:checked+label{background:linear-gradient(180deg,var(--marine),var(--ocean));border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(12,111,219,.22)}
 .chips input:focus-visible+label{outline:2px solid var(--marine);outline-offset:3px}
 .steps{display:flex;gap:1.5rem;flex-wrap:wrap}
 .steps li{display:flex;gap:.6rem;transition:color .4s}

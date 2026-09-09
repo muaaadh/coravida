@@ -5,6 +5,28 @@
 module.exports = {
 
 ui: {
+  "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
+    "一支自胡鲁马累码头出发的小型船队，以及熟悉队中每一艘船的船员。",
+  "Charters":
+    "包船",
+  "Coravida runs a small fleet out of Hulhumalé Marina, crewed by the same people on every sailing.":
+    "Coravida 自胡鲁马累码头运营一支小型船队，每次出海都由同一批人随行。",
+  "Discover our vessels":
+    "了解我们的船",
+  "Our flagship. Fourteen metres, refitted in 2025 — twelve aboard for the day, four asleep on the water.":
+    "我们的旗舰。十四米，2025 年翻修 — 日间可载十二人，四人可在水上过夜。",
+  "Our vessels":
+    "我们的船",
+  "Our vessels, the atolls, and what is under them.":
+    "我们的船、这些环礁，以及它们之下的世界。",
+  "Private charters out of Hulhumal&eacute; Marina. One party aboard, a crew of three, and a route drawn the morning you sail.":
+    "自胡鲁马累码头出发的私人包船。船上只有你们一行人、三名船员，以及出海当天早晨才定下的航线。",
+  "Reserve a vessel":
+    "预订船只",
+  "The boat you were shown is the boat you sail on":
+    "你看到的那艘船，就是你出海时坐的那艘",
+  "We keep the fleet small on purpose. The boat you were shown is the boat you sail on, nothing is shared with another party, and nothing is subcontracted.":
+    "我们刻意把船队保持得很小。你看到的那艘船，就是你出海时坐的那艘 — 不与其他客人拼船，也不转包。",
   "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
     "两个价格均为七人、整船的费用。船上人数不同，价格另行报出。",
   "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
@@ -245,7 +267,7 @@ content: {
     address: ["M. Veraa", "马累 20026", "马尔代夫共和国"]
   },
   nav: [
-    { label: "关于船" }, { label: "行程" }, { label: "影像" },
+    { label: "我们的船" }, { label: "行程" }, { label: "影像" },
     { label: "关于" }, { label: "联系" }
   ],
   music: { line: "感受马尔代夫的气息" },
