@@ -550,6 +550,55 @@
     }
   }
 
+  /* ---- The feature: one frame, driven by the list beside it -------------- */
+  function feature() {
+    var box = $("[data-feat]"); if (!box) return;
+    var rows = $$("[data-feat-r]", box), imgs = $$("[data-feat-f]", box);
+    if (rows.length < 2 || rows.length !== imgs.length) return;
+    var at = 0;
+
+    function wake(m) {                          // release a frame that was held back
+      if (!m.getAttribute("data-src")) return;
+      m.src = m.getAttribute("data-src");
+      if (m.getAttribute("data-srcset")) m.srcset = m.getAttribute("data-srcset");
+      m.removeAttribute("data-src"); m.removeAttribute("data-srcset");
+    }
+    function wakeAll() { imgs.forEach(wake); }
+    if (document.readyState === "complete") setTimeout(wakeAll, 1200);
+    else window.addEventListener("load", function () { setTimeout(wakeAll, 1200); });
+
+    function show(n) {
+      if (n === at || n < 0 || n >= rows.length) return;
+      at = n;
+      rows.forEach(function (r, i) { r.classList.toggle("on", i === at); });
+      wake(imgs[at]);
+      imgs.forEach(function (m, i) { m.classList.toggle("on", i === at); });
+    }
+
+    /* a cursor picks the row it is over */
+    rows.forEach(function (r, i) {
+      r.addEventListener("pointerenter", function (e) { if (e.pointerType !== "touch") show(i); });
+      r.addEventListener("focus", function () { show(i); });
+    });
+
+    /* a thumb has no cursor, so the row nearest the middle of what is left of
+       the screen below the sticky frame wins */
+    if (window.matchMedia("(hover: none), (max-width: 899px)").matches) {
+      onFrame.push(function (y, vh) {
+        var fr = $(".feat__f", box);
+        if (!fr) return;
+        var line = fr.getBoundingClientRect().bottom + (vh - fr.getBoundingClientRect().bottom) * 0.35;
+        var best = 0, near = Infinity;
+        for (var i = 0; i < rows.length; i++) {
+          var r = rows[i].getBoundingClientRect();
+          var d = Math.abs(r.top + r.height / 2 - line);
+          if (d < near) { near = d; best = i; }
+        }
+        show(best);
+      });
+    }
+  }
+
   /* ---- Voyage index: the photograph follows the cursor ------------------- */
   function voyageIndex() {
     var vx = $(".vx");
@@ -773,9 +822,12 @@
   function enquiry() {
     var f = $("#enquire"); if (!f) return;
     var steps = $$(".step", f), marks = $$(".steps li"), at = 0;
-    function money(n) { return "USD " + Number(n).toLocaleString("en-US"); }
+    function money(n) {
+      var c = (CV.rates && CV.rates.currency) || "USD";
+      return c + " " + Number(n).toLocaleString(LOC === "zh" || LOC === "en" ? "en-US" : LOC);
+    }
     function chosen() {
-      var v = $('input[name="voyage"]:checked', f);
+      var v = $('input[name="excursion"]:checked', f);
       return v ? (CV.voyages || []).filter(function (x) { return x.slug === v.value; })[0] : null;
     }
     function sum() {
@@ -784,12 +836,17 @@
       $("[data-s-v]").textContent = v ? v.title : "—";
       $("[data-s-a]").textContent = v ? v.area + " · " + v.duration : "—";
       $("[data-s-d]").textContent = d ? new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "—";
-      $("[data-s-g]").textContent = g ? g + (g === 1 ? " guest" : " guests") : "—";
+      $("[data-s-g]").textContent = g ? g + " " + t("guestsWord", "guests") : "—";
       $("[data-s-e]").textContent = ex.length ? ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ") : t("none", "None");
       var add = ex.reduce(function (s, i) { return s + Number(i.getAttribute("data-price") || 0); }, 0);
+      /* the package price only holds at the party size the client quoted;
+         at any other number the charter itself goes back to an enquiry */
+      var pax = (CV.rates && CV.rates.pax) || 7;
+      var priced = v && v.price != null && g === pax;
       $("[data-s-t]").textContent = !v ? "—"
-        : v.from == null ? (add ? money(add) + " + charter" : t("onRequest", "On request"))
-        : money(v.from + add);
+        : priced ? money(v.price + add)
+        : add ? money(add) + " + " + t("charterOnEnquiry", "charter on enquiry")
+        : t("onRequest", "On request");
     }
     function go(n, quiet) {
       at = Math.max(0, Math.min(steps.length - 1, n));
@@ -831,7 +888,7 @@
 
   function boot() {
     chrome(); header(); menu(); heroCycle(); video(); lines(); reveals(); scrollFx(); counters();
-    rails(); lightbox(); accordion(); enquiry(); forms(); voyageIndex(); player(); language(); driver(); ready();
+    rails(); lightbox(); accordion(); enquiry(); forms(); voyageIndex(); feature(); player(); language(); driver(); ready();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

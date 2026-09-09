@@ -51,9 +51,10 @@ function T(s) {
 const IMGDIR = path.join(ROOT, "assets/img");
 const have = new Set(fs.readdirSync(IMGDIR));
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
-const money = n => "USD " + Number(n).toLocaleString("en-US");
-const rate = v => (v.from == null ? T("On request") : T("From") + " " + money(v.from));
-const rateShort = v => (v.from == null ? T("On request") : money(v.from));
+const money = n => (CV.rates.currency || "USD") + " " +
+  Number(n).toLocaleString(LOC.code === "zh" ? "en-US" : LOC.code === "en" ? "en-US" : LOC.code);
+/* the client quotes a package price for a party of seven — never a "from" */
+const rate = v => (v.price == null ? T("On request") : money(v.price));
 function season(str) {
   if (/year round/i.test(str)) return { v: T("Year"), u: T("round"), k: T("Season") };
   const m = str.match(/^(\w{3})\w*\s*[–-]\s*(\w{3})/);
@@ -195,12 +196,23 @@ function home() {
   at(0);
   const v = CV.voyages;
   const feat = ["island-and-snorkelling", "shark-point-and-gulhi", "sunset-adventure"].map(s => v.find(x => x.slug === s));
-  const cards = feat.map((x, i) => `        <a class="card" href="excursions/${x.slug}.html" data-a="up" style="--i:${i}">
-          ${fig(x.img, x.alt, { ratio: "r34", sizes: "(min-width:760px) 31vw, 100vw", i })}
-          <div class="card__m">
-            <h3 class="d4">${x.title}</h3>
-            <div class="kv"><span>${x.kind}</span><span>${x.duration}</span></div></div>
-        </a>`).join("\n");
+  /* One large frame that cross-fades, driven by the list beside it — the three
+     equal rectangles read as a product grid and this does not. */
+  const frames = feat.map((x, i) => {
+    let m = img(x.img, i === 0 ? x.alt : "", { sizes: "(min-width:900px) 46vw, 100vw" })
+      .replace("<img ", `<img class="feat__i${i === 0 ? " on" : ""}" data-feat-f="${i}" `);
+    // only the frame on show is on the critical path; the rest arrive after load
+    if (i) m = m.replace(/ src="/, ' data-src="').replace(/ srcset="/, ' data-srcset="');
+    return "          " + m;
+  }).join("\n");
+
+  const rows = feat.map((x, i) => `          <li><a class="feat__row${i === 0 ? " on" : ""}" href="excursions/${x.slug}.html"
+            data-feat-r="${i}" data-a="up" style="--i:${i}">
+            <span class="feat__n">${String(i + 1).padStart(2, "0")}</span>
+            <span class="feat__h d4">${x.title}</span>
+            <span class="feat__m">${x.kind} &middot; ${x.duration} &middot; ${rate(x)}</span>
+            ${ARROW}
+          </a></li>`).join("\n");
 
   const slides = CV.hero.clips.map((c, i) => `        <div class="hero__s">
           ${i === 0 ? img(c.poster, c.alt, { sizes: "100vw", eager: true, cap: POSTER }) : held(c.poster)}
@@ -219,15 +231,26 @@ ${slides}
   </section>
 
   <section class="section">
-    <div class="wrap stack-xl">
-      <div class="lead stack-l" data-stagger>
-        <p class="eyebrow" data-a="up">${T("One vessel")}</p>
-        <h2 class="d2 lines">${T("The sea, at your own pace")}</h2>
-        <p class="lede measure" data-a="up">${T("Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.")}</p>
-        <p data-a="up">${link("vessel.html", T("Discover the vessel"))}</p>
-      </div>
-      <div class="g3" data-stagger>
-${cards}
+    <div class="wrap">
+      <div class="feat" data-feat>
+        <div class="feat__head stack-l" data-stagger>
+          <p class="eyebrow" data-a="up">${T("One vessel")}</p>
+          <h2 class="d2 lines">${T("The sea, at your own pace")}</h2>
+          <p class="lede measure" data-a="up">${T("Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.")}</p>
+        </div>
+
+        <div class="feat__v">
+          <div class="feat__f" data-a="clip">
+${frames}
+          </div>
+        </div>
+
+        <div class="feat__side stack-l">
+          <ol class="feat__list" data-stagger>
+${rows}
+          </ol>
+          <p data-a="up">${link("vessel.html", T("Discover the vessel"))}</p>
+        </div>
       </div>
     </div>
   </section>
@@ -345,7 +368,7 @@ function excursions() {
   const rows = CV.voyages.map((v, i) => `        <a class="vx__row" href="excursions/${v.slug}.html" data-thumb="assets/img/${v.img}-900.webp" data-alt="${esc(v.alt)}" data-a="up" style="--i:${Math.min(i,4)}">
           <span class="vx__n">${String(i + 1).padStart(2, "0")}</span>
           <span class="vx__t">${v.title}</span>
-          <span class="vx__m">${v.kind} &middot; ${v.duration} &middot; ${v.area}</span>
+          <span class="vx__m">${v.kind} &middot; ${v.duration} &middot; ${rate(v)}</span>
           <div class="vx__mob">${fig(v.img, v.alt, { ratio: "r169", sizes: "(max-width:899px) 100vw, 1px" })}</div>
         </a>`).join("\n");
 
@@ -374,7 +397,12 @@ ${rows}
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">${T("Rates")}</p>
       <h2 class="d2 lines">${T("What it costs to leave")}</h2>
-      <p class="lede measure" data-a="up">${T("Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included. Rates are quoted on enquiry against your dates and guest count.")}</p>
+      <p class="lede measure" data-a="up">${T("Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.")}</p>
+      <div class="rates" data-stagger>
+        <div data-a="up" style="--i:0"><span class="k">${T("Half day")}</span><span class="v num">${money(950)}</span></div>
+        <div data-a="up" style="--i:1"><span class="k">${T("Full day")}</span><span class="v num">${money(1350)}</span></div>
+      </div>
+      <p class="note" data-a="up">${T("Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.")}</p>
     </div>
   </section>
 
@@ -403,9 +431,9 @@ function excursionPages() {
   CV.voyages.forEach(v => {
     const r = "../";
     const others = CV.voyages.filter(x => x.slug !== v.slug);
-    const shots = v.shots.map((s, i) => `        ${fig(s, `${v.title} — aboard Tiffany Blanc 14`, { ratio: "r43", r, sizes: "(min-width:760px) 31vw, 100vw", i })}`).join("\n");
+    const shots = v.shots.map((s, i) => `        ${fig(s, `${v.title} — aboard Tiffany Blanc 14`, { ratio: "r43", sizes: "(min-width:760px) 31vw, 100vw", i })}`).join("\n");
     const rail = others.map(o => `        <a class="rail__item card" href="${o.slug}.html">
-          ${fig(o.img, o.alt, { ratio: "r34", r, sizes: "(min-width:760px) 30vw, 78vw", anim: null })}
+          ${fig(o.img, o.alt, { ratio: "r34", sizes: "(min-width:760px) 30vw, 78vw", anim: null })}
           <div class="card__m"><div class="kv"><span>${o.duration}</span><span>${o.guests}</span></div><h3 class="d4">${o.title}</h3></div>
         </a>`).join("\n");
 
@@ -455,7 +483,9 @@ ${v.plan.map((p, i) => `          <li data-a="up" style="--i:${Math.min(i, 6)}">
         <div class="split__t sticky stack-l" data-stagger>
           <p class="eyebrow" data-a="up">${T("Rates")}</p>
           <h2 class="d3 lines">${T("What the rate covers")}</h2>
-          <p class="small" data-a="up">${v.from == null ? T("Rates on request — we confirm in writing before anything is held.") : T("From") + " " + money(v.from) + " " + T("for the whole vessel, not per guest.")}</p>
+          <p class="small" data-a="up">${v.price == null
+            ? T("Rates on request — we confirm in writing before anything is held.")
+            : `<span class="num">${money(v.price)}</span> ` + T("for the whole vessel, seven aboard. Any other number is priced on enquiry.")}</p>
           <p data-a="up">${link(r + "excursions.html", T("All rates"))}</p>
         </div>
         <div class="g2">
@@ -739,8 +769,7 @@ ${chips}
             </div>
             <div class="fg fg2">
               <div class="field"><label for="g">${T("Guests")}</label><select id="g" name="guests" required>
-                <option value="2">2 ${T("guests")}</option><option value="4" selected>4 ${T("guests")}</option><option value="6">6 ${T("guests")}</option>
-                <option value="8">8 ${T("guests")}</option><option value="10">10 ${T("guests")}</option><option value="12">12 ${T("guests")}</option>
+${[2, 4, 6, 7, 8, 10, 12].map(n => `                <option value="${n}"${n === CV.rates.pax ? " selected" : ""}>${n} ${T("guests")}${n === CV.rates.pax ? " · " + T("priced") : ""}</option>`).join("\n")}
               </select></div>
               <div class="field"><label for="p">${T("Departure point")}</label><select id="p" name="pickup">
                 <option>${T("Hulhumal&eacute; Marina")}</option><option>${T("Velana International Airport jetty")}</option>
@@ -781,7 +810,7 @@ ${extras}
               <div class="sum__r"><span class="k">${T("Add-ons")}</span><span data-s-e>&mdash;</span></div>
               <div class="sum__t"><span class="k">${T("Indicative total")}</span><span class="v" data-s-t>&mdash;</span></div>
             </div>
-            <p class="note">${T("An indication only, in US dollars, for the whole vessel. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.")}</p>
+            <p class="note">${T("Package rates cover a party of seven, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.")}</p>
             <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="submit">${T("Send the enquiry")}</button></div>
           </div>
         </div>

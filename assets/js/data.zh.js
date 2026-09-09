@@ -18,6 +18,10 @@
   "hours": "每日 · 08:00 – 20:00 MVT",
   "year": 2026
  },
+ "rates": {
+  "pax": 7,
+  "currency": "USD"
+ },
  "hero": {
   "interval": 6000,
   "clips": [
@@ -106,7 +110,7 @@
    "season": "全年",
    "area": "北马累环礁",
    "departs": "08:30 · 胡鲁马累",
-   "from": null,
+   "price": 1350,
    "img": "sandbank",
    "alt": "低潮时的希玛富士沙洲",
    "line": "Fish Tank、希玛富士沙洲、海岛本身，以及日落中的归程。",
@@ -177,7 +181,7 @@
    "season": "全年",
    "area": "北马累环礁",
    "departs": "09:00 · 胡鲁马累",
-   "from": null,
+   "price": 950,
    "img": "snorkel-reef",
    "alt": "浮潜者在清澈的绿松石色浅礁之上",
    "line": "Fish Tank、一片白色沙洲，以及一段寻找海豚的归程。",
@@ -231,7 +235,7 @@
    "season": "全年",
    "area": "南马累环礁",
    "departs": "09:00 · 胡鲁马累",
-   "from": null,
+   "price": 1350,
    "img": "reef-fish",
    "alt": "南马累环礁珊瑚之上的礁鱼",
    "line": "三处浮潜点、一片沙洲，以及日落前的古尔希。",
@@ -308,7 +312,7 @@
    "season": "全年",
    "area": "南马累环礁",
    "departs": "13:30 · 胡鲁马累",
-   "from": null,
+   "price": 950,
    "img": "aerial-underway",
    "alt": "Tiffany Blanc 14 航行在马累外的深蓝海面上",
    "line": "鲨鱼点、一片沙洲，以及归途中沉下去的太阳。",
@@ -645,6 +649,8 @@
   }
  ],
  "ui": {
+  "charterOnEnquiry": "包船价格另议",
+  "guestsWord": "人",
   "menu": "菜单",
   "close": "关闭",
   "enquire": "预订咨询",

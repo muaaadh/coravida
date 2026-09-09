@@ -6,6 +6,20 @@ module.exports = {
 
 /* ---- strings the generator prints ------------------------------------- */
 ui: {
+  "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
+    "Обе цены — за всё судно для компании из семи человек. Любое другое число на борту считаем по запросу.",
+  "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
+    "Каждая экскурсия — частный чартер всего судна: экипаж, топливо и портовые сборы включены.",
+  "for the whole vessel, seven aboard. Any other number is priced on enquiry.":
+    "за всё судно, семеро на борту. Любое другое число считаем по запросу.",
+  "Full day":
+    "Полный день",
+  "Half day":
+    "Полдня",
+  "Package rates cover a party of seven, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
+    "Пакетные цены рассчитаны на компанию из семи человек и на всё судно; любое другое число на борту считаем по запросу. Окончательную сумму подтверждаем письменно до того, как что-либо бронируется. Эта форма — демонстрация и ничего не отправляет.",
+  "priced":
+    "по тарифу",
   "Chef": "Повар",
   "Berth": "Стоянка",
   "Office": "Офис",
@@ -214,6 +228,7 @@ ui: {
 
 /* ---- strings site.js needs in the browser ------------------------------ */
 chrome: {
+  charterOnEnquiry: "чартер по запросу", guestsWord: "гостей",
   menu: "Меню", close: "Закрыть", enquire: "Заявка", explore: "Разделы",
   primary: "Основная навигация", menuLabel: "Меню",
   music: "Музыка", player: "Музыкальный плеер", play: "Играть", pause: "Пауза",

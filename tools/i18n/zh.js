@@ -5,6 +5,20 @@
 module.exports = {
 
 ui: {
+  "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
+    "两个价格均为七人、整船的费用。船上人数不同，价格另行报出。",
+  "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
+    "每条行程都是整船包船 — 含船员、燃油与港口费。",
+  "for the whole vessel, seven aboard. Any other number is priced on enquiry.":
+    "为整船、七人在船的价格。人数不同，价格另行报出。",
+  "Full day":
+    "全日",
+  "Half day":
+    "半日",
+  "Package rates cover a party of seven, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
+    "套餐价格为七人、整船的费用；船上人数不同，价格另行报出。在占用任何日期之前，我们都会以书面确认最终金额。此表单为演示用途，不会发送任何内容。",
+  "priced":
+    "套餐价",
   "Chef": "厨师",
   "Berth": "泊位",
   "Office": "办公地址",
@@ -212,6 +226,7 @@ ui: {
 },
 
 chrome: {
+  charterOnEnquiry: "包船价格另议", guestsWord: "人",
   menu: "菜单", close: "关闭", enquire: "预订咨询", explore: "浏览",
   primary: "主导航", menuLabel: "菜单",
   music: "音乐", player: "音乐播放器", play: "播放", pause: "暂停",

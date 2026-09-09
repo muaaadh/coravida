@@ -58,6 +58,23 @@ Chinese gets its own type: Montserrat and Inter carry Latin and Cyrillic but no 
 uppercasing and the word-space line splitting — all Latin conventions. German gets
 `hyphens: auto`, because its compounds are long enough to break a narrow column on their own.
 
+## Rates
+
+The client quotes a **package price for a party of seven**, and prices any other number
+aboard on enquiry. Nothing on the site presents it as a "from":
+
+| | |
+|---|---|
+| Half day — Reef & Sandbank, Sunset Adventure | **USD 950** |
+| Full day — Island & Snorkelling, Shark Point & Gulhi | **USD 1,350** |
+
+`CV.rates = { pax: 7, currency: "USD" }` holds the basis and `price` sits on each
+excursion, so the figure, the qualifier and the enquiry maths always agree. The enquiry
+form defaults to seven guests and marks that option *priced*; choose any other number and
+the charter itself drops back to "On request", with add-ons still totalled beside it. Money
+formats to the reader's own convention — `USD 1,350`, `USD 1 350`, `USD 1.350` — while the
+currency stays USD.
+
 ## The hero film
 
 Three clips cycle behind the headline — a reef, an island, the vessel underway — each
@@ -105,6 +122,7 @@ carries the whole layer — no library:
 
 | Behaviour | Hook |
 |---|---|
+| **The feature.** One tall photograph beside a typographic index of three excursions. Point at a row, or scroll it into place on a phone, and the frame cross-fades to that excursion while a marine rule draws across the row. The frame on show is on the critical path; the other two arrive a second after `load`. | `data-feat`, `.feat` |
 | **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` into the closing navy section, or the footer where there isn't one |
 | **The excursion index.** Four numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
@@ -216,7 +234,7 @@ readable at 760 KB before it arrives.
 
 | File | What it is |
 |---|---|
-| `index.html` | Home — film hero, the offer and three excursions, film interlude, the vessel |
+| `index.html` | Home — film hero, the offer beside a cross-fading feature, film interlude, the vessel |
 | `vessel.html` | Tiffany Blanc 14 — four decks, specification, what is aboard |
 | `excursions.html` | The four excursions as a numbered index, then what a charter covers and add-ons |
 | `excursions/<slug>.html` | One page per excursion (4), each with its hour-by-hour timeline |
@@ -278,14 +296,15 @@ These are the client's real products, with their own timings and stops:
 Each page runs the itinerary as a timeline — the time in the margin, a rule with a dot per
 stop, the stop and one line about it.
 
-**No rates were supplied**, so `from` is `null` on all four and every price reads
-"On request"; the enquiry form shows the same, and add-ons total as "USD n + charter". Set
-`from` in `data.js` and the figures appear everywhere at once.
+Rates as supplied: **USD 950** a half day, **USD 1,350** a full day, both for a party of
+seven and for the whole vessel. Any other number aboard is priced on enquiry, and the site
+says so wherever a figure appears. Change `price` on an excursion, or `rates.pax`, and every
+page and the enquiry total move together.
 
 ## Still to confirm with the client
 
-The vessel specification in `CV.vessel`, the excursion rates and the six add-on prices, the
-contact details in `CV.brand`, and the 2019 founding year. Both forms are demonstrations —
+The vessel specification in `CV.vessel`, the six add-on prices, the contact details in
+`CV.brand`, and the 2019 founding year. (The excursion rates are now confirmed.) Both forms are demonstrations —
 they show a confirmation and write to `localStorage` (`cv.enquiries`), and send nothing.
 
 One gap in the shoot: **there is no sunset photograph** — everything was shot between

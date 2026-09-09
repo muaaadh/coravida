@@ -18,6 +18,10 @@
   "hours": "Täglich · 08:00 – 20:00 MVT",
   "year": 2026
  },
+ "rates": {
+  "pax": 7,
+  "currency": "USD"
+ },
  "hero": {
   "interval": 6000,
   "clips": [
@@ -106,7 +110,7 @@
    "season": "Ganzjährig",
    "area": "Nord-Malé-Atoll",
    "departs": "08:30 · Hulhumalé",
-   "from": null,
+   "price": 1350,
    "img": "sandbank",
    "alt": "Die Sandbank von Himmafushi bei Niedrigwasser",
    "line": "Fish Tank, die Sandbank von Himmafushi, die Insel selbst — und heimwärts unter dem Sonnenuntergang.",
@@ -177,7 +181,7 @@
    "season": "Ganzjährig",
    "area": "Nord-Malé-Atoll",
    "departs": "09:00 · Hulhumalé",
-   "from": null,
+   "price": 950,
    "img": "snorkel-reef",
    "alt": "Ein Schnorchler über einem flachen Riff in klarem, türkisem Wasser",
    "line": "Fish Tank, eine weiße Sandbank und eine Rückfahrt mit Delfinen.",
@@ -231,7 +235,7 @@
    "season": "Ganzjährig",
    "area": "Süd-Malé-Atoll",
    "departs": "09:00 · Hulhumalé",
-   "from": null,
+   "price": 1350,
    "img": "reef-fish",
    "alt": "Riff-Fische über Korallen im Süd-Malé-Atoll",
    "line": "Drei Schnorchelstopps, eine Sandbank und Gulhi, bevor die Sonne geht.",
@@ -308,7 +312,7 @@
    "season": "Ganzjährig",
    "area": "Süd-Malé-Atoll",
    "departs": "13:30 · Hulhumalé",
-   "from": null,
+   "price": 950,
    "img": "aerial-underway",
    "alt": "Tiffany Blanc 14 in Fahrt auf tiefblauem Wasser vor Malé",
    "line": "Shark Point, eine Sandbank und die Sonne, die auf dem Heimweg untergeht.",
@@ -645,6 +649,8 @@
   }
  ],
  "ui": {
+  "charterOnEnquiry": "Charter auf Anfrage",
+  "guestsWord": "Gäste",
   "menu": "Menü",
   "close": "Schließen",
   "enquire": "Anfragen",

@@ -5,6 +5,20 @@
 module.exports = {
 
 ui: {
+  "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
+    "Beide Preise gelten für sieben Personen und das ganze Schiff. Jede andere Zahl an Bord wird auf Anfrage kalkuliert.",
+  "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
+    "Jeder Ausflug ist ein Privatcharter des ganzen Schiffes — Crew, Treibstoff und Hafengebühren inbegriffen.",
+  "for the whole vessel, seven aboard. Any other number is priced on enquiry.":
+    "für das ganze Schiff, sieben an Bord. Jede andere Zahl wird auf Anfrage kalkuliert.",
+  "Full day":
+    "Ganzer Tag",
+  "Half day":
+    "Halber Tag",
+  "Package rates cover a party of seven, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
+    "Die Paketpreise gelten für sieben Personen und das ganze Schiff; jede andere Zahl an Bord wird auf Anfrage kalkuliert. Den endgültigen Betrag bestätigen wir schriftlich, bevor etwas reserviert wird. Dieses Formular ist eine Demonstration und sendet nichts.",
+  "priced":
+    "Paketpreis",
   "Chef": "Koch",
   "Berth": "Liegeplatz",
   "Office": "Büro",
@@ -212,6 +226,7 @@ ui: {
 },
 
 chrome: {
+  charterOnEnquiry: "Charter auf Anfrage", guestsWord: "Gäste",
   menu: "Menü", close: "Schließen", enquire: "Anfragen", explore: "Entdecken",
   primary: "Hauptnavigation", menuLabel: "Menü",
   music: "Musik", player: "Musikplayer", play: "Abspielen", pause: "Pause",

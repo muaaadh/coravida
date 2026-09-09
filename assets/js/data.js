@@ -58,13 +58,17 @@ window.CV = (function () {
     { label: "Contact",    href: "contact.html" }
   ];
 
-  /* The four excursions Coravida runs, as supplied by the client.
-     `from` is null until they confirm rates — the pages read "On request". */
+  /* What the client quotes: a package price for a party of seven. Any other
+     party size is priced on enquiry, so `price` is the figure at `rates.pax`
+     and nothing on the site presents it as a "from". */
+  var rates = { pax: 7, currency: "USD" };
+
+  /* The four excursions Coravida runs, as supplied by the client. */
   var voyages = [
     {
       slug: "island-and-snorkelling", title: "Island & Snorkelling", kind: "Full day",
       duration: "9.5 hours", guests: "Up to 12", season: "Year round",
-      area: "North Malé Atoll", departs: "08:30 · Hulhumalé", from: null,
+      area: "North Malé Atoll", departs: "08:30 · Hulhumalé", price: 1350,
       img: "sandbank", alt: "The Himmafushi sandbank at low water",
       line: "Fish Tank, the Himmafushi sandbank, the island itself, and home under the sunset.",
       intro: "A full day north. Snorkelling at Fish Tank while the water is clearest, a long stop on the sandbank, then time to walk Himmafushi before the run home.",
@@ -84,7 +88,7 @@ window.CV = (function () {
     {
       slug: "reef-and-sandbank", title: "Reef & Sandbank", kind: "Half day",
       duration: "4 hours", guests: "Up to 12", season: "Year round",
-      area: "North Malé Atoll", departs: "09:00 · Hulhumalé", from: null,
+      area: "North Malé Atoll", departs: "09:00 · Hulhumalé", price: 950,
       img: "snorkel-reef", alt: "A snorkeller over a shallow reef in clear turquoise water",
       line: "Fish Tank, a white sandbank, and a dolphin cruise home.",
       intro: "The short version of a good day. Straight out to Fish Tank, an hour on the sand, and a cruise back with an eye out for dolphins.",
@@ -101,7 +105,7 @@ window.CV = (function () {
     {
       slug: "shark-point-and-gulhi", title: "Shark Point & Gulhi", kind: "Full day",
       duration: "9 hours", guests: "Up to 12", season: "Year round",
-      area: "South Malé Atoll", departs: "09:00 · Hulhumalé", from: null,
+      area: "South Malé Atoll", departs: "09:00 · Hulhumalé", price: 1350,
       img: "reef-fish", alt: "Reef fish over coral in the South Malé Atoll",
       line: "Three snorkelling stops, a sandbank, and Gulhi before the sun goes.",
       intro: "South for the day. Reef sharks at Embudu, the coral garden off Taj, a sandbank at midday, and Gulhi in the afternoon before the run home.",
@@ -122,7 +126,7 @@ window.CV = (function () {
     {
       slug: "sunset-adventure", title: "Sunset Adventure", kind: "Half day",
       duration: "4.5 hours", guests: "Up to 12", season: "Year round",
-      area: "South Malé Atoll", departs: "13:30 · Hulhumalé", from: null,
+      area: "South Malé Atoll", departs: "13:30 · Hulhumalé", price: 950,
       img: "aerial-underway", alt: "Tiffany Blanc 14 underway on deep blue water off Malé",
       line: "Shark Point, a sandbank, and the sun going down on the way home.",
       intro: "An afternoon south. Reef sharks while the light is still high, a sandbank as it drops, and the whole run home under the sunset.",
@@ -212,5 +216,5 @@ window.CV = (function () {
     { q: "How do we hold a date?", a: "A fifty percent deposit confirms the booking; the balance is due seven days before departure. Bank transfer and card are both accepted." }
   ];
 
-  return { brand: brand, hero: hero, music: music, nav: nav, voyages: voyages, addons: addons, vessel: vessel, gallery: gallery, faq: faq };
+  return { brand: brand, rates: rates, hero: hero, music: music, nav: nav, voyages: voyages, addons: addons, vessel: vessel, gallery: gallery, faq: faq };
 })();
