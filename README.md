@@ -138,7 +138,8 @@ site follows them:
 
 | | |
 |---|---|
-| **Square corners on photography.** All six carry zero radius on photographs; Four Seasons has not one `border-radius` on any image surface across 19 stylesheets. `--r` is `0`; a new `--r-ui` keeps the corners on things you can press. | Radius now means "interactive". |
+| **Corners grow with the thing they belong to.** The reference set is square-cornered almost throughout, but the client asked for Apple's curve instead, so the site carries a radius *scale* rather than one value: `--r-s` 14px for rail cards and small tiles, `--r` 16–24px for a photograph, `--r-l` 20–34px for plates and anything hero-scale, `--r-ui` 14–20px for panels. Full-bleed heroes and film bands stay square, because they touch the viewport edge. | A 300px tile and an 1100px plate should not share a corner. |
+| **Tinted sections are panels, not bands.** `.section--mist` is inset by the page gutter and carries `--r-l`, so the grey sits on the white as a curved tile. The navy close keeps its full width — the sea divider has to run all the way across. | |
 | **A photograph fades up; it is not unveiled.** The curtain panel that used to slide off every image is gone. Belmond has no mask on media anywhere in 266KB of CSS; Cheval Blanc reserves its mask-reveal for *type*, which is what this site already does with headlines. Images enter on 0.75s opacity and a 14px rise, settling from 1.035× rather than 1.12×. | One mask device, spent on the headlines. |
 | **The plate is 2× the prose.** 1100px against a 544px measure, matching Aman (2.12×), Belmond (2.4×) and Four Seasons (2.1×). It stops at the gutter and never reaches the viewport edge. | |
 | **Only a photograph you can press answers to a cursor.** Hover-scale is scoped to links, cards and rail items. Aman removes it entirely. | |

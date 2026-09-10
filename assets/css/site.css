@@ -29,8 +29,12 @@
   --hgap:clamp(.6rem,1.3vw,1.15rem);
   --hpad:clamp(1.1rem,2vw,1.9rem);
   --hdr:calc(var(--hh) + var(--hgap) * 2);
-  --r:0px;                          /* photography: square, as all six references are */
-  --r-ui:clamp(12px,1.1vw,20px);    /* things you can press keep their corners */
+  /* Corners grow with the thing they belong to, the way Apple's do: a small
+     tile takes a small radius, a full-width plate takes a large one. */
+  --r-s:14px;                        /* rail cards, chips, small tiles      */
+  --r:clamp(16px,1.8vw,24px);        /* the default for a photograph        */
+  --r-l:clamp(20px,2.6vw,34px);      /* plates, and anything hero-scale     */
+  --r-ui:clamp(14px,1.4vw,20px);     /* panels and surfaces you can press   */
   --r-sm:12px;
   --e:cubic-bezier(.22,.61,.36,1);
   --eo:cubic-bezier(.16,1,.3,1);
@@ -81,7 +85,14 @@ main>*{margin:0}
   padding-bottom:calc(var(--sec) / 2 + var(--seah))}
 .section--mist,.section--navy{padding-block:calc(var(--sec) / 2) var(--sec)}
 main>section:last-child{padding-bottom:var(--sec)}
-.section--mist{background:var(--mist)}
+/* A tinted section is a panel, not a band — inset from the page and curved,
+   the way Apple's grey product tiles sit on white. The navy close keeps its
+   full width, because the sea divider has to run the whole way across. */
+.section--mist{background:var(--mist);border-radius:var(--r-l);
+  margin-inline:var(--gut);overflow:hidden}
+.section--mist>.wrap{padding-inline:clamp(1.25rem,3.4vw,3.25rem);
+  max-width:calc(var(--maxw) - var(--gut) * 2)}
+@media(max-width:700px){.section--mist{margin-inline:clamp(.75rem,3vw,1.25rem)}}
 .section--navy{background:var(--navy);color:rgba(255,255,255,.68)}
 .section--navy h1,.section--navy h2,.section--navy h3{color:#fff}
 .center{text-align:center}
@@ -328,6 +339,7 @@ figure{margin:0}
    it reads as a plate rather than a banner, and captioned so it has a reason
    to be there. */
 .plate{max-width:min(1100px,100%);margin-inline:auto}
+.plate .fig{border-radius:var(--r-l)}
 .plate figcaption{display:grid;gap:.3rem;justify-items:start;text-align:left;
   margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line);
   font-size:.8125rem;line-height:1.55;color:var(--body)}
@@ -361,6 +373,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .rail__track.drag{cursor:grabbing;scroll-snap-type:none;user-select:none}
 .rail__track::-webkit-scrollbar{display:none}
 .rail__item{flex:0 0 auto;width:min(78vw,420px);scroll-snap-align:start}
+.rail__item .fig,.card .fig{border-radius:var(--r-s)}
 .rail__nav{display:flex;gap:.5rem}
 .rail__nav button{width:44px;height:44px;border-radius:999px;border:1px solid var(--line);display:grid;place-items:center;transition:background .35s var(--e),border-color .35s,color .35s}
 .rail__nav button:hover{background:var(--marine);border-color:var(--marine);color:#fff}
@@ -507,7 +520,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 
 .lb{position:fixed;inset:0;z-index:120;background:rgba(2,16,36,.97);display:grid;place-items:center;padding:clamp(1rem,4vw,3rem);opacity:0;visibility:hidden;transition:opacity .35s var(--e),visibility .35s}
 .lb.open{opacity:1;visibility:visible}
-.lb img{max-width:min(1300px,92vw);max-height:84vh;object-fit:contain;border-radius:var(--r);transform:scale(.97);transition:transform .5s var(--eo),opacity .3s var(--e)}
+.lb img{max-width:min(1300px,92vw);max-height:84vh;object-fit:contain;border-radius:var(--r-l);transform:scale(.97);transition:transform .5s var(--eo),opacity .3s var(--e)}
 .lb.open img{transform:scale(1)}
 .lb__c{position:absolute;bottom:clamp(1rem,3vw,2rem);left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6)}
 .lb button{position:absolute;color:#fff;width:46px;height:46px;border:1px solid rgba(255,255,255,.2);border-radius:999px;display:grid;place-items:center;transition:background .3s}
