@@ -124,7 +124,7 @@ function fig(name, alt, { ratio = "r43", href = null, sizes = "(min-width:960px)
 /* A standalone photograph — one with no text beside it — is a plate, not a
    banner: narrower than the column it sits in, and captioned, so it reads as
    something chosen rather than something stretched. */
-function plate(name, alt, caption, { ratio = "r32", k = "", sizes = "(min-width:1000px) 880px, 100vw", cap = 2200, par = null } = {}) {
+function plate(name, alt, caption, { ratio = "r43", k = "", sizes = "(min-width:1200px) 1100px, 100vw", cap = 2200, par = null } = {}) {
   return `<figure class="plate">
         ${fig(name, alt, { ratio, sizes, cap, par })}
         <figcaption>${k ? `<span class="k">${k}</span>` : ""}<span>${caption}</span></figcaption>
@@ -457,7 +457,7 @@ function excursionPages() {
     const others = CV.voyages.filter(x => x.slug !== v.slug);
     const wide = v.shots[0];
     const rail = others.map(o => `        <a class="rail__item card" href="${o.slug}.html">
-          ${fig(o.img, o.alt, { ratio: "r34", sizes: "(min-width:760px) 30vw, 78vw", anim: null })}
+          ${fig(o.img, o.alt, { ratio: "r45", sizes: "(min-width:760px) 30vw, 78vw", anim: null })}
           <div class="card__m"><div class="kv"><span>${o.duration}</span><span>${o.guests}</span></div><h3 class="d4">${o.title}</h3></div>
         </a>`).join("\n");
 
@@ -564,6 +564,7 @@ function gallery() {
           <button type="button" data-lb="assets/img/${g.img}-1600.webp" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="${T("Open")}: ${esc(g.cap)}">
             ${img(g.img, g.cap, { sizes: "(min-width:1100px) 31vw, (min-width:700px) 47vw, 100vw", eager: i < 3 })}
           </button>
+          <figcaption>${g.cap}</figcaption>
         </figure>`).join("\n");
 
   const main = `  <section class="phero">

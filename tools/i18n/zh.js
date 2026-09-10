@@ -255,6 +255,7 @@ ui: {
 },
 
 chrome: {
+  pauseFilm: "暂停影片", playFilm: "播放影片",
   charterOnEnquiry: "包船价格另议", guestsWord: "人",
   menu: "菜单", close: "关闭", enquire: "预订咨询", explore: "浏览",
   primary: "主导航", menuLabel: "菜单",

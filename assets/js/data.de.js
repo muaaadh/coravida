@@ -23,7 +23,7 @@
   "currency": "USD"
  },
  "hero": {
-  "interval": 6000,
+  "interval": 9000,
   "clips": [
    {
     "src": "reef",
@@ -673,6 +673,8 @@
   }
  ],
  "ui": {
+  "pauseFilm": "Film anhalten",
+  "playFilm": "Film abspielen",
   "charterOnEnquiry": "Charter auf Anfrage",
   "guestsWord": "Gäste",
   "menu": "Menü",

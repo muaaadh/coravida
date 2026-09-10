@@ -29,7 +29,8 @@
   --hgap:clamp(.6rem,1.3vw,1.15rem);
   --hpad:clamp(1.1rem,2vw,1.9rem);
   --hdr:calc(var(--hh) + var(--hgap) * 2);
-  --r:clamp(12px,1.1vw,20px);     /* media */
+  --r:0px;                          /* photography: square, as all six references are */
+  --r-ui:clamp(12px,1.1vw,20px);    /* things you can press keep their corners */
   --r-sm:12px;
   --e:cubic-bezier(.22,.61,.36,1);
   --eo:cubic-bezier(.16,1,.3,1);
@@ -290,9 +291,12 @@ figure{margin:0}
 /* a slow drift on whichever slide is showing, so a still frame never feels frozen */
 .hero__s img,.hero__s video,.hero__bg>img,.hero__bg>video{transform:scale(1.1)}
 .hero__s.on img,.hero__s.on video,.hero__s:first-child img,.hero__s:first-child video{
-  animation:heroDrift 13s linear forwards}
-@keyframes heroDrift{from{transform:scale(1.1)}to{transform:scale(1.16)}}
-.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 78% 42% at 50% 46%,rgba(2,20,45,.5),rgba(2,20,45,0) 72%),linear-gradient(180deg,rgba(2,20,45,.5) 0%,rgba(2,20,45,.08) 26%,rgba(2,20,45,.16) 56%,rgba(2,20,45,.6) 100%)}
+  animation:heroDrift 9s linear forwards}          /* matches CV.hero.interval */
+@keyframes heroDrift{from{transform:scale(1.06)}to{transform:scale(1.12)}}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 78% 42% at 50% 46%,rgba(2,20,45,.36),rgba(2,20,45,0) 72%),linear-gradient(180deg,rgba(2,20,45,.30) 0%,rgba(2,20,45,.04) 26%,rgba(2,20,45,.14) 56%,rgba(2,20,45,.58) 100%)}
+/* a phone puts the headline lower, over the brightest part of the water —
+   the only place the scrim has to work harder than the reference set does */
+@media(max-width:700px){.hero::after{background:radial-gradient(ellipse 96% 40% at 50% 62%,rgba(2,20,45,.44),rgba(2,20,45,0) 74%),linear-gradient(180deg,rgba(2,20,45,.30) 0%,rgba(2,20,45,.06) 22%,rgba(2,20,45,.26) 58%,rgba(2,20,45,.62) 100%)}}
 .hero__in{position:relative;align-self:center;width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gut);text-align:center;color:#fff}
 .hero__in .eyebrow{color:rgba(255,255,255,.92);text-shadow:0 1px 10px rgba(2,16,36,.85),0 0 30px rgba(2,16,36,.5)}
 .hero__in h1{color:#fff;max-width:24ch;margin-inline:auto;text-shadow:0 1px 44px rgba(2,16,36,.35)}
@@ -313,7 +317,7 @@ figure{margin:0}
 .band__bg img,.band__bg video{width:100%;height:100%;object-fit:cover}
 .band__bg video{position:absolute;inset:0;opacity:0;transition:opacity 1.4s var(--e)}
 .band__bg video.on{opacity:1}
-.band::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse 70% 46% at 50% 50%,rgba(2,18,40,.42),rgba(2,18,40,0) 74%),linear-gradient(180deg,rgba(2,18,40,.46),rgba(2,18,40,.3) 45%,rgba(2,18,40,.5))}
+.band::after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse 70% 46% at 50% 50%,rgba(2,18,40,.30),rgba(2,18,40,0) 74%),linear-gradient(180deg,rgba(2,18,40,.32),rgba(2,18,40,.18) 45%,rgba(2,18,40,.36))}
 .band__in{position:relative;text-align:center;color:#fff;padding-block:clamp(7rem,18vw,16rem)}
 .band__in h2{color:#fff;max-width:23ch;margin-inline:auto;text-shadow:0 1px 34px rgba(2,16,36,.35)}
 .band__in .eyebrow{color:rgba(255,255,255,.88);text-shadow:0 1px 10px rgba(2,16,36,.85)}
@@ -323,20 +327,22 @@ figure{margin:0}
    A photograph with no text beside it. Narrower than the column it sits in so
    it reads as a plate rather than a banner, and captioned so it has a reason
    to be there. */
-.plate{max-width:min(880px,100%);margin-inline:auto}
-.plate figcaption{display:flex;flex-wrap:wrap;align-items:baseline;gap:.35rem 1.25rem;
-  margin-top:1.1rem;padding-top:.85rem;border-top:1px solid var(--line);
-  font-size:.875rem;line-height:1.6;color:var(--body)}
+.plate{max-width:min(1100px,100%);margin-inline:auto}
+.plate figcaption{display:grid;gap:.3rem;justify-items:start;text-align:left;
+  margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line);
+  font-size:.8125rem;line-height:1.55;color:var(--body)}
+.plate figcaption>span:last-child{max-width:46ch}
 .plate figcaption .k{font-family:var(--ui);font-size:.625rem;font-weight:500;letter-spacing:.26em;
   text-transform:uppercase;color:var(--ink);flex:0 0 auto}
-.center .plate figcaption{justify-content:center;text-align:center}
-@media(max-width:700px){.plate figcaption{gap:.2rem .9rem}}
+/* a caption stays flush with the photograph's left edge, even on a centred section */
+:root[lang="de"] .plate figcaption{hyphens:auto}
 
 /* --- Figures ------------------------------------------------------------ */
 .fig{display:block;position:relative;overflow:hidden;background:var(--mist);border-radius:var(--r)}
 .fig img{width:100%;height:100%;object-fit:cover;transition:transform 1.6s var(--eo),filter .7s var(--e)}
-.fig--z:hover img{transform:scale(1.045)}
-.r43{aspect-ratio:4/3}.r45{aspect-ratio:4/5}.r32{aspect-ratio:3/2}.r11{aspect-ratio:1/1}.r34{aspect-ratio:3/4}.r169{aspect-ratio:16/9}.r23{aspect-ratio:2/3}
+a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transform:scale(1.04)}
+/* four ratios, one per role: film, split, portrait, tile */
+.r169{aspect-ratio:16/9}.r43{aspect-ratio:4/3}.r45{aspect-ratio:4/5}.r11{aspect-ratio:1/1}
 .cap{margin-top:1.25rem;display:grid;gap:.35rem}
 
 /* --- Grids -------------------------------------------------------------- */
@@ -384,7 +390,7 @@ figure{margin:0}
    The client's most-asked question, at the size of an answer. A tinted card
    with the figure at display scale, the seven-guest qualifier under it, and
    the way out inside the same box. */
-.price{background:var(--mist);border:1px solid var(--line);border-radius:var(--r);
+.price{background:var(--mist);border:1px solid var(--line);border-radius:var(--r-ui);
   padding:clamp(1.5rem,3.2vw,2.25rem);display:grid;gap:.55rem;align-content:start;
   box-shadow:0 1px 0 rgba(255,255,255,.7) inset}
 .section--mist .price{background:var(--paper)}
@@ -436,7 +442,7 @@ figure{margin:0}
 }
 .vx__thumb{position:fixed;top:0;left:0;width:clamp(200px,17vw,290px);aspect-ratio:3/4;
   pointer-events:none;z-index:70;opacity:0;transform:translate3d(-50%,-50%,0) scale(.9);
-  transition:opacity .4s var(--e),transform .6s var(--eo);overflow:hidden;border-radius:var(--r);
+  transition:opacity .4s var(--e),transform .6s var(--eo);overflow:hidden;border-radius:var(--r-ui);
   box-shadow:0 24px 60px rgba(3,34,77,.24)}
 .vx__thumb.on{opacity:1;transform:translate3d(-50%,-50%,0) scale(1)}
 .vx__thumb img{width:100%;height:100%;object-fit:cover}
@@ -486,13 +492,18 @@ figure{margin:0}
 .dl a:hover{color:var(--marine);box-shadow:inset 0 -1px 0 currentColor}
 
 /* --- Gallery ------------------------------------------------------------ */
-.mosaic{column-count:1;column-gap:clamp(1rem,2vw,1.6rem)}
-@media(min-width:480px){.mosaic{column-count:2}}
-@media(min-width:1100px){.mosaic{column-count:3}}
-.mosaic figure{break-inside:avoid;margin:0 0 clamp(1rem,2vw,1.6rem)}
+/* Columns are filled round-robin by JS, not by column-count, so the order you
+   read across the top row is the order in the DOM — which is also the order the
+   lightbox steps through. CSS columns fill top-to-bottom and broke both. */
+.mosaic{display:grid;gap:clamp(1rem,2vw,1.6rem);grid-template-columns:1fr;align-items:start}
+@media(min-width:480px){.mosaic{grid-template-columns:1fr 1fr}}
+@media(min-width:1100px){.mosaic{grid-template-columns:repeat(3,1fr)}}
+.mosaic__col{display:grid;gap:clamp(1rem,2vw,1.6rem);align-content:start}
+.mosaic figure{margin:0}
 .mosaic button{display:block;width:100%;overflow:hidden;background:var(--mist);border-radius:var(--r)}
 .mosaic img{width:100%;transition:transform 1.3s var(--eo),filter .6s var(--e)}
 .mosaic button:hover img{transform:scale(1.04);filter:brightness(1.04)}
+.mosaic figcaption{margin-top:.7rem;font-size:.8125rem;line-height:1.5;color:var(--body)}
 
 .lb{position:fixed;inset:0;z-index:120;background:rgba(2,16,36,.97);display:grid;place-items:center;padding:clamp(1rem,4vw,3rem);opacity:0;visibility:hidden;transition:opacity .35s var(--e),visibility .35s}
 .lb.open{opacity:1;visibility:visible}
@@ -549,6 +560,22 @@ figure{margin:0}
 .note{font-size:.75rem;color:var(--body);line-height:1.75}
 .ok{display:none;text-align:center}
 .ok.on{display:block;animation:up .6s var(--eo)}
+
+/* --- Film controls -------------------------------------------------------
+   Anything that plays by itself for more than five seconds needs a way to stop
+   it. One 40px disc, bottom left, quiet until you go looking for it. */
+.filmc{position:absolute;left:clamp(1rem,2.4vw,1.75rem);bottom:clamp(1rem,2.4vw,1.75rem);
+  z-index:4;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;
+  color:#fff;background:rgba(2,16,36,.28);border:1px solid rgba(255,255,255,.30);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  opacity:0;transform:translateY(4px);transition:opacity .35s var(--e),transform .45s var(--eo),background .3s}
+.filmc:hover,.filmc:focus-visible{background:rgba(2,16,36,.5)}
+.filmc svg{width:11px;height:11px}
+.hero:hover .filmc,.band:hover .filmc,.fig:hover .filmc,
+.hero:focus-within .filmc,.band:focus-within .filmc,.fig:focus-within .filmc,
+.filmc:focus-visible{opacity:1;transform:none}
+@media(hover:none){.filmc{opacity:1;transform:none}}
+.fig .filmc{left:.75rem;bottom:.75rem;width:34px;height:34px}
 
 /* --- The player --------------------------------------------------------- */
 .mus{position:fixed;right:var(--hgap);bottom:var(--hgap);z-index:95;width:52px;height:52px}
@@ -702,15 +729,18 @@ figure{margin:0}
 [data-a]{transition-property:opacity,transform,clip-path;transition-duration:1.05s;transition-timing-function:var(--eo);transition-delay:calc(var(--i,0)*80ms)}
 [data-a="up"]{opacity:0;transform:translateY(32px)}
 [data-a="fade"]{opacity:0}
-[data-a="clip"]{position:relative;overflow:hidden}
-[data-a="clip"]::after{content:"";position:absolute;inset:-1px;z-index:2;background:var(--mist);transform:translateY(0);transition:transform 1.2s var(--eo);transition-delay:calc(var(--i,0)*80ms)}
-[data-a="clip"].in::after{transform:translateY(-101%)}
-[data-a="clip"] img,[data-a="clip"] video{transform:scale(1.12);transition:transform 1.8s var(--eo);transition-delay:calc(var(--i,0)*80ms)}
+/* A photograph arrives by fading up. The curtain that used to slide off it was
+   louder than anything in the reference set — and a mask-reveal reads best when
+   it is reserved for one thing, which here is the headlines. */
+[data-a="clip"]{position:relative;overflow:hidden;opacity:0;transform:translateY(14px);
+  transition:opacity .75s var(--e),transform 1s var(--eo);
+  transition-delay:calc(var(--i,0)*80ms)}
+[data-a="clip"].in{opacity:1;transform:none}
+[data-a="clip"] img,[data-a="clip"] video{transform:scale(1.035);transition:transform 1.6s var(--eo);
+  transition-delay:calc(var(--i,0)*80ms)}
 [data-a="clip"].in img,[data-a="clip"].in video{transform:scale(1)}
-.section--mist [data-a="clip"]::after{background:#EDF2F7}
-.section--navy [data-a="clip"]::after{background:var(--navy)}
 [data-a].in{opacity:1;transform:none}
-.fig--z[data-a="clip"].in:hover img{transform:scale(1.045)}
+a.fig--z[data-a="clip"].in:hover img,.card:hover .fig--z[data-a="clip"].in img{transform:scale(1.04)}
 /* a figure that carries film rather than a still */
 .fig.film video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:0;transition:opacity 1.1s var(--e)}

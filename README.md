@@ -129,6 +129,28 @@ It is skipped entirely if the player is already open or already playing, any int
 kills it early, and `sessionStorage` makes sure it appears once per visit rather than once
 per page.
 
+## How media is presented
+
+Six photography-led sites were read at source — **patinahotels.com** (Patina Maldives —
+note that `patinahotel.com`, singular, is a parked domain and not the reference), Aman,
+Cheval Blanc, Belmond, Six Senses Laamu and Four Seasons Yachts. Where they agreed, this
+site follows them:
+
+| | |
+|---|---|
+| **Square corners on photography.** All six carry zero radius on photographs; Four Seasons has not one `border-radius` on any image surface across 19 stylesheets. `--r` is `0`; a new `--r-ui` keeps the corners on things you can press. | Radius now means "interactive". |
+| **A photograph fades up; it is not unveiled.** The curtain panel that used to slide off every image is gone. Belmond has no mask on media anywhere in 266KB of CSS; Cheval Blanc reserves its mask-reveal for *type*, which is what this site already does with headlines. Images enter on 0.75s opacity and a 14px rise, settling from 1.035× rather than 1.12×. | One mask device, spent on the headlines. |
+| **The plate is 2× the prose.** 1100px against a 544px measure, matching Aman (2.12×), Belmond (2.4×) and Four Seasons (2.1×). It stops at the gutter and never reaches the viewport edge. | |
+| **Only a photograph you can press answers to a cursor.** Hover-scale is scoped to links, cards and rail items. Aman removes it entirely. | |
+| **Four ratios, role-mapped** — 16:9 film, 4:3 split, 4:5 portrait, 1:1 tile. Belmond enforces exactly four in code and warns on anything else. | Was seven. |
+| **Light scrims.** Patina runs 0.1 over its heroes. Ours came down about 40% — but a phone puts the headline over the brightest water, so `max-width:700px` gets its own slightly stronger wash. Verified: every hero headline clears 3:1, most clear 4.5:1. | |
+| **The poster is the clip's own first frame.** Cut from frame 0 of the encoded file, so the crossfade has nothing to jump between — and once the clip is running the still is taken out of the compositor. | |
+
+Two things the references do that this site deliberately does **not**: bleed a photograph
+off the viewport edge (Belmond and Six Senses both do; it was tried here and rejected), and
+drop the lightbox (Aman and Cheval Blanc have none — but a charter sells a specific boat,
+and a buyer needs to inspect it).
+
 ## Plates, and one rhythm
 
 Two rules do the work that a pile of one-off spacing used to.
@@ -165,6 +187,7 @@ carries the whole layer — no library:
 
 | Behaviour | Hook |
 |---|---|
+| **A stop for anything that plays itself.** One 40px disc, bottom left of any hero, band or film figure, quiet until you hover and always visible on touch. WCAG 2.2.2 asks for it and none of the six references provide one. | `.filmc` |
 | **The deep.** Below the sea divider the page is under water, so the closing section runs dark film behind the navy — sunlight coming down through the surface, held at 34% under a radial navy wash so the headline still wins. | `.section--deep`, `.deep__bg` |
 | **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` into the closing navy section, or the footer where there isn't one |
 | **The excursion index.** Four numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
@@ -257,7 +280,7 @@ Deliberately small, because a large one is how a site stops being clean:
 | Fonts | Self-hosted woff2 (Montserrat 300, Inter 400/500), preloaded, `font-display:swap`. No Google Fonts round-trip. |
 | Images | WebP only, four widths each (900 / 1200 / 1600 / 2200) through `srcset` + `sizes`, each carrying its own `width`/`height` read from the WebP header at build time, so nothing shifts as they land. 32 photographs, 21 MB on disk. |
 | Video | H.264 in four tiers — 1440 / 1080 / 720 / 540 — chosen at runtime from viewport × DPR and capped per clip at what its source can honestly give. |
-| Video loading | A WebP poster paints first; the clip is fetched after `load`. Skipped entirely under `prefers-reduced-motion` or Save-Data. |
+| Video loading | A WebP poster paints first; the clip is fetched after `load`. Every clip is watched: one that leaves the viewport stops decoding and picks up when it returns. Skipped entirely under `prefers-reduced-motion` or Save-Data. |
 | Audio | Nothing until the player is pressed. |
 | CSS / JS | 42 KB and 41 KB uncompressed — **10.6 KB and 11.5 KB gzipped**. One file each, no libraries. |
 | Languages | A localised page costs about **10 KB** more than the English one, and that is all of it — same CSS, same JS, same photographs. |
@@ -266,7 +289,7 @@ Measured cold with no cache on the home page:
 
 | | Desktop 1440 @2× | Phone 390 @3× |
 |---|---|---|
-| First view | 3.61 MB | **0.97 MB** |
+| First view | 3.60 MB | **0.87 MB** |
 | First contentful paint | 48 ms | 72 ms |
 | Requests | 14 | 14 |
 

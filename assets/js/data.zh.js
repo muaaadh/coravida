@@ -23,7 +23,7 @@
   "currency": "USD"
  },
  "hero": {
-  "interval": 6000,
+  "interval": 9000,
   "clips": [
    {
     "src": "reef",
@@ -673,6 +673,8 @@
   }
  ],
  "ui": {
+  "pauseFilm": "暂停影片",
+  "playFilm": "播放影片",
   "charterOnEnquiry": "包船价格另议",
   "guestsWord": "人",
   "menu": "菜单",

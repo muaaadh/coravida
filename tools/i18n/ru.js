@@ -257,6 +257,7 @@ ui: {
 
 /* ---- strings site.js needs in the browser ------------------------------ */
 chrome: {
+  pauseFilm: "Остановить видео", playFilm: "Включить видео",
   charterOnEnquiry: "чартер по запросу", guestsWord: "гостей",
   menu: "Меню", close: "Закрыть", enquire: "Заявка", explore: "Разделы",
   primary: "Основная навигация", menuLabel: "Меню",

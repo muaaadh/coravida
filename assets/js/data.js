@@ -25,7 +25,7 @@ window.CV = (function () {
      `interval` is how long each clip holds before the next — 5000-7000 reads
      well. Both fields are what the admin backend will edit. */
   var hero = {
-    interval: 6000,
+    interval: 9000,
     clips: [
       { src: "reef",   poster: "poster-reef",   max: 1440,
         alt: "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows" },

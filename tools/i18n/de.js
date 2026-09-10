@@ -255,6 +255,7 @@ ui: {
 },
 
 chrome: {
+  pauseFilm: "Film anhalten", playFilm: "Film abspielen",
   charterOnEnquiry: "Charter auf Anfrage", guestsWord: "Gäste",
   menu: "Menü", close: "Schließen", enquire: "Anfragen", explore: "Entdecken",
   primary: "Hauptnavigation", menuLabel: "Menü",

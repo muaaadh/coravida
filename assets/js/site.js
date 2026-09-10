@@ -38,6 +38,13 @@
   var ARROW = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 9.5 9.5 2.5M9.5 2.5H4M9.5 2.5V8" stroke="currentColor" stroke-width="1.1" stroke-linecap="square"/></svg>';
   var L = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M7.5 1.5 3 6l4.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
   var R = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M4.5 1.5 9 6l-4.5 4.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
+  var ICON = {
+    play: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2.5 1.4v9.2L10 6z"/></svg>',
+    pause: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><rect x="2.4" y="1.6" width="2.7" height="8.8" rx=".5"/><rect x="6.9" y="1.6" width="2.7" height="8.8" rx=".5"/></svg>',
+    prev: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M10 1.8v8.4L3.6 6z"/><rect x="1.6" y="1.8" width="1.5" height="8.4" rx=".4"/></svg>',
+    next: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 1.8v8.4L8.4 6z"/><rect x="8.9" y="1.8" width="1.5" height="8.4" rx=".4"/></svg>',
+    x: '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>'
+  };
   var CHEV = '<svg class="chev" viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M2.5 4.5 6 8l3.5-3.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
   var X = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>';
 
@@ -263,12 +270,43 @@
     v.load();
     return v;
   }
+  /* Anything that plays on its own needs a way to stop it (WCAG 2.2.2). One
+     disc per clip, put there only once the clip is actually running so a
+     blocked autoplay never leaves a dead control behind. */
+  function control(v) {
+    var host = v.closest(".hero, .band, .fig, .section--deep");
+    if (!host || $(".filmc", host)) return;
+    if (getComputedStyle(host).position === "static") host.style.position = "relative";
+    var b = el('<button class="filmc" type="button" aria-label="' + t("pauseFilm", "Pause the film") + '">' + ICON.pause + "</button>");
+    host.appendChild(b);
+    b.addEventListener("click", function () {
+      var vs = $$("video", host).filter(function (x) { return x.classList.contains("on"); });
+      var playing = vs.some(function (x) { return !x.paused; });
+      vs.forEach(function (x) { playing ? x.pause() : x.play().catch(function () {}); });
+      host.classList.toggle("film-off", playing);
+      b.innerHTML = playing ? ICON.play : ICON.pause;
+      b.setAttribute("aria-label", playing ? t("playFilm", "Play the film") : t("pauseFilm", "Pause the film"));
+    });
+  }
+
+  /* Once the clip is running, its poster is a full-size painted layer nobody
+     will ever see again — take it out of the compositor a beat after the fade. */
+  function retire(v) {
+    var still = v.parentElement && v.parentElement.querySelector("img");
+    if (!still) return;
+    setTimeout(function () { if (v.classList.contains("on")) still.style.visibility = "hidden"; }, 1500);
+  }
+  function show(v) {
+    v.classList.add("on");
+    control(v);
+    var p = v.play();
+    if (p && p.catch) p.catch(function () { v.classList.remove("on"); });
+    else retire(v);
+    if (p && p.then) p.then(function () { retire(v); }, function () {});
+  }
   function fadeIn(v) {
-    if (v.readyState >= 3) { v.classList.add("on"); var p = v.play(); if (p && p.catch) p.catch(function () {}); return; }
-    v.addEventListener("canplay", function () {
-      v.classList.add("on");
-      var p = v.play(); if (p && p.catch) p.catch(function () { v.classList.remove("on"); });
-    }, { once: true });
+    if (v.readyState >= 3) return show(v);
+    v.addEventListener("canplay", function () { show(v); }, { once: true });
   }
 
   /* the hero holds one clip, then hands over to the next */
@@ -307,6 +345,7 @@
       slides[at].classList.add("on");
       if (prev !== at) slides[prev].classList.remove("on");
       poster(slides[at]);
+      var st = $("img", slides[at]); if (st) st.style.visibility = "";
       var v = vids[at];
       if (v) { load(v, v.getAttribute("data-src"), +v.getAttribute("data-max")); v.currentTime = 0; fadeIn(v); }
       var nxi = (at + 1) % slides.length, nx = vids[nxi];   // fetch the next one while this plays
@@ -349,21 +388,29 @@
   function video() {
     var vids = $$("video[data-src]").filter(function (v) { return !v.closest("[data-hero]"); });
     if (!vids.length || SLOW || SAVE) return;
+
+    function start(v) { fadeIn(load(v, v.getAttribute("data-src"), +v.getAttribute("data-max"))); }
+
     var eager = vids.filter(function (v) { return v.hasAttribute("data-eager"); });
-    var lazy = vids.filter(function (v) { return !v.hasAttribute("data-eager"); });
-    function go() { eager.forEach(function (v) { fadeIn(load(v, v.getAttribute("data-src"), +v.getAttribute("data-max"))); }); }
+    function go() { eager.forEach(start); }
     if (document.readyState === "complete") setTimeout(go, 150);
     else window.addEventListener("load", function () { setTimeout(go, 150); });
-    if (!lazy.length) return;
-    if (!("IntersectionObserver" in window)) return lazy.forEach(function (v) { fadeIn(load(v, v.getAttribute("data-src"), +v.getAttribute("data-max"))); });
+
+    if (!("IntersectionObserver" in window)) {
+      return vids.forEach(function (v) { if (!v.hasAttribute("data-eager")) start(v); });
+    }
+    /* every clip is watched, eager ones included — a clip nobody can see should
+       not be decoding, and it should pick up again when it comes back */
     var io = new IntersectionObserver(function (es) {
       es.forEach(function (e) {
-        if (!e.isIntersecting) return;
-        fadeIn(load(e.target, e.target.getAttribute("data-src"), +e.target.getAttribute("data-max")));
-        io.unobserve(e.target);
+        var v = e.target;
+        if (e.isIntersecting) {
+          if (!v.dataset.started) start(v);
+          else if (v.classList.contains("on") && !v.closest(".film-off")) v.play().catch(function () {});
+        } else if (v.classList.contains("on")) v.pause();
       });
-    }, { rootMargin: "400px 0px" });
-    lazy.forEach(function (v) { io.observe(v); });
+    }, { rootMargin: "300px 0px" });
+    vids.forEach(function (v) { io.observe(v); });
   }
 
   /* ---- Line splitting -------------------------------------------------- */
@@ -417,13 +464,6 @@
   }
 
   /* ---- The player -------------------------------------------------------- */
-  var ICON = {
-    play: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2.5 1.4v9.2L10 6z"/></svg>',
-    pause: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><rect x="2.4" y="1.6" width="2.7" height="8.8" rx=".5"/><rect x="6.9" y="1.6" width="2.7" height="8.8" rx=".5"/></svg>',
-    prev: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M10 1.8v8.4L3.6 6z"/><rect x="1.6" y="1.8" width="1.5" height="8.4" rx=".4"/></svg>',
-    next: '<svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M2 1.8v8.4L8.4 6z"/><rect x="8.9" y="1.8" width="1.5" height="8.4" rx=".4"/></svg>',
-    x: '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="M1.5 1.5l9 9M10.5 1.5l-9 9" stroke="currentColor" stroke-width="1.2" stroke-linecap="square"/></svg>'
-  };
   var BARS = '<span class="mus__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>';
 
   function player() {
@@ -690,6 +730,31 @@
     });
   }
 
+  /* ---- Mosaic ----------------------------------------------------------- */
+  /* CSS columns fill top-to-bottom, so the third picture you read was the
+     eleventh in the DOM — and the eleventh the lightbox went to next. Filling
+     the columns round-robin puts reading order and DOM order back together. */
+  function mosaic() {
+    var m = $(".mosaic"); if (!m) return;
+    var items = $$(":scope > figure, :scope > .mosaic__col > figure", m);
+    if (!items.length) return;
+    var at = -1;
+    function cols() { return window.innerWidth >= 1100 ? 3 : window.innerWidth >= 480 ? 2 : 1; }
+    function lay() {
+      var n = cols();
+      if (n === at) return;
+      at = n;
+      var made = [];
+      for (var i = 0; i < n; i++) made.push(el('<div class="mosaic__col"></div>'));
+      items.forEach(function (f, i) { made[i % n].appendChild(f); });
+      m.textContent = "";
+      made.forEach(function (c) { m.appendChild(c); });
+    }
+    lay();
+    var t;
+    window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(lay, 150); }, { passive: true });
+  }
+
   /* ---- Lightbox -------------------------------------------------------- */
   function lightbox() {
     var trg = $$("[data-lb]"); if (!trg.length) return;
@@ -839,7 +904,7 @@
 
   function boot() {
     chrome(); header(); menu(); heroCycle(); video(); lines(); reveals(); scrollFx(); counters();
-    rails(); lightbox(); accordion(); enquiry(); forms(); voyageIndex(); player(); language(); driver(); ready();
+    rails(); lightbox(); mosaic();   /* the lightbox takes its order before the columns move things */ accordion(); enquiry(); forms(); voyageIndex(); player(); language(); driver(); ready();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();
