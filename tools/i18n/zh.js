@@ -5,6 +5,12 @@
 module.exports = {
 
 ui: {
+  "Everything the day needs is already aboard.":
+    "这一天需要的一切，都已在船上。",
+  "A guest on the sand beside her snorkel fins":
+    "沙滩上的客人，身旁是她的脚蹼",
+  "Tiffany Blanc 14 from directly above, underway":
+    "正上方视角：航行中的 Tiffany Blanc 14",
   "At anchor above the reef edge, guests over the side.":
     "停泊在礁缘之上，客人在舷外戏水。",
   "A green turtle over the reef": "礁上的绿海龟",
@@ -383,19 +389,25 @@ content: {
     ]
   },
   gallery: [
-    { cap: "Tiffany Blanc 14 · 北马累" }, { cap: "两座环礁，自高空" },
+    { cap: "Tiffany Blanc 14 · 北马累" },
+    { cap: "两座环礁，自高空" },
     { cap: "棕榈到此为止" },
     { cap: "脚蹼，和一整个下午" },
-    { cap: "鹰鳐，上午晚些时候" }, { cap: "低潮时的沙洲" },
-    { cap: "在舷缘上斟满" }, { cap: "停泊在礁缘之上" },
-    { cap: "船尾之外，深水区" }, { cap: "当天的第一处礁石" },
-    { cap: "水果，启航前摆好" }, { cap: "航行中，一路向南" },
-    { cap: "长长地走出去" }, { cap: "沙上的魟鱼" },
-    { cap: "客厅，向前望" }, { cap: "泳圈，哪儿也不用去" },
-    { cap: "驶离胡鲁马累" }, { cap: "百香果与草莓" },
-    { cap: "回到船上" }, { cap: "一艘拉上沙滩的小船" },
-    { cap: "棕榈与浅滩相接处" }, { cap: "船首，正上方视角" },
-    { cap: "从泳台下水" }, { cap: "举在水面之上" }, { cap: "两个人，随流漂着" }
+    { cap: "鹰鳐，上午晚些时候" },
+    { cap: "停泊在礁缘之上" },
+    { cap: "船尾之外，深水区" },
+    { cap: "当天的第一处礁石" },
+    { cap: "水果，启航前摆好" },
+    { cap: "航行中，一路向南" },
+    { cap: "沙上的魟鱼" },
+    { cap: "客厅，向前望" },
+    { cap: "泳圈，哪儿也不用去" },
+    { cap: "驶离胡鲁马累" },
+    { cap: "回到船上" },
+    { cap: "一艘拉上沙滩的小船" },
+    { cap: "棕榈与浅滩相接处" },
+    { cap: "船首，正上方视角" },
+    { cap: "从泳台下水" }
   ],
   faq: [
     { q: "船从哪里出发？",

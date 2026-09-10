@@ -119,7 +119,11 @@
    "price": 1350,
    "clip": "snorkel-pair",
    "clipMax": 1440,
-   "img": "sandbank",
+   "plate": {
+    "img": "palm-beach",
+    "stop": 4
+   },
+   "img": "palm-shore",
    "alt": "低潮时的希玛富士沙洲",
    "line": "Fish Tank、希玛富士沙洲、海岛本身，以及日落中的归程。",
    "intro": "向北的一整天。趁水色最清时在 Fish Tank 浮潜，在沙洲上久留，再有时间走一走希玛富士，然后返航。",
@@ -173,11 +177,6 @@
     "日落航段",
     "游泳与浮潜时间",
     "拍照停留"
-   ],
-   "shots": [
-    "fish-tank",
-    "sandbank-2",
-    "aerial-marina"
    ]
   },
   {
@@ -192,7 +191,11 @@
    "price": 950,
    "clip": "spit",
    "clipMax": 1080,
-   "img": "snorkel-reef",
+   "plate": {
+    "img": "atoll-pair",
+    "stop": 2
+   },
+   "img": "beach-aerial",
    "alt": "浮潜者在清澈的绿松石色浅礁之上",
    "line": "Fish Tank、一片白色沙洲，以及一段寻找海豚的归程。",
    "intro": "美好一天的精简版。直奔 Fish Tank，在沙上停留一小时，然后一路留意海豚返航。",
@@ -229,11 +232,6 @@
     "沙洲停留",
     "游泳与休息",
     "返回胡鲁马累的海豚航段"
-   ],
-   "shots": [
-    "fish-tank",
-    "sandbank",
-    "float-blue"
    ]
   },
   {
@@ -248,7 +246,11 @@
    "price": 1350,
    "clip": "shark",
    "clipMax": 1440,
-   "img": "reef-fish",
+   "plate": {
+    "img": "snorkellers",
+    "stop": 1
+   },
+   "img": "ray-sand",
    "alt": "南马累环礁珊瑚之上的礁鱼",
    "line": "三处浮潜点、一片沙洲，以及日落前的古尔希。",
    "intro": "向南的一天。恩布度的礁鲨、泰姬外的珊瑚花园、正午的沙洲，以及午后的古尔希，然后返航。",
@@ -308,11 +310,6 @@
     "登岛古尔希",
     "午餐",
     "日落航段"
-   ],
-   "shots": [
-    "ray-sand",
-    "snorkellers",
-    "sandbank"
    ]
   },
   {
@@ -327,6 +324,10 @@
    "price": 950,
    "clip": "wake",
    "clipMax": 1080,
+   "plate": {
+    "img": "float-blue",
+    "stop": 2
+   },
    "img": "aerial-underway",
    "alt": "Tiffany Blanc 14 航行在马累外的深蓝海面上",
    "line": "鲨鱼点、一片沙洲，以及归途中沉下去的太阳。",
@@ -370,11 +371,6 @@
     "傍晚小食与饮品",
     "日落航段",
     "游泳与浮潜"
-   ],
-   "shots": [
-    "ray-sand",
-    "sandbank-2",
-    "champagne"
    ]
   }
  ],
@@ -546,16 +542,6 @@
    "cap": "鹰鳐，上午晚些时候"
   },
   {
-   "img": "sandbank",
-   "cat": "islands",
-   "cap": "低潮时的沙洲"
-  },
-  {
-   "img": "champagne",
-   "cat": "aboard",
-   "cap": "在舷缘上斟满"
-  },
-  {
    "img": "aerial-anchor",
    "cat": "vessel",
    "cap": "停泊在礁缘之上"
@@ -581,11 +567,6 @@
    "cap": "航行中，一路向南"
   },
   {
-   "img": "sandbank-2",
-   "cat": "islands",
-   "cap": "长长地走出去"
-  },
-  {
    "img": "ray-sand",
    "cat": "water",
    "cap": "沙上的魟鱼"
@@ -604,11 +585,6 @@
    "img": "aerial-marina",
    "cat": "islands",
    "cap": "驶离胡鲁马累"
-  },
-  {
-   "img": "platter-macro",
-   "cat": "aboard",
-   "cap": "百香果与草莓"
   },
   {
    "img": "boarding",
@@ -634,16 +610,6 @@
    "img": "swim-boat",
    "cat": "water",
    "cap": "从泳台下水"
-  },
-  {
-   "img": "pineapple",
-   "cat": "aboard",
-   "cap": "举在水面之上"
-  },
-  {
-   "img": "floats-2",
-   "cat": "aboard",
-   "cap": "两个人，随流漂着"
   }
  ],
  "faq": [

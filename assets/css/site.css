@@ -92,7 +92,7 @@ main>section:last-child{padding-bottom:var(--sec)}
   margin-inline:var(--gut);overflow:hidden}
 .section--mist>.wrap{padding-inline:clamp(1.25rem,3.4vw,3.25rem);
   max-width:calc(var(--maxw) - var(--gut) * 2)}
-@media(max-width:700px){.section--mist{margin-inline:clamp(.75rem,3vw,1.25rem)}}
+@media(max-width:700px){.section--mist{margin-inline:0;border-radius:0}}
 .section--navy{background:var(--navy);color:rgba(255,255,255,.68)}
 .section--navy h1,.section--navy h2,.section--navy h3{color:#fff}
 .center{text-align:center}
@@ -105,8 +105,6 @@ main>section:last-child{padding-bottom:var(--sec)}
 .d1{font-size:clamp(2.5rem,5.6vw,5.4rem);line-height:1.02;letter-spacing:-.038em}
 .d2,.menu__nav a,.vx__t,.stats .v{font-size:clamp(2rem,3.9vw,3.5rem);line-height:1.08;letter-spacing:-.032em}
 .d3,.sum__t .v{font-size:clamp(1.45rem,2.3vw,2.05rem);line-height:1.18;letter-spacing:-.022em}
-.d4,.tl__t,.tl__h,.dl--lead dt,.acc__b,.mus__t{font-size:clamp(1.14rem,1.5vw,1.4rem);line-height:1.26;letter-spacing:-.018em}
-.menu__nav a,.vx__t,.stats .v,.sum__t .v,.tl__t,.tl__h,.dl--lead dt,.acc__b,.mus__t{font-family:var(--dsp);font-weight:300;color:var(--ink)}
 .eyebrow,.link,.btn,.burger,.menu__x,.cap .k,.kv,.vx__m,.stats .k,.dl dt,.lb__c,.field label,.chips label,.steps li,.sum__r .k,.mus__line,.ftr h4{font-family:var(--ui);font-size:.625rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;line-height:1.4;color:var(--body)}
 .eyebrow{margin:0}
 .section--navy .eyebrow{color:rgba(255,255,255,.45)}
@@ -126,7 +124,9 @@ main:has(> :last-child:not(.section--navy)) > :last-child{padding-bottom:calc(va
 figure{margin:0}
 .steps{margin-bottom:var(--s5)}
 .lede--light{color:rgba(255,255,255,.86)}
-.lead{max-width:64rem}                 /* a head block that keeps the left edge */
+/* a line of prose over film still has to be a line of prose */
+.hero__in .lede{max-width:52ch;margin-inline:auto}
+                 /* a head block that keeps the left edge */
 
 /* --- Links & buttons ---------------------------------------------------- */
 .link{display:inline-flex;align-items:center;gap:.75rem;color:var(--ink);padding-bottom:.45rem;position:relative}
@@ -162,9 +162,6 @@ figure{margin:0}
 .btn--white::before{background:linear-gradient(180deg,var(--marine),var(--ocean))}
 .btn--white:hover{color:#fff;border-color:transparent}
 
-.btn--line{background:none;color:#fff;border-color:rgba(255,255,255,.28);box-shadow:none}
-.btn--line::before{background:#fff}
-.btn--line:hover{color:var(--ocean);border-color:#fff}
 .acts{display:flex;flex-wrap:wrap;gap:.75rem}
 .center .acts{justify-content:center}
 
@@ -182,15 +179,15 @@ figure{margin:0}
 .hdr__l{justify-self:start}.hdr__m{justify-self:center}.hdr__r{justify-self:end;display:flex;align-items:center;gap:clamp(.75rem,1.6vw,1.6rem)}
 .hdr__logo img{height:28px;width:auto;transition:opacity .4s var(--e)}
 .hdr__logo .dark{display:none}
-.burger{display:inline-flex;align-items:center;gap:.75rem;color:#fff}
+.burger{display:inline-flex;align-items:center;gap:.75rem;color:#fff;transition:color .55s var(--e)}
+.hdr.solid .burger,.hdr.solid .hdr__lang,
+.light-page .hdr:not(.solid) .burger{color:var(--navy)}
 .burger i{display:block;width:17px;height:1.5px;background:currentColor;box-shadow:0 5px 0 currentColor;margin-block:-5px 5px;transition:width .4s var(--eo)}
 .burger:hover i{width:11px}
-.hdr__lang{font-size:.625rem;font-weight:500;letter-spacing:.24em;color:#fff;opacity:.75}
 .hdr .btn{height:38px;padding-inline:1.5rem}
-.hdr:not(.solid) .burger,.hdr:not(.solid) .hdr__lang,.hdr:not(.solid) .hdr__logo img{filter:drop-shadow(0 1px 14px rgba(2,16,36,.5))}
+@media(max-width:700px){.hdr .btn{height:44px}.burger{min-height:44px}}
 .hdr.solid{background:rgba(255,255,255,.74);border-color:rgba(3,34,77,.07);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 12px 40px rgba(3,34,77,.11)}
-.hdr.solid .burger,.hdr.solid .hdr__lang{color:var(--navy);filter:none}
 .hdr.solid .hdr__logo .light{display:none}
 .hdr.solid .hdr__logo .dark{display:block}
 .hdr.solid .hdr__logo img{filter:none}
@@ -200,7 +197,6 @@ figure{margin:0}
 .hdr.up{transform:translateY(calc(-100% - var(--hgap) - 6px))}
 .light-page .hdr:not(.solid){background:rgba(255,255,255,.6);border-color:rgba(3,34,77,.07);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 8px 28px rgba(3,34,77,.07)}
-.light-page .hdr:not(.solid) .burger,.light-page .hdr:not(.solid) .hdr__lang{color:var(--navy);filter:none}
 .light-page .hdr:not(.solid) .hdr__logo .light{display:none}
 .light-page .hdr:not(.solid) .hdr__logo .dark{display:block}
 .light-page .hdr:not(.solid) .hdr__logo img{filter:none}
@@ -231,6 +227,17 @@ figure{margin:0}
 :root[lang^="zh"] .lang__b{letter-spacing:.06em}
 /* Han does not break on spaces, so the line splitter has nothing to measure */
 :root[lang^="zh"] .lines{text-wrap:balance}
+/* `ch` measures a half-width zero, so a ch cap is twice as wide in Han —
+   restate the caps in em, which does not lie */
+:root[lang^="zh"] .measure{max-width:24em}
+:root[lang^="zh"] .measure--wide{max-width:34em}
+:root[lang^="zh"] .phero h1{max-width:15em}
+:root[lang^="zh"] .phero .lede{max-width:26em}
+:root[lang^="zh"] .plate figcaption>span:last-child{max-width:30em}
+:root[lang^="zh"] .ftr__tag{max-width:15em}
+/* Han has no spaces, so a break may land anywhere without this */
+:root[lang^="zh"] h1,:root[lang^="zh"] h2,:root[lang^="zh"] h3,:root[lang^="zh"] .d1,
+:root[lang^="zh"] .d2,:root[lang^="zh"] .d3,:root[lang^="zh"] .d4{line-break:strict;overflow-wrap:normal}
 
 /* --- Language ----------------------------------------------------------- */
 .lang{position:relative}
@@ -243,13 +250,13 @@ figure{margin:0}
 .hdr.solid .lang__b:hover,.hdr.solid .lang.open .lang__b,
 .light-page .hdr:not(.solid) .lang__b:hover,.light-page .hdr:not(.solid) .lang.open .lang__b{
   background:rgba(3,34,77,.06);border-color:var(--line)}
-.lang__m{position:absolute;top:calc(100% + .7rem);right:0;min-width:9.5rem;padding:.4rem;border-radius:16px;
+.lang__m{position:absolute;top:calc(100% + .7rem);right:0;min-width:9.5rem;padding:.4rem;border-radius:var(--r-ui);
   background:rgba(255,255,255,.76);-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);
   border:1px solid rgba(255,255,255,.6);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 0 0 1px rgba(3,34,77,.07),0 14px 36px rgba(3,34,77,.16);
   opacity:0;transform:translateY(-6px) scale(.97);transform-origin:100% 0;visibility:hidden;
   transition:opacity .3s var(--e),transform .42s var(--eo),visibility .3s}
 .lang.open .lang__m{opacity:1;transform:none;visibility:visible}
-.lang__m a{display:block;padding:.5rem .75rem;border-radius:10px;font-size:.8125rem;color:var(--body);
+.lang__m a{display:block;padding:.5rem .75rem;border-radius:var(--r-s);font-size:.8125rem;color:var(--body);
   transition:background .25s,color .25s}
 .lang__m a:hover{background:rgba(3,34,77,.05);color:var(--ink)}
 .lang__m a.on{color:var(--ink);background:rgba(12,111,219,.08)}
@@ -277,7 +284,7 @@ figure{margin:0}
 .menu__body{display:grid;align-content:safe center;padding:clamp(1.5rem,4vh,3rem) var(--gut) clamp(2rem,5vh,4rem);overflow-y:auto;text-align:center}
 .menu__nav ul{display:grid;justify-items:center}
 .menu__nav li{overflow:hidden}
-.menu__nav a{display:inline-block;transform:translateY(110%);transition:color .3s var(--e)}
+.menu__nav a{display:inline-block;padding-block:.35rem;transform:translateY(110%);transition:color .3s var(--e)}
 .menu.open .menu__nav a{animation:mIn .9s var(--eo) forwards}
 .menu__nav li:nth-child(1) a{animation-delay:.3s}.menu__nav li:nth-child(2) a{animation-delay:.36s}
 .menu__nav li:nth-child(3) a{animation-delay:.42s}.menu__nav li:nth-child(4) a{animation-delay:.48s}
@@ -307,9 +314,9 @@ figure{margin:0}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 78% 42% at 50% 46%,rgba(2,20,45,.36),rgba(2,20,45,0) 72%),linear-gradient(180deg,rgba(2,20,45,.30) 0%,rgba(2,20,45,.04) 26%,rgba(2,20,45,.14) 56%,rgba(2,20,45,.58) 100%)}
 /* a phone puts the headline lower, over the brightest part of the water —
    the only place the scrim has to work harder than the reference set does */
-@media(max-width:700px){.hero::after{background:radial-gradient(ellipse 96% 40% at 50% 62%,rgba(2,20,45,.44),rgba(2,20,45,0) 74%),linear-gradient(180deg,rgba(2,20,45,.30) 0%,rgba(2,20,45,.06) 22%,rgba(2,20,45,.26) 58%,rgba(2,20,45,.62) 100%)}}
+@media(max-width:700px){.hero::after{background:radial-gradient(ellipse 108% 56% at 50% 56%,rgba(2,20,45,.54),rgba(2,20,45,0) 80%),linear-gradient(180deg,rgba(2,20,45,.30) 0%,rgba(2,20,45,.10) 20%,rgba(2,20,45,.34) 48%,rgba(2,20,45,.62) 100%)}}
 .hero__in{position:relative;align-self:center;width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gut);text-align:center;color:#fff}
-.hero__in .eyebrow{color:rgba(255,255,255,.92);text-shadow:0 1px 10px rgba(2,16,36,.85),0 0 30px rgba(2,16,36,.5)}
+.hero__in .eyebrow{color:#fff;text-shadow:0 1px 10px rgba(2,16,36,.85),0 0 30px rgba(2,16,36,.5)}
 .hero__in h1{color:#fff;max-width:24ch;margin-inline:auto;text-shadow:0 1px 44px rgba(2,16,36,.35)}
 .hero__in.stack>*+*{margin-top:clamp(1.5rem,2.6vw,2.4rem)}
 .hero__in .link{text-shadow:0 1px 18px rgba(2,16,36,.6)}
@@ -359,8 +366,6 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 
 /* --- Grids -------------------------------------------------------------- */
 .g2{display:grid;gap:clamp(1.25rem,3vw,3.25rem);grid-template-columns:1fr}
-.g3{display:grid;gap:clamp(1rem,2.4vw,2.25rem);grid-template-columns:1fr}
-.g4{display:grid;gap:clamp(1rem,2vw,1.75rem);grid-template-columns:repeat(2,1fr)}
 @media(min-width:820px){.g2{grid-template-columns:1fr 1fr;align-items:start}}
 @media(min-width:760px){.g3{grid-template-columns:repeat(3,1fr)}}
 @media(min-width:900px){.g4{grid-template-columns:repeat(4,1fr)}}
@@ -389,8 +394,8 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
   padding:clamp(.9rem,2vw,1.15rem) 0;border-top:1px solid var(--line)}
 .ways li:last-child .way{border-bottom:1px solid var(--line)}
 .way__t{color:var(--ink);transition:color .35s var(--e),transform .5s var(--eo)}
-.way__m{grid-column:1;grid-row:2;font-family:var(--ui);font-size:.625rem;font-weight:500;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--body)}
+.way__m{grid-column:1;grid-row:2;font-family:var(--ui);font-size:.6875rem;font-weight:500;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--body)}
 .way svg{grid-column:2;grid-row:1/-1;width:12px;height:12px;color:var(--marine);
   opacity:.55;transition:opacity .35s,transform .5s var(--eo)}
 @media(hover:hover){
@@ -500,9 +505,12 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .dl>div{display:grid;grid-template-columns:1fr;gap:.3rem;padding:1.5rem 0;border-bottom:1px solid var(--line);transition:background .4s var(--e)}
 @media(min-width:620px){.dl>div{grid-template-columns:14rem 1fr;gap:2rem;align-items:baseline}}
 .dl dd{color:var(--ink)}
-.dl--lead dt{text-transform:none;letter-spacing:-.015em}
 .dl a{box-shadow:inset 0 -1px 0 var(--line);transition:color .3s,box-shadow .3s}
 .dl a:hover{color:var(--marine);box-shadow:inset 0 -1px 0 currentColor}
+
+/* three roles, ranged left inside a centred block — a definition list reads
+   badly centred, but the block it sits in does not have to be */
+.crew{max-width:44rem;margin-inline:auto;text-align:left}
 
 /* --- Gallery ------------------------------------------------------------ */
 /* Columns are filled round-robin by JS, not by column-count, so the order you
@@ -556,7 +564,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 @media(min-width:700px){.fg2{grid-template-columns:1fr 1fr}}
 .chips{display:flex;flex-wrap:wrap;gap:.5rem}
 .chips input{position:absolute;opacity:0;pointer-events:none}
-.chips label{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:.7rem 1.35rem;cursor:pointer;transition:background .35s,color .35s,border-color .35s}
+.chips label{display:inline-flex;align-items:center;min-height:44px;border:1px solid var(--line);border-radius:999px;padding:.6rem 1.35rem;cursor:pointer;transition:background .35s,color .35s,border-color .35s}
 .chips label:hover{border-color:var(--navy);color:var(--navy)}
 .chips input:checked+label{background:linear-gradient(180deg,var(--marine),var(--ocean));border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(12,111,219,.22)}
 .chips input:focus-visible+label{outline:2px solid var(--marine);outline-offset:3px}
@@ -570,7 +578,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .sum{border:1px solid var(--line);border-radius:var(--r);padding:clamp(1.5rem,3vw,2.25rem);display:grid;gap:1rem}
 .sum__r{display:flex;justify-content:space-between;gap:1.5rem;font-size:.9rem}
 .sum__t{border-top:1px solid var(--line);padding-top:1rem;display:flex;justify-content:space-between;align-items:baseline}
-.note{font-size:.75rem;color:var(--body);line-height:1.75}
+.note{max-width:62ch;font-size:.75rem;color:var(--body);line-height:1.75}
 .ok{display:none;text-align:center}
 .ok.on{display:block;animation:up .6s var(--eo)}
 
@@ -617,7 +625,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 
 /* the panel it opens */
 .mus__p{position:absolute;right:0;bottom:calc(100% + .6rem);
-  width:min(20.5rem,calc(100vw - 2 * var(--hgap)));border-radius:22px;overflow:hidden;
+  width:min(20.5rem,calc(100vw - 2 * var(--hgap)));border-radius:var(--r-ui);overflow:hidden;
   background:rgba(255,255,255,.62);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);
   border:1px solid rgba(255,255,255,.55);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 0 0 1px rgba(3,34,77,.07),0 16px 44px rgba(3,34,77,.18);
@@ -670,7 +678,6 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
    the desktop hover states are switched off so they cannot stick after a tap. */
 @media(hover:none){
   .card:hover,.rail__nav button:hover,.chips label:hover,.menu__lang a:hover,
-  .lang__m a:hover,.filters button:hover{background:none;transform:none}
   .rail__nav button:hover{background:none;border-color:var(--line);color:inherit}
   .card:active{transform:scale(.985)}
   .card:active .fig img{transform:scale(1.03)}
@@ -727,14 +734,14 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 
 /* --- Footer ------------------------------------------------------------- */
 .ftr{position:relative;background:var(--navy);color:rgba(255,255,255,.6);padding-block:clamp(4rem,8vw,7rem) clamp(2rem,4vw,2.5rem)}
-.ftr h4{color:rgba(255,255,255,.38);margin-bottom:1.4rem}
+.ftr h4{color:rgba(255,255,255,.58);margin-bottom:1.4rem}
 .ftr__top{display:grid;gap:clamp(2.5rem,5vw,4rem);grid-template-columns:1fr}
 @media(min-width:860px){.ftr__top{grid-template-columns:1.4fr .8fr 1fr}}
 .ftr img{height:46px;width:auto}
 .ftr a{transition:color .3s}
 .ftr a:hover{color:#fff}
 .ftr li+li{margin-top:.7rem}
-.ftr__b{margin-top:clamp(3rem,6vw,4.5rem);padding-top:1.6rem;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-wrap:wrap;gap:.75rem 2rem;justify-content:space-between;font-size:.75rem;color:rgba(255,255,255,.4)}
+.ftr__b{margin-top:clamp(3rem,6vw,4.5rem);padding-top:1.6rem;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-wrap:wrap;gap:.75rem 2rem;justify-content:space-between;font-size:.75rem;color:rgba(255,255,255,.62)}
 
 /* ==========================================================================
    MOTION

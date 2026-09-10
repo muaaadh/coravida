@@ -119,7 +119,11 @@
    "price": 1350,
    "clip": "snorkel-pair",
    "clipMax": 1440,
-   "img": "sandbank",
+   "plate": {
+    "img": "palm-beach",
+    "stop": 4
+   },
+   "img": "palm-shore",
    "alt": "Die Sandbank von Himmafushi bei Niedrigwasser",
    "line": "Fish Tank, die Sandbank von Himmafushi, die Insel selbst — und heimwärts unter dem Sonnenuntergang.",
    "intro": "Ein ganzer Tag nach Norden. Schnorcheln am Fish Tank, solange das Wasser am klarsten ist, ein langer Stopp auf der Sandbank, dann Zeit für Himmafushi vor der Rückfahrt.",
@@ -173,11 +177,6 @@
     "Sonnenuntergangsfahrt",
     "Zeit zum Schwimmen und Schnorcheln",
     "Fotostopps"
-   ],
-   "shots": [
-    "fish-tank",
-    "sandbank-2",
-    "aerial-marina"
    ]
   },
   {
@@ -192,7 +191,11 @@
    "price": 950,
    "clip": "spit",
    "clipMax": 1080,
-   "img": "snorkel-reef",
+   "plate": {
+    "img": "atoll-pair",
+    "stop": 2
+   },
+   "img": "beach-aerial",
    "alt": "Ein Schnorchler über einem flachen Riff in klarem, türkisem Wasser",
    "line": "Fish Tank, eine weiße Sandbank und eine Rückfahrt mit Delfinen.",
    "intro": "Die kurze Fassung eines guten Tages. Direkt hinaus zum Fish Tank, eine Stunde auf dem Sand und eine Rückfahrt mit einem Auge auf Delfine.",
@@ -229,11 +232,6 @@
     "Stopp an der Sandbank",
     "Schwimmen und Ausruhen",
     "Delfinfahrt zurück nach Hulhumalé"
-   ],
-   "shots": [
-    "fish-tank",
-    "sandbank",
-    "float-blue"
    ]
   },
   {
@@ -248,7 +246,11 @@
    "price": 1350,
    "clip": "shark",
    "clipMax": 1440,
-   "img": "reef-fish",
+   "plate": {
+    "img": "snorkellers",
+    "stop": 1
+   },
+   "img": "ray-sand",
    "alt": "Riff-Fische über Korallen im Süd-Malé-Atoll",
    "line": "Drei Schnorchelstopps, eine Sandbank und Gulhi, bevor die Sonne geht.",
    "intro": "Den Tag nach Süden. Riffhaie vor Embudu, der Korallengarten vor dem Taj, mittags eine Sandbank und nachmittags Gulhi vor der Rückfahrt.",
@@ -308,11 +310,6 @@
     "Landgang auf Gulhi",
     "Mittagessen",
     "Sonnenuntergangsfahrt"
-   ],
-   "shots": [
-    "ray-sand",
-    "snorkellers",
-    "sandbank"
    ]
   },
   {
@@ -327,6 +324,10 @@
    "price": 950,
    "clip": "wake",
    "clipMax": 1080,
+   "plate": {
+    "img": "float-blue",
+    "stop": 2
+   },
    "img": "aerial-underway",
    "alt": "Tiffany Blanc 14 in Fahrt auf tiefblauem Wasser vor Malé",
    "line": "Shark Point, eine Sandbank und die Sonne, die auf dem Heimweg untergeht.",
@@ -370,11 +371,6 @@
     "Abendsnack und Getränke",
     "Sonnenuntergangsfahrt",
     "Schwimmen und Schnorcheln"
-   ],
-   "shots": [
-    "ray-sand",
-    "sandbank-2",
-    "champagne"
    ]
   }
  ],
@@ -546,16 +542,6 @@
    "cap": "Adlerrochen, am späten Vormittag"
   },
   {
-   "img": "sandbank",
-   "cat": "islands",
-   "cap": "Sandbank bei Niedrigwasser"
-  },
-  {
-   "img": "champagne",
-   "cat": "aboard",
-   "cap": "Am Schandeck eingeschenkt"
-  },
-  {
    "img": "aerial-anchor",
    "cat": "vessel",
    "cap": "Vor Anker über der Riffkante"
@@ -581,11 +567,6 @@
    "cap": "In Fahrt, Kurs Süd"
   },
   {
-   "img": "sandbank-2",
-   "cat": "islands",
-   "cap": "Der lange Weg hinaus"
-  },
-  {
    "img": "ray-sand",
    "cat": "water",
    "cap": "Stechrochen über Sand"
@@ -604,11 +585,6 @@
    "img": "aerial-marina",
    "cat": "islands",
    "cap": "Auslaufen aus Hulhumalé"
-  },
-  {
-   "img": "platter-macro",
-   "cat": "aboard",
-   "cap": "Passionsfrucht und Erdbeeren"
   },
   {
    "img": "boarding",
@@ -634,16 +610,6 @@
    "img": "swim-boat",
    "cat": "water",
    "cap": "Schwimmen von der Plattform"
-  },
-  {
-   "img": "pineapple",
-   "cat": "aboard",
-   "cap": "Über dem Wasser gehalten"
-  },
-  {
-   "img": "floats-2",
-   "cat": "aboard",
-   "cap": "Zwei, treibend"
   }
  ],
  "faq": [

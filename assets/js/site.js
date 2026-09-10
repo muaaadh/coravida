@@ -447,6 +447,11 @@
     });
   }
   function lines() {
+    /* Measuring where a headline wraps before the webfont has arrived freezes
+       the fallback's line breaks into the final markup. Wait for the face. */
+    if (document.fonts && document.fonts.status !== "loaded") {
+      return document.fonts.ready.then(function () { lines(); });
+    }
     var nodes = $$(".lines");
     if (!nodes.length) return;
     // Han text has no spaces to split on, so the headline rises as one block

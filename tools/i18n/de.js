@@ -5,6 +5,12 @@
 module.exports = {
 
 ui: {
+  "Everything the day needs is already aboard.":
+    "Alles, was der Tag braucht, ist schon an Bord.",
+  "A guest on the sand beside her snorkel fins":
+    "Ein Gast am Strand neben ihren Schnorchelflossen",
+  "Tiffany Blanc 14 from directly above, underway":
+    "Tiffany Blanc 14 von direkt oben, in Fahrt",
   "At anchor above the reef edge, guests over the side.":
     "Vor Anker über der Riffkante, Gäste über der Seite.",
   "A green turtle over the reef": "Eine grüne Schildkröte über dem Riff",
@@ -382,19 +388,25 @@ content: {
     ]
   },
   gallery: [
-    { cap: "Tiffany Blanc 14 · Nord-Malé" }, { cap: "Zwei Atolle, aus der Höhe" },
+    { cap: "Tiffany Blanc 14 · Nord-Malé" },
+    { cap: "Zwei Atolle, aus der Höhe" },
     { cap: "Wo die Palmen aufhören" },
     { cap: "Flossen, und der ganze Nachmittag" },
-    { cap: "Adlerrochen, am späten Vormittag" }, { cap: "Sandbank bei Niedrigwasser" },
-    { cap: "Am Schandeck eingeschenkt" }, { cap: "Vor Anker über der Riffkante" },
-    { cap: "Achteraus, tiefes Wasser" }, { cap: "Das erste Riff des Tages" },
-    { cap: "Obst, vor dem Ablegen angerichtet" }, { cap: "In Fahrt, Kurs Süd" },
-    { cap: "Der lange Weg hinaus" }, { cap: "Stechrochen über Sand" },
-    { cap: "Salon, Blick nach vorn" }, { cap: "Ringe, und nirgendwo hin müssen" },
-    { cap: "Auslaufen aus Hulhumalé" }, { cap: "Passionsfrucht und Erdbeeren" },
-    { cap: "Zurück an Bord" }, { cap: "Ein Boot, auf den Sand gezogen" },
-    { cap: "Wo die Palmen das Flachwasser treffen" }, { cap: "Bug, von direkt oben" },
-    { cap: "Schwimmen von der Plattform" }, { cap: "Über dem Wasser gehalten" }, { cap: "Zwei, treibend" }
+    { cap: "Adlerrochen, am späten Vormittag" },
+    { cap: "Vor Anker über der Riffkante" },
+    { cap: "Achteraus, tiefes Wasser" },
+    { cap: "Das erste Riff des Tages" },
+    { cap: "Obst, vor dem Ablegen angerichtet" },
+    { cap: "In Fahrt, Kurs Süd" },
+    { cap: "Stechrochen über Sand" },
+    { cap: "Salon, Blick nach vorn" },
+    { cap: "Ringe, und nirgendwo hin müssen" },
+    { cap: "Auslaufen aus Hulhumalé" },
+    { cap: "Zurück an Bord" },
+    { cap: "Ein Boot, auf den Sand gezogen" },
+    { cap: "Wo die Palmen das Flachwasser treffen" },
+    { cap: "Bug, von direkt oben" },
+    { cap: "Schwimmen von der Plattform" }
   ],
   faq: [
     { q: "Von wo legt das Schiff ab?",

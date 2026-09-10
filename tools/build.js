@@ -316,7 +316,19 @@ ${cta()}`;
 function vessel() {
   at(0);
   const V = CV.vessel;
-  const decks = V.decks.map((d, i) => `  <section class="section${i % 2 ? " section--mist" : ""}">
+  /* Four decks in a row were only two silhouettes, A/B/A/B, for two thousand
+     pixels. The third becomes a plate, so the run is broken once in the middle. */
+  const decks = V.decks.map((d, i) => i === 2
+    ? `  <section class="section center">
+    <div class="wrap stack-l" data-stagger>
+      <div class="narrow stack-s">
+        <h2 class="d3 lines">${d.t}</h2>
+        <p class="lede measure" data-a="up">${d.d}</p>
+      </div>
+      ${plate(d.img, d.alt, CV.brand.vessel, { k: d.t, ratio: "r169" })}
+    </div>
+  </section>`
+    : `  <section class="section${i % 2 ? " section--mist" : ""}">
     <div class="wrap">
       <div class="split${i % 2 ? " split--f" : ""}">
         <div class="split__t stack-l" data-stagger>
@@ -386,7 +398,7 @@ function excursions() {
   const rows = CV.voyages.map((v, i) => `        <a class="vx__row" href="excursions/${v.slug}.html" data-thumb="assets/img/${v.img}-900.webp" data-alt="${esc(v.alt)}" data-a="up" style="--i:${Math.min(i,4)}">
           <span class="vx__n">${String(i + 1).padStart(2, "0")}</span>
           <span class="vx__t">${v.title}</span>
-          <span class="vx__m">${v.kind} &middot; ${v.duration} &middot; ${rate(v)}</span>
+          <span class="vx__m">${v.kind} &middot; ${v.duration} &middot; ${v.area}</span>
           <div class="vx__mob">${fig(v.img, v.alt, { ratio: "r169", sizes: "(max-width:899px) 100vw, 1px" })}</div>
         </a>`).join("\n");
 
@@ -401,7 +413,7 @@ function excursions() {
   <section class="band band--short">
     <div class="band__bg" data-par="0.08">
       ${img("poster-shallows", "", { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="shallows" data-max="1440" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="shallows" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
   </section>
 
@@ -412,6 +424,11 @@ function excursions() {
 ${rows}
       </div>
     </div>
+  </section>
+
+  <section class="section--sm">
+    <div class="wrap">${plate("fins", T("A guest on the sand beside her snorkel fins"),
+      T("Everything the day needs is already aboard."), { k: T("Aboard"), ratio: "r169" })}</div>
   </section>
 
   <section class="section section--mist">
@@ -442,7 +459,7 @@ ${[["Half day", 950], ["Full day", 1350]].map(([k, n], i) => `        <div class
 ${cta()}`;
 
   page({
-    file: "excursions.html", pageAttr: "excursions.html", light: true, og: "sandbank",
+    file: "excursions.html", pageAttr: "excursions.html", light: true, og: "palm-shore",
     title: T("Excursions — Coravida"),
     desc: T("Four private excursions aboard Tiffany Blanc 14 out of Hulhumalé: Fish Tank and the Himmafushi sandbank, Shark Point and Gulhi, and two half days including a sunset run."),
     main
@@ -455,7 +472,7 @@ function excursionPages() {
   CV.voyages.forEach(v => {
     const r = "../";
     const others = CV.voyages.filter(x => x.slug !== v.slug);
-    const wide = v.shots[0];
+    const pl = v.plate;
     const rail = others.map(o => `        <a class="rail__item card" href="${o.slug}.html">
           ${fig(o.img, o.alt, { ratio: "r45", sizes: "(min-width:760px) 30vw, 78vw", anim: null })}
           <div class="card__m"><div class="kv"><span>${o.duration}</span><span>${o.guests}</span></div><h3 class="d4">${o.title}</h3></div>
@@ -525,7 +542,7 @@ ${v.plan.map((p, i) => `          <li data-a="up" style="--i:${Math.min(i, 6)}">
   </section>
 
   <section class="section--sm">
-    <div class="wrap">${plate(wide, `${v.title} — ${CV.brand.vessel}`, v.plan[1].d, { k: v.plan[1].h })}</div>
+    <div class="wrap">${plate(pl.img, `${v.title} — ${CV.brand.vessel}`, v.area, { k: v.plan[pl.stop].h })}</div>
   </section>
 
   <section class="section">
@@ -584,7 +601,7 @@ ${items}
 ${cta("", T("Come and take your own"))}`;
 
   page({
-    file: "gallery.html", pageAttr: "gallery.html", light: true, og: "sandbank",
+    file: "gallery.html", pageAttr: "gallery.html", light: true, og: "atoll-pair",
     title: T("Gallery — Coravida"),
     desc: T("Photographs of Tiffany Blanc 14, the Maldivian atolls she runs through, and the reefs below them."),
     main
@@ -616,19 +633,16 @@ function about() {
         </div>
         <div class="stack-l" data-stagger>
           <p class="lede measure--wide" data-a="up">${T("We keep the fleet small on purpose. The boat you were shown is the boat you sail on, nothing is shared with another party, and nothing is subcontracted.")}</p>
-          <p class="lede measure--wide" data-a="up">${T("Three crew take her out, and it is the same three every sailing &mdash; a captain who reads the weather, a chef, and a deckhand who has the ladder down before you ask.")}</p>
         </div>
       </div>
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="split">
-        <div class="split__t sticky stack-l" data-stagger>
-          <p class="eyebrow" data-a="up">${T("The crew")}</p>
-          <h2 class="d3 lines">${T("Three people, every sailing")}</h2>
-        </div>
+  <section class="section center">
+    <div class="wrap narrow stack-l" data-stagger>
+      <p class="eyebrow" data-a="up">${T("The crew")}</p>
+      <h2 class="d3 lines">${T("Three people, every sailing")}</h2>
+      <div class="crew">
         ${dl([
           [T("Captain"), T("Reads the weather, sets the route, and decides whether the day happens at all.")],
           [T("Chef"), T("Cooks aboard, off the Mal&eacute; market that morning.")],
@@ -689,9 +703,7 @@ function contact() {
             [T("Telephone"), `<a href="${CV.brand.phoneHref}">${CV.brand.phone}</a>`],
             [T("WhatsApp"), `<a href="${CV.brand.whatsappHref}" rel="noopener">${CV.brand.phone}</a>`],
             [T("Email"), `<a href="mailto:${CV.brand.email}">${CV.brand.email}</a>`],
-            [T("Berth"), CV.brand.marina],
-            [T("Office"), CV.brand.address.join(", ")],
-            [T("Hours"), CV.brand.hours]
+            [T("Berth"), CV.brand.marina]
           ])}
         </div>
         <div data-a="up">
@@ -733,7 +745,7 @@ function contact() {
 
   <section class="section--sm section--tail">
     <div class="wrap">
-      ${plate("aerial-marina", T("Tiffany Blanc 14 leaving Hulhumalé Marina"),
+      ${plate("aerial-bow", T("Tiffany Blanc 14 from directly above, underway"),
         T("Ten minutes from Velana International Airport"), { k: T("Hulhumal&eacute; Marina"), ratio: "r169" })}
     </div>
   </section>
@@ -877,7 +889,7 @@ function notfound() {
   </section>
 
   <section class="section--sm section--tail">
-    <div class="wrap">${fig("aerial-anchor", T("Tiffany Blanc 14 alone at anchor above a reef edge"), { ratio: "r169", sizes: "100vw", par: "0.05" })}</div>
+    <div class="wrap">${plate("aerial-anchor", T("Tiffany Blanc 14 alone at anchor above a reef edge"), CV.brand.marina, { k: CV.brand.vessel, ratio: "r169" })}</div>
   </section>`;
 
   page({
