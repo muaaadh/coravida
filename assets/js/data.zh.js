@@ -32,6 +32,12 @@
     "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows"
    },
    {
+    "src": "snorkel-pair",
+    "poster": "poster-snorkel-pair",
+    "max": 1440,
+    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
+   },
+   {
     "src": "island",
     "poster": "poster-island",
     "max": 1440,
@@ -111,6 +117,8 @@
    "area": "北马累环礁",
    "departs": "08:30 · 胡鲁马累",
    "price": 1350,
+   "clip": "snorkel-pair",
+   "clipMax": 1440,
    "img": "sandbank",
    "alt": "低潮时的希玛富士沙洲",
    "line": "Fish Tank、希玛富士沙洲、海岛本身，以及日落中的归程。",
@@ -182,6 +190,8 @@
    "area": "北马累环礁",
    "departs": "09:00 · 胡鲁马累",
    "price": 950,
+   "clip": "spit",
+   "clipMax": 1080,
    "img": "snorkel-reef",
    "alt": "浮潜者在清澈的绿松石色浅礁之上",
    "line": "Fish Tank、一片白色沙洲，以及一段寻找海豚的归程。",
@@ -236,6 +246,8 @@
    "area": "南马累环礁",
    "departs": "09:00 · 胡鲁马累",
    "price": 1350,
+   "clip": "shark",
+   "clipMax": 1440,
    "img": "reef-fish",
    "alt": "南马累环礁珊瑚之上的礁鱼",
    "line": "三处浮潜点、一片沙洲，以及日落前的古尔希。",
@@ -313,6 +325,8 @@
    "area": "南马累环礁",
    "departs": "13:30 · 胡鲁马累",
    "price": 950,
+   "clip": "wake",
+   "clipMax": 1080,
    "img": "aerial-underway",
    "alt": "Tiffany Blanc 14 航行在马累外的深蓝海面上",
    "line": "鲨鱼点、一片沙洲，以及归途中沉下去的太阳。",
@@ -515,6 +529,16 @@
    "img": "atoll-pair",
    "cat": "islands",
    "cap": "两座环礁，自高空"
+  },
+  {
+   "img": "palm-beach",
+   "cat": "islands",
+   "cap": "棕榈到此为止"
+  },
+  {
+   "img": "fins",
+   "cat": "aboard",
+   "cap": "脚蹼，和一整个下午"
   },
   {
    "img": "ray",

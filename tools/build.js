@@ -66,6 +66,7 @@ const CHEVR = '<svg viewBox="0 0 12 12" fill="none" aria-hidden="true"><path d="
 
 /* the webp header, so every <img> can carry its own intrinsic size */
 const POSTER = 1600;   // film stills: the clip takes over before a larger tier pays
+const BANDPOSTER = 1200;   // a band is never the first thing painted
 const dimCache = new Map();
 function dims(file) {
   if (dimCache.has(file)) return dimCache.get(file);
@@ -114,11 +115,11 @@ function held(name) {
 }
 
 /* animated figure: clip-wipe reveal + inner scale */
-function fig(name, alt, { ratio = "r43", href = null, sizes = "(min-width:960px) 58vw, 100vw", z = true, eager = false, anim = "clip", i = null, par = null } = {}) {
-  const inner = img(name, alt, { sizes, eager });
-  const cls = `fig ${ratio}${z ? " fig--z" : ""}`;
+function fig(name, alt, { ratio = "r43", href = null, sizes = "(min-width:960px) 58vw, 100vw", z = true, eager = false, anim = "clip", i = null, par = null, cls = "", cap = 0 } = {}) {
+  const inner = img(name, alt, { sizes, eager, cap });
+  const klass = `fig ${ratio}${z ? " fig--z" : ""}${cls ? " " + cls : ""}`;
   const a = (anim ? ` data-a="${anim}"${i !== null ? ` style="--i:${i}"` : ""}` : "") + (par ? ` data-par="${par}"` : "");
-  return href ? `<a class="${cls}" href="${href}"${a}>${inner}</a>` : `<div class="${cls}"${a}>${inner}</div>`;
+  return href ? `<a class="${klass}" href="${href}"${a}>${inner}</a>` : `<div class="${klass}"${a}>${inner}</div>`;
 }
 const link = (href, text) => `<a class="link" href="${href}">${text} ${ARROW}</a>`;
 const linkL = (href, text) => `<a class="link link--light" href="${href}">${text} ${ARROW}</a>`;
@@ -175,7 +176,13 @@ ${main}
   console.log("  · " + LOC.dir + file);
 }
 
-const cta = (r = "", h = null) => `  <section class="section section--navy center">
+/* Below the sea divider the page is under water, so the closing section runs
+   dark film behind the navy — sunlight coming down through the surface. */
+const cta = (r = "", h = null) => `  <section class="section section--navy section--deep center">
+    <div class="deep__bg" aria-hidden="true">
+      ${img("poster-sunbeams", "", { sizes: "100vw", cap: 1200 })}
+      <video data-src="sunbeams" data-max="1080" muted loop playsinline preload="none" tabindex="-1"></video>
+    </div>
     <div class="wrap narrow stack-l" data-stagger>
       <h2 class="d2 lines">${h || T("Tell us when, and we will tell you where")}</h2>
       <div class="acts" data-a="up"><a class="btn btn--white" href="${r}enquire.html">${T("Enquire")}</a></div>
@@ -187,6 +194,26 @@ const stats = rows => `<div class="stats" data-stagger>` + rows.map((s, i) =>
 
 const dl = (rows, cls = "") => `<dl class="dl${cls}" data-stagger>` + rows.map((row, i) =>
   `\n        <div data-a="up" style="--i:${Math.min(i, 6)}"><dt>${row[0]}</dt><dd>${row[1]}</dd></div>`).join("") + `\n      </dl>`;
+
+/* The price, at the size a price should be. One card, used on the excursion
+   pages and again on the index — the figure, what it buys, and the way out. */
+function priceCard(v, r = "", { compact = false } = {}) {
+  const rows = compact ? [] : [
+    [T("Duration"), v.duration],
+    [T("Departs"), v.departs],
+    [T("Guests"), v.guests]
+  ];
+  return `<div class="price${compact ? " price--sm" : ""}" data-a="up">
+          <p class="price__k">${v.kind}</p>
+          <p class="price__v">${v.price == null ? T("On request") : money(v.price)}</p>
+          <p class="price__n">${T("For a party of seven, the whole vessel. Any other number is priced on enquiry.")}</p>${
+    rows.length ? `
+          <dl class="price__d">${rows.map(x => `
+            <div><dt>${x[0]}</dt><dd>${x[1]}</dd></div>`).join("")}
+          </dl>` : ""}
+          <a class="btn" href="${r}enquire.html">${T("Enquire")}</a>
+        </div>`;
+}
 
 const list = items => `<ul class="stack-s" data-stagger>` + items.map((t, i) =>
   `\n            <li class="small" data-a="up" style="--i:${Math.min(i, 6)}">${t}</li>`).join("") + `\n          </ul>`;
@@ -232,14 +259,14 @@ ${ways}
           </ul>
           <p data-a="up">${link("vessel.html", T("Discover our vessels"))}</p>
         </div>
-        ${fig(feat[0].img, feat[0].alt, { ratio: "r45", sizes: "(min-width:960px) 58vw, 100vw" })}
+        ${fig(feat[0].img, feat[0].alt, { ratio: "r45", sizes: "(min-width:960px) 57vw, 100vw", cap: 2200, cls: "bleed-r" })}
       </div>
     </div>
   </section>
 
   <section class="band">
     <div class="band__bg" data-par="0.1">
-      ${img("poster-ray", "", { sizes: "100vw", cap: POSTER })}
+      ${img("poster-ray", "", { sizes: "100vw", cap: BANDPOSTER })}
       <video data-src="ray" data-max="1080" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="band__in wrap narrow stack-l" data-stagger>
@@ -256,7 +283,12 @@ ${ways}
         <h2 class="d2 lines">${T("Tiffany Blanc 14")}</h2>
         <p class="lede measure" data-a="up">${T("Our flagship. Fourteen metres, refitted in 2025 — twelve aboard for the day, four asleep on the water.")}</p>
       </div>
-      ${fig("vessel-guests", T("Tiffany Blanc 14 at anchor with guests aboard and swimmers alongside"), { ratio: "r169", sizes: "100vw" })}
+      </div>
+    </div>
+    <div class="bleed">
+      ${fig("vessel-guests", T("Tiffany Blanc 14 at anchor with guests aboard and swimmers alongside"), { ratio: "r219", sizes: "100vw", par: "0.05" })}
+    </div>
+    <div class="wrap">
       <div class="stack-l">
         ${stats(CV.vessel.stats)}
         <p data-a="up">${link("vessel.html", T("Go aboard"))}</p>
@@ -360,8 +392,11 @@ function excursions() {
     </div>
   </section>
 
-  <section class="section--sm">
-    <div class="wrap">${fig("beach-aerial", "A boat drawn up on white sand, the reef running out into deep blue", { ratio: "r169", sizes: "100vw", eager: true, par: "0.05" })}</div>
+  <section class="band band--short">
+    <div class="band__bg" data-par="0.08">
+      ${img("poster-shallows", "", { sizes: "100vw", eager: true, cap: POSTER })}
+      <video data-src="shallows" data-max="1440" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+    </div>
   </section>
 
   <section class="section">
@@ -379,10 +414,13 @@ ${rows}
       <h2 class="d2 lines">${T("What it costs to leave")}</h2>
       <p class="lede measure" data-a="up">${T("Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.")}</p>
       <div class="rates" data-stagger>
-        <div data-a="up" style="--i:0"><span class="k">${T("Half day")}</span><span class="v num">${money(950)}</span></div>
-        <div data-a="up" style="--i:1"><span class="k">${T("Full day")}</span><span class="v num">${money(1350)}</span></div>
+${[["Half day", 950], ["Full day", 1350]].map(([k, n], i) => `        <div class="price" data-a="up" style="--i:${i}">
+          <p class="price__k">${T(k)}</p>
+          <p class="price__v">${money(n)}</p>
+          <p class="price__n">${T("For a party of seven, the whole vessel. Any other number is priced on enquiry.")}</p>
+          <a class="btn" href="enquire.html">${T("Enquire")}</a>
+        </div>`).join("\n")}
       </div>
-      <p class="note" data-a="up">${T("Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.")}</p>
     </div>
   </section>
 
@@ -411,14 +449,17 @@ function excursionPages() {
   CV.voyages.forEach(v => {
     const r = "../";
     const others = CV.voyages.filter(x => x.slug !== v.slug);
-    const shots = v.shots.map((s, i) => `        ${fig(s, `${v.title} — aboard Tiffany Blanc 14`, { ratio: "r43", sizes: "(min-width:760px) 31vw, 100vw", i })}`).join("\n");
+    const wide = v.shots[0];
     const rail = others.map(o => `        <a class="rail__item card" href="${o.slug}.html">
           ${fig(o.img, o.alt, { ratio: "r34", sizes: "(min-width:760px) 30vw, 78vw", anim: null })}
           <div class="card__m"><div class="kv"><span>${o.duration}</span><span>${o.guests}</span></div><h3 class="d4">${o.title}</h3></div>
         </a>`).join("\n");
 
     const main = `  <section class="hero hero--mid">
-    <div class="hero__bg" data-par="0.06">${img(v.img, v.alt, { r, sizes: "100vw", eager: true })}</div>
+    <div class="hero__bg" data-par="0.06">
+      ${img(v.clip ? "poster-" + v.clip : v.img, v.alt, { sizes: "100vw", eager: true, cap: POSTER })}${v.clip ? `
+      <video data-src="${v.clip}" data-max="${v.clipMax || 1080}" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>` : ""}
+    </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${v.kind} &middot; ${v.area}</p>
       <h1 class="d1 lines">${v.title}</h1>
@@ -463,10 +504,7 @@ ${v.plan.map((p, i) => `          <li data-a="up" style="--i:${Math.min(i, 6)}">
         <div class="split__t sticky stack-l" data-stagger>
           <p class="eyebrow" data-a="up">${T("Rates")}</p>
           <h2 class="d3 lines">${T("What the rate covers")}</h2>
-          <p class="small" data-a="up">${v.price == null
-            ? T("Rates on request — we confirm in writing before anything is held.")
-            : `<span class="num">${money(v.price)}</span> ` + T("for the whole vessel, seven aboard. Any other number is priced on enquiry.")}</p>
-          <p data-a="up">${link(r + "excursions.html", T("All rates"))}</p>
+          ${priceCard(v, r)}
         </div>
         <div class="g2">
           <div class="stack-s"><p class="eyebrow" data-a="up">${T("Included")}</p>${list(v.has)}</div>
@@ -480,10 +518,8 @@ ${v.plan.map((p, i) => `          <li data-a="up" style="--i:${Math.min(i, 6)}">
     </div>
   </section>
 
-  <section class="section--sm">
-    <div class="wrap"><div class="g3">
-${shots}
-      </div></div>
+  <section class="bleed">
+    ${fig(wide, `${v.title} — ${CV.brand.vessel}`, { ratio: "r219", sizes: "100vw", par: "0.05" })}
   </section>
 
   <section class="section">
@@ -602,7 +638,10 @@ function about() {
           <h2 class="d3 lines">${T("What we do about it")}</h2>
           ${list([T("No single-use plastic aboard."), T("Reef-safe sunscreen supplied."), T("We anchor on sand, never on coral.")])}
         </div>
-        ${fig("ray-sand", "A stingray moving across pale sand in shallow water", { ratio: "r43", sizes: "(min-width:960px) 58vw, 100vw" })}
+        <div class="fig r43 fig--z film" data-a="clip">
+          ${img("poster-turtle", T("A green turtle over the reef"), { sizes: "(min-width:960px) 58vw, 100vw", cap: BANDPOSTER })}
+          <video data-src="turtle" data-max="1080" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+        </div>
       </div>
     </div>
   </section>
@@ -713,7 +752,8 @@ function enquire() {
 
   const main = `  <section class="hero hero--mid">
     <div class="hero__bg" data-par="0.06">
-      ${img("vessel-guests", T("Tiffany Blanc 14 at anchor with guests aboard"), { sizes: "100vw", eager: true })}
+      ${img("poster-mask", T("A snorkeller at the surface in clear water"), { sizes: "100vw", eager: true, cap: POSTER })}
+      <video data-src="mask" data-max="1440" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${T("Enquire")}</p>

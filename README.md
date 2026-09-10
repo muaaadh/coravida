@@ -77,6 +77,18 @@ the charter itself drops back to "On request", with add-ons still totalled besid
 formats to the reader's own convention — `USD 1,350`, `USD 1 350`, `USD 1.350` — while the
 currency stays USD.
 
+## The price
+
+The client's most-asked question, at the size of an answer. `priceCard()` in
+`tools/build.js` builds one card — the figure at display scale in the brand blue, the
+seven-guest qualifier under it, the day's facts on hairlines, and **Enquire inside the same
+box**. It appears twice: two cards side by side on the excursions index (half day / full
+day), and one in the sticky column of each excursion page carrying that excursion's
+duration, departure and guest count. On a phone they stack full width.
+
+Change `price` on an excursion, or `rates.pax`, and the card, the index rows and the
+enquiry total all move together.
+
 ## The hero film
 
 Three clips cycle behind the headline — a reef, an island, the vessel underway — each
@@ -117,6 +129,21 @@ It is skipped entirely if the player is already open or already playing, any int
 kills it early, and `sessionStorage` makes sure it appears once per visit rather than once
 per page.
 
+## Shape
+
+The site is photographs in a column, which becomes a stack of matching rectangles if you
+let it. Three treatments keep the silhouette moving down a page:
+
+| | |
+|---|---|
+| **Contained** — the default. A photograph inside the column, rounded to `--r`. | `.fig` |
+| **Half bleed** — keeps the column on one side and runs off the page on the other, square on the bleeding edge. The home page's offer image. | `.bleed-r` |
+| **Full bleed** — the whole viewport width, square to all four edges, no radius. One per page at most: the flagship on the home page, one photograph on each excursion page where a row of three used to sit. | `.bleed` |
+
+The rule that keeps it honest: **no two adjacent blocks share a silhouette.** The home page
+runs film → half bleed → film → full bleed → navy; an excursion page runs film → text →
+timeline → price → full bleed → rail → navy.
+
 ## Motion
 
 Everything moves as it arrives, and nothing moves for its own sake. `assets/js/site.js`
@@ -124,6 +151,7 @@ carries the whole layer — no library:
 
 | Behaviour | Hook |
 |---|---|
+| **The deep.** Below the sea divider the page is under water, so the closing section runs dark film behind the navy — sunlight coming down through the surface, held at 34% under a radial navy wash so the headline still wins. | `.section--deep`, `.deep__bg` |
 | **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` into the closing navy section, or the footer where there isn't one |
 | **The excursion index.** Four numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
@@ -224,7 +252,7 @@ Measured cold with no cache on the home page:
 
 | | Desktop 1440 @2× | Phone 390 @3× |
 |---|---|---|
-| First view | 3.80 MB | **0.84 MB** |
+| First view | 3.60 MB | **0.84 MB** |
 | First contentful paint | 48 ms | 72 ms |
 | Requests | 14 | 14 |
 
@@ -275,13 +303,35 @@ Client footage, all shot for Coravida in August 2026:
 - **Sony (ARW)** — the champagne, platter, pineapple and float stills, from the embedded
   full-size previews. Develop the RAWs if you need more.
 
-Stock, licensed for commercial use: the three hero clips (4K) and the four music tracks
-(Creative Commons BY / BY-SA — the attribution is in the player, and must stay there).
+Stock, licensed for commercial use: the four music tracks (Creative Commons BY / BY-SA —
+the attribution is in the player, and must stay there) and, from September 2026, eight
+clips and two stills in `Web/Stock/`:
+
+| | |
+|---|---|
+| `snorkel-pair` | aerial, two snorkellers over a reef edge — the home hero and Island & Snorkelling |
+| `shark` / `shallows` | aerial, reef sharks over white sand — Shark Point, and the excursions index |
+| `spit` | a sandbank running out into pale water — Reef & Sandbank |
+| `wake` | a boat's wake across flat turquoise — Sunset Adventure |
+| `turtle` | a green turtle over coral — the reef section on About |
+| `mask` | a snorkeller at the surface — the enquiry hero |
+| `sunbeams` | light coming down through the surface — behind the closing section |
+| `palm-beach`, `fins` | two stills, in the gallery |
+
+Client footage keeps the places where it is strongest — the eagle ray band, the island and
+the vessel in the hero rotation, the whole vessel page — and the stock fills what the shoot
+did not cover. All thirteen clips on the site are in use.
 
 ```sh
 bash tools/images.sh     # every photograph, from the shoot
-bash tools/hero.sh       # the hero clips, all four tiers, plus posters
+bash tools/hero.sh       # the client's hero clips
+bash tools/stock.sh      # the September stock, all tiers plus posters
+bash tools/mirror.sh     # copy the built site into the client's OneDrive folder
 ```
+
+`tools/mirror.sh` only ever removes the paths this repo generates, so anything the client
+has dropped into that folder survives a sync — a plain `rm -rf` of the destination would
+not, and nearly did not.
 
 ## The four excursions
 
@@ -330,6 +380,8 @@ assets/
   fonts/                  Montserrat 300, Inter 400/500
 sitemap.xml               44 URLs with alternates — generated
 tools/i18n/{ru,zh,de}.js  the translations — edit these
+tools/stock.sh            encodes the September stock
+tools/mirror.sh           safe copy into the client's OneDrive folder
 tools/build.js            regenerates every page in every language
 tools/images.sh           rebuilds every photograph from the shoot
 tools/hero.sh             rebuilds the hero clips and their posters

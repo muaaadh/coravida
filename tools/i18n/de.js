@@ -5,6 +5,11 @@
 module.exports = {
 
 ui: {
+  "A green turtle over the reef": "Eine grüne Schildkröte über dem Riff",
+  "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
+    "Für sieben Personen, das ganze Schiff. Jede andere Zahl wird auf Anfrage kalkuliert.",
+  "A snorkeller at the surface in clear water":
+    "Ein Schnorchler an der Oberfläche in klarem Wasser",
   "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
     "Eine kleine Flotte ab Hulhumalé Marina — und eine Crew, die jedes Boot darin kennt.",
   "Charters":
@@ -375,6 +380,8 @@ content: {
   },
   gallery: [
     { cap: "Tiffany Blanc 14 · Nord-Malé" }, { cap: "Zwei Atolle, aus der Höhe" },
+    { cap: "Wo die Palmen aufhören" },
+    { cap: "Flossen, und der ganze Nachmittag" },
     { cap: "Adlerrochen, am späten Vormittag" }, { cap: "Sandbank bei Niedrigwasser" },
     { cap: "Am Schandeck eingeschenkt" }, { cap: "Vor Anker über der Riffkante" },
     { cap: "Achteraus, tiefes Wasser" }, { cap: "Das erste Riff des Tages" },

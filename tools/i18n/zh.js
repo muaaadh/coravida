@@ -5,6 +5,11 @@
 module.exports = {
 
 ui: {
+  "A green turtle over the reef": "礁上的绿海龟",
+  "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
+    "七人、整船的价格。人数不同，价格另行报出。",
+  "A snorkeller at the surface in clear water":
+    "清澈水面上的浮潜者",
   "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
     "一支自胡鲁马累码头出发的小型船队，以及熟悉队中每一艘船的船员。",
   "Charters":
@@ -376,6 +381,8 @@ content: {
   },
   gallery: [
     { cap: "Tiffany Blanc 14 · 北马累" }, { cap: "两座环礁，自高空" },
+    { cap: "棕榈到此为止" },
+    { cap: "脚蹼，和一整个下午" },
     { cap: "鹰鳐，上午晚些时候" }, { cap: "低潮时的沙洲" },
     { cap: "在舷缘上斟满" }, { cap: "停泊在礁缘之上" },
     { cap: "船尾之外，深水区" }, { cap: "当天的第一处礁石" },

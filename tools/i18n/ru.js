@@ -6,6 +6,11 @@ module.exports = {
 
 /* ---- strings the generator prints ------------------------------------- */
 ui: {
+  "A green turtle over the reef": "Зелёная черепаха над рифом",
+  "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
+    "За всё судно, компания из семи человек. Любое другое число считаем по запросу.",
+  "A snorkeller at the surface in clear water":
+    "Сноркелер у поверхности в прозрачной воде",
   "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
     "Небольшой флот из марины Хулхумале и экипаж, который знает каждое судно в нём.",
   "Charters":
@@ -379,6 +384,8 @@ content: {
   },
   gallery: [
     { cap: "Tiffany Blanc 14 · Северный Мале" }, { cap: "Два атолла, с высоты" },
+    { cap: "Там, где кончаются пальмы" },
+    { cap: "Ласты и весь день впереди" },
     { cap: "Орляк, ближе к полудню" }, { cap: "Песчаная коса в малую воду" },
     { cap: "Налито на планшире" }, { cap: "На якоре над кромкой рифа" },
     { cap: "За кормой, глубокая вода" }, { cap: "Первый риф дня" },

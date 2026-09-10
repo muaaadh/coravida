@@ -32,6 +32,12 @@
     "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows"
    },
    {
+    "src": "snorkel-pair",
+    "poster": "poster-snorkel-pair",
+    "max": 1440,
+    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
+   },
+   {
     "src": "island",
     "poster": "poster-island",
     "max": 1440,
@@ -111,6 +117,8 @@
    "area": "Nord-Malé-Atoll",
    "departs": "08:30 · Hulhumalé",
    "price": 1350,
+   "clip": "snorkel-pair",
+   "clipMax": 1440,
    "img": "sandbank",
    "alt": "Die Sandbank von Himmafushi bei Niedrigwasser",
    "line": "Fish Tank, die Sandbank von Himmafushi, die Insel selbst — und heimwärts unter dem Sonnenuntergang.",
@@ -182,6 +190,8 @@
    "area": "Nord-Malé-Atoll",
    "departs": "09:00 · Hulhumalé",
    "price": 950,
+   "clip": "spit",
+   "clipMax": 1080,
    "img": "snorkel-reef",
    "alt": "Ein Schnorchler über einem flachen Riff in klarem, türkisem Wasser",
    "line": "Fish Tank, eine weiße Sandbank und eine Rückfahrt mit Delfinen.",
@@ -236,6 +246,8 @@
    "area": "Süd-Malé-Atoll",
    "departs": "09:00 · Hulhumalé",
    "price": 1350,
+   "clip": "shark",
+   "clipMax": 1440,
    "img": "reef-fish",
    "alt": "Riff-Fische über Korallen im Süd-Malé-Atoll",
    "line": "Drei Schnorchelstopps, eine Sandbank und Gulhi, bevor die Sonne geht.",
@@ -313,6 +325,8 @@
    "area": "Süd-Malé-Atoll",
    "departs": "13:30 · Hulhumalé",
    "price": 950,
+   "clip": "wake",
+   "clipMax": 1080,
    "img": "aerial-underway",
    "alt": "Tiffany Blanc 14 in Fahrt auf tiefblauem Wasser vor Malé",
    "line": "Shark Point, eine Sandbank und die Sonne, die auf dem Heimweg untergeht.",
@@ -515,6 +529,16 @@
    "img": "atoll-pair",
    "cat": "islands",
    "cap": "Zwei Atolle, aus der Höhe"
+  },
+  {
+   "img": "palm-beach",
+   "cat": "islands",
+   "cap": "Wo die Palmen aufhören"
+  },
+  {
+   "img": "fins",
+   "cat": "aboard",
+   "cap": "Flossen, und der ganze Nachmittag"
   },
   {
    "img": "ray",

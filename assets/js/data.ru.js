@@ -32,6 +32,12 @@
     "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows"
    },
    {
+    "src": "snorkel-pair",
+    "poster": "poster-snorkel-pair",
+    "max": 1440,
+    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
+   },
+   {
     "src": "island",
     "poster": "poster-island",
     "max": 1440,
@@ -111,6 +117,8 @@
    "area": "Северный Мале Атолл",
    "departs": "08:30 · Хулхумале",
    "price": 1350,
+   "clip": "snorkel-pair",
+   "clipMax": 1440,
    "img": "sandbank",
    "alt": "Песчаная коса Химмафуши в малую воду",
    "line": "Fish Tank, песчаная коса Химмафуши, сам остров и дорога домой под закат.",
@@ -182,6 +190,8 @@
    "area": "Северный Мале Атолл",
    "departs": "09:00 · Хулхумале",
    "price": 950,
+   "clip": "spit",
+   "clipMax": 1080,
    "img": "snorkel-reef",
    "alt": "Сноркелер над мелким рифом в прозрачной бирюзовой воде",
    "line": "Fish Tank, белая песчаная коса и дорога домой с дельфинами.",
@@ -236,6 +246,8 @@
    "area": "Южный Мале Атолл",
    "departs": "09:00 · Хулхумале",
    "price": 1350,
+   "clip": "shark",
+   "clipMax": 1440,
    "img": "reef-fish",
    "alt": "Рифовые рыбы над кораллом в Южном Мале Атолле",
    "line": "Три точки снорклинга, песчаная коса и Гулхи до захода солнца.",
@@ -313,6 +325,8 @@
    "area": "Южный Мале Атолл",
    "departs": "13:30 · Хулхумале",
    "price": 950,
+   "clip": "wake",
+   "clipMax": 1080,
    "img": "aerial-underway",
    "alt": "Tiffany Blanc 14 на ходу по тёмно-синей воде у Мале",
    "line": "Шарк-Пойнт, песчаная коса и солнце, садящееся по дороге домой.",
@@ -515,6 +529,16 @@
    "img": "atoll-pair",
    "cat": "islands",
    "cap": "Два атолла, с высоты"
+  },
+  {
+   "img": "palm-beach",
+   "cat": "islands",
+   "cap": "Там, где кончаются пальмы"
+  },
+  {
+   "img": "fins",
+   "cat": "aboard",
+   "cap": "Ласты и весь день впереди"
   },
   {
    "img": "ray",
