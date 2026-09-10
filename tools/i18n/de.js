@@ -5,6 +5,8 @@
 module.exports = {
 
 ui: {
+  "At anchor above the reef edge, guests over the side.":
+    "Vor Anker über der Riffkante, Gäste über der Seite.",
   "A green turtle over the reef": "Eine grüne Schildkröte über dem Riff",
   "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
     "Für sieben Personen, das ganze Schiff. Jede andere Zahl wird auf Anfrage kalkuliert.",

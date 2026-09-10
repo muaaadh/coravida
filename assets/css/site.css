@@ -17,7 +17,8 @@
   --ui:Inter,"Helvetica Neue",Arial,sans-serif;
   --gut:clamp(1.5rem,6vw,6.5rem);
   --maxw:1720px;
-  --sec:clamp(6.5rem,13vw,13.5rem);
+  --sec:clamp(5rem,9vw,9rem);       /* the one gap between blocks */
+  --seah:clamp(62px,8vw,128px);     /* the sea divider's own height */
   --s1:clamp(.55rem,.9vw,.85rem);   /* label to line         */
   --s2:clamp(.9rem,1.6vw,1.5rem);   /* line to line          */
   --s3:clamp(1.5rem,2.6vw,2.5rem);  /* head to body          */
@@ -57,8 +58,28 @@ dl,dd{margin:0}
 /* --- Layout ------------------------------------------------------------- */
 .wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gut)}
 .narrow{max-width:calc(1100px + var(--gut) * 2)}
-.section{padding-block:var(--sec)}
-.section--sm{padding-block:var(--s6)}
+/* ONE rhythm, stated once. Every block owns the gap BELOW it, so no gap is
+   ever paid for twice. A hero or a film band has no text at its bottom edge
+   and nothing to give, so the block that follows one owns that gap instead —
+   as does the block after a change of background colour. Result: every
+   content-to-content gap on every page is exactly --sec. */
+main>*{margin:0}
+.section,.section--sm{padding-block:0 var(--sec)}
+.section--sm{--sec:var(--s6)}
+.phero{padding-bottom:var(--sec)}
+.section--mist,.section--navy{padding-block:var(--sec)}
+.hero+*,.band+*{padding-top:var(--sec)}
+/* symmetric about a colour boundary: half a gap on each side of it */
+.section--mist+*,.section--navy+*{padding-top:calc(var(--sec) / 2)}
+/* a change of background is itself the break, so the block above one keeps
+   only a half gap — otherwise a colour boundary costs twice a plain one */
+:is(.section,.section--sm,.phero):has(+.section--mist){padding-bottom:calc(var(--sec) / 2)}
+/* ...except above the navy, where the sea divider rises out of this block and
+   needs its own height back on top of that half gap */
+:is(.section,.section--sm,.section--tail,.phero):has(+.section--navy){
+  padding-bottom:calc(var(--sec) / 2 + var(--seah))}
+.section--mist,.section--navy{padding-block:calc(var(--sec) / 2) var(--sec)}
+main>section:last-child{padding-bottom:var(--sec)}
 .section--mist{background:var(--mist)}
 .section--navy{background:var(--navy);color:rgba(255,255,255,.68)}
 .section--navy h1,.section--navy h2,.section--navy h3{color:#fff}
@@ -88,9 +109,8 @@ dl,dd{margin:0}
 .stack-xl>*+*{margin-top:var(--s5)}
 .head-wrap{margin-bottom:var(--s4)}
 .section--tail{padding-bottom:var(--sec)}
-/* the sea rises out of whatever sits above it — give that section the room back */
-:where(.section,.section--sm,.section--tail):has(+ .section--navy){padding-bottom:calc(var(--sec) + 5rem)}
-main:has(> :last-child:not(.section--navy)) > :last-child{padding-bottom:calc(var(--sec) + 5rem)}
+/* the footer carries the sea on pages that do not close on a navy section */
+main:has(> :last-child:not(.section--navy)) > :last-child{padding-bottom:calc(var(--sec) + var(--seah))}
 figure{margin:0}
 .steps{margin-bottom:var(--s5)}
 .lede--light{color:rgba(255,255,255,.86)}
@@ -281,7 +301,7 @@ figure{margin:0}
 .hero__in .link::before{background:rgba(255,255,255,.4)}
 @keyframes cue{0%{transform:scaleY(.3);opacity:0}40%{opacity:1}100%{transform:scaleY(1);opacity:0}}
 
-.phero{padding-top:calc(var(--hdr) + clamp(4.5rem,11vw,10rem));padding-bottom:clamp(2rem,5vw,4rem);text-align:center}
+.phero{padding-top:calc(var(--hdr) + clamp(4rem,9vw,8rem));text-align:center}
 .phero h1{margin-inline:auto;max-width:17ch}
 .phero .lede{margin-inline:auto;max-width:42ch}
 
@@ -299,26 +319,25 @@ figure{margin:0}
 .band__in .eyebrow{color:rgba(255,255,255,.88);text-shadow:0 1px 10px rgba(2,16,36,.85)}
 .band__in .lede{color:rgba(255,255,255,.82);max-width:38ch;margin-inline:auto}
 
+/* --- Plates --------------------------------------------------------------
+   A photograph with no text beside it. Narrower than the column it sits in so
+   it reads as a plate rather than a banner, and captioned so it has a reason
+   to be there. */
+.plate{max-width:min(880px,100%);margin-inline:auto}
+.plate figcaption{display:flex;flex-wrap:wrap;align-items:baseline;gap:.35rem 1.25rem;
+  margin-top:1.1rem;padding-top:.85rem;border-top:1px solid var(--line);
+  font-size:.875rem;line-height:1.6;color:var(--body)}
+.plate figcaption .k{font-family:var(--ui);font-size:.625rem;font-weight:500;letter-spacing:.26em;
+  text-transform:uppercase;color:var(--ink);flex:0 0 auto}
+.center .plate figcaption{justify-content:center;text-align:center}
+@media(max-width:700px){.plate figcaption{gap:.2rem .9rem}}
+
 /* --- Figures ------------------------------------------------------------ */
 .fig{display:block;position:relative;overflow:hidden;background:var(--mist);border-radius:var(--r)}
 .fig img{width:100%;height:100%;object-fit:cover;transition:transform 1.6s var(--eo),filter .7s var(--e)}
 .fig--z:hover img{transform:scale(1.045)}
-.r43{aspect-ratio:4/3}.r45{aspect-ratio:4/5}.r219{aspect-ratio:21/9}.r32{aspect-ratio:3/2}.r11{aspect-ratio:1/1}.r34{aspect-ratio:3/4}.r169{aspect-ratio:16/9}.r23{aspect-ratio:2/3}
+.r43{aspect-ratio:4/3}.r45{aspect-ratio:4/5}.r32{aspect-ratio:3/2}.r11{aspect-ratio:1/1}.r34{aspect-ratio:3/4}.r169{aspect-ratio:16/9}.r23{aspect-ratio:2/3}
 .cap{margin-top:1.25rem;display:grid;gap:.35rem}
-
-/* --- Bleed ---------------------------------------------------------------
-   A photograph the full width of the viewport, square to the edges. Every
-   other image on the site sits rounded inside the column, so one of these per
-   page is enough to break the run of rectangles. */
-.bleed{position:relative;overflow:hidden}
-.bleed .fig{border-radius:0}
-.bleed>.fig{margin:0}
-@media(max-width:700px){.bleed .fig{aspect-ratio:16/10}}
-
-/* the same idea at half strength: the image keeps the column on one side and
-   runs off the page on the other */
-.bleed-r{margin-right:calc(var(--gut) * -1);border-start-end-radius:0;border-end-end-radius:0}
-@media(min-width:1720px){.bleed-r{margin-right:calc((100vw - var(--maxw)) / -2 - var(--gut))}}
 
 /* --- Grids -------------------------------------------------------------- */
 .g2{display:grid;gap:clamp(1.25rem,3vw,3.25rem);grid-template-columns:1fr}
@@ -719,7 +738,7 @@ figure{margin:0}
 }
 
 /* --- The sea ------------------------------------------------------------ */
-.sea{position:absolute;left:0;right:0;top:1px;height:clamp(62px,8vw,128px);overflow:hidden;pointer-events:none;z-index:2;
+.sea{position:absolute;left:0;right:0;top:1px;height:var(--seah);overflow:hidden;pointer-events:none;z-index:2;
   --rise:34px;transform:translateY(calc(-100% + var(--rise)));transition:transform 1.6s var(--eo)}
 .sea.in{--rise:0px}
 .sea svg{width:200%;max-width:none;height:100%;display:block}

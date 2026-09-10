@@ -129,20 +129,34 @@ It is skipped entirely if the player is already open or already playing, any int
 kills it early, and `sessionStorage` makes sure it appears once per visit rather than once
 per page.
 
-## Shape
+## Plates, and one rhythm
 
-The site is photographs in a column, which becomes a stack of matching rectangles if you
-let it. Three treatments keep the silhouette moving down a page:
+Two rules do the work that a pile of one-off spacing used to.
 
-| | |
-|---|---|
-| **Contained** — the default. A photograph inside the column, rounded to `--r`. | `.fig` |
-| **Half bleed** — keeps the column on one side and runs off the page on the other, square on the bleeding edge. The home page's offer image. | `.bleed-r` |
-| **Full bleed** — the whole viewport width, square to all four edges, no radius. One per page at most: the flagship on the home page, one photograph on each excursion page where a row of three used to sit. | `.bleed` |
+**A photograph with no text beside it is a plate, not a banner.** `plate()` in
+`tools/build.js` renders it narrower than the column it sits in (880px), rounded, with a
+hairline and a caption beneath: a micro-caps label and one line saying what you are looking
+at. That is what gives a standalone image a reason to be on the page. Seven of them, one per
+page. Photographs that already have text beside them stay in their split and take no
+caption — they are not standalone.
 
-The rule that keeps it honest: **no two adjacent blocks share a silhouette.** The home page
-runs film → half bleed → film → full bleed → navy; an excursion page runs film → text →
-timeline → price → full bleed → rail → navy.
+**Every block owns the gap below it.** No gap is ever paid for twice:
+
+```css
+main>*{margin:0}
+.section,.section--sm{padding-block:0 var(--sec)}      /* pay below, never above */
+.section--mist,.section--navy{padding-block:calc(var(--sec)/2) var(--sec)}
+.hero+*,.band+*{padding-top:var(--sec)}                /* film has none to give */
+.section--mist+*,.section--navy+*{padding-top:calc(var(--sec)/2)}
+```
+
+A hero or a film band has no text at its bottom edge and nothing to give, so the block after
+one owns that gap instead. A change of background colour is itself a break, so it takes half
+a gap either side rather than a full one twice. Above the navy the block also gets `--seah`
+back, because the sea divider rises out of it.
+
+Before this, gaps between sections measured anywhere from **−66px to 370px** on the same
+page. They are now one number.
 
 ## Motion
 
@@ -252,7 +266,7 @@ Measured cold with no cache on the home page:
 
 | | Desktop 1440 @2× | Phone 390 @3× |
 |---|---|---|
-| First view | 3.60 MB | **0.84 MB** |
+| First view | 3.61 MB | **0.97 MB** |
 | First contentful paint | 48 ms | 72 ms |
 | Requests | 14 | 14 |
 

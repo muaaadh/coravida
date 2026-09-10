@@ -5,6 +5,8 @@
 module.exports = {
 
 ui: {
+  "At anchor above the reef edge, guests over the side.":
+    "停泊在礁缘之上，客人在舷外戏水。",
   "A green turtle over the reef": "礁上的绿海龟",
   "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
     "七人、整船的价格。人数不同，价格另行报出。",

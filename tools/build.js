@@ -121,6 +121,16 @@ function fig(name, alt, { ratio = "r43", href = null, sizes = "(min-width:960px)
   const a = (anim ? ` data-a="${anim}"${i !== null ? ` style="--i:${i}"` : ""}` : "") + (par ? ` data-par="${par}"` : "");
   return href ? `<a class="${klass}" href="${href}"${a}>${inner}</a>` : `<div class="${klass}"${a}>${inner}</div>`;
 }
+/* A standalone photograph — one with no text beside it — is a plate, not a
+   banner: narrower than the column it sits in, and captioned, so it reads as
+   something chosen rather than something stretched. */
+function plate(name, alt, caption, { ratio = "r32", k = "", sizes = "(min-width:1000px) 880px, 100vw", cap = 2200, par = null } = {}) {
+  return `<figure class="plate">
+        ${fig(name, alt, { ratio, sizes, cap, par })}
+        <figcaption>${k ? `<span class="k">${k}</span>` : ""}<span>${caption}</span></figcaption>
+      </figure>`;
+}
+
 const link = (href, text) => `<a class="link" href="${href}">${text} ${ARROW}</a>`;
 const linkL = (href, text) => `<a class="link link--light" href="${href}">${text} ${ARROW}</a>`;
 
@@ -259,7 +269,7 @@ ${ways}
           </ul>
           <p data-a="up">${link("vessel.html", T("Discover our vessels"))}</p>
         </div>
-        ${fig(feat[0].img, feat[0].alt, { ratio: "r45", sizes: "(min-width:960px) 57vw, 100vw", cap: 2200, cls: "bleed-r" })}
+        ${fig(feat[0].img, feat[0].alt, { ratio: "r43", sizes: "(min-width:960px) 57vw, 100vw", cap: 2200 })}
       </div>
     </div>
   </section>
@@ -283,12 +293,8 @@ ${ways}
         <h2 class="d2 lines">${T("Tiffany Blanc 14")}</h2>
         <p class="lede measure" data-a="up">${T("Our flagship. Fourteen metres, refitted in 2025 — twelve aboard for the day, four asleep on the water.")}</p>
       </div>
-      </div>
-    </div>
-    <div class="bleed">
-      ${fig("vessel-guests", T("Tiffany Blanc 14 at anchor with guests aboard and swimmers alongside"), { ratio: "r219", sizes: "100vw", par: "0.05" })}
-    </div>
-    <div class="wrap">
+      ${plate("vessel-guests", T("Tiffany Blanc 14 at anchor with guests aboard and swimmers alongside"),
+        T("At anchor above the reef edge, guests over the side."), { k: CV.brand.vessel })}
       <div class="stack-l">
         ${stats(CV.vessel.stats)}
         <p data-a="up">${link("vessel.html", T("Go aboard"))}</p>
@@ -518,8 +524,8 @@ ${v.plan.map((p, i) => `          <li data-a="up" style="--i:${Math.min(i, 6)}">
     </div>
   </section>
 
-  <section class="bleed">
-    ${fig(wide, `${v.title} — ${CV.brand.vessel}`, { ratio: "r219", sizes: "100vw", par: "0.05" })}
+  <section class="section--sm">
+    <div class="wrap">${plate(wide, `${v.title} — ${CV.brand.vessel}`, v.plan[1].d, { k: v.plan[1].h })}</div>
   </section>
 
   <section class="section">
@@ -596,7 +602,8 @@ function about() {
   </section>
 
   <section class="section--sm">
-    <div class="wrap">${fig("aerial-marina", T("Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air"), { ratio: "r169", sizes: "100vw", eager: true, par: "0.05" })}</div>
+    <div class="wrap">${plate("aerial-marina", T("Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air"),
+      T("Ten minutes from Velana International Airport"), { k: T("Hulhumal&eacute; Marina"), ratio: "r169" })}</div>
   </section>
 
   <section class="section">
@@ -725,10 +732,8 @@ function contact() {
 
   <section class="section--sm section--tail">
     <div class="wrap">
-      <figure>
-        ${fig("aerial-marina", T("Tiffany Blanc 14 leaving Hulhumalé Marina"), { ratio: "r169", sizes: "100vw", par: "0.05" })}
-        <figcaption class="cap" data-a="up"><span class="k">${T("Hulhumal&eacute; Marina")}</span><span class="d4">${T("Ten minutes from Velana International Airport")}</span></figcaption>
-      </figure>
+      ${plate("aerial-marina", T("Tiffany Blanc 14 leaving Hulhumalé Marina"),
+        T("Ten minutes from Velana International Airport"), { k: T("Hulhumal&eacute; Marina"), ratio: "r169" })}
     </div>
   </section>
 

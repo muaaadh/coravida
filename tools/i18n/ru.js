@@ -6,6 +6,8 @@ module.exports = {
 
 /* ---- strings the generator prints ------------------------------------- */
 ui: {
+  "At anchor above the reef edge, guests over the side.":
+    "На якоре над кромкой рифа, гости за бортом.",
   "A green turtle over the reef": "Зелёная черепаха над рифом",
   "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
     "За всё судно, компания из семи человек. Любое другое число считаем по запросу.",
