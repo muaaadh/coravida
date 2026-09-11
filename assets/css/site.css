@@ -42,7 +42,7 @@
 }
 
 *,*::before,*::after{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;font-size:clamp(16px,15.2px + .2vw,17.5px)}
 body{margin:0;background:var(--paper);color:var(--body);font-family:var(--ui);font-size:1rem;line-height:1.8;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:hidden}
 body.lock{overflow:hidden}
 img,svg,video{display:block;max-width:100%}
@@ -72,19 +72,16 @@ main>*{margin:0}
 .section,.section--sm{padding-block:0 var(--sec)}
 .section--sm{--sec:var(--s6)}
 .phero{padding-bottom:var(--sec)}
-.section--mist,.section--navy{padding-block:var(--sec)}
+.section--mist{padding-block:var(--sec)}
 .hero+*,.band+*{padding-top:var(--sec)}
 /* symmetric about a colour boundary: half a gap on each side of it */
-.section--mist+*,.section--navy+*{padding-top:calc(var(--sec) / 2)}
+.section--mist+*{padding-top:calc(var(--sec) / 2)}
 /* a change of background is itself the break, so the block above one keeps
    only a half gap — otherwise a colour boundary costs twice a plain one */
 :is(.section,.section--sm,.phero):has(+.section--mist){padding-bottom:calc(var(--sec) / 2)}
-/* ...except above the navy, where the sea divider rises out of this block and
-   needs its own height back on top of that half gap */
-:is(.section,.section--sm,.section--tail,.phero):has(+.section--navy){
-  padding-bottom:calc(var(--sec) / 2 + var(--seah))}
-.section--mist,.section--navy{padding-block:calc(var(--sec) / 2) var(--sec)}
-main>section:last-child{padding-bottom:var(--sec)}
+.section--mist{padding-block:calc(var(--sec) / 2) var(--sec)}
+/* the last block always meets the footer, and the sea rises out of the footer */
+main>section:last-child{padding-bottom:calc(var(--sec) + var(--seah))}
 /* A tinted section is a panel, not a band — inset from the page and curved,
    the way Apple's grey product tiles sit on white. The navy close keeps its
    full width, because the sea divider has to run the whole way across. */
@@ -93,8 +90,6 @@ main>section:last-child{padding-bottom:var(--sec)}
 .section--mist>.wrap{padding-inline:clamp(1.25rem,3.4vw,3.25rem);
   max-width:calc(var(--maxw) - var(--gut) * 2)}
 @media(max-width:700px){.section--mist{margin-inline:0;border-radius:0}}
-.section--navy{background:var(--navy);color:rgba(255,255,255,.68)}
-.section--navy h1,.section--navy h2,.section--navy h3{color:#fff}
 .center{text-align:center}
 .measure{max-width:34rem}
 .measure--wide{max-width:50rem}
@@ -102,15 +97,13 @@ main>section:last-child{padding-bottom:var(--sec)}
 
 /* --- Type --------------------------------------------------------------- */
 .d1,.d2,.d3{text-wrap:balance}
-.d1{font-size:clamp(2.5rem,5.6vw,5.4rem);line-height:1.02;letter-spacing:-.038em}
-.d2,.menu__nav a,.vx__t,.stats .v{font-size:clamp(2rem,3.9vw,3.5rem);line-height:1.08;letter-spacing:-.032em}
-.d3,.sum__t .v{font-size:clamp(1.45rem,2.3vw,2.05rem);line-height:1.18;letter-spacing:-.022em}
-.eyebrow,.link,.btn,.burger,.menu__x,.cap .k,.kv,.vx__m,.stats .k,.dl dt,.lb__c,.field label,.chips label,.steps li,.sum__r .k,.mus__line,.ftr h4{font-family:var(--ui);font-size:.625rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;line-height:1.4;color:var(--body)}
+.d1{font-size:clamp(2.7rem,5.8vw,5.6rem);line-height:1.02;letter-spacing:-.038em}
+.d2,.menu__nav a,.vx__t,.stats .v{font-size:clamp(2.15rem,4vw,3.7rem);line-height:1.08;letter-spacing:-.032em}
+.d3,.sum__t .v{font-size:clamp(1.55rem,2.4vw,2.2rem);line-height:1.18;letter-spacing:-.022em}
+.eyebrow,.link,.btn,.burger,.menu__x,.cap .k,.kv,.vx__m,.stats .k,.dl dt,.lb__c,.field label,.chips label,.steps li,.sum__r .k,.mus__line,.ftr h4{font-family:var(--ui);font-size:.6875rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;line-height:1.4;color:var(--body)}
 .eyebrow{margin:0}
-.section--navy .eyebrow{color:rgba(255,255,255,.45)}
-.lede{font-size:clamp(1.06rem,1.05vw,1.16rem);line-height:1.85;color:var(--body)}
-.section--navy .lede{color:rgba(255,255,255,.7)}
-.small{font-size:.875rem;line-height:1.8;color:var(--body)}
+.lede{font-size:clamp(1.1rem,1.15vw,1.25rem);line-height:1.85;color:var(--body)}
+.small{font-size:.9375rem;line-height:1.8;color:var(--body)}
 .num{font-family:var(--dsp);font-weight:300;font-variant-numeric:tabular-nums}
 
 .stack>*+*{margin-top:var(--s2)}
@@ -120,7 +113,6 @@ main>section:last-child{padding-bottom:var(--sec)}
 .head-wrap{margin-bottom:var(--s4)}
 .section--tail{padding-bottom:var(--sec)}
 /* the footer carries the sea on pages that do not close on a navy section */
-main:has(> :last-child:not(.section--navy)) > :last-child{padding-bottom:calc(var(--sec) + var(--seah))}
 figure{margin:0}
 .steps{margin-bottom:var(--s5)}
 .lede--light{color:rgba(255,255,255,.86)}
@@ -256,7 +248,7 @@ figure{margin:0}
   opacity:0;transform:translateY(-6px) scale(.97);transform-origin:100% 0;visibility:hidden;
   transition:opacity .3s var(--e),transform .42s var(--eo),visibility .3s}
 .lang.open .lang__m{opacity:1;transform:none;visibility:visible}
-.lang__m a{display:block;padding:.5rem .75rem;border-radius:var(--r-s);font-size:.8125rem;color:var(--body);
+.lang__m a{display:block;padding:.5rem .75rem;border-radius:var(--r-s);font-size:.875rem;color:var(--body);
   transition:background .25s,color .25s}
 .lang__m a:hover{background:rgba(3,34,77,.05);color:var(--ink)}
 .lang__m a.on{color:var(--ink);background:rgba(12,111,219,.08)}
@@ -264,7 +256,7 @@ figure{margin:0}
 
 /* the same choice, inside the menu, where there is room for the words */
 .menu__lang{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:1.2rem}
-.menu__lang a{padding:.45rem .9rem;border-radius:999px;border:1px solid var(--line);font-size:.75rem;
+.menu__lang a{padding:.45rem .9rem;border-radius:999px;border:1px solid var(--line);font-size:.8125rem;
   color:var(--body);transition:background .3s,color .3s,border-color .3s}
 .menu__lang a:hover{border-color:var(--navy);color:var(--navy)}
 .menu__lang a.on{background:linear-gradient(180deg,var(--marine),var(--ocean));border-color:transparent;color:#fff}
@@ -349,9 +341,9 @@ figure{margin:0}
 .plate .fig{border-radius:var(--r-l)}
 .plate figcaption{display:grid;gap:.3rem;justify-items:start;text-align:left;
   margin-top:.9rem;padding-top:.8rem;border-top:1px solid var(--line);
-  font-size:.8125rem;line-height:1.55;color:var(--body)}
+  font-size:.875rem;line-height:1.55;color:var(--body)}
 .plate figcaption>span:last-child{max-width:46ch}
-.plate figcaption .k{font-family:var(--ui);font-size:.625rem;font-weight:500;letter-spacing:.26em;
+.plate figcaption .k{font-family:var(--ui);font-size:.6875rem;font-weight:500;letter-spacing:.26em;
   text-transform:uppercase;color:var(--ink);flex:0 0 auto}
 /* a caption stays flush with the photograph's left edge, even on a centred section */
 :root[lang="de"] .plate figcaption{hyphens:auto}
@@ -394,7 +386,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
   padding:clamp(.9rem,2vw,1.15rem) 0;border-top:1px solid var(--line)}
 .ways li:last-child .way{border-bottom:1px solid var(--line)}
 .way__t{color:var(--ink);transition:color .35s var(--e),transform .5s var(--eo)}
-.way__m{grid-column:1;grid-row:2;font-family:var(--ui);font-size:.6875rem;font-weight:500;
+.way__m{grid-column:1;grid-row:2;font-family:var(--ui);font-size:.75rem;font-weight:500;
   letter-spacing:.14em;text-transform:uppercase;color:var(--body)}
 .way svg{grid-column:2;grid-row:1/-1;width:12px;height:12px;color:var(--marine);
   opacity:.55;transition:opacity .35s,transform .5s var(--eo)}
@@ -412,19 +404,19 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
   padding:clamp(1.5rem,3.2vw,2.25rem);display:grid;gap:.55rem;align-content:start;
   box-shadow:0 1px 0 rgba(255,255,255,.7) inset}
 .section--mist .price{background:var(--paper)}
-.price__k{font-family:var(--ui);font-size:.625rem;font-weight:500;letter-spacing:.26em;
+.price__k{font-family:var(--ui);font-size:.6875rem;font-weight:500;letter-spacing:.26em;
   text-transform:uppercase;color:var(--body);margin:0}
 .price__v{font-family:var(--dsp);font-weight:300;font-size:clamp(2.4rem,4.6vw,3.6rem);
   line-height:1;letter-spacing:-.035em;font-variant-numeric:tabular-nums;
   background:linear-gradient(180deg,var(--marine),var(--ocean));
   -webkit-background-clip:text;background-clip:text;color:transparent;margin:0}
-.price__n{font-size:.8125rem;line-height:1.6;color:var(--body);max-width:32ch;margin:.15rem 0 0}
+.price__n{font-size:.875rem;line-height:1.6;color:var(--body);max-width:32ch;margin:.15rem 0 0}
 .price__d{display:grid;gap:0;margin-top:.9rem;border-top:1px solid var(--line)}
 .price__d>div{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;
   padding:.7rem 0;border-bottom:1px solid var(--line)}
-.price__d dt{font-family:var(--ui);font-size:.625rem;font-weight:500;letter-spacing:.16em;
+.price__d dt{font-family:var(--ui);font-size:.6875rem;font-weight:500;letter-spacing:.16em;
   text-transform:uppercase;color:var(--body)}
-.price__d dd{font-size:.875rem;color:var(--ink);text-align:right}
+.price__d dd{font-size:.9375rem;color:var(--ink);text-align:right}
 .price .btn{margin-top:1.1rem;justify-self:start}
 .price--sm .price__v{font-size:clamp(2rem,3.4vw,2.6rem)}
 
@@ -450,7 +442,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .vx__row{display:grid;grid-template-columns:auto 1fr auto;align-items:baseline;gap:clamp(1rem,3vw,2.5rem);
   padding:clamp(1.5rem,3vw,2.4rem) 0;border-bottom:1px solid var(--line);position:relative}
 .vx__row:first-child{border-top:1px solid var(--line)}
-.vx__n{font-size:.5625rem;letter-spacing:.24em;color:var(--body);transition:color .4s}
+.vx__n{font-size:.625rem;letter-spacing:.24em;color:var(--body);transition:color .4s}
 .vx__t{  letter-spacing:-.03em;color:var(--ink);transition:color .45s var(--e),transform .6s var(--eo)}
 .vx__m{white-space:nowrap;transition:color .4s}
 .vx__row:hover .vx__t{color:var(--marine)}
@@ -490,7 +482,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .section--mist .tl__r::after{background:var(--mist)}
 .tl li:hover .tl__r::after{background:var(--marine)}
 .tl__h{  letter-spacing:-.018em;color:var(--ink)}
-.tl__d{font-size:.875rem;line-height:1.75;color:var(--body);margin-top:.4rem;max-width:52ch}
+.tl__d{font-size:.9375rem;line-height:1.75;color:var(--body);margin-top:.4rem;max-width:52ch}
 @media(max-width:559px){.tl{--tlt:3.4rem;--tlg:.85rem}.tl__t{font-size:.9rem}}
 
 /* --- Numbers / lists ---------------------------------------------------- */
@@ -498,8 +490,6 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 @media(min-width:760px){.stats{grid-template-columns:repeat(4,1fr)}}
 .stats>div{display:grid;gap:.55rem}
 .stats .v .u{font-size:.34em;letter-spacing:.08em;margin-left:.32em;color:var(--body)}
-.section--navy .stats .v{color:#fff}
-.section--navy .stats .k{color:rgba(255,255,255,.45)}
 
 .dl{border-top:1px solid var(--line)}
 .dl>div{display:grid;grid-template-columns:1fr;gap:.3rem;padding:1.5rem 0;border-bottom:1px solid var(--line);transition:background .4s var(--e)}
@@ -511,6 +501,14 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 /* three roles, ranged left inside a centred block — a definition list reads
    badly centred, but the block it sits in does not have to be */
 .crew{max-width:44rem;margin-inline:auto;text-align:left}
+
+/* --- Gallery groups -----------------------------------------------------
+   A number, the subject, and how many are in it — one line, hairlined. */
+.galhead{display:flex;align-items:baseline;gap:clamp(.9rem,2vw,1.5rem);
+  padding-bottom:var(--s2);border-bottom:1px solid var(--line)}
+.galhead .eyebrow{color:var(--marine)}
+.galhead h2{flex:1 1 auto}
+.galhead__n{font-family:var(--ui);font-size:.6875rem;font-weight:500;letter-spacing:.2em;color:var(--body)}
 
 /* --- Gallery ------------------------------------------------------------ */
 /* Columns are filled round-robin by JS, not by column-count, so the order you
@@ -524,7 +522,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .mosaic button{display:block;width:100%;overflow:hidden;background:var(--mist);border-radius:var(--r)}
 .mosaic img{width:100%;transition:transform 1.3s var(--eo),filter .6s var(--e)}
 .mosaic button:hover img{transform:scale(1.04);filter:brightness(1.04)}
-.mosaic figcaption{margin-top:.7rem;font-size:.8125rem;line-height:1.5;color:var(--body)}
+.mosaic figcaption{margin-top:.7rem;font-size:.875rem;line-height:1.5;color:var(--body)}
 
 .lb{position:fixed;inset:0;z-index:120;background:rgba(2,16,36,.97);display:grid;place-items:center;padding:clamp(1rem,4vw,3rem);opacity:0;visibility:hidden;transition:opacity .35s var(--e),visibility .35s}
 .lb.open{opacity:1;visibility:visible}
@@ -576,9 +574,9 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .step.on{display:block;animation:up .6s var(--eo)}
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 .sum{border:1px solid var(--line);border-radius:var(--r);padding:clamp(1.5rem,3vw,2.25rem);display:grid;gap:1rem}
-.sum__r{display:flex;justify-content:space-between;gap:1.5rem;font-size:.9rem}
+.sum__r{display:flex;justify-content:space-between;gap:1.5rem;font-size:.9375rem}
 .sum__t{border-top:1px solid var(--line);padding-top:1rem;display:flex;justify-content:space-between;align-items:baseline}
-.note{max-width:62ch;font-size:.75rem;color:var(--body);line-height:1.75}
+.note{max-width:62ch;font-size:.8125rem;color:var(--body);line-height:1.75}
 .ok{display:none;text-align:center}
 .ok.on{display:block;animation:up .6s var(--eo)}
 
@@ -633,9 +631,9 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
   opacity:0;transform:translateY(12px) scale(.96);transform-origin:100% 100%;visibility:hidden;
   transition:opacity .4s var(--e),transform .55s var(--eo),visibility .4s}
 .mus.open .mus__p{opacity:1;transform:none;visibility:visible}
-.mus__line{color:var(--marine);margin:0;font-size:.5rem;letter-spacing:.2em}
+.mus__line{color:var(--marine);margin:0;font-size:.5625rem;letter-spacing:.2em}
 .mus__t{  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.mus__by{font-size:.6875rem;line-height:1.5;color:var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mus__by{font-size:.75rem;line-height:1.5;color:var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .mus__by a{box-shadow:inset 0 -1px 0 var(--line)}
 .mus__by a:hover{color:var(--marine)}
 .mus__bar{height:3px;border-radius:3px;background:rgba(3,34,77,.13);overflow:hidden;cursor:pointer}
@@ -721,7 +719,6 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 /* --- The deep -----------------------------------------------------------
    The closing section sits below the sea divider, so it carries the light
    coming down through the surface. Held well back — the headline has to win. */
-.section--deep{position:relative;isolation:isolate}
 .deep__bg{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
 .deep__bg img,.deep__bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:.34;filter:saturate(.8)}
@@ -733,7 +730,9 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 @media(prefers-reduced-motion:reduce){.deep__bg video{display:none}}
 
 /* --- Footer ------------------------------------------------------------- */
-.ftr{position:relative;background:var(--navy);color:rgba(255,255,255,.6);padding-block:clamp(4rem,8vw,7rem) clamp(2rem,4vw,2.5rem)}
+.ftr{position:relative;isolation:isolate;background:var(--navy);color:rgba(255,255,255,.6);
+  padding-block:clamp(5rem,9vw,8rem) clamp(2rem,4vw,2.5rem)}
+.ftr>.wrap{position:relative;z-index:1}
 .ftr h4{color:rgba(255,255,255,.58);margin-bottom:1.4rem}
 .ftr__top{display:grid;gap:clamp(2.5rem,5vw,4rem);grid-template-columns:1fr}
 @media(min-width:860px){.ftr__top{grid-template-columns:1.4fr .8fr 1fr}}
@@ -741,7 +740,7 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .ftr a{transition:color .3s}
 .ftr a:hover{color:#fff}
 .ftr li+li{margin-top:.7rem}
-.ftr__b{margin-top:clamp(3rem,6vw,4.5rem);padding-top:1.6rem;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-wrap:wrap;gap:.75rem 2rem;justify-content:space-between;font-size:.75rem;color:rgba(255,255,255,.62)}
+.ftr__b{margin-top:clamp(3rem,6vw,4.5rem);padding-top:1.6rem;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-wrap:wrap;gap:.75rem 2rem;justify-content:space-between;font-size:.8125rem;color:rgba(255,255,255,.62)}
 
 /* ==========================================================================
    MOTION

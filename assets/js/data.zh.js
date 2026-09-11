@@ -195,8 +195,8 @@
     "img": "atoll-pair",
     "stop": 2
    },
-   "img": "beach-aerial",
-   "alt": "浮潜者在清澈的绿松石色浅礁之上",
+   "img": "swim-boat",
+   "alt": "客人从泳台下水，在深蓝海水中游泳",
    "line": "Fish Tank、一片白色沙洲，以及一段寻找海豚的归程。",
    "intro": "美好一天的精简版。直奔 Fish Tank，在沙上停留一小时，然后一路留意海豚返航。",
    "plan": [
@@ -583,18 +583,13 @@
   },
   {
    "img": "aerial-marina",
-   "cat": "islands",
+   "cat": "vessel",
    "cap": "驶离胡鲁马累"
   },
   {
    "img": "boarding",
    "cat": "vessel",
    "cap": "回到船上"
-  },
-  {
-   "img": "beach-aerial",
-   "cat": "islands",
-   "cap": "一艘拉上沙滩的小船"
   },
   {
    "img": "palm-shore",

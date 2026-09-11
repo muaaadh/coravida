@@ -123,11 +123,12 @@ until you open it. It plays four Creative Commons tracks chosen for the room the
 
 Nothing autoplays. `preload="none"` means an untouched player costs zero bytes.
 
-**One invitation, then silence.** Two seconds after the page settles, a small glass pill
-appears beside the button — *Turn the sound on* — and removes itself five seconds later.
-It is skipped entirely if the player is already open or already playing, any interaction
-kills it early, and `sessionStorage` makes sure it appears once per visit rather than once
-per page.
+**One invitation, then silence.** A second and a half after the page settles, a small glass
+pill appears beside the button — *Turn the sound on* — holds for seven seconds, and removes
+itself; a failsafe clears it at ten regardless. It is skipped entirely if the player is
+already open or already playing, any interaction kills it early, and it is marked as seen
+the moment it *appears* — not when it leaves — so a visitor who moves to the next page
+inside the window never sees it twice.
 
 ## How media is presented
 
@@ -189,8 +190,8 @@ carries the whole layer — no library:
 | Behaviour | Hook |
 |---|---|
 | **A stop for anything that plays itself.** One 40px disc, bottom left of any hero, band or film figure, quiet until you hover and always visible on touch. WCAG 2.2.2 asks for it and none of the six references provide one. | `.filmc` |
-| **The deep.** Below the sea divider the page is under water, so the closing section runs dark film behind the navy — sunlight coming down through the surface, held at 34% under a radial navy wash so the headline still wins. | `.section--deep`, `.deep__bg` |
-| **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` into the closing navy section, or the footer where there isn't one |
+| **The deep.** Below the sea divider the page is under water, so the footer runs dark film behind the navy — sunlight coming down through the surface, held at 34% under a radial navy wash so the type still wins. | `.ftr .deep__bg` |
+| **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` onto the footer — every page closes on white, and the water begins where the footer does |
 | **The excursion index.** Four numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
 | Sections fade and lift, staggered | `data-a="up\|fade"` inside `data-stagger`, which numbers any child the build did not |
@@ -270,7 +271,7 @@ Deliberately small, because a large one is how a site stops being clean:
 | | |
 |---|---|
 | Colour | Navy `#03224D`, marine `#0C6FDB`, ocean `#0046B1`, mist `#F5F8FB`. **One** body grey (`--body`, 5.7:1 on white) and **one** hairline. The primary button is the one place the brand blue fills a shape — a marine-to-ocean gradient, white on it at 4.9:1 — and on navy it inverts to a white pill with ocean text at 8.4:1. Selected chips and the current language pill take the same fill. |
-| Type | Montserrat 300 for display, Inter 400/500 for everything else. Four display sizes (`.d1–.d4`) and **one** micro-caps label rule, shared by 17 selectors. |
+| Type | Montserrat 300 for display, Inter 400/500 for everything else. The root is `clamp(16px, 15.2px + .2vw, 17.5px)` — 16px on a phone, 17.5px on a desktop — so every rem grows with the screen. Body 17.5px, labels 12px, captions 15px, lede 19px at 1440. Four display sizes (`.d1–.d4`) and **one** micro-caps label rule. |
 | Space | `--s1…--s6` for vertical rhythm, `--sec` for section padding, `--gut` for the page gutter. No spacing lives in the HTML — the only inline styles in the whole build are stagger indices. |
 | Reveals | Three: `up`, `fade`, `clip`. |
 
@@ -305,7 +306,7 @@ readable at 760 KB before it arrives.
 | `vessel.html` | Tiffany Blanc 14 — four decks, specification, what is aboard |
 | `excursions.html` | The four excursions as a numbered index, then what a charter covers and add-ons |
 | `excursions/<slug>.html` | One page per excursion (4), each with its hour-by-hour timeline |
-| `gallery.html` | Mosaic with a lightbox |
+| `gallery.html` | Four subject groups — Our vessels, Aboard, Below, Islands — each a captioned mosaic under a numbered heading, one lightbox across all of them |
 | `about.html` | The company, the crew, the reef |
 | `contact.html` | Details, message form, FAQ |
 | `enquire.html` | Four-step charter enquiry with a live indicative total |

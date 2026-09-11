@@ -94,7 +94,7 @@ window.CV = (function () {
       area: "North Malé Atoll", departs: "09:00 · Hulhumalé", price: 950,
       clip: "spit", clipMax: 1080,
       plate: { img: "atoll-pair",   stop: 2 },
-      img: "beach-aerial", alt: "A snorkeller over a shallow reef in clear turquoise water",
+      img: "swim-boat", alt: "Guests swimming off the platform in deep blue water",
       line: "Fish Tank, a white sandbank, and a dolphin cruise home.",
       intro: "The short version of a good day. Straight out to Fish Tank, an hour on the sand, and a cruise back with an eye out for dolphins.",
       plan: [
@@ -201,9 +201,8 @@ window.CV = (function () {
     { img: "ray-sand",      cat: "water",   cap: "Stingray over sand" },
     { img: "salon",         cat: "vessel",  cap: "Salon, looking forward" },
     { img: "float-blue",    cat: "aboard",  cap: "Rings, and nowhere to be" },
-    { img: "aerial-marina", cat: "islands", cap: "Leaving Hulhumalé" },
+    { img: "aerial-marina", cat: "vessel",  cap: "Leaving Hulhumalé" },
     { img: "boarding",      cat: "vessel",  cap: "Back aboard" },
-    { img: "beach-aerial",  cat: "islands", cap: "A boat drawn up on the sand" },
     { img: "palm-shore",    cat: "islands", cap: "Where the palms meet the shallows" },
     { img: "aerial-bow",    cat: "vessel",  cap: "Bow, from directly above" },
     { img: "swim-boat",     cat: "water",   cap: "Swimming off the platform" }

@@ -195,8 +195,8 @@
     "img": "atoll-pair",
     "stop": 2
    },
-   "img": "beach-aerial",
-   "alt": "Ein Schnorchler über einem flachen Riff in klarem, türkisem Wasser",
+   "img": "swim-boat",
+   "alt": "Gäste schwimmen von der Plattform in tiefblauem Wasser",
    "line": "Fish Tank, eine weiße Sandbank und eine Rückfahrt mit Delfinen.",
    "intro": "Die kurze Fassung eines guten Tages. Direkt hinaus zum Fish Tank, eine Stunde auf dem Sand und eine Rückfahrt mit einem Auge auf Delfine.",
    "plan": [
@@ -583,18 +583,13 @@
   },
   {
    "img": "aerial-marina",
-   "cat": "islands",
+   "cat": "vessel",
    "cap": "Auslaufen aus Hulhumalé"
   },
   {
    "img": "boarding",
    "cat": "vessel",
    "cap": "Zurück an Bord"
-  },
-  {
-   "img": "beach-aerial",
-   "cat": "islands",
-   "cap": "Ein Boot, auf den Sand gezogen"
   },
   {
    "img": "palm-shore",

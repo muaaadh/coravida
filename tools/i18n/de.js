@@ -5,6 +5,7 @@
 module.exports = {
 
 ui: {
+  "Islands": "Inseln",
   "Everything the day needs is already aboard.":
     "Alles, was der Tag braucht, ist schon an Bord.",
   "A guest on the sand beside her snorkel fins":
@@ -309,7 +310,7 @@ content: {
       departs: "09:00 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
       line: "Fish Tank, eine weiße Sandbank und eine Rückfahrt mit Delfinen.",
       intro: "Die kurze Fassung eines guten Tages. Direkt hinaus zum Fish Tank, eine Stunde auf dem Sand und eine Rückfahrt mit einem Auge auf Delfine.",
-      alt: "Ein Schnorchler über einem flachen Riff in klarem, türkisem Wasser",
+      alt: "Gäste schwimmen von der Plattform in tiefblauem Wasser",
       plan: [
         { h: "Hulhumalé", d: "Hinaus vom Steg." },
         { h: "Fish Tank", d: "Schnorcheln mit den Tropenfischen in klarem Wasser." },
@@ -403,7 +404,6 @@ content: {
     { cap: "Ringe, und nirgendwo hin müssen" },
     { cap: "Auslaufen aus Hulhumalé" },
     { cap: "Zurück an Bord" },
-    { cap: "Ein Boot, auf den Sand gezogen" },
     { cap: "Wo die Palmen das Flachwasser treffen" },
     { cap: "Bug, von direkt oben" },
     { cap: "Schwimmen von der Plattform" }

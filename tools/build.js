@@ -188,14 +188,13 @@ ${main}
 
 /* Below the sea divider the page is under water, so the closing section runs
    dark film behind the navy — sunlight coming down through the surface. */
-const cta = (r = "", h = null) => `  <section class="section section--navy section--deep center">
-    <div class="deep__bg" aria-hidden="true">
-      ${img("poster-sunbeams", "", { sizes: "100vw", cap: 1200 })}
-      <video data-src="sunbeams" data-max="1080" muted loop playsinline preload="none" tabindex="-1"></video>
-    </div>
+/* The close is white; the navy — and the sea that rises out of it — belong to the
+   footer. So the page ends on its own ground and the water begins where the site
+   information does. */
+const cta = (r = "", h = null) => `  <section class="section section--close center">
     <div class="wrap narrow stack-l" data-stagger>
       <h2 class="d2 lines">${h || T("Tell us when, and we will tell you where")}</h2>
-      <div class="acts" data-a="up"><a class="btn btn--white" href="${r}enquire.html">${T("Enquire")}</a></div>
+      <div class="acts" data-a="up"><a class="btn" href="${r}enquire.html">${T("Enquire")}</a></div>
     </div>
   </section>`;
 
@@ -577,12 +576,37 @@ ${cta(r)}`;
 /* ------------------------------------------------------------- GALLERY -- */
 function gallery() {
   at(0);
-  const items = CV.gallery.map((g, i) => `        <figure data-a="up" style="--i:${i % 3}">
-          <button type="button" data-lb="assets/img/${g.img}-1600.webp" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="${T("Open")}: ${esc(g.cap)}">
-            ${img(g.img, g.cap, { sizes: "(min-width:1100px) 31vw, (min-width:700px) 47vw, 100vw", eager: i < 3 })}
-          </button>
-          <figcaption>${g.cap}</figcaption>
-        </figure>`).join("\n");
+  /* Eighteen photographs in one field asks the reader to sort them. Four
+     groups, each under its own heading, does the sorting for them. */
+  const GROUPS = [
+    ["vessel",  T("Our vessels")],
+    ["aboard",  T("Aboard")],
+    ["water",   T("Below")],
+    ["islands", T("Islands")]
+  ];
+  let k = 0;
+  const groups = GROUPS.map(([cat, title], gi) => {
+    const set = CV.gallery.filter(g => g.cat === cat);
+    if (!set.length) return "";
+    const items = set.map((g, i) => `          <figure data-a="up" style="--i:${i % 3}">
+            <button type="button" data-lb="assets/img/${g.img}-1600.webp" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="${T("Open")}: ${esc(g.cap)}">
+              ${img(g.img, g.cap, { sizes: "(min-width:1100px) 31vw, (min-width:700px) 47vw, 100vw", eager: k++ < 3 })}
+            </button>
+            <figcaption>${g.cap}</figcaption>
+          </figure>`).join("\n");
+    return `  <section class="section${gi % 2 ? " section--mist" : ""}">
+    <div class="wrap stack-l">
+      <div class="galhead" data-stagger>
+        <p class="eyebrow" data-a="up">${String(gi + 1).padStart(2, "0")}</p>
+        <h2 class="d3 lines">${title}</h2>
+        <span class="galhead__n">${set.length}</span>
+      </div>
+      <div class="mosaic" data-stagger>
+${items}
+      </div>
+    </div>
+  </section>`;
+  }).filter(Boolean).join("\n\n");
 
   const main = `  <section class="phero">
     <div class="wrap narrow stack-l" data-stagger>
@@ -592,11 +616,7 @@ function gallery() {
     </div>
   </section>
 
-  <section class="section">
-    <div class="wrap"><div class="mosaic" data-stagger>
-${items}
-    </div></div>
-  </section>
+${groups}
 
 ${cta("", T("Come and take your own"))}`;
 

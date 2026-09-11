@@ -68,9 +68,7 @@
     var f = $('[data-chrome="footer"]');
     if (f) {
       var ft = footerEl(); f.replaceWith(ft);
-      var prev = ft.previousElementSibling;
-      if (prev && prev.tagName === "MAIN") prev = prev.lastElementChild;
-      sea((prev && prev.classList && prev.classList.contains("section--navy")) ? prev : ft);
+      sea(ft);
     }
   }
 
@@ -132,7 +130,12 @@
     var links = (CV.nav || []).map(function (n) { return '<li><a href="' + pg(n.href) + '">' + n.label + "</a></li>"; }).join("") +
       '<li><a href="' + pg("enquire.html") + '">' + t("enquire", "Enquire") + "</a></li>";
     return el(
-      '<footer class="ftr"><div class="wrap"><div class="ftr__top">' +
+      '<footer class="ftr">' +
+        '<div class="deep__bg" aria-hidden="true">' +
+          '<img src="' + u("assets/img/poster-sunbeams-1200.webp") + '" alt="" loading="lazy" decoding="async" width="1200" height="675">' +
+          '<video data-src="sunbeams" data-max="1080" muted loop playsinline preload="none" tabindex="-1"></video>' +
+        "</div>" +
+        '<div class="wrap"><div class="ftr__top">' +
         '<div data-a="up"><img src="' + u("assets/img/logo-full-white.webp") + '" alt="' + B.name + '" width="90" height="46" loading="lazy">' +
           '<p class="small ftr__tag">' + B.tagline + ".</p></div>" +
         '<div data-a="up"><h4>' + t("explore", "Explore") + "</h4><ul>" + links + "</ul></div>" +
@@ -274,7 +277,7 @@
      disc per clip, put there only once the clip is actually running so a
      blocked autoplay never leaves a dead control behind. */
   function control(v) {
-    var host = v.closest(".hero, .band, .fig, .section--deep");
+    var host = v.closest(".hero, .band, .fig, .ftr");
     if (!host || $(".filmc", host)) return;
     if (getComputedStyle(host).position === "static") host.style.position = "relative";
     var b = el('<button class="filmc" type="button" aria-label="' + t("pauseFilm", "Pause the film") + '">' + ICON.pause + "</button>");
@@ -565,14 +568,19 @@
         t("nudge", "Turn the sound on") + "</span>" +
         '<i class="mus__nq" aria-hidden="true"></i></div>');
       wrap.appendChild(n);
-      var out;
+      /* mark it seen the moment it appears — not when it leaves — so a visitor
+         who moves to the next page inside the window never sees it twice */
+      store("nudged", "1");
+      var out, gone = false;
       function go() {
+        if (gone) return;
+        gone = true;
         clearTimeout(out);
         n.classList.remove("in");
-        setTimeout(function () { n.remove(); }, 600);
-        store("nudged", "1");
+        setTimeout(function () { if (n.parentNode) n.remove(); }, 600);
       }
-      setTimeout(function () { n.classList.add("in"); out = setTimeout(go, 5000); }, 2200);
+      setTimeout(function () { n.classList.add("in"); out = setTimeout(go, 7000); }, 1500);
+      setTimeout(go, 10000);                            // failsafe: nothing keeps it past ten seconds
       wrap.addEventListener("click", go, { once: true });
       n.addEventListener("click", function () { $("#musB").click(); });
     }
@@ -740,24 +748,20 @@
      eleventh in the DOM — and the eleventh the lightbox went to next. Filling
      the columns round-robin puts reading order and DOM order back together. */
   function mosaic() {
-    var m = $(".mosaic"); if (!m) return;
-    var items = $$(":scope > figure, :scope > .mosaic__col > figure", m);
-    if (!items.length) return;
-    var at = -1;
-    function cols() { return window.innerWidth >= 1100 ? 3 : window.innerWidth >= 480 ? 2 : 1; }
-    function lay() {
-      var n = cols();
-      if (n === at) return;
-      at = n;
-      var made = [];
-      for (var i = 0; i < n; i++) made.push(el('<div class="mosaic__col"></div>'));
-      items.forEach(function (f, i) { made[i % n].appendChild(f); });
-      m.textContent = "";
-      made.forEach(function (c) { m.appendChild(c); });
-    }
-    lay();
-    var t;
-    window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(lay, 150); }, { passive: true });
+    $$(".mosaic").forEach(function (m) {
+      var items = $$(":scope > figure, :scope > .mosaic__col > figure", m);
+      if (!items.length) return;
+      var at = -1;
+      function cols() { return window.innerWidth >= 1100 ? 3 : window.innerWidth >= 480 ? 2 : 1; }
+      function lay() {
+        var n = cols(); if (n === at) return; at = n;
+        var made = []; for (var i = 0; i < n; i++) made.push(el('<div class="mosaic__col"></div>'));
+        items.forEach(function (f, i) { made[i % n].appendChild(f); });
+        m.textContent = ""; made.forEach(function (c) { m.appendChild(c); });
+      }
+      lay();
+      var t; window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(lay, 150); }, { passive: true });
+    });
   }
 
   /* ---- Lightbox -------------------------------------------------------- */
