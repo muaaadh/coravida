@@ -5,6 +5,9 @@
 module.exports = {
 
 ui: {
+  "Goes straight to the crew, on WhatsApp or by email.": "直接送达船员：WhatsApp 或电子邮件。",
+  "Send on WhatsApp": "通过 WhatsApp 发送",
+  "Send by email": "通过电子邮件发送",
   "Islands": "岛屿",
   "Everything the day needs is already aboard.":
     "这一天需要的一切，都已在船上。",
@@ -264,6 +267,7 @@ ui: {
 chrome: {
   pauseFilm: "暂停影片", playFilm: "播放影片",
   charterOnEnquiry: "包船价格另议", guestsWord: "人",
+  oneMore: "还差一步", sendToCrew: "发送给船员", alreadyWritten: "消息已经写好——选择 WhatsApp 或电子邮件，它会直接送达码头办公室。",
   menu: "菜单", close: "关闭", enquire: "预订咨询", explore: "浏览",
   primary: "主导航", menuLabel: "菜单",
   music: "音乐", player: "音乐播放器", play: "播放", pause: "暂停",
@@ -287,7 +291,7 @@ content: {
   ],
   music: { line: "感受马尔代夫的气息" },
   voyages: [
-    {
+    { slug: "island-and-snorkelling", 
       has: ["出海行程", "Fish Tank 浮潜", "希玛富士沙洲", "登岛希玛富士", "日落航段", "游泳与浮潜时间", "拍照停留"],
       title: "海岛与浮潜", kind: "全日", duration: "9.5 小时", area: "北马累环礁",
       departs: "08:30 · 胡鲁马累", guests: "最多 12 人", season: "全年",
@@ -305,7 +309,7 @@ content: {
         { h: "胡鲁马累", d: "靠泊。" }
       ]
     },
-    {
+    { slug: "reef-and-sandbank", 
       has: ["出海行程", "Fish Tank 浮潜", "沙洲停留", "游泳与休息", "返回胡鲁马累的海豚航段"],
       title: "礁石与沙洲", kind: "半日", duration: "4 小时", area: "北马累环礁",
       departs: "09:00 · 胡鲁马累", guests: "最多 12 人", season: "全年",
@@ -320,7 +324,7 @@ content: {
         { h: "胡鲁马累", d: "靠泊。" }
       ]
     },
-    {
+    { slug: "shark-point-and-gulhi", 
       has: ["全日出海行程", "三处浮潜点", "鲨鱼点浮潜", "珊瑚花园浮潜", "沙洲停留", "登岛古尔希", "午餐", "日落航段"],
       title: "鲨鱼点与古尔希", kind: "全日", duration: "9 小时", area: "南马累环礁",
       departs: "09:00 · 胡鲁马累", guests: "最多 12 人", season: "全年",
@@ -339,7 +343,7 @@ content: {
         { h: "胡鲁马累码头", d: "靠泊。" }
       ]
     },
-    {
+    { slug: "sunset-adventure", 
       has: ["出海行程", "鲨鱼点浮潜", "沙洲停留", "傍晚小食与饮品", "日落航段", "游泳与浮潜"],
       title: "日落之旅", kind: "半日", duration: "4.5 小时", area: "南马累环礁",
       departs: "13:30 · 胡鲁马累", guests: "最多 12 人", season: "全年",
@@ -357,12 +361,12 @@ content: {
     }
   ],
   addons: [
-    { t: "船上私厨", d: "三道菜，航行中现做。" },
-    { t: "摄影师", d: "船上半日，一周内交付修好的成片。" },
-    { t: "漂浮早餐", d: "停泊时在浅水中供应。" },
-    { t: "沙洲布置", d: "餐桌、遮阳伞与地垫一并送上沙洲。" },
-    { t: "潜水", d: "两瓶气、配重与向导，每位潜水员。" },
-    { t: "机场与度假村接送", d: "维拉纳机场或你的度假村，单程。" }
+    { id: "private-chef-aboard",  t: "船上私厨", d: "三道菜，航行中现做。" },
+    { id: "photographer",  t: "摄影师", d: "船上半日，一周内交付修好的成片。" },
+    { id: "floating-breakfast",  t: "漂浮早餐", d: "停泊时在浅水中供应。" },
+    { id: "sandbank-set-up",  t: "沙洲布置", d: "餐桌、遮阳伞与地垫一并送上沙洲。" },
+    { id: "diving",  t: "潜水", d: "两瓶气、配重与向导，每位潜水员。" },
+    { id: "airport-and-resort-transfers",  t: "机场与度假村接送", d: "维拉纳机场或你的度假村，单程。" }
   ],
   vessel: {
     stats: [{ k: "船长", u: "米" }, { k: "载客" }, { k: "客舱" }, { k: "船员" }],
@@ -379,48 +383,48 @@ content: {
       "泳台与登船梯", "冷藏与冰块", "各尺码救生衣", "雷达、GPS 与甚高频电台"
     ],
     decks: [
-      { t: "飞桥", d: "上层驾驶位、日光垫与遮阳休息区 — 长距离航行时最好的位置。",
+      { img: "aerial-close",  t: "飞桥", d: "上层驾驶位、日光垫与遮阳休息区 — 长距离航行时最好的位置。",
         alt: "航拍 Tiffany Blanc 14 的飞桥，客人在船上" },
-      { t: "客厅", d: "带空调，两侧通高玻璃，一张可坐六人的餐桌。",
+      { img: "salon",  t: "客厅", d: "带空调，两侧通高玻璃，一张可坐六人的餐桌。",
         alt: "Tiffany Blanc 14 带空调的客厅，向前望向驾驶位" },
-      { t: "后甲板与泳台", d: "遮阳后甲板、登船梯，以及贴近水面的泳台。",
+      { img: "boarding",  t: "后甲板与泳台", d: "遮阳后甲板、登船梯，以及贴近水面的泳台。",
         alt: "客人从船尾水中登上 Tiffany Blanc 14" },
-      { t: "水里", d: "锚一落定，地垫、泳圈与浮潜装备就下水。",
+      { img: "float-blue",  t: "水里", d: "锚一落定，地垫、泳圈与浮潜装备就下水。",
         alt: "客人在深蓝海水中，靠着船身漂在泳圈上" }
     ]
   },
   gallery: [
-    { cap: "Tiffany Blanc 14 · 北马累" },
-    { cap: "两座环礁，自高空" },
-    { cap: "棕榈到此为止" },
-    { cap: "脚蹼，和一整个下午" },
-    { cap: "鹰鳐，上午晚些时候" },
-    { cap: "停泊在礁缘之上" },
-    { cap: "船尾之外，深水区" },
-    { cap: "当天的第一处礁石" },
-    { cap: "水果，启航前摆好" },
-    { cap: "航行中，一路向南" },
-    { cap: "沙上的魟鱼" },
-    { cap: "客厅，向前望" },
-    { cap: "泳圈，哪儿也不用去" },
-    { cap: "驶离胡鲁马累" },
-    { cap: "回到船上" },
-    { cap: "棕榈与浅滩相接处" },
-    { cap: "船首，正上方视角" },
-    { cap: "从泳台下水" }
+    { img: "vessel-guests",  cap: "Tiffany Blanc 14 · 北马累" },
+    { img: "atoll-pair",  cap: "两座环礁，自高空" },
+    { img: "palm-beach",  cap: "棕榈到此为止" },
+    { img: "fins",  cap: "脚蹼，和一整个下午" },
+    { img: "ray",  cap: "鹰鳐，上午晚些时候" },
+    { img: "aerial-anchor",  cap: "停泊在礁缘之上" },
+    { img: "floats",  cap: "船尾之外，深水区" },
+    { img: "snorkellers",  cap: "当天的第一处礁石" },
+    { img: "platter",  cap: "水果，启航前摆好" },
+    { img: "aerial-underway",  cap: "航行中，一路向南" },
+    { img: "ray-sand",  cap: "沙上的魟鱼" },
+    { img: "salon",  cap: "客厅，向前望" },
+    { img: "float-blue",  cap: "泳圈，哪儿也不用去" },
+    { img: "aerial-marina",  cap: "驶离胡鲁马累" },
+    { img: "boarding",  cap: "回到船上" },
+    { img: "palm-shore",  cap: "棕榈与浅滩相接处" },
+    { img: "aerial-bow",  cap: "船首，正上方视角" },
+    { img: "swim-boat",  cap: "从泳台下水" }
   ],
   faq: [
-    { q: "船从哪里出发？",
+    { id: "where-does-the-vessel",  q: "船从哪里出发？",
       a: "胡鲁马累码头，距维拉纳国际机场十分钟。经安排，我们也可到北马累与南马累环礁的多数度假村与民宿接人。" },
-    { q: "最多可以载多少人？",
+    { id: "how-many-guests-can",  q: "最多可以载多少人？",
       a: "日间包船十二人，过夜四人，分住两间带独立卫浴的客舱。十二人是本船的法定上限，我们不会超载。" },
-    { q: "费用包含哪些？",
+    { id: "what-is-included-in",  q: "费用包含哪些？",
       a: "整船私人使用、船长与船员、行程内燃油、港口费、浮潜装备、饮用水与软饮。行程中注明的餐食已含。" },
-    { q: "如果天气转坏怎么办？",
+    { id: "what-happens-if-the",  q: "如果天气转坏怎么办？",
       a: "由船长在当天早晨决定。如果无法安全出海，你可以改期，或全额退款。" },
-    { q: "可以配合饮食要求吗？",
+    { id: "can-you-cater-for",  q: "可以配合饮食要求吗？",
       a: "可以。请在咨询时告知 — 清真为默认，素食、纯素与无过敏原餐可按需准备。" },
-    { q: "如何锁定日期？",
+    { id: "how-do-we-hold",  q: "如何锁定日期？",
       a: "支付百分之五十订金即确认预订；余款于出发前七天结清。支持银行转账与刷卡。" }
   ]
 }

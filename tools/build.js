@@ -1,13 +1,13 @@
 /* ==========================================================================
    CORAVIDA — site generator.   node tools/build.js
-   Emits every HTML page from assets/js/data.js, motion attributes included.
+   Emits every HTML page from content/site.json, motion attributes included.
+   The admin at /admin/ edits that JSON and commits it; a GitHub Action then
+   runs this file and republishes the site.
    ========================================================================== */
 const fs = require("fs");
 const path = require("path");
 const ROOT = path.resolve(__dirname, "..");
-global.window = {};
-require(path.join(ROOT, "assets/js/data.js"));
-const EN = global.window.CV;
+const EN = JSON.parse(fs.readFileSync(path.join(ROOT, "content/site.json"), "utf8"));
 
 /* ---------------------------------------------------------------- I18N --
    English is the source. Each locale file carries `ui` (a dictionary keyed by
@@ -20,9 +20,20 @@ const LOCALES = [
   { code: "de", dir: "de/",  lang: "de", label: "Deutsch",  short: "DE" }
 ];
 
+/* Arrays of records merge by identity (`slug` for excursions, `img` for the
+   gallery, `file` for tracks and clips) when the override carries that key,
+   so the admin can reorder, add or drop an entry without shifting every
+   translation after it. Anything else merges by index. */
+const IDKEYS = ["slug", "img", "file", "src"];
+function idOf(o) { if (!o || typeof o !== "object") return null; for (const k of IDKEYS) if (k in o) return k + ":" + o[k]; return null; }
 function deepMerge(base, over) {
   if (Array.isArray(base)) {
     if (!Array.isArray(over)) return base;
+    const keyed = over.length && over.every(idOf);
+    if (keyed) {
+      const byId = new Map(over.map(o => [idOf(o), o]));
+      return base.map(v => { const o = byId.get(idOf(v)); return o ? deepMerge(v, o) : v; });
+    }
     return base.map((v, i) => (i in over ? deepMerge(v, over[i]) : v));
   }
   if (base && typeof base === "object") {
@@ -97,7 +108,7 @@ tiers.forEach(a => a.sort((x, y) => x - y));
 /* responsive <img> */
 function img(name, alt, { sizes = "100vw", eager = false, cap = 0 } = {}) {
   let set = tiers.get(name) || [];
-  if (!set.length) throw new Error("no image tiers for " + name);
+  if (!set.length) throw new Error(`no image tiers for "${name}" — if it was uploaded through the admin, run  npm i --no-save sharp && node tools/tiers.js`);
   // a still the film replaces within a second does not need the largest tier
   if (cap) { const under = set.filter(w => w <= cap); if (under.length) set = under; }
   const pick = set[Math.min(1, set.length - 1)];
@@ -740,14 +751,14 @@ function contact() {
             </div>
             <div class="field"><label for="m">${T("Message")}</label><textarea id="m" name="message" required></textarea></div>
             <div class="acts"><button class="btn" type="submit">${T("Send")}</button></div>
-            <p class="note">${T("A demonstration form &mdash; nothing is sent.")}</p>
+            <p class="note">${T("Goes straight to the crew, on WhatsApp or by email.")}</p>
           </form>
           <div class="ok" id="okC">
             <div class="stack-l">
-              <p class="eyebrow">${T("Received")}</p>
-              <h2 class="d2">${T("Thank you")}</h2>
-              <p class="lede measure">${T("The crew reply within a day, usually sooner.")}</p>
-              <div class="acts"><a class="btn btn--ghost" href="index.html">${T("Back to the harbour")}</a></div>
+              <p class="eyebrow" data-ok-eyebrow>${T("Received")}</p>
+              <h2 class="d2" data-ok-h>${T("Thank you")}</h2>
+              <p class="lede measure" data-ok-p>${T("The crew reply within a day, usually sooner.")}</p>
+              <div class="acts" data-deliver><a class="btn" href="${CV.brand.whatsappHref}" data-wa rel="noopener">${T("Send on WhatsApp")}</a><a class="btn btn--ghost" href="mailto:${CV.brand.email}" data-mail>${T("Send by email")}</a></div>
             </div>
           </div>
         </div>
@@ -785,7 +796,7 @@ function enquire() {
   at(0);
   const chips = CV.voyages.map((v, i) => `              <input type="radio" id="v${i}" name="excursion" value="${v.slug}"${i === 0 ? " checked" : ""}>
               <label for="v${i}">${v.title} &middot; ${v.kind}</label>`).join("\n");
-  const extras = CV.addons.map((a, i) => `              <input type="checkbox" id="x${i}" name="extra" value="${a.t.toLowerCase().replace(/[^a-z]+/g, "-")}" data-label="${esc(a.t)}" data-price="${a.p}">
+  const extras = CV.addons.map((a, i) => `              <input type="checkbox" id="x${i}" name="extra" value="${a.id}" data-label="${esc(a.t)}" data-price="${a.p}">
               <label for="x${i}">${a.t} &middot; ${a.p}</label>`).join("\n");
 
   const main = `  <section class="hero hero--mid">
@@ -876,10 +887,10 @@ ${extras}
 
       <div class="ok" id="enquireOk">
         <div class="stack-l">
-          <p class="eyebrow">${T("Received")}</p>
-          <h2 class="d2">${T("We have it")}</h2>
-          <p class="lede measure">${T("The crew reply within a day, usually sooner. If your dates are tight, call the marina office.")}</p>
-          <div class="acts"><a class="btn" href="index.html">${T("Back to the harbour")}</a><a class="btn btn--ghost" href="${CV.brand.phoneHref}">${CV.brand.phone}</a></div>
+          <p class="eyebrow" data-ok-eyebrow>${T("Received")}</p>
+          <h2 class="d2" data-ok-h>${T("We have it")}</h2>
+          <p class="lede measure" data-ok-p>${T("The crew reply within a day, usually sooner. If your dates are tight, call the marina office.")}</p>
+          <div class="acts" data-deliver><a class="btn" href="${CV.brand.whatsappHref}" data-wa rel="noopener">${T("Send on WhatsApp")}</a><a class="btn btn--ghost" href="mailto:${CV.brand.email}" data-mail>${T("Send by email")}</a><a class="btn btn--ghost" href="${CV.brand.phoneHref}">${CV.brand.phone}</a></div>
         </div>
       </div>
     </div>
@@ -920,6 +931,32 @@ function notfound() {
 
 const SITE = "https://muaaadh.github.io/coravida/";
 
+/* the English data file the pages load (classic script, so file:// works) */
+fs.mkdirSync(path.join(ROOT, "assets/js"), { recursive: true });
+fs.writeFileSync(path.join(ROOT, "assets/js/data.js"),
+  "/* Generated by tools/build.js from content/site.json — edit that (or use /admin/), not this. */\n" +
+  "(function(){var w=typeof window!==\"undefined\"?window:global;w.CV=" +
+  JSON.stringify(EN, null, 1) + ";})();\n");
+
+/* what the admin can choose from: every photograph, clip and track that is
+   actually built, with the size it can honestly be shown at */
+{
+  const VID = path.join(ROOT, "assets/video"), AUD = path.join(ROOT, "assets/audio");
+  const clips = new Map();
+  for (const f of fs.existsSync(VID) ? fs.readdirSync(VID) : []) {
+    const m = /^(.+)-(\d+)\.mp4$/.exec(f); if (!m) continue;
+    (clips.get(m[1]) || clips.set(m[1], []).get(m[1])).push(+m[2]);
+  }
+  const images = [...tiers.keys()].filter(n => !/^poster-/.test(n) && !/^logo|^favicon|^caustics/.test(n)).sort()
+    .map(n => { const ws = tiers.get(n), d = dims(`${n}-${ws[ws.length - 1]}.webp`); return { name: n, max: ws[ws.length - 1], w: d && d.w, h: d && d.h }; });
+  const tracks = (fs.existsSync(AUD) ? fs.readdirSync(AUD) : []).filter(f => /\.(mp3|m4a|ogg)$/.test(f)).map(f => f.replace(/\.[^.]+$/, ""));
+  fs.writeFileSync(path.join(ROOT, "content/media.json"), JSON.stringify({
+    images,
+    clips: [...clips.keys()].sort().map(n => ({ name: n, max: Math.max(...clips.get(n)), poster: tiers.has("poster-" + n) ? "poster-" + n : null })),
+    tracks: [...new Set(tracks)].sort()
+  }, null, 2) + "\n");
+}
+
 for (const loc of LOCALES) {
   LOC = loc;
   if (loc.code === "en") { CV = EN; DICT = {}; }
@@ -928,7 +965,6 @@ for (const loc of LOCALES) {
     DICT = src.ui || {};
     CV = deepMerge(EN, src.content || {});
     CV.ui = src.chrome || {};                  // the strings site.js needs at runtime
-    fs.mkdirSync(path.join(ROOT, "assets/js"), { recursive: true });
     fs.writeFileSync(path.join(ROOT, `assets/js/data.${loc.code}.js`),
       "/* Generated by tools/build.js — edit tools/i18n/" + loc.code + ".js, not this. */\n" +
       "(function(){var w=typeof window!==\"undefined\"?window:global;w.CV=" +

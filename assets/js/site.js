@@ -144,7 +144,7 @@
           '<li><a href="mailto:' + B.email + '">' + B.email + "</a></li>" +
           "<li>" + B.marina + "</li><li>" + (B.address || []).join(", ") + "</li><li>" + B.hours + "</li>" +
         "</ul></div>" +
-      '</div><div class="ftr__b"><span>© ' + B.year + " " + B.legal + "</span><span>" + B.vessel + "</span>" +
+      '</div><div class="ftr__b"><span>© ' + new Date().getFullYear() + " " + B.legal + "</span><span>" + B.vessel + "</span>" +
       '<span>' + t("siteBy", "Site by") + ' <a href="https://dheemi.com" rel="noopener">Dheemi Studio</a></span>' +
       "</div></div></footer>"
     );
@@ -891,13 +891,49 @@
     f.addEventListener("submit", function (e) {
       e.preventDefault(); if (!ok()) return;
       var d = {}; new FormData(f).forEach(function (v, k) { d[k] = d[k] ? [].concat(d[k], v) : v; });
-      d.at = new Date().toISOString();
-      try { var a = JSON.parse(localStorage.getItem("cv.enquiries") || "[]"); a.push(d); localStorage.setItem("cv.enquiries", JSON.stringify(a)); } catch (x) {}
-      f.hidden = true;
-      var o = $("#enquireOk");
-      if (o) { o.classList.add("on"); o.scrollIntoView({ behavior: SLOW ? "auto" : "smooth", block: "center" }); }
+      var v = chosen(); if (v) d.excursionTitle = v.title;
+      var ex = $$('input[name="extra"]:checked', f);
+      if (ex.length) d.extras = ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ");
+      d.total = ($("[data-s-t]") || {}).textContent || "";
+      deliver(f, "enquiry", d, $("#enquireOk"));
     });
     go(0, true);
+  }
+
+  /* ---- Delivery ---------------------------------------------------------
+     A static site has no inbox, so a form goes to the crew one of two ways:
+     posted to the endpoint the admin set (Web3Forms, Formspree — anything
+     that takes JSON), and always as a prepared WhatsApp or email message,
+     which in the Maldives is how most enquiries arrive anyway. */
+  function deliver(f, kind, d, o) {
+    var B = CV.brand || {}, F = B.form || {};
+    var lines = [], skip = { at: 1, total: 0 };
+    var order = ["name", "email", "phone", "staying", "subject", "excursionTitle", "date", "alt", "guests", "pickup", "extras", "total", "message", "notes"];
+    var label = { name: "Name", email: "Email", phone: "Phone", staying: "Staying at", subject: "Subject", excursionTitle: "Excursion", date: "Date", alt: "Alternative date", guests: "Guests", pickup: "Departure", extras: "Extras", total: "Total", message: "Message", notes: "Notes" };
+    order.forEach(function (k) { if (d[k] && String(d[k]).trim() && !skip[k]) lines.push(label[k] + ": " + [].concat(d[k]).join(", ")); });
+    var subject = (kind === "enquiry" ? "Charter enquiry" : "Enquiry") + (d.excursionTitle ? " — " + d.excursionTitle : "") + (d.date ? " · " + d.date : "");
+    var text = subject + "\n\n" + lines.join("\n") + "\n\n— sent from " + location.host;
+    var wa = $("[data-wa]", o), ml = $("[data-mail]", o);
+    if (wa) wa.href = (B.whatsappHref || "https://wa.me/").split("?")[0] + "?text=" + encodeURIComponent(text);
+    if (ml) ml.href = "mailto:" + (B.email || "") + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(text);
+    try { var a = JSON.parse(localStorage.getItem("cv.enquiries") || "[]"); d.at = new Date().toISOString(); a.push(d); localStorage.setItem("cv.enquiries", JSON.stringify(a)); } catch (x) {}
+    function show(sent) {
+      if (!sent) {
+        var e1 = $("[data-ok-eyebrow]", o), h = $("[data-ok-h]", o), p = $("[data-ok-p]", o);
+        if (e1) e1.textContent = t("oneMore", "One more step");
+        if (h) h.textContent = t("sendToCrew", "Send it to the crew");
+        if (p) p.textContent = t("alreadyWritten", "The message is already written — choose WhatsApp or email and it goes straight to the marina office.");
+      }
+      f.hidden = true;
+      if (o) { o.classList.add("on"); o.scrollIntoView({ behavior: SLOW ? "auto" : "smooth", block: "center" }); }
+    }
+    if (!F.endpoint) return show(false);
+    var body = {}; Object.keys(d).forEach(function (k) { body[k] = [].concat(d[k]).join(", "); });
+    body.subject = subject; if (F.key) body.access_key = F.key;
+    var btn = $('[type="submit"]', f); if (btn) btn.disabled = true;
+    fetch(F.endpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(body) })
+      .then(function (r) { show(r.ok); }, function () { show(false); })
+      .then(function () { if (btn) btn.disabled = false; });
   }
 
   function forms() {
@@ -905,8 +941,8 @@
       f.addEventListener("submit", function (e) {
         e.preventDefault();
         if (!f.checkValidity()) return f.reportValidity();
-        var o = $("#" + f.getAttribute("data-ok"));
-        f.hidden = true; if (o) o.classList.add("on");
+        var d = {}; new FormData(f).forEach(function (v, k) { d[k] = d[k] ? [].concat(d[k], v) : v; });
+        deliver(f, "contact", d, $("#" + f.getAttribute("data-ok")));
       });
     });
   }

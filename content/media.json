@@ -1,0 +1,191 @@
+{
+  "images": [
+    {
+      "name": "aerial-anchor",
+      "max": 1920,
+      "w": 1920,
+      "h": 1080
+    },
+    {
+      "name": "aerial-bow",
+      "max": 1920,
+      "w": 1920,
+      "h": 1080
+    },
+    {
+      "name": "aerial-close",
+      "max": 1920,
+      "w": 1920,
+      "h": 1080
+    },
+    {
+      "name": "aerial-marina",
+      "max": 1920,
+      "w": 1920,
+      "h": 1080
+    },
+    {
+      "name": "aerial-underway",
+      "max": 1920,
+      "w": 1920,
+      "h": 1080
+    },
+    {
+      "name": "atoll-pair",
+      "max": 2800,
+      "w": 2800,
+      "h": 1867
+    },
+    {
+      "name": "boarding",
+      "max": 2800,
+      "w": 2800,
+      "h": 2100
+    },
+    {
+      "name": "fins",
+      "max": 2800,
+      "w": 2800,
+      "h": 2100
+    },
+    {
+      "name": "float-blue",
+      "max": 2800,
+      "w": 2800,
+      "h": 2100
+    },
+    {
+      "name": "floats",
+      "max": 1616,
+      "w": 1616,
+      "h": 1080
+    },
+    {
+      "name": "palm-beach",
+      "max": 2800,
+      "w": 2800,
+      "h": 1869
+    },
+    {
+      "name": "palm-shore",
+      "max": 2800,
+      "w": 2800,
+      "h": 1867
+    },
+    {
+      "name": "platter",
+      "max": 1616,
+      "w": 1616,
+      "h": 1080
+    },
+    {
+      "name": "ray",
+      "max": 2200,
+      "w": 2200,
+      "h": 1238
+    },
+    {
+      "name": "ray-sand",
+      "max": 2200,
+      "w": 2200,
+      "h": 1238
+    },
+    {
+      "name": "salon",
+      "max": 2800,
+      "w": 2800,
+      "h": 1867
+    },
+    {
+      "name": "snorkellers",
+      "max": 1600,
+      "w": 1600,
+      "h": 901
+    },
+    {
+      "name": "swim-boat",
+      "max": 2800,
+      "w": 2800,
+      "h": 2100
+    },
+    {
+      "name": "vessel-guests",
+      "max": 2800,
+      "w": 2800,
+      "h": 2100
+    }
+  ],
+  "clips": [
+    {
+      "name": "anchor",
+      "max": 1080,
+      "poster": "poster-anchor"
+    },
+    {
+      "name": "island",
+      "max": 1440,
+      "poster": "poster-island"
+    },
+    {
+      "name": "mask",
+      "max": 1440,
+      "poster": "poster-mask"
+    },
+    {
+      "name": "ray",
+      "max": 1080,
+      "poster": "poster-ray"
+    },
+    {
+      "name": "reef",
+      "max": 1440,
+      "poster": "poster-reef"
+    },
+    {
+      "name": "shallows",
+      "max": 1440,
+      "poster": "poster-shallows"
+    },
+    {
+      "name": "shark",
+      "max": 1440,
+      "poster": "poster-shark"
+    },
+    {
+      "name": "snorkel-pair",
+      "max": 1440,
+      "poster": "poster-snorkel-pair"
+    },
+    {
+      "name": "spit",
+      "max": 1080,
+      "poster": "poster-spit"
+    },
+    {
+      "name": "sunbeams",
+      "max": 1440,
+      "poster": "poster-sunbeams"
+    },
+    {
+      "name": "turtle",
+      "max": 1440,
+      "poster": "poster-turtle"
+    },
+    {
+      "name": "vessel",
+      "max": 1080,
+      "poster": "poster-vessel"
+    },
+    {
+      "name": "wake",
+      "max": 1080,
+      "poster": "poster-wake"
+    }
+  ],
+  "tracks": [
+    "essence",
+    "horizon",
+    "lagoon",
+    "trade-winds"
+  ]
+}

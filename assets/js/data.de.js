@@ -16,7 +16,10 @@
   "whatsappHref": "https://wa.me/9607771234",
   "email": "hello@coravida.com",
   "hours": "Täglich · 08:00 – 20:00 MVT",
-  "year": 2026
+  "form": {
+   "endpoint": "",
+   "key": ""
+  }
  },
  "rates": {
   "pax": 7,
@@ -376,31 +379,37 @@
  ],
  "addons": [
   {
+   "id": "private-chef-aboard",
    "t": "Privatkoch an Bord",
    "d": "Drei Gänge, unterwegs gekocht.",
    "p": 320
   },
   {
+   "id": "photographer",
    "t": "Fotograf",
    "d": "Ein halber Tag an Bord, bearbeitete Dateien innerhalb einer Woche.",
    "p": 450
   },
   {
+   "id": "floating-breakfast",
    "t": "Schwimmendes Frühstück",
    "d": "Serviert im Flachwasser, vor Anker.",
    "p": 180
   },
   {
+   "id": "sandbank-set-up",
    "t": "Aufbau auf der Sandbank",
    "d": "Tisch, Schirm und Matten hinübergetragen.",
    "p": 260
   },
   {
+   "id": "diving",
    "t": "Tauchen",
    "d": "Zwei Flaschen, Blei und ein Guide, pro Taucher.",
    "p": 210
   },
   {
+   "id": "airport-and-resort-transfers",
    "t": "Flughafen- und Resorttransfers",
    "d": "Velana oder Ihr Resort, je Strecke.",
    "p": 120
@@ -609,26 +618,32 @@
  ],
  "faq": [
   {
+   "id": "where-does-the-vessel",
    "q": "Von wo legt das Schiff ab?",
    "a": "Hulhumalé Marina, zehn Minuten vom Velana International Airport. Nach Absprache holen wir Sie auch von den meisten Resorts und Guesthouses im Nord- und Süd-Malé-Atoll ab."
   },
   {
+   "id": "how-many-guests-can",
    "q": "Wie viele Gäste können Sie mitnehmen?",
    "a": "Zwölf für einen Tagescharter, vier über Nacht in zwei Kabinen mit eigenem Bad. Zwölf ist das gesetzliche Maximum für das Schiff, und wir überschreiten es nicht."
   },
   {
+   "id": "what-is-included-in",
    "q": "Was ist im Preis enthalten?",
    "a": "Die private Nutzung des Schiffes, Kapitän und Crew, Treibstoff innerhalb der Route, Hafengebühren, Schnorchelausrüstung, Wasser und alkoholfreie Getränke. Mahlzeiten sind enthalten, wo das Programm es sagt."
   },
   {
+   "id": "what-happens-if-the",
    "q": "Was passiert, wenn das Wetter umschlägt?",
    "a": "Der Kapitän entscheidet am Morgen. Können wir nicht sicher auslaufen, verschieben Sie die Buchung auf einen anderen Termin oder erhalten den vollen Betrag zurück."
   },
   {
+   "id": "can-you-cater-for",
    "q": "Berücksichtigen Sie besondere Ernährungswünsche?",
    "a": "Ja. Sagen Sie es uns bei der Anfrage — halal ist Standard; vegetarische, vegane und allergikergerechte Menüs bereiten wir auf Wunsch zu."
   },
   {
+   "id": "how-do-we-hold",
    "q": "Wie halten wir einen Termin fest?",
    "a": "Eine Anzahlung von fünfzig Prozent bestätigt die Buchung; der Rest ist sieben Tage vor Abfahrt fällig. Banküberweisung und Karte werden akzeptiert."
   }
@@ -638,6 +653,9 @@
   "playFilm": "Film abspielen",
   "charterOnEnquiry": "Charter auf Anfrage",
   "guestsWord": "Gäste",
+  "oneMore": "Noch ein Schritt",
+  "sendToCrew": "An die Crew senden",
+  "alreadyWritten": "Die Nachricht ist schon geschrieben – WhatsApp oder E-Mail wählen, und sie geht direkt ans Marinabüro.",
   "menu": "Menü",
   "close": "Schließen",
   "enquire": "Anfragen",

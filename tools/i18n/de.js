@@ -5,6 +5,9 @@
 module.exports = {
 
 ui: {
+  "Goes straight to the crew, on WhatsApp or by email.": "Geht direkt an die Crew – per WhatsApp oder E-Mail.",
+  "Send on WhatsApp": "Per WhatsApp senden",
+  "Send by email": "Per E-Mail senden",
   "Islands": "Inseln",
   "Everything the day needs is already aboard.":
     "Alles, was der Tag braucht, ist schon an Bord.",
@@ -264,6 +267,7 @@ ui: {
 chrome: {
   pauseFilm: "Film anhalten", playFilm: "Film abspielen",
   charterOnEnquiry: "Charter auf Anfrage", guestsWord: "Gäste",
+  oneMore: "Noch ein Schritt", sendToCrew: "An die Crew senden", alreadyWritten: "Die Nachricht ist schon geschrieben – WhatsApp oder E-Mail wählen, und sie geht direkt ans Marinabüro.",
   menu: "Menü", close: "Schließen", enquire: "Anfragen", explore: "Entdecken",
   primary: "Hauptnavigation", menuLabel: "Menü",
   music: "Musik", player: "Musikplayer", play: "Abspielen", pause: "Pause",
@@ -286,7 +290,7 @@ content: {
   ],
   music: { line: "Spüren Sie das Wesen der Malediven" },
   voyages: [
-    {
+    { slug: "island-and-snorkelling", 
       has: ["Bootsausflug", "Schnorcheln am Fish Tank", "Sandbank Himmafushi", "Landgang auf Himmafushi", "Sonnenuntergangsfahrt", "Zeit zum Schwimmen und Schnorcheln", "Fotostopps"],
       title: "Insel & Schnorcheln", kind: "Ganzer Tag", duration: "9,5 Stunden", area: "Nord-Malé-Atoll",
       departs: "08:30 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
@@ -304,7 +308,7 @@ content: {
         { h: "Hulhumalé", d: "Längsseits." }
       ]
     },
-    {
+    { slug: "reef-and-sandbank", 
       has: ["Bootsfahrt", "Schnorcheln am Fish Tank", "Stopp an der Sandbank", "Schwimmen und Ausruhen", "Delfinfahrt zurück nach Hulhumalé"],
       title: "Riff & Sandbank", kind: "Halber Tag", duration: "4 Stunden", area: "Nord-Malé-Atoll",
       departs: "09:00 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
@@ -319,7 +323,7 @@ content: {
         { h: "Hulhumalé", d: "Längsseits." }
       ]
     },
-    {
+    { slug: "shark-point-and-gulhi", 
       has: ["Ganztägiger Bootsausflug", "Drei Schnorchelplätze", "Schnorcheln am Shark Point", "Schnorcheln im Korallengarten", "Stopp an der Sandbank", "Landgang auf Gulhi", "Mittagessen", "Sonnenuntergangsfahrt"],
       title: "Shark Point & Gulhi", kind: "Ganzer Tag", duration: "9 Stunden", area: "Süd-Malé-Atoll",
       departs: "09:00 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
@@ -338,7 +342,7 @@ content: {
         { h: "Steg Hulhumalé", d: "Längsseits." }
       ]
     },
-    {
+    { slug: "sunset-adventure", 
       has: ["Bootsausflug", "Schnorcheln am Shark Point", "Stopp an der Sandbank", "Abendsnack und Getränke", "Sonnenuntergangsfahrt", "Schwimmen und Schnorcheln"],
       title: "Sonnenuntergangs-Abenteuer", kind: "Halber Tag", duration: "4,5 Stunden", area: "Süd-Malé-Atoll",
       departs: "13:30 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
@@ -356,12 +360,12 @@ content: {
     }
   ],
   addons: [
-    { t: "Privatkoch an Bord", d: "Drei Gänge, unterwegs gekocht." },
-    { t: "Fotograf", d: "Ein halber Tag an Bord, bearbeitete Dateien innerhalb einer Woche." },
-    { t: "Schwimmendes Frühstück", d: "Serviert im Flachwasser, vor Anker." },
-    { t: "Aufbau auf der Sandbank", d: "Tisch, Schirm und Matten hinübergetragen." },
-    { t: "Tauchen", d: "Zwei Flaschen, Blei und ein Guide, pro Taucher." },
-    { t: "Flughafen- und Resorttransfers", d: "Velana oder Ihr Resort, je Strecke." }
+    { id: "private-chef-aboard",  t: "Privatkoch an Bord", d: "Drei Gänge, unterwegs gekocht." },
+    { id: "photographer",  t: "Fotograf", d: "Ein halber Tag an Bord, bearbeitete Dateien innerhalb einer Woche." },
+    { id: "floating-breakfast",  t: "Schwimmendes Frühstück", d: "Serviert im Flachwasser, vor Anker." },
+    { id: "sandbank-set-up",  t: "Aufbau auf der Sandbank", d: "Tisch, Schirm und Matten hinübergetragen." },
+    { id: "diving",  t: "Tauchen", d: "Zwei Flaschen, Blei und ein Guide, pro Taucher." },
+    { id: "airport-and-resort-transfers",  t: "Flughafen- und Resorttransfers", d: "Velana oder Ihr Resort, je Strecke." }
   ],
   vessel: {
     stats: [{ k: "Länge", v: "14,2", u: "m" }, { k: "Gäste" }, { k: "Kabinen" }, { k: "Crew" }],
@@ -378,48 +382,48 @@ content: {
       "Badeplattform und Leiter", "Kühlung und Eis", "Rettungswesten für alle Größen", "Radar, GPS und UKW"
     ],
     decks: [
-      { t: "Flybridge", d: "Oberer Steuerstand, Sonnenpolster und eine beschattete Lounge — der beste Platz auf einer Überfahrt.",
+      { img: "aerial-close",  t: "Flybridge", d: "Oberer Steuerstand, Sonnenpolster und eine beschattete Lounge — der beste Platz auf einer Überfahrt.",
         alt: "Die Flybridge der Tiffany Blanc 14 aus der Luft, mit Gästen an Bord" },
-      { t: "Salon", d: "Klimatisiert, raumhohe Verglasung auf beiden Seiten und ein Tisch für sechs.",
+      { img: "salon",  t: "Salon", d: "Klimatisiert, raumhohe Verglasung auf beiden Seiten und ein Tisch für sechs.",
         alt: "Der klimatisierte Salon der Tiffany Blanc 14 mit Blick nach vorn zum Steuerstand" },
-      { t: "Cockpit & Plattform", d: "Beschattetes Achterdeck, Badeleiter und eine Badeplattform auf Wasserhöhe.",
+      { img: "boarding",  t: "Cockpit & Plattform", d: "Beschattetes Achterdeck, Badeleiter und eine Badeplattform auf Wasserhöhe.",
         alt: "Gäste steigen am Heck aus dem Wasser auf die Tiffany Blanc 14" },
-      { t: "Das Wasser", d: "Matten, Ringe und Schnorchelzeug gehen über Bord, sobald der Anker sitzt.",
+      { img: "float-blue",  t: "Das Wasser", d: "Matten, Ringe und Schnorchelzeug gehen über Bord, sobald der Anker sitzt.",
         alt: "Gäste treiben auf Ringen neben dem Schiff in tiefblauem Wasser" }
     ]
   },
   gallery: [
-    { cap: "Tiffany Blanc 14 · Nord-Malé" },
-    { cap: "Zwei Atolle, aus der Höhe" },
-    { cap: "Wo die Palmen aufhören" },
-    { cap: "Flossen, und der ganze Nachmittag" },
-    { cap: "Adlerrochen, am späten Vormittag" },
-    { cap: "Vor Anker über der Riffkante" },
-    { cap: "Achteraus, tiefes Wasser" },
-    { cap: "Das erste Riff des Tages" },
-    { cap: "Obst, vor dem Ablegen angerichtet" },
-    { cap: "In Fahrt, Kurs Süd" },
-    { cap: "Stechrochen über Sand" },
-    { cap: "Salon, Blick nach vorn" },
-    { cap: "Ringe, und nirgendwo hin müssen" },
-    { cap: "Auslaufen aus Hulhumalé" },
-    { cap: "Zurück an Bord" },
-    { cap: "Wo die Palmen das Flachwasser treffen" },
-    { cap: "Bug, von direkt oben" },
-    { cap: "Schwimmen von der Plattform" }
+    { img: "vessel-guests",  cap: "Tiffany Blanc 14 · Nord-Malé" },
+    { img: "atoll-pair",  cap: "Zwei Atolle, aus der Höhe" },
+    { img: "palm-beach",  cap: "Wo die Palmen aufhören" },
+    { img: "fins",  cap: "Flossen, und der ganze Nachmittag" },
+    { img: "ray",  cap: "Adlerrochen, am späten Vormittag" },
+    { img: "aerial-anchor",  cap: "Vor Anker über der Riffkante" },
+    { img: "floats",  cap: "Achteraus, tiefes Wasser" },
+    { img: "snorkellers",  cap: "Das erste Riff des Tages" },
+    { img: "platter",  cap: "Obst, vor dem Ablegen angerichtet" },
+    { img: "aerial-underway",  cap: "In Fahrt, Kurs Süd" },
+    { img: "ray-sand",  cap: "Stechrochen über Sand" },
+    { img: "salon",  cap: "Salon, Blick nach vorn" },
+    { img: "float-blue",  cap: "Ringe, und nirgendwo hin müssen" },
+    { img: "aerial-marina",  cap: "Auslaufen aus Hulhumalé" },
+    { img: "boarding",  cap: "Zurück an Bord" },
+    { img: "palm-shore",  cap: "Wo die Palmen das Flachwasser treffen" },
+    { img: "aerial-bow",  cap: "Bug, von direkt oben" },
+    { img: "swim-boat",  cap: "Schwimmen von der Plattform" }
   ],
   faq: [
-    { q: "Von wo legt das Schiff ab?",
+    { id: "where-does-the-vessel",  q: "Von wo legt das Schiff ab?",
       a: "Hulhumalé Marina, zehn Minuten vom Velana International Airport. Nach Absprache holen wir Sie auch von den meisten Resorts und Guesthouses im Nord- und Süd-Malé-Atoll ab." },
-    { q: "Wie viele Gäste können Sie mitnehmen?",
+    { id: "how-many-guests-can",  q: "Wie viele Gäste können Sie mitnehmen?",
       a: "Zwölf für einen Tagescharter, vier über Nacht in zwei Kabinen mit eigenem Bad. Zwölf ist das gesetzliche Maximum für das Schiff, und wir überschreiten es nicht." },
-    { q: "Was ist im Preis enthalten?",
+    { id: "what-is-included-in",  q: "Was ist im Preis enthalten?",
       a: "Die private Nutzung des Schiffes, Kapitän und Crew, Treibstoff innerhalb der Route, Hafengebühren, Schnorchelausrüstung, Wasser und alkoholfreie Getränke. Mahlzeiten sind enthalten, wo das Programm es sagt." },
-    { q: "Was passiert, wenn das Wetter umschlägt?",
+    { id: "what-happens-if-the",  q: "Was passiert, wenn das Wetter umschlägt?",
       a: "Der Kapitän entscheidet am Morgen. Können wir nicht sicher auslaufen, verschieben Sie die Buchung auf einen anderen Termin oder erhalten den vollen Betrag zurück." },
-    { q: "Berücksichtigen Sie besondere Ernährungswünsche?",
+    { id: "can-you-cater-for",  q: "Berücksichtigen Sie besondere Ernährungswünsche?",
       a: "Ja. Sagen Sie es uns bei der Anfrage — halal ist Standard; vegetarische, vegane und allergikergerechte Menüs bereiten wir auf Wunsch zu." },
-    { q: "Wie halten wir einen Termin fest?",
+    { id: "how-do-we-hold",  q: "Wie halten wir einen Termin fest?",
       a: "Eine Anzahlung von fünfzig Prozent bestätigt die Buchung; der Rest ist sieben Tage vor Abfahrt fällig. Banküberweisung und Karte werden akzeptiert." }
   ]
 }
