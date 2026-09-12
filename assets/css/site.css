@@ -63,6 +63,7 @@ dl,dd{margin:0}
 /* --- Layout ------------------------------------------------------------- */
 .wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gut)}
 .narrow{max-width:calc(1100px + var(--gut) * 2)}
+.narrow.form{max-width:calc(820px + var(--gut) * 2)}
 /* ONE rhythm, stated once. Every block owns the gap BELOW it, so no gap is
    ever paid for twice. A hero or a film band has no text at its bottom edge
    and nothing to give, so the block that follows one owns that gap instead —
@@ -79,7 +80,9 @@ main>*{margin:0}
 /* a change of background is itself the break, so the block above one keeps
    only a half gap — otherwise a colour boundary costs twice a plain one */
 :is(.section,.section--sm,.phero):has(+.section--mist){padding-bottom:calc(var(--sec) / 2)}
-.section--mist{padding-block:calc(var(--sec) / 2) var(--sec)}
+/* a panel is a visible box, so its inside is padded the same top and bottom;
+   the half gap after it is paid by the block that follows */
+.section--mist{padding-block:calc(var(--sec) / 2)}
 /* the last block always meets the footer, and the sea rises out of the footer */
 main>section:last-child{padding-bottom:calc(var(--sec) + var(--seah))}
 /* A tinted section is a panel, not a band — inset from the page and curved,
@@ -90,6 +93,7 @@ main>section:last-child{padding-bottom:calc(var(--sec) + var(--seah))}
 .section--mist>.wrap{padding-inline:clamp(1.25rem,3.4vw,3.25rem);
   max-width:calc(var(--maxw) - var(--gut) * 2)}
 @media(max-width:700px){.section--mist{margin-inline:0;border-radius:0}}
+.split--mid{align-items:center}
 .center{text-align:center}
 .measure{max-width:34rem}
 .measure--wide{max-width:50rem}
@@ -169,6 +173,7 @@ figure{margin:0}
   transition:background .55s var(--e),box-shadow .55s var(--e),border-color .55s var(--e),transform .55s var(--e)}
 .hdr__in{width:100%;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem}
 .hdr__l{justify-self:start}.hdr__m{justify-self:center}.hdr__r{justify-self:end;display:flex;align-items:center;gap:clamp(.75rem,1.6vw,1.6rem)}
+.hdr__logo{display:inline-flex;align-items:center;min-height:44px;padding-inline:.5rem}
 .hdr__logo img{height:28px;width:auto;transition:opacity .4s var(--e)}
 .hdr__logo .dark{display:none}
 .burger{display:inline-flex;align-items:center;gap:.75rem;color:#fff;transition:color .55s var(--e)}
@@ -236,6 +241,8 @@ figure{margin:0}
 .lang__b{display:inline-flex;align-items:center;gap:.4rem;height:32px;padding-inline:.7rem;border-radius:999px;
   font-family:var(--ui);font-size:.625rem;font-weight:500;letter-spacing:.16em;text-transform:uppercase;
   color:inherit;border:1px solid transparent;transition:background .3s var(--e),border-color .3s var(--e)}
+.hdr .lang__b{color:#fff}
+.hdr.solid .lang__b,.light-page .hdr:not(.solid) .lang__b{color:var(--body)}
 .lang__b .chev{width:9px;height:9px;transition:transform .35s var(--e);opacity:.6}
 .lang.open .lang__b .chev{transform:rotate(180deg)}
 .hdr .lang__b:hover,.lang.open .lang__b{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.24)}
@@ -255,7 +262,7 @@ figure{margin:0}
 @media(max-width:700px){.lang{display:none}}    /* it lives in the menu on a phone */
 
 /* the same choice, inside the menu, where there is room for the words */
-.menu__lang{display:flex;flex-wrap:wrap;gap:.35rem;margin-top:1.2rem}
+.menu__lang{display:flex;flex-wrap:wrap;gap:.35rem;flex-basis:100%;justify-content:center;margin-top:.9rem}
 .menu__lang a{padding:.45rem .9rem;border-radius:999px;border:1px solid var(--line);font-size:.8125rem;
   color:var(--body);transition:background .3s,color .3s,border-color .3s}
 .menu__lang a:hover{border-color:var(--navy);color:var(--navy)}
@@ -283,12 +290,17 @@ figure{margin:0}
 .menu__nav li:nth-child(5) a{animation-delay:.54s}.menu__nav li:nth-child(6) a{animation-delay:.6s}
 .menu__nav a:hover,.menu__nav a.here{color:var(--marine)}
 @keyframes mIn{to{transform:translateY(0)}}
-.menu__foot{margin-top:clamp(2.5rem,6vh,4rem);display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem 1.75rem;opacity:0;transform:translateY(14px);transition:opacity .6s .62s var(--e),transform .8s .62s var(--eo)}
+.menu__foot{margin-top:clamp(2.5rem,6vh,4rem);display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:.4rem 1.75rem;opacity:0;transform:translateY(14px);transition:opacity .6s .62s var(--e),transform .8s .62s var(--eo)}
 .menu.open .menu__foot{opacity:1;transform:none}
 
 /* --- Hero --------------------------------------------------------------- */
 .hero{position:relative;height:min(100svh,860px);min-height:min(600px,100svh);display:grid;isolation:isolate;overflow:hidden}
 .hero--mid{height:76svh;min-height:min(520px,80svh)}
+/* when the subject sits in the middle of the frame the words drop to the
+   lower third and the frame is shown from its top, so nothing is written
+   across the vessel */
+.hero--low .hero__in{align-self:end;padding-bottom:clamp(3rem,9vh,6rem)}
+.hero--low .hero__bg>img,.hero--low .hero__bg>video{object-position:50% 100%}
 .hero__bg{position:absolute;inset:-8% 0;z-index:-2;background:var(--navy);overflow:hidden;will-change:transform}
 .hero__s{position:absolute;inset:0;opacity:0;transition:opacity 1.5s var(--e)}
 .hero__s:first-child,.hero__s.on{opacity:1}
@@ -514,13 +526,16 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 /* Columns are filled round-robin by JS, not by column-count, so the order you
    read across the top row is the order in the DOM — which is also the order the
    lightbox steps through. CSS columns fill top-to-bottom and broke both. */
-.mosaic{display:grid;gap:clamp(1rem,2vw,1.6rem);grid-template-columns:1fr;align-items:start}
-@media(min-width:480px){.mosaic{grid-template-columns:1fr 1fr}}
-@media(min-width:1100px){.mosaic{grid-template-columns:repeat(3,1fr)}}
-.mosaic__col{display:grid;gap:clamp(1rem,2vw,1.6rem);align-content:start}
+/* rows of two (3:2) and three (4:3) that always end on a full row — the
+   reading order is the lightbox order, and nothing is left ragged */
+.mosaic{display:grid;gap:clamp(1rem,2vw,1.6rem)}
+.mosaic__row{display:grid;gap:clamp(1rem,2vw,1.6rem);grid-template-columns:repeat(var(--n,3),1fr);--ar:4/3}
+.mosaic__row[data-n="2"]{--ar:3/2}
+.mosaic__row[data-n="1"]{--ar:2/1}
+@media(max-width:559px){.mosaic__row{grid-template-columns:1fr;--ar:4/3}}
 .mosaic figure{margin:0}
-.mosaic button{display:block;width:100%;overflow:hidden;background:var(--mist);border-radius:var(--r)}
-.mosaic img{width:100%;transition:transform 1.3s var(--eo),filter .6s var(--e)}
+.mosaic button{display:block;width:100%;aspect-ratio:var(--ar);overflow:hidden;background:var(--mist);border-radius:var(--r)}
+.mosaic img{width:100%;height:100%;object-fit:cover;transition:transform 1.3s var(--eo),filter .6s var(--e)}
 .mosaic button:hover img{transform:scale(1.04);filter:brightness(1.04)}
 .mosaic figcaption{margin-top:.7rem;font-size:.875rem;line-height:1.5;color:var(--body)}
 
@@ -528,7 +543,9 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .lb.open{opacity:1;visibility:visible}
 .lb img{max-width:min(1300px,92vw);max-height:84vh;object-fit:contain;border-radius:var(--r-l);transform:scale(.97);transition:transform .5s var(--eo),opacity .3s var(--e)}
 .lb.open img{transform:scale(1)}
-.lb__c{position:absolute;bottom:clamp(1rem,3vw,2rem);left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6)}
+.lb__c{position:absolute;bottom:clamp(1rem,3vw,2rem);left:50%;transform:translateX(-50%);color:rgba(255,255,255,.6);text-align:center;width:max-content;max-width:calc(100vw - 2rem)}
+/* the player has no business over an open menu or viewer */
+body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
 .lb button{position:absolute;color:#fff;width:46px;height:46px;border:1px solid rgba(255,255,255,.2);border-radius:999px;display:grid;place-items:center;transition:background .3s}
 .lb button:hover{background:rgba(255,255,255,.12)}
 .lb__x{top:clamp(1rem,3vw,2rem);right:clamp(1rem,3vw,2rem)}
@@ -548,7 +565,8 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .acc__i.open .acc__b i::after{transform:scaleY(0)}
 .acc__p{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s var(--eo)}
 .acc__i.open .acc__p{grid-template-rows:1fr}
-.acc__p>div{overflow:hidden}
+.acc__p>div{overflow:hidden;visibility:hidden;transition:visibility .5s}
+.acc__i.open .acc__p>div{visibility:visible}
 .acc__p p{padding-bottom:1.8rem;max-width:58ch}
 
 /* --- Forms -------------------------------------------------------------- */
@@ -578,6 +596,8 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
 .sum__t{border-top:1px solid var(--line);padding-top:1rem;display:flex;justify-content:space-between;align-items:baseline}
 .note{max-width:62ch;font-size:.8125rem;color:var(--body);line-height:1.75}
 .ok{display:none;text-align:center}
+.ok .acts{justify-content:center}
+.ok .measure{margin-inline:auto}
 .ok.on{display:block;animation:up .6s var(--eo)}
 
 /* --- Film controls -------------------------------------------------------
@@ -689,7 +709,8 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
   .mus__b:active{transform:scale(.94)}
   /* a finger needs 44px; several of these were sized for a cursor */
   .link,.menu__x,.burger{min-height:44px;align-items:center}
-  .lb__x,.lb__p,.lb__n{width:52px;height:52px}
+  .lb__x{width:52px;height:52px}
+  .lb__p,.lb__n{display:none}   /* a swipe moves between pictures on a phone */
 }
 .card,.btn,.mus__b{-webkit-tap-highlight-color:transparent}
 
@@ -710,9 +731,11 @@ a.fig--z:hover img,.card:hover .fig--z img,.rail__item:hover .fig--z img{transfo
   .menu__body{text-align:left}
   .menu__nav ul{justify-items:start}
   .menu__foot{justify-content:flex-start;text-align:left}
-  .menu__lang{margin-top:1.6rem}
-  /* the header capsule keeps its shape but gives the words more room */
-  .hdr__in{gap:.5rem}
+  .menu__lang{justify-content:flex-start;margin-top:1.4rem}
+  /* the header capsule keeps its shape but gives the words more room; the
+     side columns stay equal so the logo is truly centred */
+  .hdr__in{gap:.5rem;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
+  .hdr .btn,.menu__bar .btn{padding-inline:1.1rem}
   .steps{gap:.9rem 1.1rem}
 }
 

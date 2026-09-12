@@ -192,8 +192,8 @@
    "area": "Северный Мале Атолл",
    "departs": "09:00 · Хулхумале",
    "price": 950,
-   "clip": "spit",
-   "clipMax": 1080,
+   "clip": "shallows",
+   "clipMax": 1440,
    "plate": {
     "img": "atoll-pair",
     "stop": 2

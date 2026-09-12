@@ -749,18 +749,26 @@
      the columns round-robin puts reading order and DOM order back together. */
   function mosaic() {
     $$(".mosaic").forEach(function (m) {
-      var items = $$(":scope > figure, :scope > .mosaic__col > figure", m);
+      var items = $$(":scope > figure, :scope > .mosaic__row > figure, :scope > .mosaic__col > figure", m);
       if (!items.length) return;
-      var at = -1;
-      function cols() { return window.innerWidth >= 1100 ? 3 : window.innerWidth >= 480 ? 2 : 1; }
-      function lay() {
-        var n = cols(); if (n === at) return; at = n;
-        var made = []; for (var i = 0; i < n; i++) made.push(el('<div class="mosaic__col"></div>'));
-        items.forEach(function (f, i) { made[i % n].appendChild(f); });
-        m.textContent = ""; made.forEach(function (c) { m.appendChild(c); });
+      // rows of two and three, alternating, that always end on a full row
+      var rows = [], left = items.length, next = 2;
+      while (left > 0) {
+        if (left === 1) {
+          if (!rows.length) rows.push(1);
+          else if (rows[rows.length - 1] === 2) rows[rows.length - 1] = 3;
+          else { rows[rows.length - 1] = 2; rows.push(2); }
+          left = 0;
+        } else if (left === 2) { rows.push(2); left = 0; }
+        else { rows.push(next); left -= next; next = next === 2 ? 3 : 2; }
       }
-      lay();
-      var t; window.addEventListener("resize", function () { clearTimeout(t); t = setTimeout(lay, 150); }, { passive: true });
+      m.textContent = "";
+      var i = 0;
+      rows.forEach(function (n) {
+        var r = el('<div class="mosaic__row" data-n="' + n + '" style="--n:' + n + '"></div>');
+        for (var k = 0; k < n && i < items.length; k++) r.appendChild(items[i++]);
+        m.appendChild(r);
+      });
     });
   }
 
@@ -925,6 +933,7 @@
         if (p) p.textContent = t("alreadyWritten", "The message is already written — choose WhatsApp or email and it goes straight to the marina office.");
       }
       f.hidden = true;
+      var steps = f.parentNode && $(".steps", f.parentNode); if (steps) steps.hidden = true;   // the form is done
       if (o) { o.classList.add("on"); o.scrollIntoView({ behavior: SLOW ? "auto" : "smooth", block: "center" }); }
     }
     if (!F.endpoint) return show(false);

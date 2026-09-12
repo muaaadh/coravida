@@ -192,8 +192,8 @@
    "area": "Nord-Malé-Atoll",
    "departs": "09:00 · Hulhumalé",
    "price": 950,
-   "clip": "spit",
-   "clipMax": 1080,
+   "clip": "shallows",
+   "clipMax": 1440,
    "plate": {
     "img": "atoll-pair",
     "stop": 2

@@ -5,6 +5,7 @@
 module.exports = {
 
 ui: {
+  "A vessel underway across a shallow lagoon, seen from the air": "Ein Boot in Fahrt durch eine flache Lagune, aus der Luft",
   "Goes straight to the crew, on WhatsApp or by email.": "Geht direkt an die Crew – per WhatsApp oder E-Mail.",
   "Send on WhatsApp": "Per WhatsApp senden",
   "Send by email": "Per E-Mail senden",

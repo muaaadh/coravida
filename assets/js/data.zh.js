@@ -192,8 +192,8 @@
    "area": "北马累环礁",
    "departs": "09:00 · 胡鲁马累",
    "price": 950,
-   "clip": "spit",
-   "clipMax": 1080,
+   "clip": "shallows",
+   "clipMax": 1440,
    "plate": {
     "img": "atoll-pair",
     "stop": 2

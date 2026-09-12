@@ -6,6 +6,7 @@ module.exports = {
 
 /* ---- strings the generator prints ------------------------------------- */
 ui: {
+  "A vessel underway across a shallow lagoon, seen from the air": "Судно на ходу через мелкую лагуну, вид с воздуха",
   "Goes straight to the crew, on WhatsApp or by email.": "Уходит прямо экипажу — в WhatsApp или по почте.",
   "Send on WhatsApp": "Отправить в WhatsApp",
   "Send by email": "Отправить по почте",

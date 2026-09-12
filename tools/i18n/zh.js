@@ -5,6 +5,7 @@
 module.exports = {
 
 ui: {
+  "A vessel underway across a shallow lagoon, seen from the air": "一艘船穿过浅泻湖，空中俯瞰",
   "Goes straight to the crew, on WhatsApp or by email.": "直接送达船员：WhatsApp 或电子邮件。",
   "Send on WhatsApp": "通过 WhatsApp 发送",
   "Send by email": "通过电子邮件发送",

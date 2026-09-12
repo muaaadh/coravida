@@ -351,7 +351,7 @@ function vessel() {
     </div>
   </section>`).join("\n\n");
 
-  const main = `  <section class="hero hero--mid">
+  const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       ${img("poster-anchor", T("Tiffany Blanc 14 at anchor above a reef edge"), { sizes: "100vw", eager: true, cap: POSTER })}
       <video data-src="anchor" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
@@ -485,11 +485,11 @@ function excursionPages() {
     const others = CV.voyages.filter(x => x.slug !== v.slug);
     const pl = v.plate;
     const rail = others.map(o => `        <a class="rail__item card" href="${o.slug}.html">
-          ${fig(o.img, o.alt, { ratio: "r45", sizes: "(min-width:760px) 30vw, 78vw", anim: null })}
+          ${fig(o.img, o.alt, { ratio: "r45", sizes: "(min-width:540px) 420px, 78vw", anim: null })}
           <div class="card__m"><div class="kv"><span>${o.duration}</span><span>${o.guests}</span></div><h3 class="d4">${o.title}</h3></div>
         </a>`).join("\n");
 
-    const main = `  <section class="hero hero--mid">
+    const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       ${img(v.clip ? "poster-" + v.clip : v.img, v.alt, { sizes: "100vw", eager: true, cap: POSTER })}${v.clip ? `
       <video data-src="${v.clip}" data-max="${v.clipMax || 1080}" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>` : ""}
@@ -602,7 +602,7 @@ function gallery() {
     if (!set.length) return "";
     const items = set.map((g, i) => `          <figure data-a="up" style="--i:${i % 3}">
             <button type="button" data-lb="assets/img/${g.img}-1600.webp" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="${T("Open")}: ${esc(g.cap)}">
-              ${img(g.img, g.cap, { sizes: "(min-width:1100px) 31vw, (min-width:700px) 47vw, 100vw", eager: k++ < 3 })}
+              ${img(g.img, g.cap, { sizes: "(min-width:1200px) 560px, (min-width:560px) 50vw, 100vw", eager: k++ < 2 })}
             </button>
             <figcaption>${g.cap}</figcaption>
           </figure>`).join("\n");
@@ -658,8 +658,8 @@ function about() {
 
   <section class="section">
     <div class="wrap">
-      <div class="split">
-        <div class="split__t sticky stack-l" data-stagger>
+      <div class="split split--mid">
+        <div class="split__t stack-l" data-stagger>
           <p class="eyebrow" data-a="up">${T("The company")}</p>
           <h2 class="d2 lines">${T("The boat you were shown is the boat you sail on")}</h2>
         </div>
@@ -800,10 +800,10 @@ function enquire() {
   const extras = CV.addons.map((a, i) => `              <input type="checkbox" id="x${i}" name="extra" value="${a.id}" data-label="${esc(a.t)}" data-price="${a.p}">
               <label for="x${i}">${a.t} &middot; ${a.p}</label>`).join("\n");
 
-  const main = `  <section class="hero hero--mid">
+  const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
-      ${img("poster-mask", T("A snorkeller at the surface in clear water"), { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="mask" data-max="1440" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      ${img("poster-wake", T("A vessel underway across a shallow lagoon, seen from the air"), { sizes: "100vw", eager: true, cap: POSTER })}
+      <video data-src="wake" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${T("Enquire")}</p>
@@ -813,7 +813,7 @@ function enquire() {
   </section>
 
   <section class="section">
-    <div class="wrap narrow">
+    <div class="wrap narrow form">
       <ul class="steps" data-a="up">
         <li class="on">${T("Excursion")}</li><li>${T("Dates")}</li><li>${T("Details")}</li><li>${T("Review")}</li>
       </ul>

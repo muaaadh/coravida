@@ -303,9 +303,9 @@ window.Admin = (function () {
     if (B) {
       var sum = B.summary();
       k.appendChild(kpi("Upcoming charters", sum.upcoming, "confirmed, from today"));
-      k.appendChild(kpi("Outstanding", B.money(sum.outstanding), sum.unpaid + " unpaid invoice" + (sum.unpaid === 1 ? "" : "s")));
-      k.appendChild(kpi("This month", B.money(sum.month.revenue), "invoiced, before T-GST"));
-      k.appendChild(kpi("Expenses", B.money(sum.month.expenses), "this month"));
+      k.appendChild(kpi("Outstanding", B.money(sum.outstanding, 0), sum.unpaid + " unpaid invoice" + (sum.unpaid === 1 ? "" : "s")));
+      k.appendChild(kpi("This month", B.money(sum.month.revenue, 0), "invoiced, before T-GST"));
+      k.appendChild(kpi("Expenses", B.money(sum.month.expenses, 0), "this month"));
     }
     host.appendChild(k);
     var g = E("div", { class: "grid2" });

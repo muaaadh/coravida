@@ -282,19 +282,28 @@
       field("Introduction", v, "intro", { type: "textarea", max: 320, required: true })]));
     var planCard = E("div", { class: "card" }), planRows = E("div", { class: "rows" });
     planCard.appendChild(E("div", { class: "card__h" }, [E("h3", { text: "The day, stop by stop" }), E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Add a stop", onclick: function () { v.plan.push({ t: "", h: "", d: "" }); A.changed(); drawPlan(); } })]));
+    var stopSel = null;
+    var stopOpts = function () { return v.plan.map(function (p, i) { return [i, (p.t || "—") + " " + (p.h || "")]; }); };
+    var refreshStops = function () {
+      if (!stopSel) return;
+      var sel = stopSel.querySelector("select"); sel.innerHTML = "";
+      stopOpts().forEach(function (o) { sel.appendChild(E("option", { value: o[0], text: o[1], selected: String(v.plate.stop) === String(o[0]) })); });
+      if (v.plate.stop >= v.plan.length) { v.plate.stop = Math.max(0, v.plan.length - 1); sel.value = v.plate.stop; }
+    };
     var drawPlan = list(planRows, v.plan, { render: function (p, i, body) {
-      body.appendChild(E("div", { class: "fg", style: "grid-template-columns:90px 1fr" }, [field("Time", p, "t", { placeholder: "09:00", required: true }), field("Stop", p, "h", { required: true, max: 40 })]));
+      body.appendChild(E("div", { class: "fg", style: "grid-template-columns:90px minmax(0,1fr)" }, [field("Time", p, "t", { placeholder: "09:00", required: true }), field("Stop", p, "h", { required: true, max: 40, onchange: refreshStops })]));
       body.appendChild(field("What happens", p, "d", { max: 140 }));
+      refreshStops();
     } });
     planCard.appendChild(planRows); host.appendChild(planCard);
     host.appendChild(E("div", { class: "card" }, [E("h3", { text: "What is included" }), chips(v.has, "e.g. Lunch aboard — Enter to add")]));
-    var stopOpts = function () { return v.plan.map(function (p, i) { return [i, p.t + " " + p.h]; }); };
+    stopSel = field("Caption it with this stop", v.plate, "stop", { type: "select", options: stopOpts(), onchange: function (val) { v.plate.stop = Number(val); } });
     host.appendChild(E("div", { class: "card" }, [E("h3", { text: "Pictures and film" }),
       clipSelect("Film at the top of the page", v, "clip", { onchange: function (n) { var k = clips().filter(function (x) { return x.name === n; })[0]; if (k) v.clipMax = k.max; } }),
       imagePick("Card photograph (index, home and related lists)", v, "img"),
       field("Describe the card photograph", v, "alt", { max: 120, required: true, help: "For screen readers and search engines." }),
       imagePick("Plate photograph (mid-page)", v.plate, "img"),
-      field("Caption it with this stop", v.plate, "stop", { type: "select", options: stopOpts() })
+      stopSel
     ]));
   }
 
@@ -306,7 +315,7 @@
     head(host, "Add-ons", "Extras offered on the enquiry form and the excursions page, each with its price.",
       E("button", { class: "btn btn--go", type: "button", text: "Add one", onclick: function () { Ad.push({ id: "addon-" + A.uid().slice(-4), t: "", d: "", p: 0 }); A.changed(); draw(); } }));
     var draw = list(rows, Ad, { render: function (a, i, body) {
-      body.appendChild(E("div", { class: "fg", style: "grid-template-columns:1fr 130px" }, [field("Name", a, "t", { required: true, max: 40, onchange: function (t) { if (!a._fixed) a.id = A.slug(t) || a.id; } }), field("Price", a, "p", { type: "number", min: 0, prefix: R.currency })]));
+      body.appendChild(E("div", { class: "fg fg--price" }, [field("Name", a, "t", { required: true, max: 40, onchange: function (t) { if (!a._fixed) a.id = A.slug(t) || a.id; } }), field("Price", a, "p", { type: "number", min: 0, prefix: R.currency })]));
       body.appendChild(field("One line", a, "d", { max: 90 }));
       a._fixed = !!a.id;
     } });
@@ -319,7 +328,7 @@
     var V = C.draft.vessel;
     head(host, "Our vessels", "The flagship page. A second vessel is a Dheemi job for now — tell us when one arrives.");
     host.appendChild(E("div", { class: "card" }, [E("h3", { text: "Headline figures" }), field("Vessel name", V, "name", { required: true }),
-      E("div", { class: "fg fg4" }, V.stats.map(function (s) { return E("div", { class: "fg" }, [field(s.k || "Stat", s, "v", { required: true }), field("Unit", s, "u", { placeholder: "m" })]); }))]));
+      E("div", { class: "fg fg2" }, V.stats.map(function (s) { return E("div", { class: "fg fg--stat" }, [field(s.k || "Stat", s, "v", { required: true }), field("Unit", s, "u", { hint: "optional" })]); }))]));
     var spec = E("div", { class: "card" }), specRows = E("div", { class: "rows" });
     spec.appendChild(E("div", { class: "card__h" }, [E("h3", { text: "Specification" }), E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Add a line", onclick: function () { V.spec.push({ k: "", v: "" }); A.changed(); drawSpec(); } })]));
     var drawSpec = list(specRows, V.spec, { render: function (s, i, body) { body.appendChild(E("div", { class: "fg fg2" }, [field("Label", s, "k", { required: true }), field("Value", s, "v", { required: true })])); } });
@@ -377,9 +386,9 @@
             iconBtn("down", "Move down", function () { if (k < idx.length - 1) { var j = idx[k + 1]; G.splice(j, 0, G.splice(gi, 1)[0]); A.changed(); draw(); } }),
             iconBtn("trash", "Remove from gallery", function () { G.splice(gi, 1); A.changed(); A.render(); })
           ]);
-          var body = E("div", { class: "row__body", style: "grid-template-columns:120px 1fr;align-items:start" }, [
+          var body = E("div", { class: "row__body row__body--thumb" }, [
             E("img", { class: "thumb thumb--lg", src: thumbSrc(g.img), alt: "" }),
-            E("div", { class: "fg", style: "grid-template-columns:1fr minmax(140px,200px)" }, [field("Caption", g, "cap", { max: 60, required: true, hint: g.img }), field("Section", g, "cat", { type: "select", options: CATS, onchange: function () { A.render(); } })])
+            E("div", { class: "fg fg--cap" }, [field("Caption", g, "cap", { max: 60, required: true, hint: g.img }), field("Section", g, "cat", { type: "select", options: CATS, onchange: function () { A.render(); } })])
           ]);
           rows.appendChild(E("div", { class: "row" }, [body, tools]));
         });

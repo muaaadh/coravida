@@ -163,8 +163,10 @@ window.Books = (function (A) {
     var priceF;
     function autoPrice() {
       var v = (cv.voyages || []).filter(function (x) { return x.slug === b.excursion; })[0];
-      b.excursionTitle = v ? v.title : b.excursionTitle;
+      b.excursionTitle = v ? v.title : "Custom charter";
+      var pkg = (cv.voyages || []).map(function (x) { return x.price; });
       if (v && Number(b.guests) === Number(R.pax) && v.price != null) { b.price = v.price; priceF._input.value = v.price; }
+      else if (b.price != null && pkg.indexOf(Number(b.price)) > -1) { b.price = null; priceF._input.value = ""; }   // the package price only holds at the quoted party size
     }
     node.appendChild(E("div", { class: "fg fg2" }, [
       fld("Customer name", b.customer, "name", { required: true }), fld("Email", b.customer, "email", { type: "email" }),
@@ -175,7 +177,7 @@ window.Books = (function (A) {
       fld("Excursion", b, "excursion", { type: "select", options: (cv.voyages || []).map(function (v) { return [v.slug, v.title]; }).concat([["custom", "Custom charter"]]), onchange: autoPrice }),
       fld("Guests", b, "guests", { type: "number", min: 1, step: 1, required: true, onchange: autoPrice })
     ]));
-    priceF = fld("Charter price", b, "price", { type: "number", min: 0, prefix: R.currency, help: "Fills in automatically for a party of " + R.pax + "; any other number is quoted by hand." });
+    priceF = fld("Charter price", b, "price", { type: "number", min: 0, prefix: R.currency, placeholder: "quote by hand", help: "Fills in automatically for a party of " + R.pax + "; any other number is quoted by hand." });
     node.appendChild(E("div", { class: "fg fg2" }, [priceF, fld("Status", b, "status", { type: "select", options: STATUS })]));
     var addons = E("div", { class: "field" }, [E("label", { text: "Add-ons" })]);
     (cv.addons || []).forEach(function (a) {
@@ -226,7 +228,7 @@ window.Books = (function (A) {
       if (!rows.length) return body.appendChild(empty("No bookings here", view === "upcoming" ? "New enquiries arrive by WhatsApp or email — add them here to track them." : "Nothing in this view.", view === "upcoming" ? E("button", { class: "btn btn--go", type: "button", text: "New booking", onclick: newBooking }) : null));
       body.appendChild(table([["Date"], ["Ref"], ["Customer"], ["Excursion"], ["Guests", "r"], ["Total", "r"], ["Status"], ["Invoice"]], rows.map(function (b) {
         var inv = S.invoices.filter(function (i) { return i.bookingId === b.id; });
-        return { item: b, cells: [fmtDate(b.date), E("span", { class: "s", text: b.ref }), E("span", { class: "t", text: b.customer.name || "—" }), b.excursionTitle || "—", String(b.guests || ""), money(bookingTotal(b), 0), bookingBadge(b),
+        return { item: b, cells: [fmtDate(b.date), E("span", { class: "s", text: b.ref }), E("span", { class: "t", text: b.customer.name || "—" }), b.excursionTitle || "—", String(b.guests || ""), b.price == null ? E("span", { class: "mute", text: "to quote" }) : money(bookingTotal(b), 0), bookingBadge(b),
           inv.length ? E("span", {}, inv.map(function (i) { return E("a", { href: "#invoices/" + i.id, text: i.no, style: "margin-right:.4rem" }); })) : E("span", { class: "mute", text: "—" })] };
       }), function (b) { A.go("bookings/" + b.id); }, true));
     }
@@ -248,7 +250,7 @@ window.Books = (function (A) {
     var g = E("div", { class: "grid2" });
     var dl = function (pairs) { var d = E("dl", { class: "tot", style: "max-width:none;justify-content:start;grid-template-columns:140px 1fr" }); pairs.forEach(function (p) { if (p[1] == null || p[1] === "") return; d.appendChild(E("dt", { text: p[0] })); var dd = E("dd", { style: "text-align:left" }); if (typeof p[1] === "string") dd.textContent = p[1]; else dd.appendChild(p[1]); d.appendChild(dd); }); return d; };
     g.appendChild(E("div", { class: "card" }, [E("h3", { text: "Customer" }), dl([["Name", b.customer.name], ["Email", b.customer.email ? E("a", { href: "mailto:" + b.customer.email, text: b.customer.email }) : null], ["Telephone", b.customer.phone ? E("a", { href: "https://wa.me/" + String(b.customer.phone).replace(/[^\d]/g, ""), target: "_blank", rel: "noopener", text: b.customer.phone }) : null], ["Staying at", b.customer.staying], ["Notes", b.notes]])]));
-    var lines = [["Charter", money(b.price, 0)]].concat((b.addons || []).map(function (a) { return [a.t, money(a.p, 0)]; }));
+    var lines = [["Charter", b.price == null ? "to quote" : money(b.price, 0)]].concat((b.addons || []).map(function (a) { return [a.t, money(a.p, 0)]; }));
     var tot = E("dl", { class: "tot", style: "margin-left:0;max-width:none" });
     lines.forEach(function (l) { tot.appendChild(E("dt", { text: l[0] })); tot.appendChild(E("dd", { text: l[1] })); });
     tot.appendChild(E("dt", { class: "big", text: "Total, before T-GST" })); tot.appendChild(E("dd", { class: "big", text: money(bookingTotal(b), 0) }));
@@ -265,7 +267,7 @@ window.Books = (function (A) {
     var mode = { v: "full" };
     function buildLines() {
       if (!b) { inv.lines = inv.lines.length ? inv.lines : [{ d: "", qty: 1, unit: 0 }]; return; }
-      var d = (b.excursionTitle || "Charter") + " · " + fmtDate(b.date) + " · " + b.guests + " guests · " + (content().brand || {}).vessel || "";
+      var d = [(b.excursionTitle || "Charter"), fmtDate(b.date), b.guests + " guests", (content().brand || {}).vessel].filter(Boolean).join(" · ");
       var total = bookingTotal(b);
       if (mode.v === "deposit") inv.lines = [{ d: "Deposit, 50% — " + d, qty: 1, unit: round2(total / 2) }];
       else if (mode.v === "balance") inv.lines = [{ d: "Balance, 50% — " + d, qty: 1, unit: round2(total / 2) }];
