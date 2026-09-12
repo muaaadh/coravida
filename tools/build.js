@@ -161,6 +161,7 @@ function head({ title, desc, og, r, path: pagePath }) {
 <link rel="preload" href="${r}assets/fonts/montserrat-300.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="${r}assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${r}assets/css/site.css">
+<script type="speculationrules">{"prefetch":[{"where":{"and":[{"href_matches":"/*"},{"not":{"href_matches":"/*.mp4"}}]},"eagerness":"moderate"}]}</script>
 ${alt}`;
 }
 

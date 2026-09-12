@@ -947,8 +947,20 @@
     });
   }
 
+  /* a lazy photograph fades in as it lands instead of popping */
+  function lazyFade() {
+    if (SLOW) return;
+    $$("img[loading=lazy]").forEach(function (im) {
+      if (im.complete && im.naturalWidth) return;
+      im.classList.add("lz");
+      var on = function () { im.classList.add("ld"); };
+      im.addEventListener("load", on, { once: true }); im.addEventListener("error", on, { once: true });
+      if (im.complete) on();                      // it landed while we were looking
+    });
+  }
+
   function boot() {
-    chrome(); header(); menu(); heroCycle(); video(); lines(); reveals(); scrollFx(); counters();
+    chrome(); header(); menu(); heroCycle(); video(); lines(); reveals(); scrollFx(); counters(); lazyFade();
     rails(); lightbox(); mosaic();   /* the lightbox takes its order before the columns move things */ accordion(); enquiry(); forms(); voyageIndex(); player(); language(); driver(); ready();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);

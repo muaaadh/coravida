@@ -8,7 +8,7 @@ mkdir -p "$DEST"
 # rsync into OneDrive dies with "mmap: Operation timed out", so: tar, and prune
 # only the paths the build generates.
 for p in index.html vessel.html excursions.html gallery.html about.html contact.html \
-         enquire.html 404.html sitemap.xml README.md excursions ru zh de assets tools; do
+         enquire.html 404.html sitemap.xml README.md excursions ru zh de assets tools admin content .github; do
   rm -rf "$DEST/$p"
 done
 cd "$SRC" && tar cf - --exclude='.git' . | (cd "$DEST" && tar xf -)

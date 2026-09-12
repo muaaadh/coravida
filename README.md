@@ -1,9 +1,10 @@
 # Coravida — website
 
-A static site for **Coravida** and its vessel **Tiffany Blanc 14**. No build step for the
-browser, no dependencies, no server: open `index.html`, or drop the folder on any host.
+A static site for **Coravida** and its vessel **Tiffany Blanc 14**, with an admin that
+edits it and keeps the books. No build step for the browser, no dependencies, no server:
+open `index.html`, or drop the folder on any host.
 
-Live at **https://muaaadh.github.io/coravida/**
+Live at **https://muaaadh.github.io/coravida/** · Admin at **https://muaaadh.github.io/coravida/admin/**
 
 ---
 
@@ -209,6 +210,14 @@ skipped would never appear at all.
 All of it is disabled under `prefers-reduced-motion`, where every element resolves to its
 end state and the sea stands still.
 
+**Between pages.** Where the browser has View Transitions (Chrome, Safari 18.2+) a
+navigation is a short cross-fade with a 10px rise; the header and the player are named
+groups, so they hold still while the page changes beneath them. Same-site links are
+prefetched on hover through speculation rules, so the next page is usually already there.
+Lazy photographs fade in as they land (`img.lz`), and anything tappable presses in under a
+finger (`:active` under `hover:none`). Reveals are a touch quicker than before — 0.95s,
+26px, 70ms stagger.
+
 ### On a phone
 
 Touch gets the same motion, not a stripped-back version — and the things a cursor does for
@@ -317,19 +326,82 @@ The same twelve exist again under `/ru/`, `/zh/` and `/de/`. `sitemap.xml` lists
 
 ## Changing the content
 
-Everything is in **`assets/js/data.js`** — brand facts, the hero clips and their interval,
-the music tracks, navigation, the four excursions (hour-by-hour itineraries, inclusions),
-add-ons, the vessel, gallery captions, FAQ.
-
-Every HTML page is generated from it:
+Everything is in **`content/site.json`** — brand facts and contact details, the hero clips
+and their interval, the music tracks, navigation, the four excursions (hour-by-hour
+itineraries, inclusions, the price for seven), add-ons, the vessel, gallery captions and
+sections, FAQ. Every HTML page is generated from it:
 
 ```sh
 node tools/build.js      # rewrites all 48 pages, in all four languages
 ```
 
-Edit `data.js`, run the build, commit. Header, menu, footer, sea and player are injected by
-`assets/js/site.js`, so they change in one place. Pages that open on white carry
-`class="light-page"` on `<body>` so the header renders navy instead of white.
+There are two ways to change it:
+
+- **The admin** at `/admin/` — for the client. See below.
+- **Directly** — edit the JSON, run the build, and `bash tools/deploy.sh "message"`,
+  which pulls first (the admin and the build bot both commit to `main`), builds, commits,
+  pushes and mirrors to OneDrive.
+
+`assets/js/data.js` and `data.{ru,zh,de}.js` are generated from the JSON — never edit them.
+Header, menu, footer, sea and player are injected by `assets/js/site.js`, so they change
+in one place. Pages that open on white carry `class="light-page"` on `<body>`.
+
+Records with an identity (`slug` on excursions, `img` on gallery entries and decks, `id`
+on add-ons and questions) are what the translations attach to, so an entry can be
+reordered, added or removed in the admin without shifting the translations of the rest.
+Anything the admin changes shows in **English on the RU/ZH/DE pages until it is
+translated** in `tools/i18n/` — the build prints exactly which strings.
+
+## The admin
+
+`/admin/` is a **GitHub-as-CMS** editor — vanilla, no framework, no server. It reads
+`content/site.json` from the repository, keeps a draft in the browser (autosaved, restored
+on return), and **Publish** commits the JSON through the GitHub Contents API. A GitHub
+Action (`.github/workflows/build.yml`) then rebuilds every page and republishes Pages —
+about **40 seconds** from Publish to live; the admin watches the run and says when.
+
+- **Website:** Brand & contact (phone becomes the call and WhatsApp links), Hero film
+  (order, clips, seconds each holds), Excursions & prices (the pricing basis, then every
+  excursion: essentials, words, the day stop by stop, inclusions, film and pictures), Add-ons,
+  Our vessels, Gallery (captions, sections, order), Music, Questions.
+- **Photographs:** upload from the gallery or any picture picker. The browser resizes to
+  2400px and the file is committed to `assets/src/`; the Action cuts the WebP tiers with
+  `tools/tiers.js` (sharp), builds, and commits the tiers back so a clone stays complete.
+  New film clips remain a Dheemi job (`tools/stock.sh`).
+- **Access:** one fine-grained personal access token, pasted once in Settings — Contents
+  read/write on `coravida` and `coravida-books`, Actions read so it can show the build.
+  Without a token the admin is read-only.
+- **Read-only fallback:** with no token it still shows the published content, so it is
+  useful for reading and drafting.
+
+## The books
+
+The accounting a one-vessel charter company actually needs, and nothing it does not:
+
+- **Bookings** — enquiry → confirmed → completed (or cancelled); customer, date, excursion,
+  guests, add-ons; the package price fills itself in at the party size the site quotes.
+- **Invoices** — from a booking (full, 50% deposit, or balance) or blank; T-GST at the rate
+  in Settings (17% since July 2025); status derived from payments; print to PDF on
+  Coravida paper with the bank details.
+- **Payments received** and **Expenses** (fuel, crew, marina, provisions, maintenance…).
+- **Reports** — invoiced, T-GST to remit, received, expenses, net, outstanding; twelve-month
+  bars; expenses by category; charters by excursion; CSV export of everything for the
+  accountant.
+
+No journal, no chart of accounts, no bills or vendors — those were the JH Yachts demo and
+nobody at a marina office needs them. The data is **one JSON file in the private
+repository `muaaadh/coravida-books`**, written on every change through the same token (one
+commit per save, so every version is recoverable), and cached in the browser so it opens
+instantly and survives a bad connection; two devices merge by record. Settings has
+*Load sample data* for a demonstration, *Clear all books*, and backup/restore.
+
+## Forms
+
+A static site has no inbox, so the contact and enquiry forms **deliver** two ways: every
+submission becomes a prepared WhatsApp message and a prepared email to the details in
+Brand & contact (the visitor picks one — in the Maldives that is how enquiries arrive), and
+if a **form endpoint** is set in the admin (Web3Forms, Formspree, anything that takes
+JSON) it is also posted there automatically.
 
 ## Media
 
@@ -408,9 +480,13 @@ index.html  vessel.html  excursions.html  gallery.html
 about.html  contact.html  enquire.html  404.html
 excursions/*.html         4 excursion pages — generated
 ru/  zh/  de/             the same twelve pages again — generated
+content/site.json         all content, in English — edit this, or use the admin
+content/media.json        what is built: photographs, clips, tracks — generated
+admin/                    the editor and the books (index.html, app.js, content.js, books.js)
+.github/workflows/        build.yml — tiers, build, commit back, deploy Pages
 assets/
   css/site.css            the design system
-  js/data.js              all content, in English — edit this
+  js/data.js              generated from content/site.json — do not edit
   js/data.{ru,zh,de}.js   merged per language — generated, do not edit
   js/site.js              chrome, language, sea, hero cycle, player, reveals, lightbox, forms
   img/                    WebP, four widths each, plus the logo lockups
@@ -421,6 +497,8 @@ sitemap.xml               44 URLs with alternates — generated
 tools/i18n/{ru,zh,de}.js  the translations — edit these
 tools/stock.sh            encodes the September stock
 tools/mirror.sh           safe copy into the client's OneDrive folder
+tools/deploy.sh           pull, build, commit, push, mirror — in that order
+tools/tiers.js            WebP tiers for admin uploads (sharp; the Action runs it)
 tools/build.js            regenerates every page in every language
 tools/images.sh           rebuilds every photograph from the shoot
 tools/hero.sh             rebuilds the hero clips and their posters
