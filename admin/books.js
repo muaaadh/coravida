@@ -16,7 +16,8 @@ window.Books = (function (A) {
   var STATUS = [["enquiry", "Enquiry"], ["confirmed", "Confirmed"], ["completed", "Completed"], ["cancelled", "Cancelled"]];
 
   /* ---------------------------------------------------------------- data */
-  var S = null, sha = null, remote = false, saveT = null, saving = false, lastSaved = null, localOnly = true;
+  var S = null, sha = null, remote = false, saveT = null, saving = false, lastSaved = null, localOnly = true, failed = "";
+  var BRANCH = "main";   // the books repository's own branch, whatever the site's is
   function blank() {
     return { v: 1, settings: { currency: "USD", tgst: 17, prefix: "CV", nextInvoice: 1, nextBooking: 1, bank: "", footer: "Thank you for sailing with Coravida. A fifty percent deposit confirms a booking; the balance is due seven days before departure." },
              bookings: [], invoices: [], payments: [], expenses: [] };
@@ -29,13 +30,13 @@ window.Books = (function (A) {
   function monthKey(s) { return String(s).slice(0, 7); }
   var stamp = function (o) { o.updated = new Date().toISOString(); return o; };
 
-  function cache() { A.lsSet(KEY, { data: S, sha: sha, dirty: !!saveT || saving && !lastSaved, at: Date.now() }); }
+  function cache() { A.lsSet(KEY, { data: S, sha: sha, dirty: !!saveT || saving || !!failed, at: Date.now() }); }
   function load() {
     var c = A.lsGet(KEY, null);
     S = c && c.data ? c.data : blank(); sha = c ? c.sha : null;
     if (!A.token()) { localOnly = true; return Promise.resolve(); }
     var s = A.settings();
-    return A.gh.read(s.booksRepo, s.booksPath).then(function (r) {
+    return A.gh.read(s.booksRepo, s.booksPath, BRANCH).then(function (r) {
       localOnly = false; remote = true;
       if (r.missing) { sha = null; return save(true); }   // first run: create the file
       var R = JSON.parse(r.text);
@@ -62,21 +63,21 @@ window.Books = (function (A) {
     if (localOnly) { drawSync(); return Promise.resolve(); }
     if (!now) { saveT = setTimeout(function () { save(true); }, 1200); drawSync(); return Promise.resolve(); }
     var s = A.settings(); saving = true; drawSync();
-    return A.gh.putText(s.booksRepo, s.booksPath, JSON.stringify(S, null, 2) + "\n", "Books: " + new Date().toISOString().slice(0, 16).replace("T", " "), sha)
-      .then(function (j) { sha = j.content.sha; saving = false; lastSaved = new Date(); cache(); drawSync(); })
+    return A.gh.putText(s.booksRepo, s.booksPath, JSON.stringify(S, null, 2) + "\n", "Books: " + new Date().toISOString().slice(0, 16).replace("T", " "), sha, BRANCH)
+      .then(function (j) { sha = j.content.sha; saving = false; failed = ""; lastSaved = new Date(); cache(); drawSync(); })
       .catch(function (e) {
         saving = false;
         if (e.status === 409 || e.status === 422) {   // someone else saved: merge and retry once
-          return A.gh.read(s.booksRepo, s.booksPath).then(function (r) { S = merge(JSON.parse(r.text), S); sha = r.sha; A.render(); return save(true); });
+          return A.gh.read(s.booksRepo, s.booksPath, BRANCH).then(function (r) { S = merge(JSON.parse(r.text), S); sha = r.sha; A.render(); return save(true); });
         }
-        toast("Books did not save: " + e.message, "err"); drawSync();
+        failed = e.message; toast("Books did not save: " + e.message, "err"); cache(); drawSync();
       });
   }
   function drawSync() {
     $$(".booksSync").forEach(function (n) {
-      n.className = "booksSync badge " + (localOnly ? "badge--warn" : saving || saveT ? "badge--info" : "badge--ok");
-      n.textContent = localOnly ? "On this device only" : saving ? "Saving…" : saveT ? "Unsaved" : lastSaved ? "Saved " + lastSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Synced";
-      n.title = localOnly ? "Add a GitHub token in Settings to keep the books in your private repository." : "";
+      n.className = "booksSync badge " + (localOnly ? "badge--warn" : failed ? "badge--bad" : saving || saveT ? "badge--info" : "badge--ok");
+      n.textContent = localOnly ? "On this device only" : failed ? "Not saved" : saving ? "Saving…" : saveT ? "Unsaved" : lastSaved ? "Saved " + lastSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Synced";
+      n.title = localOnly ? "Add a GitHub token in Settings to keep the books in your private repository." : failed || "";
     });
   }
   function syncBadge() { var b = E("span", { class: "booksSync badge" }); setTimeout(drawSync, 0); return b; }

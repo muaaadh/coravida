@@ -338,19 +338,29 @@
 
   /* ---------------------------------------------------------------- Gallery */
   var CATS = [["vessel", "Our vessels"], ["aboard", "Aboard"], ["water", "Below"], ["islands", "Islands"]];
+  var adding = false;
   A.register({ id: "gallery", group: "Website", label: "Gallery", icon: "grid", render: function (host) {
     if (!ready(host)) return;
     var G = C.draft.gallery;
     var used = function (n) { return G.some(function (g) { return g.img === n; }); };
     head(host, "Gallery", "Four sections, in this order. Captions are one line; the section decides where a photograph sits.",
-      E("button", { class: "btn btn--go", type: "button", text: "Add a photograph", onclick: function () {
-        var pick = { img: "" }, node = E("div", {});
-        node.appendChild(imagePick("Choose one not yet in the gallery, or upload", pick, "img", { exclude: used }));
-        A.dialog({ title: "Add to the gallery", node: node, wide: true, actions: [["Cancel", "btn--ghost", null], ["Add", "btn--go", "ok"]], validate: function () { if (!pick.img) { toast("Choose a photograph.", "err"); return false; } return true; } }).then(function (r) {
-          if (r !== "ok") return;
-          G.push({ img: pick.img, cat: "vessel", cap: "" }); A.changed(); A.render();
-        });
-      } }));
+      E("button", { class: "btn btn--go", type: "button", text: "Add a photograph", disabled: adding, onclick: function () { adding = true; A.render(); } }));
+    if (adding) {
+      var pick = { img: "", cat: "vessel" };
+      var panel = E("div", { class: "card", style: "border-color:var(--marine)" }, [
+        E("div", { class: "card__h" }, [E("div", {}, [E("h3", { text: "Add to the gallery" }), E("p", { text: "Choose a photograph not yet in the gallery, or upload a new one." })])]),
+        imagePick("Photograph", pick, "img", { exclude: used }),
+        E("div", { class: "fg fg2" }, [field("Section", pick, "cat", { type: "select", options: CATS })]),
+        E("div", { class: "acts acts--end" }, [
+          E("button", { class: "btn btn--ghost", type: "button", text: "Cancel", onclick: function () { adding = false; A.render(); } }),
+          E("button", { class: "btn btn--go", type: "button", text: "Add to gallery", onclick: function () {
+            if (!pick.img) return toast("Choose a photograph first.", "err");
+            G.push({ img: pick.img, cat: pick.cat, cap: "" }); adding = false; A.changed(); A.render(); toast("Added — give it a caption.", "ok");
+          } })
+        ])
+      ]);
+      host.appendChild(panel);
+    }
     CATS.forEach(function (c) {
       var set = G.filter(function (g) { return g.cat === c[0]; });
       var card = E("div", { class: "card" }), rows = E("div", { class: "rows" });

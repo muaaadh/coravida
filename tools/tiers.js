@@ -35,7 +35,7 @@ catch (e) { console.error("tiers: `sharp` is not installed — run  npm i --no-s
     if (!widths.length) { console.warn("tiers: " + f + " is only " + w0 + "px wide — too small, skipped"); continue; }
     for (const w of widths) {
       await sharp(src).rotate().resize({ width: w, withoutEnlargement: true })
-        .webp({ quality: 82, effort: 6, smartSubsample: true })
+        .webp({ quality: 78, effort: 6, smartSubsample: true })
         .toFile(path.join(OUT, `${name}-${w}.webp`));
     }
     made++;
