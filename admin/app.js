@@ -54,15 +54,16 @@ window.Admin = (function () {
     cog: '<circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>',
     up: '<path d="m6 15 6-6 6 6"/>', down: '<path d="m6 9 6 6 6-6"/>',
     trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
-    x: '<path d="M6 6l12 12M18 6 6 18"/>', chev: '<path d="m9 6 6 6-6 6"/>', print: '<path d="M6 9V3h12v6M6 18H4V9h16v9h-2"/><rect x="6" y="14" width="12" height="7"/>'
+    x: '<path d="M6 6l12 12M18 6 6 18"/>', chev: '<path d="m9 6 6 6-6 6"/>', chevl: '<path d="m15 6-6 6 6 6"/>', print: '<path d="M6 9V3h12v6M6 18H4V9h16v9h-2"/><rect x="6" y="14" width="12" height="7"/>'
   };
   var svg = function (p) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON[p] || p) + "</svg>"; };
   var iconBtn = function (name, title, onclick, cls) { var b = E("button", { class: "btn btn--icon " + (cls || ""), type: "button", title: title, "aria-label": title, html: svg(name), onclick: onclick }); return b; };
 
   var toastT = null;
-  function toast(msg, kind) {
+  function toast(msg, kind, action) {
     var t = $("#toast"); t.textContent = msg; t.className = "toast" + (kind ? " is-" + kind : ""); t.hidden = false;
-    clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, kind === "err" ? 8000 : 3600);
+    if (action) t.appendChild(E("button", { class: "toast__act", type: "button", text: action.label, onclick: function () { t.hidden = true; action.run(); } }));
+    clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, action ? 8000 : kind === "err" ? 8000 : 3600);
   }
   function status(msg, kind) { var s = $("#status"); s.textContent = msg; s.className = "top__status" + (kind ? " is-" + kind : ""); s.title = msg; }
   function dialog(opts) {
@@ -164,7 +165,7 @@ window.Admin = (function () {
   function renderNav() {
     var r = route(), nav = $("#nav"), grp = null;
     nav.innerHTML = "";
-    SECTIONS.slice().sort(function (a, b) { return GROUPS.indexOf(a.group) - GROUPS.indexOf(b.group); }).forEach(function (s) {
+    SECTIONS.slice().sort(function (a, b) { return (GROUPS.indexOf(a.group) - GROUPS.indexOf(b.group)) || ((a.order == null ? 1 : a.order) - (b.order == null ? 1 : b.order)); }).forEach(function (s) {
       if (s.group !== grp) { grp = s.group; nav.appendChild(E("div", { class: "side__grp", text: grp })); }
       var a = E("a", { class: "side__lnk" + (r.id === s.id ? " on" : ""), href: "#" + s.id, html: svg(s.icon || "chev") + "<span>" + esc(s.label) + "</span>" });
       var b = s.badge && s.badge(); if (b) a.appendChild(E("span", { class: "bdg", text: b }));
@@ -178,7 +179,7 @@ window.Admin = (function () {
   function render() {
     var r = route(), s = SECTIONS.filter(function (x) { return x.id === r.id; })[0] || SECTIONS[0];
     if (!s) return;
-    var host = $("#view"); host.innerHTML = "";
+    var host = $("#view"); host.innerHTML = ""; document.body.classList.remove("cal-open");
     $("#topH").textContent = s.label; document.title = s.label + " · Coravida Admin";
     try { s.render(host, r.arg); } catch (e) { console.error(e); host.appendChild(E("div", { class: "note note--bad", text: "This view failed to draw: " + e.message })); }
     renderNav();

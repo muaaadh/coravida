@@ -268,6 +268,8 @@ ui: {
 chrome: {
   pauseFilm: "暂停影片", playFilm: "播放影片",
   charterOnEnquiry: "包船价格另议", guestsWord: "人",
+  dayTaken: "那一天已被预订——请另选日期。", amFree: "那一天只剩上午可用。", pmFree: "那一天只剩下午可用。",
+  halfDayOnly: "那一天只有半天可用——请选择半日行程或另选日期。",
   oneMore: "还差一步", sendToCrew: "发送给船员", alreadyWritten: "消息已经写好——选择 WhatsApp 或电子邮件，它会直接送达码头办公室。",
   menu: "菜单", close: "关闭", enquire: "预订咨询", explore: "浏览",
   primary: "主导航", menuLabel: "菜单",

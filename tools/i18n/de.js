@@ -268,6 +268,8 @@ ui: {
 chrome: {
   pauseFilm: "Film anhalten", playFilm: "Film abspielen",
   charterOnEnquiry: "Charter auf Anfrage", guestsWord: "Gäste",
+  dayTaken: "Dieser Tag ist schon vergeben – bitte einen anderen wählen.", amFree: "An diesem Tag ist nur noch der Vormittag frei.", pmFree: "An diesem Tag ist nur noch der Nachmittag frei.",
+  halfDayOnly: "An diesem Tag ist nur ein halber Tag frei – wählen Sie eine Halbtagestour oder einen anderen Tag.",
   oneMore: "Noch ein Schritt", sendToCrew: "An die Crew senden", alreadyWritten: "Die Nachricht ist schon geschrieben – WhatsApp oder E-Mail wählen, und sie geht direkt ans Marinabüro.",
   menu: "Menü", close: "Schließen", enquire: "Anfragen", explore: "Entdecken",
   primary: "Hauptnavigation", menuLabel: "Menü",

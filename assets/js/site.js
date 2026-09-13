@@ -893,11 +893,46 @@
       for (var i = 0; i < need.length; i++) if (!need[i].checkValidity()) { need[i].reportValidity(); return false; }
       return true;
     }
+    /* the books publish which days are gone (dates only, never a name), so a
+       visitor is told before they write to the crew */
+    var dateIn = $('[name="date"]', f), altIn = $('[name="alt"]', f), taken = null;
+    function check() {
+      if (!taken) return;
+      [dateIn, altIn].forEach(function (inp, i) {
+        if (!inp) return;
+        var note = inp._note, d = inp.value, v = chosen();
+        if (!d) { note.hidden = true; inp.setCustomValidity(""); return; }
+        var full = taken.indexOf(d) > -1, half = taken.filter(function (x) { return x.indexOf(d + ":") === 0; })[0];
+        var fullDay = v && !/half|evening|sunset/i.test(v.kind || ""), pre = inp._label ? inp._label + " — " : "";
+        if (full || (half && fullDay)) {
+          note.textContent = pre + (half && fullDay && !full ? t("halfDayOnly", "Only half of that day is free — choose a half-day excursion, or another day.") : t("dayTaken", "That day is already taken — please choose another."));
+          note.hidden = false; note.className = "note note--avail is-bad"; if (i === 0) inp.setCustomValidity(note.textContent); else inp.setCustomValidity("");
+        } else if (half) {
+          note.textContent = pre + t(half.slice(-2) === "pm" ? "pmFree" : "amFree", half.slice(-2) === "pm" ? "Only the afternoon is still free that day." : "Only the morning is still free that day.");
+          note.hidden = false; note.className = "note note--avail"; inp.setCustomValidity("");
+        } else { note.hidden = true; inp.setCustomValidity(""); }
+      });
+    }
+    if (dateIn) {
+      var today = new Date(), min = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
+      var row = dateIn.closest(".fg") || dateIn.parentNode, notes = document.createElement("div"); notes.className = "avail"; row.parentNode.insertBefore(notes, row.nextSibling);
+      [dateIn, altIn].forEach(function (inp, i) {
+        if (!inp) return;
+        inp.min = min;
+        var note = document.createElement("p"); note.className = "note note--avail"; note.hidden = true; note.id = "avail-" + i; note.setAttribute("aria-live", "polite");
+        inp.setAttribute("aria-describedby", note.id); inp._note = note; notes.appendChild(note);
+        var lab = f.querySelector('label[for="' + inp.id + '"]'); inp._label = lab ? lab.textContent.trim() : "";
+        inp.addEventListener("change", check); inp.addEventListener("input", check);
+      });
+      f.addEventListener("change", function (e) { if (e.target.name === "excursion") check(); });
+      fetch(u("content/availability.json"), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { taken = j && j.taken || []; check(); }).catch(function () {});
+    }
     $$("[data-next]", f).forEach(function (b) { b.addEventListener("click", function () { if (ok()) go(at + 1); }); });
     $$("[data-prev]", f).forEach(function (b) { b.addEventListener("click", function () { go(at - 1); }); });
     f.addEventListener("change", function () { if (at === steps.length - 1) sum(); });
     f.addEventListener("submit", function (e) {
       e.preventDefault(); if (!ok()) return;
+      check(); if (dateIn && !dateIn.checkValidity()) { go(1); dateIn.reportValidity(); return; }
       var d = {}; new FormData(f).forEach(function (v, k) { d[k] = d[k] ? [].concat(d[k], v) : v; });
       var v = chosen(); if (v) d.excursionTitle = v.title;
       var ex = $$('input[name="extra"]:checked', f);

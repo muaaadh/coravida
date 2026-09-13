@@ -595,6 +595,8 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
 .sum__r{display:flex;justify-content:space-between;gap:1.5rem;font-size:.9375rem}
 .sum__t{border-top:1px solid var(--line);padding-top:1rem;display:flex;justify-content:space-between;align-items:baseline}
 .note{max-width:62ch;font-size:.8125rem;color:var(--body);line-height:1.75}
+.note--avail{margin-top:.6rem;color:var(--ocean)}
+.note--avail.is-bad{color:#B4232C}
 .ok{display:none;text-align:center}
 .ok .acts{justify-content:center}
 .ok .measure{margin-inline:auto}

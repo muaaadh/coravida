@@ -395,6 +395,33 @@ commit per save, so every version is recoverable), and cached in the browser so 
 instantly and survives a bad connection; two devices merge by record. Settings has
 *Load sample data* for a demonstration, *Clear all books*, and backup/restore.
 
+## The calendar
+
+The first thing in Books. One vessel, one month at a time, in the shape of Airbnb's host
+calendar:
+
+- **A confirmed booking takes its day** the moment it is confirmed — nobody "puts it on
+  the calendar". A full-day charter takes the whole day (navy bar); a half-day takes the
+  morning or the afternoon (AM/PM bar), so a morning Reef & Sandbank and a Sunset
+  Adventure can share a day. Which half an excursion takes is derived from its kind and
+  departure time (`slotFor`) and can be changed on the booking.
+- **An enquiry takes nothing** — dashed bar — until it is confirmed, and it cannot be
+  confirmed into a day that is blocked or already has that half booked: the booking form
+  says so under the date, the Confirm button is disabled with the reason, and the invoice
+  path will not silently confirm it either.
+- **Blocks** are whole days the boat cannot sail (maintenance, weather, private use, crew
+  off, other), with an optional note. Select a day or a range — drag on a desktop,
+  *Select a range* then tap on a phone — and block it; only the free days are blocked and
+  the panel lists which booked days stay booked. Unblocking part of a longer block splits
+  it. Every block and unblock has an 8-second **Undo**.
+- **Past days** stay readable (who sailed last Saturday) but cannot be changed.
+- **The website is told.** After every save the books publish `content/availability.json`
+  — dates and halves only, never a name — and the enquiry form warns a visitor who picks a
+  taken day, or notes that only the morning or afternoon is left.
+- Records are never deleted, only marked, so a deletion on one device survives a merge with
+  another; a tab that returns after a minute reloads from GitHub, and a pending save is
+  flushed when the tab is hidden.
+
 ## Forms
 
 A static site has no inbox, so the contact and enquiry forms **deliver** two ways: every
@@ -482,7 +509,8 @@ excursions/*.html         4 excursion pages — generated
 ru/  zh/  de/             the same twelve pages again — generated
 content/site.json         all content, in English — edit this, or use the admin
 content/media.json        what is built: photographs, clips, tracks — generated
-admin/                    the editor and the books (index.html, app.js, content.js, books.js)
+admin/                    the editor, the books and the calendar (app.js, content.js, books.js, calendar.js)
+content/availability.json which days are taken — written by the books, read by the enquiry form
 .github/workflows/        build.yml — tiers, build, commit back, deploy Pages
 assets/
   css/site.css            the design system
