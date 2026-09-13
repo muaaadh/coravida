@@ -51,6 +51,7 @@ window.Admin = (function () {
     cash: '<rect x="3" y="7" width="18" height="11" rx="2"/><circle cx="12" cy="12.5" r="2.5"/>',
     card: '<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18"/>',
     chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+    clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
     cog: '<circle cx="12" cy="12" r="3"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/>',
     up: '<path d="m6 15 6-6 6 6"/>', down: '<path d="m6 9 6 6 6-6"/>',
     trash: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
@@ -151,6 +152,12 @@ window.Admin = (function () {
     var s = settings();
     return fetch(s.api + "/repos/" + s.owner + "/" + s.repo + "/actions/runs?per_page=1&branch=" + encodeURIComponent(s.branch), { headers: ghHeaders(), cache: "no-store" })
       .then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { return j && j.workflow_runs && j.workflow_runs[0] || null; }).catch(function () { return null; });
+  }
+  /* the versions of one file — every save is a commit, so this is the time machine */
+  function ghCommits(repo, path, n) {
+    var s = settings();
+    return fetch(s.api + "/repos/" + s.owner + "/" + repo + "/commits?path=" + encodeURIComponent(path) + "&per_page=" + (n || 40), { headers: ghHeaders(), cache: "no-store" })
+      .then(function (res) { if (!res.ok) return ghMessage(res, repo).then(function (m) { throw new Error(m); }); return res.json(); });
   }
   var actionsUrl = function () { return "https://github.com/" + settings().owner + "/" + settings().repo + "/actions"; };
   var siteUrl = function () { return new URL("../", location.href).href; };
@@ -402,6 +409,6 @@ window.Admin = (function () {
            E: E, $: $, $$: $$, esc: esc, clone: clone, slug: slug, uid: uid, svg: svg, iconBtn: iconBtn,
            toast: toast, status: status, dialog: dialog, confirm: confirm,
            settings: settings, token: token, lsGet: lsGet, lsSet: lsSet, KEY: KEY,
-           gh: { read: ghRead, put: ghPut, putText: ghPutText, runs: ghRuns },
+           gh: { read: ghRead, put: ghPut, putText: ghPutText, runs: ghRuns, commits: ghCommits },
            C: C, changed: changed, kpi: kpi, siteUrl: siteUrl };
 })();

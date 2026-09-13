@@ -270,6 +270,7 @@ chrome: {
   charterOnEnquiry: "Charter auf Anfrage", guestsWord: "Gäste",
   dayTaken: "Dieser Tag ist schon vergeben – bitte einen anderen wählen.", amFree: "An diesem Tag ist nur noch der Vormittag frei.", pmFree: "An diesem Tag ist nur noch der Nachmittag frei.",
   halfDayOnly: "An diesem Tag ist nur ein halber Tag frei – wählen Sie eine Halbtagestour oder einen anderen Tag.",
+  notAvailH: "Dieser Tag ist nicht verfügbar", notAvailP: "Das Boot ist bereits vergeben. Möchten Sie uns kontaktieren? Die Crew nennt Ihnen den nächsten freien Termin.", sendWhatsApp: "Per WhatsApp senden", waAsk: "Hallo Coravida – ich möchte am {date}{exc} chartern, aber laut Website ist der Tag vergeben. Wann ist der nächste freie Termin?",
   oneMore: "Noch ein Schritt", sendToCrew: "An die Crew senden", alreadyWritten: "Die Nachricht ist schon geschrieben – WhatsApp oder E-Mail wählen, und sie geht direkt ans Marinabüro.",
   menu: "Menü", close: "Schließen", enquire: "Anfragen", explore: "Entdecken",
   primary: "Hauptnavigation", menuLabel: "Menü",

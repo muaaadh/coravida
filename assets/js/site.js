@@ -912,10 +912,27 @@
           note.hidden = false; note.className = "note note--avail"; inp.setCustomValidity("");
         } else { note.hidden = true; inp.setCustomValidity(""); }
       });
+      /* the preferred day is gone: the enquiry stops here, and the crew are a tap away */
+      var blocked = !!dateIn.value && !dateIn.checkValidity(), card = dateIn._card, next = $("[data-next]", dateIn.closest(".step") || f);
+      if (card) {
+        card.hidden = !blocked; if (blocked) dateIn._note.hidden = true;   // the card says it
+        if (blocked) {
+          var B = CV.brand || {}, v2 = chosen(), when = new Date(dateIn.value + "T00:00:00").toLocaleDateString(LOC === "zh" ? "zh-CN" : LOC === "en" ? "en-GB" : LOC, { day: "numeric", month: "long", year: "numeric" });
+          var msg = t("waAsk", "Hello Coravida — I would like to charter on {date}{exc}, but the website says that day is taken. What is the nearest free date?").replace("{date}", when).replace("{exc}", v2 ? " (" + v2.title + ")" : "");
+          var wa = $("[data-wa]", card), tel = $("[data-tel]", card);
+          if (wa) wa.href = (B.whatsappHref || "https://wa.me/").split("?")[0] + "?text=" + encodeURIComponent(msg);
+          if (tel) { tel.href = B.phoneHref || "#"; tel.textContent = B.phone || ""; }
+        }
+      }
+      if (next) next.disabled = blocked;
     }
     if (dateIn) {
       var today = new Date(), min = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
       var row = dateIn.closest(".fg") || dateIn.parentNode, notes = document.createElement("div"); notes.className = "avail"; row.parentNode.insertBefore(notes, row.nextSibling);
+      var card = el('<div class="avail__card" hidden><p class="avail__h">' + t("notAvailH", "That day is not available") + '</p>' +
+        '<p>' + t("notAvailP", "The vessel is already spoken for. Would you like to get in touch? The crew will suggest the nearest free date.") + "</p>" +
+        '<div class="acts"><a class="btn" data-wa rel="noopener" target="_blank">' + t("sendWhatsApp", "Send on WhatsApp") + '</a><a class="btn btn--ghost" data-tel></a></div></div>');
+      notes.appendChild(card); dateIn._card = card;
       [dateIn, altIn].forEach(function (inp, i) {
         if (!inp) return;
         inp.min = min;

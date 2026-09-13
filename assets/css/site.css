@@ -597,6 +597,11 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
 .note{max-width:62ch;font-size:.8125rem;color:var(--body);line-height:1.75}
 .note--avail{margin-top:.6rem;color:var(--ocean)}
 .note--avail.is-bad{color:#B4232C}
+.avail__card{margin-top:1rem;padding:1.4rem 1.5rem;border-radius:var(--r);background:var(--mist);display:grid;gap:.6rem}
+.avail__card .avail__h{font-family:var(--display);font-size:1.35rem;letter-spacing:-.02em;color:var(--ink)}
+.avail__card p{color:var(--body);max-width:44rem}
+.avail__card .acts{margin-top:.5rem}
+.step .btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
 .ok{display:none;text-align:center}
 .ok .acts{justify-content:center}
 .ok .measure{margin-inline:auto}

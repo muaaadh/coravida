@@ -416,11 +416,28 @@ calendar:
   it. Every block and unblock has an 8-second **Undo**.
 - **Past days** stay readable (who sailed last Saturday) but cannot be changed.
 - **The website is told.** After every save the books publish `content/availability.json`
-  — dates and halves only, never a name — and the enquiry form warns a visitor who picks a
-  taken day, or notes that only the morning or afternoon is left.
+  — dates and halves only, never a name. A visitor who picks a taken or blocked day
+  cannot continue the enquiry: the form says the day is not available and offers
+  **Send on WhatsApp** (message pre-written with the date and excursion) and the
+  telephone number instead. A half-free day says which half is left; a full-day
+  excursion on a half-free day is refused too.
 - Records are never deleted, only marked, so a deletion on one device survives a merge with
   another; a tab that returns after a minute reloads from GitHub, and a pending save is
   flushed when the tab is hidden.
+
+## History — nothing is ever lost
+
+- **Every change is written down** — created, edited (with what changed), confirmed,
+  completed, cancelled, blocked, unblocked, undone, invoiced, paid, removed, settings
+  saved, backup restored, everything cleared — with the time and the device that did it
+  (name the device in Settings). **History** in the admin lists it all, filterable and
+  searchable, with CSV export; each booking's page shows its own story; the Overview
+  shows the latest five.
+- **Every version is kept.** The books are one file in the private repository and every
+  save is a commit. History → *Earlier versions* lists them; *Look* summarises one,
+  *Put back* restores it — and the version you replace is itself kept, so a put-back can
+  be put back. Deleting is a marker, not a removal, so a deletion on one device survives
+  a merge with another.
 
 ## Forms
 
@@ -509,7 +526,7 @@ excursions/*.html         4 excursion pages — generated
 ru/  zh/  de/             the same twelve pages again — generated
 content/site.json         all content, in English — edit this, or use the admin
 content/media.json        what is built: photographs, clips, tracks — generated
-admin/                    the editor, the books and the calendar (app.js, content.js, books.js, calendar.js)
+admin/                    the editor, the books, the calendar and history (app.js, content.js, books.js, calendar.js, history.js)
 content/availability.json which days are taken — written by the books, read by the enquiry form
 .github/workflows/        build.yml — tiers, build, commit back, deploy Pages
 assets/

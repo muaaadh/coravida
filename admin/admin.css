@@ -271,6 +271,17 @@ hr{border:0;border-top:1px solid var(--line);margin:1.25rem 0}
 }
 
 
+/* ---- history --------------------------------------------------------------------------------- */
+.hist{display:flex;flex-direction:column}
+.hist__day{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:1.1rem 0 .4rem;border-bottom:1px solid var(--line)}
+.hist__day:first-child{padding-top:.2rem}
+.hist__row{display:grid;grid-template-columns:3.2rem auto minmax(0,1fr);gap:.7rem;align-items:center;padding:.55rem 0;border-bottom:1px solid var(--line);color:var(--ink);font-size:.9rem;text-decoration:none}
+a.hist__row:hover{background:var(--mist);text-decoration:none}
+.hist__t{font-variant-numeric:tabular-nums;color:var(--body);font-size:.82rem}
+.hist__x b{font-weight:400}
+.hist__x .s{color:var(--mute);font-size:.8rem}
+@media(max-width:560px){.hist__row{grid-template-columns:3rem minmax(0,1fr)}.hist__row .badge{grid-column:2}.hist__x{grid-column:2}}
+
 /* ---- calendar ------------------------------------------------------------------------------- */
 .cal{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:1.25rem;align-items:start}
 .cal__main{padding:1.1rem 1.2rem 1.1rem}

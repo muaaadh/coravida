@@ -41,7 +41,21 @@ window.Books = (function (A) {
   var nameOf = function (b) { return (b && b.customer && b.customer.name) || (b && b.ref) || "Booking"; };
 
   function cache() { A.lsSet(KEY, { data: S, sha: sha, dirty: !!saveT || saving || !!failed, localOnly: localOnly, at: Date.now() }); }
-  var LISTS = ["bookings", "invoices", "payments", "expenses", "blocks"];
+  var LISTS = ["bookings", "invoices", "payments", "expenses", "blocks", "log"];
+  /* every change is written down: what, by which device, when — and merged
+     like everything else, so both devices see the whole story */
+  function device() { return A.lsGet("cv:device", "") || (/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent) ? "Phone" : "Computer"); }
+  function logIt(kind, act, text, link, ref) {
+    (S.log = S.log || []).push({ id: A.uid(), at: new Date().toISOString(), who: device(), kind: kind, act: act, text: text, link: link || "", ref: ref || "", updated: new Date().toISOString() });
+  }
+  /* a one-line account of what an edit changed */
+  function diffOf(before, after) {
+    var out = [], F = { date: "date", slot: "time", guests: "guests", price: "price", status: "status", excursionTitle: "excursion", notes: "notes" };
+    Object.keys(F).forEach(function (k) { var a = before[k], b = after[k]; if (String(a == null ? "" : a) !== String(b == null ? "" : b)) out.push(F[k] + " " + (k === "date" ? fmtDate(a) + " → " + fmtDate(b) : k === "slot" ? slotLabel(a || "day") + " → " + slotLabel(b || "day") : k === "notes" ? "changed" : (a == null ? "—" : a) + " → " + (b == null ? "—" : b))); });
+    ["name", "email", "phone", "staying"].forEach(function (k) { if (String((before.customer || {})[k] || "") !== String((after.customer || {})[k] || "")) out.push(k + " changed"); });
+    var ad = function (x) { return (x.addons || []).map(function (a) { return a.t; }).sort().join(", "); }; if (ad(before) !== ad(after)) out.push("add-ons " + (ad(after) || "none"));
+    return out.join(", ");
+  }
   /* books written by an older build may lack a list; never let that throw */
   function shape(x) {
     x = x && typeof x === "object" ? x : blank(); x.settings = Object.assign(blank().settings, x.settings || {});
@@ -97,6 +111,8 @@ window.Books = (function (A) {
     var s = A.settings(); saving = true; drawSync();
     var cut = new Date(Date.now() - 90 * 86400000).toISOString();
     ["bookings", "invoices", "payments", "expenses", "blocks"].forEach(function (k) { if (S[k]) S[k] = S[k].filter(function (x) { return !x.deleted || (x.updated || "") > cut; }); });
+    // the file must stay well under GitHub's 1 MB read limit; older log lines live on in the commit history
+    if (S.log && S.log.length > 3000) S.log = S.log.slice().sort(function (a, b) { return a.at < b.at ? 1 : -1; }).slice(0, 3000);
     return A.gh.putText(s.booksRepo, s.booksPath, JSON.stringify(S, null, 2) + "\n", "Books: " + new Date().toISOString().slice(0, 16).replace("T", " "), sha, BRANCH)
       .then(function (j) { sha = j.content.sha; saving = false; failed = ""; retries = 0; lastSaved = new Date(); loadedAt = Date.now(); cache(); drawSync(); publishAvailability(); })
       .catch(function (e) {
@@ -198,6 +214,7 @@ window.Books = (function (A) {
     if (to < from) { var t = from; from = to; to = t; }
     var done = unblock(from, to, true), rec = stamp({ id: A.uid(), from: from, to: to, reason: reason || "other", note: note || "" });
     (S.blocks = S.blocks || []).push(rec); done.added.push(rec.id);
+    logIt("block", "blocked", (from === to ? fmtDate(from) : fmtDate(from) + " – " + fmtDate(to)) + " · " + reasonLabel(rec.reason) + (rec.note ? " · " + rec.note : ""), "#calendar/" + from.slice(0, 7));
     if (!quiet) save();
     return done;
   }
@@ -205,12 +222,14 @@ window.Books = (function (A) {
   function unblock(from, to, quiet) {
     if (to < from) { var t = from; from = to; to = t; }
     var done = { added: [], removed: [] };
+    var hit = 0;
     L("blocks").forEach(function (b) {
-      if (b.to < from || b.from > to) return;
+      if (b.to < from || b.from > to) return; hit++;
       if (b.from < from) { var l = stamp({ id: A.uid(), from: b.from, to: addDays(from, -1), reason: b.reason, note: b.note }); S.blocks.push(l); done.added.push(l.id); }
       if (b.to > to) { var r = stamp({ id: A.uid(), from: addDays(to, 1), to: b.to, reason: b.reason, note: b.note }); S.blocks.push(r); done.added.push(r.id); }
       remove("blocks", b.id); done.removed.push(b.id);
     });
+    if (hit && !quiet) logIt("block", "unblocked", (from === to ? fmtDate(from) : fmtDate(from) + " – " + fmtDate(to)) + " freed", "#calendar/" + from.slice(0, 7));
     if (!quiet) save();
     return done;
   }
@@ -218,6 +237,7 @@ window.Books = (function (A) {
   function undo(done) {
     (done.added || []).forEach(function (id) { var x = byId(S.blocks, id); if (x) { x.deleted = true; stamp(x); } });
     (done.removed || []).forEach(function (id) { var x = byId(S.blocks, id); if (x) { delete x.deleted; stamp(x); } });
+    logIt("block", "undone", "Undo — the last block change was reversed", "#calendar");
     save();
   }
   var joinDone = function (list) { return { added: [].concat.apply([], list.map(function (d) { return d.added; })), removed: [].concat.apply([], list.map(function (d) { return d.removed; })) }; }
@@ -358,7 +378,7 @@ window.Books = (function (A) {
     A.dialog({ title: "New booking", node: node, wide: true, actions: [["Cancel", "btn--ghost", null], ["Save booking", "btn--go", "ok"]], validate: function () { return validate(node) && node._check(); } }).then(function (r) {
       if (r !== "ok") return;
       b.ref = "B-" + String(S.settings.nextBooking++).padStart(4, "0");
-      S.bookings.push(stamp(b)); save();
+      S.bookings.push(stamp(b)); logIt("booking", "created", b.ref + " · " + nameOf(b) + " · " + fmtDate(b.date) + " · " + (b.excursionTitle || "Custom") + " · " + b.status, "#bookings/" + b.id, b.ref); save();
       if (after) after(b); else { A.go("bookings/" + b.id); toast("Booking " + b.ref + " saved.", "ok"); }
     });
   }
@@ -367,7 +387,8 @@ window.Books = (function (A) {
     A.dialog({ title: "Edit " + b.ref, node: node, wide: true, actions: [["Cancel", "btn--ghost", null], ["Save", "btn--go", "ok"]], validate: function () { return validate(node) && node._check(); } }).then(function (r) {
       if (r !== "ok") return;
       var live = byId(L("bookings"), b.id) || b;   // the books may have been refreshed while the dialog was open
-      Object.assign(live, copy); stamp(live); save(); A.render(); toast("Saved.", "ok");
+      var what = diffOf(live, copy);
+      Object.assign(live, copy); stamp(live); logIt("booking", "edited", live.ref + " · " + nameOf(live) + (what ? " — " + what : ""), "#bookings/" + live.id, live.ref); save(); A.render(); toast("Saved.", "ok");
     });
   }
   A.register({ id: "bookings", group: "Books", label: "Bookings", icon: "cal", badge: function () { var n = S ? L("bookings").filter(function (b) { return b.status === "enquiry" && b.date >= today(); }).length : 0; return n || ""; }, render: function (host, arg) {
@@ -403,10 +424,10 @@ window.Books = (function (A) {
     var invs = L("invoices").filter(function (i) { return i.bookingId === b.id; });
     var acts = E("div", { class: "acts" }, [syncBadge(),
       E("button", { class: "btn btn--ghost", type: "button", text: "Edit", onclick: function () { editBooking(b); } }),
-      b.status === "enquiry" ? (function () { var why = conflict(Object.assign({}, b, { status: "confirmed" })); return E("button", { class: "btn", type: "button", text: "Confirm", disabled: !!why, title: why ? "Cannot confirm — " + why : "", onclick: function () { b.status = "confirmed"; stamp(b); save(); A.render(); toast(b.ref + " confirmed — " + fmtDate(b.date) + " is now taken.", "ok"); } }); })() : null,
-      b.status === "confirmed" && b.date <= today() ? E("button", { class: "btn", type: "button", text: "Mark completed", onclick: function () { b.status = "completed"; stamp(b); save(); A.render(); } }) : null,
+      b.status === "enquiry" ? (function () { var why = conflict(Object.assign({}, b, { status: "confirmed" })); return E("button", { class: "btn", type: "button", text: "Confirm", disabled: !!why, title: why ? "Cannot confirm — " + why : "", onclick: function () { b.status = "confirmed"; stamp(b); logIt("booking", "confirmed", b.ref + " · " + nameOf(b) + " · " + fmtDate(b.date) + " " + slotLabel(b.slot || "day").toLowerCase(), "#bookings/" + b.id, b.ref); save(); A.render(); toast(b.ref + " confirmed — " + fmtDate(b.date) + " is now taken.", "ok"); } }); })() : null,
+      b.status === "confirmed" && b.date <= today() ? E("button", { class: "btn", type: "button", text: "Mark completed", onclick: function () { b.status = "completed"; stamp(b); logIt("booking", "completed", b.ref + " · " + nameOf(b) + " · " + fmtDate(b.date), "#bookings/" + b.id, b.ref); save(); A.render(); } }) : null,
       E("button", { class: "btn btn--go", type: "button", text: "Create invoice", onclick: function () { newInvoice(b); } }),
-      b.status !== "cancelled" ? E("button", { class: "btn btn--bad btn--sm", type: "button", text: "Cancel booking", onclick: function () { A.confirm("Cancel " + b.ref + "?", "The booking stays in the books, marked cancelled.", "Cancel booking", true).then(function (ok) { if (ok) { b.status = "cancelled"; stamp(b); save(); A.render(); } }); } }) : null
+      b.status !== "cancelled" ? E("button", { class: "btn btn--bad btn--sm", type: "button", text: "Cancel booking", onclick: function () { A.confirm("Cancel " + b.ref + "?", "The booking stays in the books, marked cancelled.", "Cancel booking", true).then(function (ok) { if (ok) { b.status = "cancelled"; stamp(b); logIt("booking", "cancelled", b.ref + " · " + nameOf(b) + " · " + fmtDate(b.date) + " — the day is free again", "#bookings/" + b.id, b.ref); save(); A.render(); } }); } }) : null
     ]);
     var why0 = b.status === "enquiry" ? conflict(Object.assign({}, b, { status: "confirmed" })) : null;
     host.appendChild(E("div", { class: "pagehead" }, [E("div", {}, [E("h2", {}, [b.customer.name || "Booking", " ", bookingBadge(b)]), E("p", { text: (b.excursionTitle || "Custom charter") + " · " + fmtDate(b.date) + " · " + slotLabel(b.slot || "day").toLowerCase() + " · " + b.guests + " guests" })]), acts]));
@@ -421,6 +442,7 @@ window.Books = (function (A) {
     g.appendChild(E("div", { class: "card" }, [E("h3", { text: "Price" }), tot,
       invs.length ? E("div", { class: "list" }, invs.map(function (i) { var x = invTotals(i), st = invStatus(i); return E("div", { class: "list__i" }, [E("div", {}, [E("a", { href: "#invoices/" + i.id, text: i.no }), E("div", { class: "s", text: fmtDate(i.date) + " · " + money(x.total) })]), badge(st)]); })) : E("p", { class: "small mute", text: "Not invoiced yet." })]));
     host.appendChild(g);
+    if (window.History) { var hc = E("div", { class: "card" }, [E("h3", { text: "History" })]), hb = E("div", { class: "hist" }); window.History.forRef(b.ref, hb); hc.appendChild(hb); host.appendChild(hc); }
   }
 
   /* ---------------------------------------------------------------- invoices */
@@ -457,7 +479,7 @@ window.Books = (function (A) {
       if (r !== "ok") return;
       inv.no = nextNo(); S.settings.nextInvoice++;
       if (b && b.status === "enquiry") { if (!conflict(Object.assign({}, b, { status: "confirmed" }))) { b.status = "confirmed"; stamp(b); } else toast("The booking stays an enquiry — " + conflict(Object.assign({}, b, { status: "confirmed" })) + ".", "err"); }
-      S.invoices.push(stamp(inv)); save(); A.go("invoices/" + inv.id); toast("Invoice " + inv.no + " created.", "ok");
+      S.invoices.push(stamp(inv)); logIt("invoice", "created", inv.no + " · " + (inv.customer.name || "") + " · " + money(invTotals(inv).total) + (b ? " · for " + b.ref : ""), "#invoices/" + inv.id, b ? b.ref : inv.no); save(); A.go("invoices/" + inv.id); toast("Invoice " + inv.no + " created.", "ok");
     });
   }
   function recordPayment(inv) {
@@ -472,7 +494,7 @@ window.Books = (function (A) {
     node.appendChild(fld("Reference", p, "ref", { placeholder: "Transfer reference, receipt number" }));
     A.dialog({ title: "Record a payment", node: node, actions: [["Cancel", "btn--ghost", null], ["Record", "btn--go", "ok"]], validate: function () { return validate(node) && Number(p.amount) > 0; } }).then(function (r) {
       if (r !== "ok") return;
-      S.payments.push(stamp(p)); save(); A.render(); toast("Payment recorded.", "ok");
+      S.payments.push(stamp(p)); var pi = byId(L("invoices"), p.invoiceId) || {}; logIt("payment", "received", money(p.amount) + " on " + (pi.no || "?") + " · " + (pi.customer && pi.customer.name || "") + " · " + p.method, "#invoices/" + p.invoiceId, pi.no); save(); A.render(); toast("Payment recorded.", "ok");
     });
   }
   A.register({ id: "invoices", group: "Books", label: "Invoices", icon: "inv", badge: function () { return S ? (L("invoices").filter(function (i) { return invStatus(i)[0] === "overdue"; }).length || "") : ""; }, render: function (host, arg) {
@@ -494,7 +516,7 @@ window.Books = (function (A) {
       E("div", { class: "acts" }, [syncBadge(),
         x.balance > 0 ? E("button", { class: "btn btn--go", type: "button", text: "Record payment", onclick: function () { recordPayment(inv); } }) : null,
         E("button", { class: "btn btn--ghost", type: "button", html: svg("print") + " Print / PDF", onclick: function () { window.print(); } }),
-        x.paid === 0 ? E("button", { class: "btn btn--bad btn--sm", type: "button", text: "Delete", onclick: function () { A.confirm("Delete " + inv.no + "?", "It has no payments against it. The number will not be reused.", "Delete", true).then(function (ok) { if (ok) { remove("invoices", inv.id); save(); A.go("invoices"); } }); } }) : null
+        x.paid === 0 ? E("button", { class: "btn btn--bad btn--sm", type: "button", text: "Delete", onclick: function () { A.confirm("Delete " + inv.no + "?", "It has no payments against it. The number will not be reused.", "Delete", true).then(function (ok) { if (ok) { remove("invoices", inv.id); logIt("invoice", "deleted", inv.no + " · " + (inv.customer.name || ""), "", inv.no); save(); A.go("invoices"); } }); } }) : null
       ])]));
     var paper = E("div", { class: "paper" });
     paper.appendChild(E("div", { class: "paper__top" }, [
@@ -516,7 +538,7 @@ window.Books = (function (A) {
     if (foot) paper.appendChild(E("div", { class: "paper__foot", text: foot }));
     host.appendChild(paper);
     var pays = L("payments").filter(function (p) { return p.invoiceId === inv.id; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
-    if (pays.length) host.appendChild(E("div", { class: "card noprint" }, [E("h3", { text: "Payments" }), table([["Date"], ["Method"], ["Reference"], ["Amount", "r"], [""]], pays.map(function (p) { return { item: p, cells: [fmtDate(p.date), (METHODS.filter(function (m) { return m[0] === p.method; })[0] || [])[1] || p.method, p.ref || "—", money(p.amount), A.iconBtn("trash", "Remove payment", function () { A.confirm("Remove this payment?", money(p.amount) + " on " + fmtDate(p.date) + ".", "Remove", true).then(function (ok) { if (ok) { remove("payments", p.id); save(); A.render(); } }); })] }; }))]));
+    if (pays.length) host.appendChild(E("div", { class: "card noprint" }, [E("h3", { text: "Payments" }), table([["Date"], ["Method"], ["Reference"], ["Amount", "r"], [""]], pays.map(function (p) { return { item: p, cells: [fmtDate(p.date), (METHODS.filter(function (m) { return m[0] === p.method; })[0] || [])[1] || p.method, p.ref || "—", money(p.amount), A.iconBtn("trash", "Remove payment", function () { A.confirm("Remove this payment?", money(p.amount) + " on " + fmtDate(p.date) + ".", "Remove", true).then(function (ok) { if (ok) { remove("payments", p.id); logIt("payment", "removed", money(p.amount) + " on " + inv.no + " · " + fmtDate(p.date), "#invoices/" + inv.id, inv.no); save(); A.render(); } }); })] }; }))]));
   }
 
   /* ---------------------------------------------------------------- payments */
@@ -539,7 +561,7 @@ window.Books = (function (A) {
   }
   A.register({ id: "expenses", group: "Books", label: "Expenses", icon: "card", render: function (host) {
     var m = A.lsGet("cv:books:exm", "all");
-    head(host, "Expenses", "Fuel, crew, marina, food, maintenance — what it costs to run the day.", E("button", { class: "btn btn--go", type: "button", text: "Add expense", onclick: function () { var x = { id: A.uid(), date: today(), category: "fuel", amount: null, desc: "", paidBy: "bank" }; expenseForm(x, "Add expense", function () { S.expenses.push(stamp(x)); save(); A.render(); }); } }));
+    head(host, "Expenses", "Fuel, crew, marina, food, maintenance — what it costs to run the day.", E("button", { class: "btn btn--go", type: "button", text: "Add expense", onclick: function () { var x = { id: A.uid(), date: today(), category: "fuel", amount: null, desc: "", paidBy: "bank" }; expenseForm(x, "Add expense", function () { S.expenses.push(stamp(x)); logIt("expense", "added", money(x.amount) + " · " + x.desc + " · " + x.category, "#expenses"); save(); A.render(); }); } }));
     var months = {}; L("expenses").forEach(function (e) { months[monthKey(e.date)] = 1; });
     var mopts = [["all", "All months"]].concat(Object.keys(months).sort().reverse().map(function (k) { return [k, new Date(k + "-01T00:00:00").toLocaleDateString("en-GB", { month: "long", year: "numeric" })]; }));
     var sel = E("select", {}); mopts.forEach(function (o) { sel.appendChild(E("option", { value: o[0], text: o[1], selected: o[0] === m })); });
@@ -550,7 +572,7 @@ window.Books = (function (A) {
     card.appendChild(E("div", { class: "filters" }, [E("div", { class: "field", style: "min-width:200px" }, [sel]), E("span", { class: "badge", text: "Total " + money(total) }),
       E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Export CSV", onclick: function () { csv("coravida-expenses.csv", [["Date", "Category", "Description", "Paid from", "Amount"]].concat(L("expenses").map(function (e) { return [e.date, e.category, e.desc, e.paidBy, e.amount]; }))); } })]));
     card.appendChild(rows.length ? table([["Date"], ["Category"], ["What for"], ["Paid from"], ["Amount", "r"], [""]], rows.map(function (e) { return { item: e, cells: [fmtDate(e.date), (CATS.filter(function (c) { return c[0] === e.category; })[0] || [])[1] || e.category, E("span", { class: "t", text: e.desc }), e.paidBy, money(e.amount),
-      E("span", { class: "acts" }, [A.iconBtn("chev", "Edit", function () { var c = JSON.parse(JSON.stringify(e)); expenseForm(c, "Edit expense", function () { Object.assign(e, c); stamp(e); save(); A.render(); }); }), A.iconBtn("trash", "Remove", function () { A.confirm("Remove this expense?", e.desc + " — " + money(e.amount), "Remove", true).then(function (ok) { if (ok) { remove("expenses", e.id); save(); A.render(); } }); })])] }; }), null, true)
+      E("span", { class: "acts" }, [A.iconBtn("chev", "Edit", function () { var c = JSON.parse(JSON.stringify(e)); expenseForm(c, "Edit expense", function () { Object.assign(e, c); stamp(e); logIt("expense", "edited", money(e.amount) + " · " + e.desc, "#expenses"); save(); A.render(); }); }), A.iconBtn("trash", "Remove", function () { A.confirm("Remove this expense?", e.desc + " — " + money(e.amount), "Remove", true).then(function (ok) { if (ok) { remove("expenses", e.id); logIt("expense", "removed", money(e.amount) + " · " + e.desc, "#expenses"); save(); A.render(); } }); })])] }; }), null, true)
       : empty("No expenses " + (m === "all" ? "yet" : "this month"), "Add fuel, crew and marina costs as they happen and the reports do the rest."));
     host.appendChild(card);
   } });
@@ -604,6 +626,8 @@ window.Books = (function (A) {
     card.appendChild(E("div", {}, [E("p", { class: "kpi__k", text: "The next two weeks" }), strip]));
     if (!next.length) card.appendChild(E("p", { class: "small mute", text: "Nothing booked from today." }));
     else card.appendChild(E("div", { class: "list" }, next.map(function (b) { return E("div", { class: "list__i" }, [E("div", {}, [E("a", { href: "#bookings/" + b.id, text: fmtDate(b.date) + " · " + (b.customer.name || "—") }), E("div", { class: "s", text: (b.excursionTitle || "Custom") + " · " + b.guests + " guests" })]), bookingBadge(b)]); })));
+    var recent = L("log").slice().sort(function (a, b) { return a.at < b.at ? 1 : -1; }).slice(0, 5);
+    if (recent.length) card.appendChild(E("div", {}, [E("p", { class: "kpi__k", text: "Latest changes" }), E("div", { class: "list" }, recent.map(function (e) { return E("div", { class: "list__i" }, [E("div", {}, [E(e.link ? "a" : "span", { href: e.link || null, text: e.text }), E("div", { class: "s", text: e.act + " · " + e.who + " · " + new Date(e.at).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) })])]); })), E("a", { class: "small", href: "#history", text: "All history →" })]));
     var over = L("invoices").filter(function (i) { return invStatus(i)[0] === "overdue"; });
     if (over.length) card.appendChild(E("div", { class: "note note--warn", html: over.length + " overdue invoice" + (over.length > 1 ? "s" : "") + " — <a href='#invoices'>see them</a>." }));
     return card;
@@ -615,15 +639,17 @@ window.Books = (function (A) {
     card.appendChild(E("div", { class: "fg fg2" }, [fld("Next invoice number", st, "nextInvoice", { type: "number", min: 1, step: 1 }), fld("Next booking number", st, "nextBooking", { type: "number", min: 1, step: 1 })]));
     card.appendChild(fld("Bank details (printed on invoices)", st, "bank", { type: "textarea", placeholder: "Bank of Maldives\nCoravida Marine Services Pvt Ltd\nUSD account 7730 000 123 456\nSWIFT MALBMVMV" }));
     card.appendChild(fld("Footer line", st, "footer", { type: "textarea" }));
+    var dev = { name: A.lsGet("cv:device", "") };
+    card.appendChild(fld("This device is called", dev, "name", { placeholder: device(), help: "Written next to every change in History, so the office knows which phone or laptop did what.", onchange: function (v) { A.lsSet("cv:device", String(v || "").trim()); } }));
     card.appendChild(E("div", { class: "acts acts--between" }, [
       E("div", { class: "acts" }, [
         E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Download backup", onclick: function () { var a = E("a", { href: "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(S, null, 2)), download: "coravida-books-" + today() + ".json" }); document.body.appendChild(a); a.click(); a.remove(); } }),
-        E("label", { class: "btn btn--ghost btn--sm" }, ["Restore backup", E("input", { type: "file", accept: "application/json", hidden: true, onchange: function (e) { var f = e.target.files[0]; if (!f) return; f.text().then(function (txt) { var j = JSON.parse(txt); if (!j || !j.bookings) throw new Error("not a books file"); return A.confirm("Restore this backup?", "It replaces everything in the books with the file's contents.", "Restore", true).then(function (ok) { if (ok) { S = shape(j); LISTS.forEach(function (k) { S[k].forEach(function (x) { delete x.deleted; stamp(x); }); }); S.settings.updated = new Date().toISOString(); save(true); A.render(); } }); }).catch(function (x) { toast("Could not restore: " + x.message, "err"); }); } })]),
-        E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Load sample data", onclick: function () { A.confirm("Load sample data?", "Adds a few example bookings, invoices and expenses so you can see how the books work. Clear them again from here.", "Load").then(function (ok) { if (ok) { sample(); save(); A.render(); toast("Sample data loaded.", "ok"); } }); } })
+        E("label", { class: "btn btn--ghost btn--sm" }, ["Restore backup", E("input", { type: "file", accept: "application/json", hidden: true, onchange: function (e) { var f = e.target.files[0]; if (!f) return; f.text().then(function (txt) { var j = JSON.parse(txt); if (!j || !j.bookings) throw new Error("not a books file"); return A.confirm("Restore this backup?", "It replaces everything in the books with the file's contents.", "Restore", true).then(function (ok) { if (ok) { S = shape(j); LISTS.forEach(function (k) { S[k].forEach(function (x) { delete x.deleted; stamp(x); }); }); S.settings.updated = new Date().toISOString(); logIt("books", "restored", "Backup file restored: " + L("bookings").length + " bookings, " + L("invoices").length + " invoices", "#history"); save(true); A.render(); } }); }).catch(function (x) { toast("Could not restore: " + x.message, "err"); }); } })]),
+        E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Load sample data", onclick: function () { A.confirm("Load sample data?", "Adds a few example bookings, invoices and expenses so you can see how the books work. Clear them again from here.", "Load").then(function (ok) { if (ok) { sample(); logIt("books", "sample", "Sample data loaded", "#history"); save(); A.render(); toast("Sample data loaded.", "ok"); } }); } })
       ]),
-      E("button", { class: "btn btn--bad btn--sm", type: "button", text: "Clear all books", onclick: function () { A.confirm("Clear every booking, invoice, payment and expense?", "Settings stay. Download a backup first if in doubt.", "Clear everything", true).then(function (ok) { if (ok) { ["bookings", "invoices", "payments", "expenses", "blocks"].forEach(function (k) { (S[k] || []).forEach(function (x) { x.deleted = true; stamp(x); }); }); S.settings.nextInvoice = 1; S.settings.nextBooking = 1; save(); A.render(); } }); } })
+      E("button", { class: "btn btn--bad btn--sm", type: "button", text: "Clear all books", onclick: function () { A.confirm("Clear every booking, invoice, payment and expense?", "Settings stay. Download a backup first if in doubt.", "Clear everything", true).then(function (ok) { if (ok) { var n = L("bookings").length; ["bookings", "invoices", "payments", "expenses", "blocks"].forEach(function (k) { (S[k] || []).forEach(function (x) { x.deleted = true; stamp(x); }); }); S.settings.nextInvoice = 1; S.settings.nextBooking = 1; logIt("books", "cleared", "Everything cleared (" + n + " bookings) — earlier versions remain on GitHub", "#history"); save(); A.render(); } }); } })
     ]));
-    card.appendChild(E("button", { class: "btn btn--go", type: "button", text: "Save books settings", onclick: function () { st.updated = new Date().toISOString(); save(); toast("Saved.", "ok"); } }));
+    card.appendChild(E("button", { class: "btn btn--go", type: "button", text: "Save books settings", onclick: function () { st.updated = new Date().toISOString(); logIt("settings", "saved", "T-GST " + st.tgst + "% · " + st.currency + " · invoices " + st.prefix + "-", "#settings"); save(); toast("Saved.", "ok"); } }));
     return card;
   }
   function sample() {
@@ -654,5 +680,5 @@ window.Books = (function (A) {
   return { load: load, save: save, summary: summary, money: money, overviewCard: overviewCard, settingsCard: settingsCard, data: function () { return S; },
            live: L, today: today, addDays: addDays, daysBetween: daysBetween, fmtDate: fmtDate, iso: iso, parse: parse,
            occupancy: occupancy, conflict: conflict, block: block, unblock: unblock, availability: availability, blocksOn: blocksOn,
-           SLOTS: SLOTS, REASONS: REASONS, slotLabel: slotLabel, reasonLabel: reasonLabel, slotFor: slotFor, newBooking: newBooking, editBooking: editBooking, sync: drawSync, undo: undo, joinDone: joinDone, nameOf: nameOf, clashCheck: clashCheck };
+           SLOTS: SLOTS, REASONS: REASONS, slotLabel: slotLabel, reasonLabel: reasonLabel, slotFor: slotFor, newBooking: newBooking, editBooking: editBooking, sync: drawSync, undo: undo, joinDone: joinDone, nameOf: nameOf, clashCheck: clashCheck, logIt: logIt, device: device, invTotals: invTotals, shape: shape, setAll: function (x) { S = shape(x); } };
 })(window.Admin);
