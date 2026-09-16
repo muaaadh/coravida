@@ -1,17 +1,13 @@
 /* ==========================================================================
    CORAVIDA — admin core.
-   The website's content lives in content/site.json on GitHub; the books live
-   in a private repository of their own. Both are read and written through the
-   GitHub Contents API with a fine-grained token the operator pastes once. A
-   GitHub Action rebuilds the pages after every content commit, so an edit is
-   live about two minutes after Publish. No framework, no build step.
+   Everything lives in one Supabase project — the website's content, the
+   books, the inbox — behind a staff login. Publishing writes the content to
+   the database and asks Vercel to rebuild the site. No framework, no build.
    ========================================================================== */
 window.Admin = (function () {
   "use strict";
 
-  var DEFAULTS = { owner: "muaaadh", repo: "coravida", branch: "main", path: "content/site.json",
-                   booksRepo: "coravida-books", booksPath: "books.json", api: "https://api.github.com" };
-  var KEY = { settings: "cv:admin:settings", token: "cv:admin:token", remember: "cv:admin:remember", draft: "cv:admin:draft", uploads: "cv:admin:uploads" };
+  var KEY = { draft: "cv:admin:draft", uploads: "cv:admin:uploads", email: "cv:admin:email" };
 
   /* ---------------------------------------------------------------- dom */
   var $ = function (s, c) { return (c || document).querySelector(s); };
@@ -93,75 +89,10 @@ window.Admin = (function () {
   }
 
   /* ------------------------------------------------------------ storage */
-  function settings() { try { return Object.assign({}, DEFAULTS, JSON.parse(localStorage.getItem(KEY.settings) || "{}")); } catch (e) { return Object.assign({}, DEFAULTS); } }
-  function saveSettings(s) { localStorage.setItem(KEY.settings, JSON.stringify(s)); }
-  function token() { return sessionStorage.getItem(KEY.token) || localStorage.getItem(KEY.token) || ""; }
-  function setToken(v, remember) {
-    sessionStorage.removeItem(KEY.token); localStorage.removeItem(KEY.token);
-    if (!v) return;
-    (remember ? localStorage : sessionStorage).setItem(KEY.token, v);
-    localStorage.setItem(KEY.remember, remember ? "1" : "");
-  }
   function lsGet(k, d) { try { var v = JSON.parse(localStorage.getItem(k) || "null"); return v == null ? d : v; } catch (e) { return d; } }
   function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* full or blocked — keep working */ } }
-
-  /* ------------------------------------------------------------ github */
-  function b64encodeUtf8(str) {
-    var bytes = new TextEncoder().encode(str), bin = "";
-    for (var i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
-    return btoa(bin);
-  }
-  function b64decodeUtf8(b64) {
-    var bin = atob(String(b64).replace(/\s+/g, "")), bytes = new Uint8Array(bin.length);
-    for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-    return new TextDecoder().decode(bytes);
-  }
-  function ghHeaders() { return { Authorization: "Bearer " + token(), Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json" }; }
-  function ghUrl(repo, path) {
-    var s = settings();
-    return s.api.replace(/\/$/, "") + "/repos/" + encodeURIComponent(s.owner) + "/" + encodeURIComponent(repo) + "/contents/" + path.split("/").map(encodeURIComponent).join("/");
-  }
-  function ghMessage(res, repo) {
-    return res.json().catch(function () { return {}; }).then(function (j) {
-      var detail = j && j.message ? " GitHub said: “" + j.message + "”." : "";
-      switch (res.status) {
-        case 401: return "GitHub rejected the token (401) — it is missing, mistyped or expired. Paste a fresh one in Settings." + detail;
-        case 403: return "GitHub refused (403). The token needs Contents: read and write on " + settings().owner + "/" + repo + ", or a rate limit was hit." + detail;
-        case 404: return "Not found (404) on " + settings().owner + "/" + repo + " — check the repository name in Settings, and that the token can see it." + detail;
-        case 409: case 422: return "GitHub rejected the commit (" + res.status + ") — the file changed since it was loaded. Reload and try again." + detail;
-        default: return "GitHub returned " + res.status + " " + res.statusText + "." + detail;
-      }
-    });
-  }
-  function ghRead(repo, path, branch) {
-    if (!token()) return Promise.reject(new Error("No GitHub token. Add one in Settings."));
-    return fetch(ghUrl(repo, path) + "?ref=" + encodeURIComponent(branch || settings().branch), { headers: ghHeaders(), cache: "no-store" })
-      .then(function (res) {
-        if (res.status === 404) return { sha: null, text: null, missing: true };
-        if (!res.ok) return ghMessage(res, repo).then(function (m) { throw new Error(m); });
-        return res.json().then(function (j) { return { sha: j.sha, text: b64decodeUtf8(j.content || ""), htmlUrl: j.html_url }; });
-      });
-  }
-  function ghPut(repo, path, content64, message, sha, branch) {
-    var body = { message: message, content: content64, branch: branch || settings().branch };
-    if (sha) body.sha = sha;
-    return fetch(ghUrl(repo, path), { method: "PUT", headers: ghHeaders(), body: JSON.stringify(body) })
-      .then(function (res) { if (!res.ok) return ghMessage(res, repo).then(function (m) { var e = new Error(m); e.status = res.status; throw e; }); return res.json(); });
-  }
-  function ghPutText(repo, path, text, message, sha, branch) { return ghPut(repo, path, b64encodeUtf8(text), message, sha, branch); }
-  function ghRuns() {
-    var s = settings();
-    return fetch(s.api + "/repos/" + s.owner + "/" + s.repo + "/actions/runs?per_page=1&branch=" + encodeURIComponent(s.branch), { headers: ghHeaders(), cache: "no-store" })
-      .then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { return j && j.workflow_runs && j.workflow_runs[0] || null; }).catch(function () { return null; });
-  }
-  /* the versions of one file — every save is a commit, so this is the time machine */
-  function ghCommits(repo, path, n) {
-    var s = settings();
-    return fetch(s.api + "/repos/" + s.owner + "/" + repo + "/commits?path=" + encodeURIComponent(path) + "&per_page=" + (n || 40), { headers: ghHeaders(), cache: "no-store" })
-      .then(function (res) { if (!res.ok) return ghMessage(res, repo).then(function (m) { throw new Error(m); }); return res.json(); });
-  }
-  var actionsUrl = function () { return "https://github.com/" + settings().owner + "/" + settings().repo + "/actions"; };
   var siteUrl = function () { return new URL("../", location.href).href; };
+  var signedIn = function () { return !!(window.DB && DB.ready && DB.auth.user()); };
 
   /* ------------------------------------------------------------ sections & routing */
   var SECTIONS = [];
@@ -195,7 +126,7 @@ window.Admin = (function () {
   }
 
   /* ------------------------------------------------------------ content state */
-  var C = { baseline: null, draft: null, sha: null, readonly: true, dirty: false, media: null, uploads: [] };
+  var C = { baseline: null, draft: null, readonly: true, dirty: false, media: null, uploads: [] };
   var serialize = function (o) { return JSON.stringify(o, null, 2) + "\n"; };
   var canon = function (d) { return d ? serialize(d) : ""; };
   function setDirty(on) {
@@ -203,7 +134,7 @@ window.Admin = (function () {
     $("#dirty").hidden = !C.dirty;
     $("#btn-discard").hidden = !C.dirty;
     $("#btn-publish").disabled = !C.dirty || C.readonly;
-    if (C.dirty) lsSet(KEY.draft, { at: Date.now(), sha: C.sha, data: C.draft });
+    if (C.dirty) lsSet(KEY.draft, { at: Date.now(), data: C.draft });
     renderNav();
   }
   function changed() { setDirty(canon(C.draft) !== canon(C.baseline) || C.uploads.length > 0); }
@@ -213,19 +144,16 @@ window.Admin = (function () {
   }
 
   function loadContent() {
-    var s = settings();
-    if (token()) {
-      status("Connecting to GitHub…", "busy");
-      return ghRead(s.repo, s.path).then(function (r) {
-        if (r.missing) throw new Error("content/site.json is not in " + s.owner + "/" + s.repo + "@" + s.branch + ".");
-        C.baseline = JSON.parse(r.text); C.sha = r.sha; C.readonly = false;
-        status("Connected · " + s.owner + "/" + s.repo + " @ " + r.sha.slice(0, 7), "ok");
-      }).catch(function (e) {
-        status(e.message, "err"); toast(e.message, "err");
-        return loadPublished();
-      });
+    if (signedIn()) {
+      status("Loading…", "busy");
+      return DB.content.get("site").then(function (r) {
+        if (!r) return loadPublished().then(function () { if (C.baseline) return DB.content.set("site", C.baseline); });   // first run: seed from the built site
+        C.baseline = r.data; C.readonly = false;
+        status("Signed in · " + (DB.auth.user().email || ""), "ok");
+      }).catch(function (e) { status(e.message, "err"); toast(e.message, "err"); return loadPublished(); })
+        .then(function () { if (C.baseline) { C.readonly = false; status("Signed in · " + (DB.auth.user().email || ""), "ok"); } });
     }
-    return loadPublished().then(function () { status("Read-only — add a GitHub token in Settings to publish.", "warn"); });
+    return loadPublished().then(function () { status("Not signed in", "warn"); });
   }
   function loadPublished() {
     return fetch("../content/site.json", { cache: "no-store" }).then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
@@ -244,70 +172,61 @@ window.Admin = (function () {
     });
   }
 
-  var buildPoll = null;
-  function watchBuild(sinceIso) {
-    clearTimeout(buildPoll);
+  /* the site is rebuilt by Vercel; /api/publish holds the hook and checks the login */
+  function rebuild() {
+    return DB.auth.token().then(function (tok) {
+      return fetch("../api/publish", { method: "POST", headers: { Authorization: "Bearer " + tok } }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw new Error(j.error || ("The rebuild could not be started (HTTP " + r.status + ")")); return j; }); });
+    });
+  }
+  var buildT = null;
+  function watchBuild() {
+    clearTimeout(buildT);
     var t0 = Date.now();
-    (function poll() {
-      ghRuns().then(function (run) {
-        if (!run) { status("Committed — the site rebuilds in about two minutes.", "ok"); return; }
-        var fresh = new Date(run.created_at).getTime() >= new Date(sinceIso).getTime() - 15000;
-        if (!fresh || run.status !== "completed") {
-          status("Building the site… (" + Math.round((Date.now() - t0) / 1000) + "s)", "busy");
-          if (Date.now() - t0 < 12 * 60000) buildPoll = setTimeout(poll, 8000); else status("Still building — check Actions on GitHub.", "warn");
-          return;
-        }
-        if (run.conclusion === "success") { status("Live · published " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), "ok"); toast("The site is live with your changes.", "ok"); loadMedia(); }
-        else { status("The build failed — open Actions on GitHub to see why.", "err"); toast("The build failed. Open Actions on GitHub to see why.", "err"); }
-      });
+    status("Publishing — the site rebuilds in about two minutes…", "busy");
+    (function tick() {
+      var s = Math.round((Date.now() - t0) / 1000);
+      if (s > 150) { status("Live · published " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), "ok"); toast("The site should be live with your changes.", "ok"); loadMedia(); return; }
+      status("Publishing — the site rebuilds in about two minutes… (" + s + "s)", "busy");
+      buildT = setTimeout(tick, 5000);
     })();
   }
 
   function publish() {
-    if (C.readonly) return toast("Add a GitHub token in Settings first.", "err");
+    if (C.readonly) return toast("Sign in first.", "err");
     var bad = $$(".field.is-bad").length;
     if (bad) return toast("Fix the highlighted fields first.", "err");
     var secs = changedSections(), ups = C.uploads.slice();
     var node = E("div", {}, [
-      E("p", { text: "This commits your changes to GitHub. The site rebuilds itself and is live in about two minutes." }),
+      E("p", { text: "This saves your changes and rebuilds the website. It is live in about two minutes." }),
       secs.length ? E("p", { class: "small body", text: "Changed: " + secs.join(", ") + "." }) : null,
       ups.length ? E("p", { class: "small body", text: ups.length + " new photograph" + (ups.length > 1 ? "s" : "") + " will be uploaded first: " + ups.map(function (u) { return u.name; }).join(", ") + "." }) : null,
       secs.length ? E("p", { class: "note small", text: "Other languages keep their existing translations. Text you changed shows in English on the Russian, Chinese and German pages until Dheemi translates it." }) : null
     ]);
     dialog({ title: "Publish to the live site?", node: node, actions: [["Cancel", "btn--ghost", null], ["Publish", "btn--go", "ok"]] }).then(function (r) {
       if (r !== "ok") return;
-      var s = settings(), btn = $("#btn-publish"); btn.disabled = true;
+      var btn = $("#btn-publish"); btn.disabled = true;
       status("Publishing…", "busy");
       var chain = Promise.resolve();
       ups.forEach(function (u) {
         chain = chain.then(function () {
           status("Uploading " + u.name + "…", "busy");
-          return ghRead(s.repo, "assets/src/" + u.name + ".jpg").then(function (ex) {
-            return ghPut(s.repo, "assets/src/" + u.name + ".jpg", u.b64, "Photograph: " + u.name, ex.sha);
-          });
+          var bin = atob(u.b64), bytes = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+          return DB.storage.upload(u.name, new Blob([bytes], { type: "image/jpeg" }));
         });
       });
-      chain.then(function () {
-        status("Committing content…", "busy");
-        var msg = "Content: " + (secs.length ? secs.join(", ") : "photographs") + " (admin)";
-        return ghPutText(s.repo, s.path, serialize(C.draft), msg, C.sha);
-      }).then(function (j) {
-        C.baseline = clone(C.draft); C.sha = j.content.sha; C.uploads = []; lsSet(KEY.uploads, []); localStorage.removeItem(KEY.draft);
-        setDirty(false); toast("Published. Building the site…", "ok");
-        watchBuild(new Date().toISOString());
-        render();
-      }).catch(function (e) {
-        status(e.message, "err"); toast(e.message, "err"); btn.disabled = false;
-        if (e.status === 409 || e.status === 422) {
-          ghRead(s.repo, s.path).then(function (r) { C.sha = r.sha; toast("Reloaded the latest version from GitHub — check your edits and publish again.", "err"); });
-        }
-      });
+      chain.then(function () { status("Saving content…", "busy"); return DB.content.set("site", C.draft); })
+        .then(function () { return rebuild(); })
+        .then(function () {
+          C.baseline = clone(C.draft); C.uploads = []; lsSet(KEY.uploads, []); localStorage.removeItem(KEY.draft);
+          setDirty(false); toast("Saved. Rebuilding the site…", "ok"); watchBuild(); render();
+        })
+        .catch(function (e) { status(e.message, "err"); toast(e.message, "err"); btn.disabled = false; });
     });
   }
 
   /* ------------------------------------------------------------ overview */
   register({ id: "overview", group: "Overview", label: "Overview", icon: "home", render: function (host) {
-    var s = settings(), B = window.Books;
+    var B = window.Books;
     var k = E("div", { class: "kpis" });
     if (B) {
       var sum = B.summary();
@@ -320,7 +239,7 @@ window.Admin = (function () {
     var g = E("div", { class: "grid2" });
     // site
     var site = E("div", { class: "card" }, [
-      E("div", { class: "card__h" }, [E("div", {}, [E("h2", { text: "Website" }), E("p", { text: C.readonly ? "Read-only until a GitHub token is added in Settings." : "Connected to " + s.owner + "/" + s.repo + "." })]),
+      E("div", { class: "card__h" }, [E("div", {}, [E("h2", { text: "Website" }), E("p", { text: C.readonly ? "Sign in to edit." : "Signed in as " + (DB.auth.user().email || "staff") + "." })]),
         E("a", { class: "btn btn--ghost btn--sm", href: siteUrl(), target: "_blank", rel: "noopener", text: "Open site ↗" })])
     ]);
     var cs = changedSections();
@@ -336,52 +255,54 @@ window.Admin = (function () {
     });
     site.appendChild(quick);
     g.appendChild(site);
-    if (window.Inbox && token()) g.appendChild(window.Inbox.overviewCard());
+    if (window.Inbox && signedIn()) g.appendChild(window.Inbox.overviewCard());
     if (B) g.appendChild(B.overviewCard());
     host.appendChild(g);
-    if (token()) ghRuns().then(function (run) {
-      if (!run) return;
-      var when = new Date(run.updated_at).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
-      site.insertBefore(E("p", { class: "small body", html: "Last build: <b>" + esc(run.conclusion || run.status) + "</b> · " + esc(when) + " · <a href='" + actionsUrl() + "' target='_blank' rel='noopener'>Actions ↗</a>" }), quick);
-    });
   } });
   function kpi(k, v, n) { return E("div", { class: "kpi" }, [E("div", { class: "kpi__k", text: k }), E("div", { class: "kpi__v", text: v }), n ? E("div", { class: "kpi__n", text: n }) : null]); }
 
-  /* ------------------------------------------------------------ settings */
+  /* ------------------------------------------------------------ account */
   register({ id: "settings", group: "Settings", label: "Settings", icon: "cog", render: function (host) {
-    var s = settings();
-    var tok = E("input", { type: "password", id: "tok", value: token(), placeholder: "github_pat_…", autocomplete: "off", spellcheck: "false" });
-    var rem = E("input", { type: "checkbox", checked: localStorage.getItem(KEY.remember) === "1" });
-    var owner = E("input", { value: s.owner }), repo = E("input", { value: s.repo }), branch = E("input", { value: s.branch }), books = E("input", { value: s.booksRepo });
-    var f = function (label, input, help) { var w = E("div", { class: "field" }, [E("label", { text: label }), input]); if (help) w.appendChild(E("p", { class: "field__help", text: help })); return w; };
-    var card = E("div", { class: "card" }, [
-      E("div", { class: "card__h" }, [E("div", {}, [E("h2", { text: "GitHub access" }), E("p", { text: "One fine-grained token unlocks both the website content and the books." })])]),
-      E("div", { class: "note", html: "Create it at <a href='https://github.com/settings/personal-access-tokens/new' target='_blank' rel='noopener'>github.com/settings/personal-access-tokens/new</a>: " +
-        "<b>Repository access</b> → Only select repositories → <b>" + esc(s.repo) + "</b> and <b>" + esc(s.booksRepo) + "</b>; " +
-        "<b>Permissions</b> → Contents: <b>Read and write</b>, Actions: <b>Read-only</b> (so the editor can show the build). Set an expiry you are comfortable with and paste it here." }),
-      f("Personal access token", tok),
-      E("label", { class: "check" }, [rem, "Remember on this device (otherwise it is forgotten when the tab closes)"]),
-      E("div", { class: "fg fg3" }, [f("Owner", owner), f("Website repository", repo), f("Branch", branch)]),
-      f("Books repository", books, "A private repository of your own — bookings, invoices and expenses are kept there, never on the public site."),
-      E("div", { class: "acts acts--between" }, [
-        E("button", { class: "btn btn--ghost", type: "button", text: "Forget token", onclick: function () { setToken("", false); tok.value = ""; toast("Token forgotten on this device."); } }),
-        E("button", { class: "btn btn--go", type: "button", text: "Save and connect", onclick: function () {
-          saveSettings({ owner: owner.value.trim() || DEFAULTS.owner, repo: repo.value.trim() || DEFAULTS.repo, branch: branch.value.trim() || DEFAULTS.branch, booksRepo: books.value.trim() || DEFAULTS.booksRepo });
-          setToken(tok.value.trim(), rem.checked);
-          toast("Saved. Connecting…"); boot();
-        } })
-      ])
-    ]);
+    var u = DB.ready ? DB.auth.user() : null;
+    var card = E("div", { class: "card" }, [E("div", { class: "card__h" }, [E("div", {}, [E("h2", { text: "Your account" }), E("p", { text: u ? "Signed in as " + u.email : "Not signed in." })])])]);
+    if (u) {
+      var p1 = E("input", { type: "password", autocomplete: "new-password", placeholder: "At least 8 characters" }), p2 = E("input", { type: "password", autocomplete: "new-password" });
+      card.appendChild(E("div", { class: "fg fg2" }, [E("div", { class: "field" }, [E("label", { text: "New password" }), p1]), E("div", { class: "field" }, [E("label", { text: "Again" }), p2])]));
+      card.appendChild(E("div", { class: "acts acts--between" }, [
+        E("button", { class: "btn btn--ghost", type: "button", text: "Sign out", onclick: function () { DB.auth.signOut().then(function () { location.reload(); }); } }),
+        E("button", { class: "btn btn--go", type: "button", text: "Change password", onclick: function () { if (p1.value.length < 8) return toast("Use at least 8 characters.", "err"); if (p1.value !== p2.value) return toast("The two passwords differ.", "err"); DB.auth.setPassword(p1.value).then(function () { p1.value = p2.value = ""; toast("Password changed.", "ok"); }).catch(function (e) { toast(e.message, "err"); }); } })
+      ]));
+      card.appendChild(E("p", { class: "small mute", text: "New staff accounts are created by Dheemi. Each person signs in with their own email and password on any device." }));
+    }
     host.appendChild(card);
     if (window.Books) host.appendChild(window.Books.settingsCard());
     host.appendChild(E("div", { class: "card" }, [
       E("h2", { text: "How publishing works" }),
-      E("p", { class: "body", html: "Edits are kept as a draft in this browser until you press <b>Publish</b>. Publish commits <code>content/site.json</code> (and any new photographs) to GitHub; a GitHub Action then rebuilds all 48 pages in four languages and republishes the site — about two minutes. New photographs are cut to web sizes during that build." }),
-      E("p", { class: "body", html: "Translations: Russian, Chinese and German are maintained by Dheemi. Anything you change shows in English on those pages until it is translated." }),
-      E("p", { class: "small mute", html: "Admin build " + esc(VERSION) + " · <a href='" + actionsUrl() + "' target='_blank' rel='noopener'>Actions on GitHub ↗</a>" })
+      E("p", { class: "body", html: "Edits are kept as a draft in this browser until you press <b>Publish</b>. Publish saves the content to the database and rebuilds the website — about two minutes. New photographs are cut to web sizes during that build." }),
+      E("p", { class: "body", html: "The books, the calendar and the inbox save as you go and are shared by every device the moment they change." }),
+      E("p", { class: "small mute", text: "Admin build " + VERSION })
     ]));
   } });
-  var VERSION = "2026.09.12";
+  var VERSION = "2026.09.16";
+
+  /* ------------------------------------------------------------ sign in */
+  function login() {
+    var host = $("#view"); host.innerHTML = ""; $("#topH").textContent = "Sign in"; document.title = "Sign in · Coravida Admin";
+    $("#nav").innerHTML = ""; $("#btn-publish").disabled = true; $("#dirty").hidden = true; $("#btn-discard").hidden = true;
+    if (!DB.ready) { host.appendChild(E("div", { class: "note note--bad", text: DB.reason })); return; }
+    var em = E("input", { type: "email", autocomplete: "username", value: lsGet(KEY.email, ""), placeholder: "you@coravida.com" }), pw = E("input", { type: "password", autocomplete: "current-password" });
+    var form = E("form", { class: "login card", onsubmit: function (e) {
+      e.preventDefault(); var b = $("button[type=submit]", form); b.disabled = true; status("Signing in…", "busy");
+      DB.auth.signIn(em.value.trim(), pw.value).then(function () { lsSet(KEY.email, em.value.trim()); boot(); }).catch(function (x) { b.disabled = false; status("", ""); toast(x.message === "Invalid login credentials" ? "That email and password do not match." : x.message, "err"); });
+    } }, [
+      E("h2", { text: "Coravida admin" }), E("p", { class: "body", text: "Sign in with your staff email and password." }),
+      E("div", { class: "field" }, [E("label", { text: "Email" }), em]), E("div", { class: "field" }, [E("label", { text: "Password" }), pw]),
+      E("div", { class: "acts acts--between" }, [E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Forgotten password", onclick: function () { if (!em.value) return toast("Type your email first.", "err"); DB.auth.reset(em.value.trim()).then(function () { toast("Check your email for the reset link.", "ok"); }).catch(function (x) { toast(x.message, "err"); }); } }), E("button", { class: "btn btn--go", type: "submit", text: "Sign in" })])
+    ]);
+    host.appendChild(E("div", { class: "login__wrap" }, [form]));
+    setTimeout(function () { (em.value ? pw : em).focus(); }, 50);
+    status("", "");
+  }
 
   /* ------------------------------------------------------------ boot */
   var booted = false;
@@ -391,27 +312,30 @@ window.Admin = (function () {
       $("#btn-publish").addEventListener("click", publish);
       $("#btn-discard").addEventListener("click", discard);
       $("#menuBtn").addEventListener("click", openSide); $("#sideX").addEventListener("click", closeSide); $("#scrim").addEventListener("click", closeSide);
-      window.addEventListener("hashchange", render);
+      window.addEventListener("hashchange", function () { if (signedIn()) render(); });
       window.addEventListener("beforeunload", function (e) { if (C.dirty && !C.readonly) { e.preventDefault(); e.returnValue = ""; } });
       $("#sideVer").textContent = VERSION;
+      if (DB.ready) DB.auth.onChange(function (u, ev) { if (ev === "SIGNED_OUT") login(); if (ev === "PASSWORD_RECOVERY") { location.hash = "#settings"; toast("Set a new password below.", "ok"); } });
     }
-    C.uploads = lsGet(KEY.uploads, []);
-    Promise.all([loadContent(), loadMedia(), window.Books ? window.Books.load() : Promise.resolve()]).then(function () {
-      if (window.Inbox && token()) window.Inbox.load(true);
-      var d = lsGet(KEY.draft, null);
-      if (C.baseline && d && d.data && canon(d.data) !== canon(C.baseline)) {
-        C.draft = d.data; setDirty(true);
-        toast("Restored your unsaved draft from " + new Date(d.at).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ".");
-      } else { C.draft = C.baseline ? clone(C.baseline) : null; setDirty(C.uploads.length > 0); }
-      if (!C.draft && route().id !== "settings" && route().id !== "overview") location.hash = "#settings";
-      render();
+    var start = DB.ready ? DB.auth.session() : Promise.resolve(null);
+    start.then(function (session) {
+      if (!session) return login();
+      C.uploads = lsGet(KEY.uploads, []);
+      return Promise.all([loadContent(), loadMedia(), window.Books ? window.Books.load() : Promise.resolve()]).then(function () {
+        if (window.Inbox) window.Inbox.load(true);
+        var d = lsGet(KEY.draft, null);
+        if (C.baseline && d && d.data && canon(d.data) !== canon(C.baseline)) {
+          C.draft = d.data; setDirty(true);
+          toast("Restored your unsaved draft from " + new Date(d.at).toLocaleString([], { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ".");
+        } else { C.draft = C.baseline ? clone(C.baseline) : null; setDirty(C.uploads.length > 0); }
+        render();
+      });
     });
   }
 
   return { boot: boot, register: register, route: route, go: go, render: render, renderNav: renderNav,
            E: E, $: $, $$: $$, esc: esc, clone: clone, slug: slug, uid: uid, svg: svg, iconBtn: iconBtn,
            toast: toast, status: status, dialog: dialog, confirm: confirm,
-           settings: settings, token: token, lsGet: lsGet, lsSet: lsSet, KEY: KEY,
-           gh: { read: ghRead, put: ghPut, putText: ghPutText, runs: ghRuns, commits: ghCommits },
+           lsGet: lsGet, lsSet: lsSet, KEY: KEY, signedIn: signedIn,
            C: C, changed: changed, kpi: kpi, siteUrl: siteUrl };
 })();

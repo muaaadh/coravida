@@ -1,0 +1,7 @@
+{
+  "name": "coravida",
+  "private": true,
+  "description": "Coravida — website, admin and books. Vanilla; Vercel runs tools/vercel-build.js.",
+  "scripts": { "build": "node tools/vercel-build.js" },
+  "devDependencies": { "sharp": "^0.34.3" }
+}

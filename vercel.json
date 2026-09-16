@@ -1,0 +1,10 @@
+{
+  "buildCommand": "node tools/vercel-build.js",
+  "outputDirectory": "_site",
+  "framework": null,
+  "functions": { "api/*.js": { "maxDuration": 10 } },
+  "headers": [
+    { "source": "/content/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store" }] },
+    { "source": "/assets/(.*)\\.(webp|mp4|mp3|woff2)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }] }
+  ]
+}

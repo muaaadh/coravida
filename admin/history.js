@@ -1,8 +1,6 @@
 /* ==========================================================================
    CORAVIDA — history.
-   Two records of everything: the log the books write on every change (who,
-   when, what), and the versions GitHub keeps — one commit per save — any of
-   which can be looked at or put back.
+   The log the books write on every change: who, when, what.
    ========================================================================== */
 (function (A) {
   "use strict";
@@ -36,7 +34,7 @@
 
   A.register({ id: "history", group: "Books", label: "History", icon: "clock", order: 9, render: function (host) {
     var kind = A.lsGet("cv:hist:k", "all"), q = "";
-    host.appendChild(E("div", { class: "pagehead" }, [E("div", {}, [E("h2", { text: "History" }), E("p", { text: "Every change to the books, by whom and when — and every earlier version, kept on GitHub." })]), E("span", { class: "booksSync badge" })]));
+    host.appendChild(E("div", { class: "pagehead" }, [E("div", {}, [E("h2", { text: "History" }), E("p", { text: "Every change to the books, by whom and when." })]), E("span", { class: "booksSync badge" })]));
     var card = E("div", { class: "card" }), body = E("div", { class: "hist" });
     var search = E("input", { placeholder: "Search a name, a reference, a date…" });
     var seg = E("div", { class: "seg" }); KINDS.forEach(function (k) { seg.appendChild(E("button", { type: "button", class: k[0] === kind ? "on" : "", text: k[1], onclick: function () { kind = k[0]; A.lsSet("cv:hist:k", kind); $$("button", seg).forEach(function (b, i) { b.classList.toggle("on", KINDS[i][0] === kind); }); draw(); } })); });
@@ -58,62 +56,11 @@
     B.sync();
   } });
 
-  /* the GitHub side: one commit per save */
+  /* where the record itself lives */
   function versions() {
-    var card = E("div", { class: "card" }), body = E("div");
-    card.appendChild(E("div", { class: "card__h" }, [E("div", {}, [E("h2", { text: "Earlier versions" }), E("p", { text: "The books are saved to your private repository on every change. Any version can be looked at, or put back." })])]));
-    card.appendChild(body);
-    if (!A.token()) { body.appendChild(E("div", { class: "note note--warn", html: "Add a GitHub token in <a href='#settings'>Settings</a> to see the versions kept on GitHub." })); return card; }
-    var s = A.settings();
-    body.appendChild(E("p", { class: "small mute", text: "Loading versions…" }));
-    A.gh.commits(s.booksRepo, s.booksPath, 40).then(function (cs) {
-      body.innerHTML = "";
-      if (!cs.length) return body.appendChild(E("p", { class: "small mute", text: "No versions yet." }));
-      var lst = E("div", { class: "list" });
-      cs.forEach(function (c, i) {
-        var d = new Date(c.commit.author.date), msg = c.commit.message.split("\n")[0];
-        lst.appendChild(E("div", { class: "list__i" }, [
-          E("div", {}, [E("b", { style: "font-weight:500", text: d.toLocaleString([], { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" }) + (i === 0 ? " · current" : "") }), E("div", { class: "s", text: msg + " · " + c.sha.slice(0, 7) })]),
-          E("div", { class: "acts" }, [
-            E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Look", onclick: function () { peek(c); } }),
-            i ? E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Put back", onclick: function () { putBack(c); } }) : null
-          ])
-        ]));
-      });
-      body.appendChild(lst);
-      body.appendChild(E("p", { class: "small mute", html: "Older still: the full history is in the repository — <a href='https://github.com/" + esc(s.owner) + "/" + esc(s.booksRepo) + "/commits/main/" + esc(s.booksPath) + "' target='_blank' rel='noopener'>see it on GitHub ↗</a>." }));
-    }).catch(function (e) { body.innerHTML = ""; body.appendChild(E("div", { class: "note note--bad", text: e.message })); });
-    return card;
+    return E("div", { class: "card" }, [E("h2", { text: "Where this is kept" }),
+      E("p", { class: "body", text: "The books live in the Coravida database, shared by every device the moment something changes. Nothing is ever deleted outright — a removed record is only marked, so it stays in this history — and Settings offers a full backup file at any time." })]);
   }
-  function fetchVersion(c) { var s = A.settings(); return A.gh.read(s.booksRepo, s.booksPath, c.sha).then(function (r) { return B.shape(JSON.parse(r.text)); }); }
-  function peek(c) {
-    fetchVersion(c).then(function (v) {
-      var live = function (k) { return (v[k] || []).filter(function (x) { return !x.deleted; }); };
-      var node = E("div", {}, [
-        E("p", { class: "body", text: "Saved " + new Date(c.commit.author.date).toLocaleString() + " from this version:" }),
-        E("ul", { class: "cal__skip" }, [
-          E("li", { text: live("bookings").length + " bookings (" + live("bookings").filter(function (b) { return b.status === "confirmed"; }).length + " confirmed)" }),
-          E("li", { text: live("invoices").length + " invoices, " + live("payments").length + " payments, " + live("expenses").length + " expenses" }),
-          E("li", { text: live("blocks").length + " blocked periods on the calendar" }),
-          E("li", { text: "T-GST " + v.settings.tgst + "% · next invoice " + v.settings.prefix + "-" + String(v.settings.nextInvoice).padStart(4, "0") })
-        ]),
-        E("p", { class: "small mute", text: "Put back replaces the books with this version; the version you have now stays on GitHub too, so nothing is ever lost." })
-      ]);
-      A.dialog({ title: "Version " + c.sha.slice(0, 7), node: node, actions: [["Close", "btn--ghost", null], ["Put back this version", "btn--go", "ok"]] }).then(function (r) { if (r === "ok") putBack(c); });
-    }).catch(function (e) { toast(e.message, "err"); });
-  }
-  function putBack(c) {
-    A.confirm("Put back the version from " + new Date(c.commit.author.date).toLocaleString() + "?", "The books go back to exactly what they were then. The current version stays on GitHub, so this can be undone the same way.", "Put back", true).then(function (ok) {
-      if (!ok) return;
-      fetchVersion(c).then(function (v) {
-        ["bookings", "invoices", "payments", "expenses", "blocks", "log"].forEach(function (k) { (v[k] || []).forEach(function (x) { x.updated = new Date().toISOString(); }); });
-        v.settings.updated = new Date().toISOString();
-        B.setAll(v); B.logIt("books", "restored", "Version " + c.sha.slice(0, 7) + " from " + new Date(c.commit.author.date).toLocaleString() + " put back", "#history"); B.save(true);
-        toast("Put back. The books are as they were.", "ok"); A.render();
-      }).catch(function (e) { toast(e.message, "err"); });
-    });
-  }
-
   /* the story of one booking, for its page */
   window.History = { forRef: function (ref, host) {
     var entries = B.live("log").filter(function (e) { return e.ref === ref; }).sort(function (a, b) { return a.at < b.at ? 1 : -1; });

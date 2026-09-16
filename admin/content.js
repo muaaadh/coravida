@@ -187,10 +187,10 @@
       E("div", { class: "fg fg3" }, [field("Address line 1", b.address, 0), field("Address line 2", b.address, 1), field("Address line 3", b.address, 2)])
     ]));
     host.appendChild(E("div", { class: "card" }, [
-      E("div", { class: "card__h" }, [E("div", {}, [E("h3", { text: "Where enquiries go" }), E("p", { text: "Every enquiry and contact message is offered to the visitor as a prepared WhatsApp or email to the details above. Add a form endpoint and it is also posted there automatically." })])]),
+      E("div", { class: "card__h" }, [E("div", {}, [E("h3", { text: "Where enquiries go" }), E("p", { text: "Every enquiry and contact message lands in the Inbox here, and is offered to the visitor as a prepared WhatsApp or email to the details above as well." })])]),
       E("div", { class: "fg fg2" }, [
-        field("Form endpoint (optional)", b.form, "endpoint", { type: "url", placeholder: "https://api.web3forms.com/submit", help: "Web3Forms, Formspree or any service that accepts JSON. Leave empty to rely on WhatsApp and email." }),
-        field("Access key (if the service needs one)", b.form, "key", { placeholder: "Web3Forms access key" })
+        field("Extra copy to a form service (optional)", b.form, "endpoint", { type: "url", placeholder: "https://api.web3forms.com/submit", help: "Only if you also want each enquiry emailed by a service like Web3Forms or Formspree. Leave empty otherwise." }),
+        field("Access key (if that service needs one)", b.form, "key", { placeholder: "Web3Forms access key" })
       ])
     ]));
   } });

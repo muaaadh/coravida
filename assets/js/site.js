@@ -977,15 +977,19 @@
   }
 
   var LANGTAG = LOC === "zh" ? "zh-CN" : LOC === "en" ? "en-GB" : LOC;
-  /* which days are gone: the live copy the office publishes the moment it
-     saves, then the static file in the repo as the fallback */
-  var takenCache = null;
+  /* which days are gone: the office publishes it to the database the moment
+     it saves; the static file in the repo is the fallback */
+  var ENV = window.CV_ENV || {}, takenCache = null;
+  function db(path, init) {
+    if (!ENV.SUPABASE_URL || !ENV.SUPABASE_ANON_KEY) return Promise.reject(new Error("no database"));
+    var h = Object.assign({ apikey: ENV.SUPABASE_ANON_KEY, Authorization: "Bearer " + ENV.SUPABASE_ANON_KEY }, (init && init.headers) || {});
+    return fetch(ENV.SUPABASE_URL + "/rest/v1/" + path, Object.assign({}, init || {}, { headers: h }));
+  }
   function loadTaken(cb) {
     if (takenCache) return cb(takenCache);
-    var F = (CV.brand || {}).form || {}, live = /\/api\/enquire\/?$/.test(F.endpoint || "") ? F.endpoint.replace(/\/api\/enquire\/?$/, "/api/availability") : "";
     var stat = function () { return fetch(u("content/availability.json"), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }); };
-    var first = live ? Promise.race([fetch(live, { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }), new Promise(function (res) { setTimeout(function () { res(null); }, 3500); })]).catch(function () { return null; }) : Promise.resolve(null);
-    first.then(function (j) { return (j && j.taken) ? j : stat(); }).then(function (j) { takenCache = (j && j.taken) || []; cb(takenCache); }).catch(function () { cb([]); });
+    var live = Promise.race([db("content?key=eq.availability&select=data", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (rows) { return rows && rows[0] ? rows[0].data : null; }), new Promise(function (res) { setTimeout(function () { res(null); }, 3500); })]).catch(function () { return null; });
+    live.then(function (j) { return (j && j.taken) ? j : stat(); }).then(function (j) { takenCache = (j && j.taken) || []; cb(takenCache); }).catch(function () { cb([]); });
   }
 
   /* ---- The calendar -------------------------------------------------------
@@ -1128,13 +1132,15 @@
       var steps = f.parentNode && $(".steps", f.parentNode); if (steps) steps.hidden = true;   // the form is done
       if (o) { o.classList.add("on"); o.scrollIntoView({ behavior: SLOW ? "auto" : "smooth", block: "center" }); }
     }
-    if (!F.endpoint) return show(false);
     var body = {}; Object.keys(d).forEach(function (k) { body[k] = [].concat(d[k]).join(", "); });
-    body.subject = subject; body.kind = kind; body.lang = LOC; body.page = location.pathname.split("/").pop() || "index.html"; if (F.key) body.access_key = F.key;
+    body.subject = subject; body.lang = LOC; body.page = location.pathname.split("/").pop() || "index.html";
+    if (body.website) return show(true);                       // the honeypot caught a robot
+    delete body.website;
     var btn = $('[type="submit"]', f); if (btn) btn.disabled = true;
-    fetch(F.endpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(body) })
-      .then(function (r) { show(r.ok); }, function () { show(false); })
-      .then(function () { if (btn) btn.disabled = false; });
+    var id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+    if (F.endpoint) { var extra = Object.assign({ kind: kind }, body); if (F.key) extra.access_key = F.key; fetch(F.endpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(extra) }).catch(function () {}); }   // an extra copy, if the office wants one
+    var sent = ENV.SUPABASE_URL ? db("inbox", { method: "POST", headers: { "Content-Type": "application/json", Prefer: "return=minimal" }, body: JSON.stringify({ id: id, kind: kind, data: body }) }).then(function (r) { return r.ok; }) : Promise.resolve(false);
+    sent.then(function (ok) { show(ok); }, function () { show(false); }).then(function () { if (btn) btn.disabled = false; });
   }
 
   function forms() {

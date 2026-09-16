@@ -1,36 +1,27 @@
 /* ==========================================================================
    CORAVIDA — the inbox.
    What guests send through the website's enquiry and contact forms lands in
-   a small function on Vercel (see brand.form.endpoint) and is read from
-   here. An enquiry becomes a booking with one press; the rest is a reply.
+   the inbox table and is read from here, live. An enquiry becomes a booking
+   with one press; the rest is a reply.
    ========================================================================== */
 (function (A) {
   "use strict";
   var E = A.E, $ = A.$, $$ = A.$$, esc = A.esc, svg = A.svg, toast = A.toast, B = window.Books;
-  var entries = A.lsGet("cv:inbox", []), loadedAt = 0, loading = false, error = "";
-
-  function url() {
-    var c = A.C.draft || A.C.baseline, ep = c && c.brand && c.brand.form && c.brand.form.endpoint || "";
-    return /\/api\/enquire\/?$/.test(ep) ? ep.replace(/\/api\/enquire\/?$/, "/api/inbox") : "";
-  }
-  function headers() { return { Authorization: "Bearer " + A.token(), "Content-Type": "application/json" }; }
+  var entries = A.lsGet("cv:inbox", []), loadedAt = 0, loading = false, error = "", watching = false;
   function load(force) {
-    if (!A.token() || !url()) return Promise.resolve(entries);
-    if (loading || (!force && Date.now() - loadedAt < 20000)) return Promise.resolve(entries);
+    if (!A.signedIn()) return Promise.resolve(entries);
+    if (loading || (!force && Date.now() - loadedAt < 15000)) return Promise.resolve(entries);
     loading = true;
-    return fetch(url(), { headers: headers(), cache: "no-store" }).then(function (r) { return r.json().then(function (j) { if (!r.ok || !j.ok) throw new Error(j.error || ("HTTP " + r.status)); return j.entries; }); })
-      .then(function (list) { entries = list; error = ""; loadedAt = Date.now(); A.lsSet("cv:inbox", entries); A.renderNav(); return entries; })
+    return DB.inbox.list()
+      .then(function (list) { entries = list; error = ""; loadedAt = Date.now(); A.lsSet("cv:inbox", entries); A.renderNav(); watch(); return entries; })
       .catch(function (e) { error = e.message; return entries; })
       .then(function (x) { loading = false; return x; });
   }
+  function watch() { if (watching) return; watching = true; DB.inbox.watch(function () { load(true).then(function () { if (A.route().id === "inbox") A.render(); }); }); }
   function update(id, patch) {
-    return fetch(url(), { method: "POST", headers: headers(), body: JSON.stringify(Object.assign({ id: id, by: B.device() }, patch)) })
-      .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || "Could not update"); var i = entries.findIndex(function (e) { return e.id === id; }); if (i > -1) entries[i] = j.entry; A.lsSet("cv:inbox", entries); A.renderNav(); return j.entry; });
+    return DB.inbox.update(id, Object.assign({ by: B.device() }, patch)).then(function (e) { var i = entries.findIndex(function (x) { return x.id === id; }); if (i > -1) entries[i] = e; else entries.unshift(e); A.lsSet("cv:inbox", entries); A.renderNav(); return e; });
   }
-  function del(id) {
-    return fetch(url(), { method: "DELETE", headers: headers(), body: JSON.stringify({ id: id }) }).then(function (r) { return r.json(); })
-      .then(function (j) { if (!j.ok) throw new Error(j.error || "Could not delete"); entries = entries.filter(function (e) { return e.id !== id; }); A.lsSet("cv:inbox", entries); A.renderNav(); });
-  }
+  function del(id) { return DB.inbox.remove(id).then(function () { entries = entries.filter(function (e) { return e.id !== id; }); A.lsSet("cv:inbox", entries); A.renderNav(); }); }
   var fresh = function () { return entries.filter(function (e) { return e.status === "new"; }); };
   var ago = function (iso) { var s = (Date.now() - new Date(iso)) / 1000; return s < 90 ? "just now" : s < 5400 ? Math.round(s / 60) + " min ago" : s < 172800 ? Math.round(s / 3600) + " h ago" : new Date(iso).toLocaleDateString("en-GB", { day: "numeric", month: "short" }); };
   var LANGS = { en: "English", ru: "Russian", zh: "Chinese", de: "German" };
@@ -86,8 +77,7 @@
     var view = A.lsGet("cv:inbox:v", "new");
     host.appendChild(E("div", { class: "pagehead" }, [E("div", {}, [E("h2", { text: "Inbox" }), E("p", { text: "What guests send through the website. Make a booking from an enquiry in one press, or reply." })]),
       E("div", { class: "acts" }, [E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Refresh", onclick: function () { load(true).then(A.render); } })])]));
-    if (!A.token()) { host.appendChild(E("div", { class: "note note--warn", html: "Add a GitHub token in <a href='#settings'>Settings</a> to read the inbox — the same token unlocks the books." })); return; }
-    if (!url()) { host.appendChild(E("div", { class: "note note--warn", html: "No inbox address — set the form endpoint under <a href='#brand'>Brand & contact</a>." })); return; }
+    if (!A.signedIn()) { host.appendChild(E("div", { class: "note note--warn", text: "Sign in to read the inbox." })); return; }
     var card0 = E("div", { class: "card" });
     var seg = E("div", { class: "seg" }); [["new", "New"], ["handled", "Handled"], ["archived", "Archived"], ["all", "All"]].forEach(function (k) { seg.appendChild(E("button", { type: "button", class: k[0] === view ? "on" : "", text: k[1], onclick: function () { A.lsSet("cv:inbox:v", k[0]); A.render(); } })); });
     card0.appendChild(E("div", { class: "filters" }, [seg, E("span", { class: "small mute", text: loadedAt ? "Checked " + ago(new Date(loadedAt).toISOString()) : "" })]));
@@ -111,7 +101,7 @@
     return c;
   }
   // keep the badge honest while the admin is open
-  setInterval(function () { if (document.visibilityState === "visible" && A.token()) load(false).then(function () { if (A.route().id === "inbox") A.render(); }); }, 60000);
+  setInterval(function () { if (document.visibilityState === "visible" && A.signedIn()) load(false).then(function () { if (A.route().id === "inbox") A.render(); }); }, 120000);
   document.addEventListener("visibilitychange", function () { if (document.visibilityState === "visible") load(true); });
   window.Inbox = { load: load, fresh: fresh, overviewCard: overviewCard, entries: function () { return entries; } };
 })(window.Admin);

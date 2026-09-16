@@ -7,6 +7,8 @@
 const fs = require("fs");
 const path = require("path");
 const ROOT = path.resolve(__dirname, "..");
+/* content/site.json is what tools/vercel-build.js fetched from the database
+   a moment ago (or, locally, whatever was last pulled) */
 const EN = JSON.parse(fs.readFileSync(path.join(ROOT, "content/site.json"), "utf8"));
 
 /* ---------------------------------------------------------------- I18N --
@@ -186,6 +188,7 @@ ${main}
 </main>
 
 <div data-chrome="footer"></div>
+<script src="${asset}assets/js/env.js"></script>
 <script src="${asset}assets/js/data${LOC.code === "en" ? "" : "." + LOC.code}.js"></script>
 <script src="${asset}assets/js/site.js"></script>
 </body>
@@ -941,7 +944,7 @@ function notfound() {
   });
 }
 
-const SITE = "https://muaaadh.github.io/coravida/";
+const SITE = (process.env.SITE_URL || "https://coravida.vercel.app/").replace(/\/?$/, "/");
 
 /* the English data file the pages load (classic script, so file:// works) */
 fs.mkdirSync(path.join(ROOT, "assets/js"), { recursive: true });

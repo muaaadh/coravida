@@ -16,8 +16,7 @@ window.Books = (function (A) {
   var STATUS = [["enquiry", "Enquiry"], ["confirmed", "Confirmed"], ["completed", "Completed"], ["cancelled", "Cancelled"]];
 
   /* ---------------------------------------------------------------- data */
-  var S = null, sha = null, remote = false, saveT = null, saving = false, lastSaved = null, localOnly = true, failed = "";
-  var BRANCH = "main";   // the books repository's own branch, whatever the site's is
+  var S = null, saveT = null, saving = false, lastSaved = null, localOnly = true, failed = "";
   function blank() {
     return { v: 1, settings: { currency: "USD", tgst: 17, prefix: "CV", nextInvoice: 1, nextBooking: 1, bank: "", footer: "Thank you for sailing with Coravida. A fifty percent deposit confirms a booking; the balance is due seven days before departure." },
              bookings: [], invoices: [], payments: [], expenses: [], blocks: [] };
@@ -40,7 +39,6 @@ window.Books = (function (A) {
   var stamp = function (o) { o.updated = new Date().toISOString(); return o; };
   var nameOf = function (b) { return (b && b.customer && b.customer.name) || (b && b.ref) || "Booking"; };
 
-  function cache() { A.lsSet(KEY, { data: S, sha: sha, dirty: !!saveT || saving || !!failed, localOnly: localOnly, at: Date.now() }); }
   var LISTS = ["bookings", "invoices", "payments", "expenses", "blocks", "log"];
   /* every change is written down: what, by which device, when — and merged
      like everything else, so both devices see the whole story */
@@ -64,121 +62,104 @@ window.Books = (function (A) {
     x.invoices.forEach(function (i) { i.customer = i.customer || {}; i.lines = i.lines || []; });
     return x;
   }
+  /* ---- load: the cache first, then the database; then listen ------------ */
+  var loadedAt = 0, lastSync = "", unwatch = null;
+  function fromRows(rows) {
+    var x = blank(); x.log = [];
+    rows.forEach(function (r) {
+      var rec = Object.assign({}, r.data, { id: r.id, updated: r.updated });
+      if (r.deleted) rec.deleted = true;
+      if (r.kind === "settings") { x.settings = Object.assign(x.settings, r.data, { updated: r.updated }); return; }
+      if (x[r.kind]) x[r.kind].push(rec);
+    });
+    return shape(x);
+  }
+  function toRows(since) {
+    var rows = [];
+    LISTS.forEach(function (k) { (S[k] || []).forEach(function (rec) { if (!since || (rec.updated || "") > since) { var d = Object.assign({}, rec); delete d.updated; rows.push({ id: rec.id, kind: k, updated: rec.updated || new Date().toISOString(), deleted: !!rec.deleted, data: d }); } }); });
+    if (!since || (S.settings.updated || "") > since) { var st = Object.assign({}, S.settings); delete st.updated; rows.push({ id: "settings", kind: "settings", updated: S.settings.updated || new Date().toISOString(), deleted: false, data: st }); }
+    return rows;
+  }
+  /* a row from the database, folded into what we hold (newer wins) */
+  function fold(r) {
+    if (r.kind === "settings") { if ((r.updated || "") >= (S.settings.updated || "")) S.settings = Object.assign(blank().settings, r.data, { updated: r.updated }); return true; }
+    if (!S[r.kind]) return false;
+    var rec = Object.assign({}, r.data, { id: r.id, updated: r.updated }); if (r.deleted) rec.deleted = true;
+    var i = S[r.kind].findIndex(function (x) { return x.id === r.id; });
+    if (i < 0) { S[r.kind].push(rec); return true; }
+    if ((rec.updated || "") > (S[r.kind][i].updated || "")) { S[r.kind][i] = rec; return true; }
+    return false;
+  }
   function load() {
     var c = A.lsGet(KEY, null);
-    S = shape(c && c.data ? c.data : blank()); sha = c ? c.sha : null;
-    if (!A.token()) { localOnly = true; return Promise.resolve(); }
-    var s = A.settings();
-    return A.gh.read(s.booksRepo, s.booksPath, BRANCH).then(function (r) {
-      localOnly = false; remote = true;
-      if (r.missing) { sha = null; return save(true); }   // first run: create the file
-      var R = shape(JSON.parse(r.text));
-      // a device that worked without a token keeps what it did; otherwise the file wins
-      var hadLocal = c && (c.dirty || c.localOnly) && LISTS.some(function (k) { return (c.data[k] || []).length; });
-      S = hadLocal ? merge(R, S) : R; sha = r.sha; lastSaved = new Date(); loadedAt = Date.now();
-      if (hadLocal) return save(true).then(clashCheck);
-      cache(); clashCheck(); publishAvailability();
-    }).catch(function (e) { localOnly = true; toast("Books: " + e.message + " Working on this device only.", "err"); });
+    S = shape(c && c.data ? c.data : blank()); lastSync = c && c.lastSync || "";
+    if (!A.signedIn()) { localOnly = true; return Promise.resolve(); }
+    return DB.records.all().then(function (rows) {
+      localOnly = false;
+      var pending = toRows(lastSync);                 // made here while offline or before the last save landed
+      var fresh = fromRows(rows);
+      pending.forEach(function (r) { var rec = Object.assign({}, r.data, { id: r.id, updated: r.updated }); if (r.deleted) rec.deleted = true; if (r.kind === "settings") { if ((r.updated || "") > (fresh.settings.updated || "")) fresh.settings = Object.assign(fresh.settings, r.data, { updated: r.updated }); } else { var i = fresh[r.kind].findIndex(function (x) { return x.id === r.id; }); if (i < 0) fresh[r.kind].push(rec); else if ((rec.updated || "") > (fresh[r.kind][i].updated || "")) fresh[r.kind][i] = rec; } });
+      S = shape(fresh); loadedAt = Date.now(); lastSaved = new Date();
+      var p = pending.length ? DB.records.upsert(pending).then(function () { lastSync = new Date().toISOString(); }) : Promise.resolve(lastSync = lastSync || new Date().toISOString());
+      return p.then(function () { cache(); clashCheck(); publishAvailability(); listen(); });
+    }).catch(function (e) { localOnly = true; toast("Books: " + e.message + " Working from the copy on this device.", "err"); });
   }
-  /* after any merge: a slot two confirmed bookings both hold is the one thing
-     the office must hear about at once */
+  function listen() {
+    if (unwatch) return;
+    unwatch = DB.records.watch(function (r) {
+      if (fold(r)) { cache(); if (/^#(calendar|bookings|invoices|payments|expenses|reports|overview|history)/.test(location.hash)) A.render(); }
+    });
+  }
+  function cache() { A.lsSet(KEY, { data: S, lastSync: lastSync, at: Date.now() }); }
+  function save(now) {
+    cache();
+    clearTimeout(saveT); saveT = null;
+    if (localOnly) { drawSync(); return Promise.resolve(); }
+    if (!now) { saveT = setTimeout(function () { save(true); }, 900); drawSync(); return Promise.resolve(); }
+    var rows = toRows(lastSync); if (!rows.length) { drawSync(); return Promise.resolve(); }
+    saving = true; drawSync();
+    var stampAt = new Date().toISOString();
+    return DB.records.upsert(rows)
+      .then(function () { saving = false; failed = ""; lastSaved = new Date(); lastSync = stampAt; cache(); drawSync(); publishAvailability(); })
+      .catch(function (e) { saving = false; failed = e.message; toast("Books did not save: " + e.message, "err"); cache(); drawSync(); });
+  }
+  /* after any load or merge: a slot two confirmed bookings both hold is the one
+     thing the office must hear about at once */
   function clashCheck() {
     var seen = {}, n = 0;
     L("bookings").forEach(function (b) { if (!takes(b) || !b.date) return; var o = occupancy(b.date); if (o.clash.length && !seen[b.date]) { seen[b.date] = 1; n += o.clash.length; } });
     if (n) toast("Double-booked: " + Object.keys(seen).map(fmtDate).join(", ") + " — open the calendar and move one of them.", "err");
     return n;
   }
-  /* union by id, the newer record wins — so two devices can both add things */
-  function merge(a, b) {
-    var out = shape(JSON.parse(JSON.stringify(a))); b = shape(b);
-    // settings travel as one thing: whichever side saved them last wins
-    out.settings = ((b.settings.updated || "") >= (a.settings.updated || "")) ? Object.assign({}, a.settings, b.settings) : Object.assign({}, b.settings, a.settings);
-    ["bookings", "invoices", "payments", "expenses", "blocks"].forEach(function (k) {
-      var by = {}; (a[k] || []).forEach(function (x) { by[x.id] = x; });
-      (b[k] || []).forEach(function (x) { if (!by[x.id] || (x.updated || "") > (by[x.id].updated || "")) by[x.id] = x; });
-      out[k] = Object.keys(by).map(function (i) { return by[i]; });
-    });
-    out.settings.nextInvoice = Math.max(a.settings.nextInvoice || 1, b.settings.nextInvoice || 1);
-    out.settings.nextBooking = Math.max(a.settings.nextBooking || 1, b.settings.nextBooking || 1);
-    return out;
-  }
-  var retries = 0;
-  function save(now) {
-    cache();
-    clearTimeout(saveT); saveT = null;
-    if (localOnly) { drawSync(); return Promise.resolve(); }
-    if (!now) { saveT = setTimeout(function () { save(true); }, 1200); drawSync(); return Promise.resolve(); }
-    var s = A.settings(); saving = true; drawSync();
-    var cut = new Date(Date.now() - 90 * 86400000).toISOString();
-    ["bookings", "invoices", "payments", "expenses", "blocks"].forEach(function (k) { if (S[k]) S[k] = S[k].filter(function (x) { return !x.deleted || (x.updated || "") > cut; }); });
-    // the file must stay well under GitHub's 1 MB read limit; older log lines live on in the commit history
-    if (S.log && S.log.length > 3000) S.log = S.log.slice().sort(function (a, b) { return a.at < b.at ? 1 : -1; }).slice(0, 3000);
-    return A.gh.putText(s.booksRepo, s.booksPath, JSON.stringify(S, null, 2) + "\n", "Books: " + new Date().toISOString().slice(0, 16).replace("T", " "), sha, BRANCH)
-      .then(function (j) { sha = j.content.sha; saving = false; failed = ""; retries = 0; lastSaved = new Date(); loadedAt = Date.now(); cache(); drawSync(); publishAvailability(); })
-      .catch(function (e) {
-        saving = false;
-        if ((e.status === 409 || e.status === 422) && retries < 3) {   // someone else saved: merge and try again
-          retries++;
-          return A.gh.read(s.booksRepo, s.booksPath, BRANCH).then(function (r) { S = merge(JSON.parse(r.text), S); sha = r.sha; A.render(); clashCheck(); return save(true); });
-        }
-        retries = 0;
-        failed = e.message; toast("Books did not save: " + e.message, "err"); cache(); drawSync();
-      });
-  }
   /* The website's calendar asks which days are gone. Only dates and halves
-     travel — never a name. Two copies: the inbox function gets it at once (the
-     calendar reads that live), and the static file in the site repo is the
-     fallback, committed only when the set actually changed. */
-  var pubT = null, web = { state: "", at: null, err: "" };
-  function availUrl() { var c = (window.Admin.C.draft || window.Admin.C.baseline) || {}, ep = c.brand && c.brand.form && c.brand.form.endpoint || ""; return /\/api\/enquire\/?$/.test(ep) ? ep.replace(/\/api\/enquire\/?$/, "/api/availability") : ""; }
+     travel — never a name. */
+  var web = { state: "", at: null, err: "" };
   function publishAvailability() {
-    if (localOnly) { web.state = "local"; drawSync(); return; }
-    var list = availability(today().slice(0, 7) + "-01", 430), text = JSON.stringify({ taken: list }) + "\n";
+    if (localOnly) { web.state = "local"; drawSync(); return Promise.resolve(); }
+    var list = availability(today().slice(0, 7) + "-01", 430);
     web.state = "sending"; drawSync();
-    var live = availUrl() ? fetch(availUrl(), { method: "POST", headers: { Authorization: "Bearer " + A.token(), "Content-Type": "application/json" }, body: JSON.stringify({ taken: list }) })
-      .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || "refused"); web.state = "ok"; web.at = new Date(); web.err = ""; drawSync(); })
-      .catch(function (e) { web.state = "error"; web.err = e.message; drawSync(); }) : Promise.resolve();
-    clearTimeout(pubT);
-    pubStatic = function () {
-      pubT = null; pubStatic = null;
-      if (A.lsGet("cv:books:avail", "") === text) return;
-      var s = A.settings();
-      A.gh.read(s.repo, "content/availability.json").then(function (r) {
-        if (r.text === text) { A.lsSet("cv:books:avail", text); return; }
-        return A.gh.putText(s.repo, "content/availability.json", text, "Availability: " + list.length + " day" + (list.length === 1 ? "" : "s") + " taken (books)", r.sha).then(function () { A.lsSet("cv:books:avail", text); });
-      }).catch(function (e) { if (!availUrl()) toast("Could not send availability to the website: " + e.message, "err"); });
-    };
-    pubT = setTimeout(pubStatic, 2500);
-    return live;
+    return DB.content.set("availability", { taken: list, at: new Date().toISOString() })
+      .then(function () { web.state = "ok"; web.at = new Date(); web.err = ""; drawSync(); })
+      .catch(function (e) { web.state = "error"; web.err = e.message; drawSync(); });
   }
-  var pubStatic = null;
   /* what the website currently knows, for the calendar's header */
-  function webBadge() {
-    var b = E("span", { class: "badge webSync" }); setTimeout(drawSync, 0); return b;
-  }
-  var loadedAt = 0;
+  function webBadge() { var b = E("span", { class: "badge webSync" }); setTimeout(drawSync, 0); return b; }
   document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "hidden") { if (saveT) save(true); if (pubT && pubStatic) { clearTimeout(pubT); pubStatic(); } return; }
-    if (failed && !saving) { save(true); return; }
-    if (localOnly || saving || saveT || !loadedAt || Date.now() - loadedAt < 60000) return;
-    var s = A.settings();
-    A.gh.read(s.booksRepo, s.booksPath, BRANCH).then(function (r) {
-      if (r.missing || r.sha === sha) return;
-      S = merge(JSON.parse(r.text), S); sha = r.sha; loadedAt = Date.now(); cache(); A.render(); toast("Books refreshed from the other device.", "ok"); clashCheck();
-    }).catch(function () {});
+    if (document.visibilityState === "hidden") { if (saveT) save(true); return; }
+    if (failed && !saving) save(true);
   });
-  window.addEventListener("pagehide", function () { if (saveT) save(true); if (pubT && pubStatic) { clearTimeout(pubT); pubStatic(); } });
+  window.addEventListener("pagehide", function () { if (saveT) save(true); });
   function drawSync() {
     $$(".webSync").forEach(function (n) {
       var st = localOnly ? "local" : web.state;
       n.className = "webSync badge " + (st === "ok" ? "badge--ok" : st === "sending" ? "badge--info" : st === "error" || st === "local" ? "badge--bad" : "");
-      n.textContent = st === "local" ? "Website not updated — connect first" : st === "sending" ? "Updating the website…" : st === "ok" ? "Website up to date" : st === "error" ? "Website not updated" : "Website: unknown";
-      n.title = st === "error" ? web.err : st === "local" ? "Bookings and blocks made without a GitHub token stay on this device; the website cannot see them." : st === "ok" && web.at ? "Sent " + web.at.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+      n.textContent = st === "local" ? "Website not updated — sign in first" : st === "sending" ? "Updating the website…" : st === "ok" ? "Website up to date" : st === "error" ? "Website not updated" : "Website: unknown";
+      n.title = st === "error" ? web.err : st === "ok" && web.at ? "Sent " + web.at.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
     });
     $$(".booksSync").forEach(function (n) {
       n.className = "booksSync badge " + (localOnly ? "badge--warn" : failed ? "badge--bad" : saving || saveT ? "badge--info" : "badge--ok");
       n.textContent = localOnly ? "On this device only" : failed ? "Not saved" : saving ? "Saving…" : saveT ? "Unsaved" : lastSaved ? "Saved " + lastSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Synced";
-      n.title = localOnly ? "Add a GitHub token in Settings to keep the books in your private repository." : failed || "";
+      n.title = localOnly ? "Sign in to save to the books." : failed || "";
     });
   }
   function syncBadge() { var b = E("span", { class: "booksSync badge" }); setTimeout(drawSync, 0); return b; }
@@ -337,8 +318,8 @@ window.Books = (function (A) {
   function connectBanner(host) {
     if (!localOnly) return;
     host.appendChild(E("div", { class: "note note--bad connect" }, [
-      E("div", {}, [E("b", { text: "Not connected — this device only." }), " ", "Bookings, blocked days and enquiries made here are not saved to the books, and the website's calendar will not show them, until a GitHub token is added."]),
-      E("a", { class: "btn btn--sm", href: "#settings", text: "Connect in Settings" })
+      E("div", {}, [E("b", { text: "Not connected — this device only." }), " ", "The database could not be reached; what you do here stays on this device until it can."]),
+      E("button", { class: "btn btn--sm", type: "button", text: "Try again", onclick: function () { load().then(A.render); } })
     ]));
   }
   function csv(name, rows) {

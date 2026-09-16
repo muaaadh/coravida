@@ -14,4 +14,4 @@ git add -A
 if git diff --cached --quiet; then echo "nothing to commit"; else git commit -m "$MSG"; fi
 git push origin main
 bash tools/mirror.sh
-echo "pushed — the Action publishes it in about a minute: https://github.com/muaaadh/coravida/actions"
+echo "pushed — Vercel builds and publishes it in about two minutes: https://vercel.com/muaaadhs-projects/coravida"
