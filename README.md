@@ -4,7 +4,13 @@ A static site for **Coravida** and its vessel **Tiffany Blanc 14**, with an admi
 edits it and keeps the books. No build step for the browser, no dependencies, no server:
 open `index.html`, or drop the folder on any host.
 
-Live at **https://muaaadh.github.io/coravida/** · Admin at **https://muaaadh.github.io/coravida/admin/**
+Live at **https://coravida.vercel.app/** · Admin at **https://coravida.vercel.app/admin/**
+
+**Where things run (since 16 Sept 2026):** the pages, the admin and one small function are
+on **Vercel** (project `coravida`, built from this repo on every push to `main`); the
+content, the books and the inbox are in **Supabase** (project `coravida`, Mumbai, ref
+`hkzseexkxufrqbngzqdk`) behind row-level security and a staff login. GitHub only holds the
+code now — Pages is off.
 
 ---
 
@@ -335,12 +341,11 @@ sections, FAQ. Every HTML page is generated from it:
 node tools/build.js      # rewrites all 48 pages, in all four languages
 ```
 
-There are two ways to change it:
-
-- **The admin** at `/admin/` — for the client. See below.
-- **Directly** — edit the JSON, run the build, and `bash tools/deploy.sh "message"`,
-  which pulls first (the admin and the build bot both commit to `main`), builds, commits,
-  pushes and mirrors to OneDrive.
+The **admin** at `/admin/` is how the client changes it; **Publish** saves the content to
+the database and asks Vercel to rebuild. The copy in the repo, `content/site.json`, is what
+`tools/vercel-build.js` fetched from the database at the last build — treat it as a
+snapshot, not the source. To ship code: `bash tools/deploy.sh "message"` (pull, build,
+commit, push, mirror to OneDrive); Vercel builds from the push.
 
 `assets/js/data.js` and `data.{ru,zh,de}.js` are generated from the JSON — never edit them.
 Header, menu, footer, sea and player are injected by `assets/js/site.js`, so they change
@@ -354,25 +359,23 @@ translated** in `tools/i18n/` — the build prints exactly which strings.
 
 ## The admin
 
-`/admin/` is a **GitHub-as-CMS** editor — vanilla, no framework, no server. It reads
-`content/site.json` from the repository, keeps a draft in the browser (autosaved, restored
-on return), and **Publish** commits the JSON through the GitHub Contents API. A GitHub
-Action (`.github/workflows/build.yml`) then rebuilds every page and republishes Pages —
-about **40 seconds** from Publish to live; the admin watches the run and says when.
+`/admin/` is vanilla — no framework, no build. **Staff sign in with email and password**
+(Supabase Auth; sign-ups are closed, accounts are created by Dheemi). Everything the admin
+touches goes through `admin/db.js`; nothing else knows a URL or a key.
 
 - **Website:** Brand & contact (phone becomes the call and WhatsApp links), Hero film
   (order, clips, seconds each holds), Excursions & prices (the pricing basis, then every
   excursion: essentials, words, the day stop by stop, inclusions, film and pictures), Add-ons,
-  Our vessels, Gallery (captions, sections, order), Music, Questions.
+  Our vessels, Gallery (captions, sections, order), Music, Questions. Edits are a draft in
+  the browser (autosaved, restored on return) until **Publish**, which saves the content to
+  the `content` table and calls `/api/publish` — a function holding Vercel's deploy hook,
+  which only accepts a valid staff sign-in — so the site rebuilds; about two minutes.
 - **Photographs:** upload from the gallery or any picture picker. The browser resizes to
-  2400px and the file is committed to `assets/src/`; the Action cuts the WebP tiers with
-  `tools/tiers.js` (sharp), builds, and commits the tiers back so a clone stays complete.
-  New film clips remain a Dheemi job (`tools/stock.sh`).
-- **Access:** one fine-grained personal access token, pasted once in Settings — Contents
-  read/write on `coravida` and `coravida-books`, Actions read so it can show the build.
-  Without a token the admin is read-only.
-- **Read-only fallback:** with no token it still shows the published content, so it is
-  useful for reading and drafting.
+  2400px and sends the file to the `uploads` bucket; the build downloads new sources, cuts
+  the WebP tiers with `tools/tiers.js` (sharp) and builds. New film clips remain a Dheemi
+  job (`tools/stock.sh`).
+- **Account:** Settings shows who is signed in, changes the password, signs out. *Forgotten
+  password* on the sign-in screen emails a reset link.
 
 ## The books
 
@@ -389,10 +392,10 @@ The accounting a one-vessel charter company actually needs, and nothing it does 
   accountant.
 
 No journal, no chart of accounts, no bills or vendors — those were the JH Yachts demo and
-nobody at a marina office needs them. The data is **one JSON file in the private
-repository `muaaadh/coravida-books`**, written on every change through the same token (one
-commit per save, so every version is recoverable), and cached in the browser so it opens
-instantly and survives a bad connection; two devices merge by record. Settings has
+nobody at a marina office needs them. Every record is **a row in the `records` table**
+(id, kind, updated, deleted, and the record itself as JSON), saved the moment it changes
+and pushed to every other open device by Supabase Realtime; a copy in the browser lets it
+open instantly and work through a bad connection, catching up when it returns. Settings has
 *Load sample data* for a demonstration, *Clear all books*, and backup/restore.
 
 ## The calendar
@@ -415,47 +418,34 @@ calendar:
   the panel lists which booked days stay booked. Unblocking part of a longer block splits
   it. Every block and unblock has an 8-second **Undo**.
 - **Past days** stay readable (who sailed last Saturday) but cannot be changed.
-- **The website is told.** After every save the books publish `content/availability.json`
-  — dates and halves only, never a name. A visitor who picks a taken or blocked day
+- **The website is told.** After every save the books write the taken days to the
+  `availability` row of the `content` table — dates and halves only, never a name — and the
+  public calendar reads it live. A visitor who picks a taken or blocked day
   cannot continue the enquiry: the form says the day is not available and offers
   **Send on WhatsApp** (message pre-written with the date and excursion) and the
   telephone number instead. A half-free day says which half is left; a full-day
   excursion on a half-free day is refused too.
-- Records are never deleted, only marked, so a deletion on one device survives a merge with
-  another; a tab that returns after a minute reloads from GitHub, and a pending save is
-  flushed when the tab is hidden.
+- Records are never deleted, only marked; a pending save is flushed when the tab is hidden.
 
 ## History — nothing is ever lost
 
-- **Every change is written down** — created, edited (with what changed), confirmed,
-  completed, cancelled, blocked, unblocked, undone, invoiced, paid, removed, settings
-  saved, backup restored, everything cleared — with the time and the device that did it
-  (name the device in Settings). **History** in the admin lists it all, filterable and
-  searchable, with CSV export; each booking's page shows its own story; the Overview
-  shows the latest five.
-- **Every version is kept.** The books are one file in the private repository and every
-  save is a commit. History → *Earlier versions* lists them; *Look* summarises one,
-  *Put back* restores it — and the version you replace is itself kept, so a put-back can
-  be put back. Deleting is a marker, not a removal, so a deletion on one device survives
-  a merge with another.
+Every change is written down — created, edited (with what changed), confirmed, completed,
+cancelled, blocked, unblocked, undone, invoiced, paid, removed, settings saved, backup
+restored, everything cleared — with the time and the device that did it (name the device
+in Settings). **History** lists it all, filterable and searchable, with CSV export; each
+booking's page shows its own story; the Overview shows the latest five. Nothing is deleted
+outright — a removed record is only marked — and Settings offers a full backup file.
 
 ## Enquiries — the inbox
 
-The enquiry and contact forms post to **`https://coravida-inbox-alpha.vercel.app/api/enquire`**
-(`brand.form.endpoint`, editable under Brand & contact): two small functions in the
-private repo **`muaaadh/coravida-inbox`**, deployed to the Vercel project `coravida-inbox`
-under muaaadh's account (pushes to that repo's `main` deploy automatically), storing each
-submission as a private Vercel Blob. The admin's **Inbox**
-(first under Books) lists them the moment they arrive — badge on the sidebar, card on the
-Overview — with **Make a booking** (the enquiry becomes a booking, prefilled: guest,
-date, excursion, guests, add‑ons, notes), reply links (WhatsApp / email / call), Mark
-handled, Archive, Delete. The admin authenticates to the inbox with the same GitHub token
-it already holds: the function accepts a token that can read the private books
-repository. If the function is unreachable the site falls back to the prepared WhatsApp
-message and email.
-
-The guest still gets the WhatsApp and email buttons after sending, so nothing is lost if
-the office prefers to talk.
+The enquiry and contact forms insert straight into the **`inbox` table** with the public
+key — the public key may only *insert* there (RLS: `status = 'new'`, nothing else), never
+read. The admin's **Inbox** (first under Books) lists them the moment they arrive, live —
+badge on the sidebar, card on the Overview — with **Make a booking** (the enquiry becomes
+a booking, prefilled: guest, date, excursion, guests, add‑ons, notes), reply links
+(WhatsApp / email / call), Mark handled, Archive, Delete. If the database is unreachable
+the site falls back to the prepared WhatsApp message and email; the guest gets those
+buttons after sending anyway. A honeypot field on both forms keeps robots out.
 
 ## The public calendar
 
@@ -550,8 +540,12 @@ ru/  zh/  de/             the same twelve pages again — generated
 content/site.json         all content, in English — edit this, or use the admin
 content/media.json        what is built: photographs, clips, tracks — generated
 admin/                    the editor, the books, the calendar, history and inbox (app.js, content.js, books.js, calendar.js, history.js, inbox.js)
-content/availability.json which days are taken — written by the books, read by the enquiry form
-.github/workflows/        build.yml — tiers, build, commit back, deploy Pages
+content/availability.json which days are taken — a build-time copy; the live one is in the database
+supabase/schema.sql       the database: tables, RLS, grants, realtime, the uploads bucket
+supabase/config.toml      auth settings pushed with `supabase config push` (sign-ups closed)
+api/publish.js            the one function: a staff sign-in in, a Vercel rebuild out
+vercel.json               build = tools/vercel-build.js, output = _site/
+tools/vercel-build.js     pull content + uploads from the database, tiers, build, assemble
 assets/
   css/site.css            the design system
   js/data.js              generated from content/site.json — do not edit
@@ -565,7 +559,7 @@ sitemap.xml               44 URLs with alternates — generated
 tools/i18n/{ru,zh,de}.js  the translations — edit these
 tools/stock.sh            encodes the September stock
 tools/mirror.sh           safe copy into the client's OneDrive folder
-tools/deploy.sh           pull, build, commit, push, mirror — in that order
+tools/deploy.sh           pull, build, commit, push (Vercel builds from it), mirror
 tools/tiers.js            WebP tiers for admin uploads (sharp; the Action runs it)
 tools/build.js            regenerates every page in every language
 tools/images.sh           rebuilds every photograph from the shoot
