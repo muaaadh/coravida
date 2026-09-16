@@ -139,23 +139,26 @@ window.Books = (function (A) {
       .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || "refused"); web.state = "ok"; web.at = new Date(); web.err = ""; drawSync(); })
       .catch(function (e) { web.state = "error"; web.err = e.message; drawSync(); }) : Promise.resolve();
     clearTimeout(pubT);
-    pubT = setTimeout(function () {
+    pubStatic = function () {
+      pubT = null; pubStatic = null;
       if (A.lsGet("cv:books:avail", "") === text) return;
       var s = A.settings();
       A.gh.read(s.repo, "content/availability.json").then(function (r) {
         if (r.text === text) { A.lsSet("cv:books:avail", text); return; }
         return A.gh.putText(s.repo, "content/availability.json", text, "Availability: " + list.length + " day" + (list.length === 1 ? "" : "s") + " taken (books)", r.sha).then(function () { A.lsSet("cv:books:avail", text); });
       }).catch(function (e) { if (!availUrl()) toast("Could not send availability to the website: " + e.message, "err"); });
-    }, 2500);
+    };
+    pubT = setTimeout(pubStatic, 2500);
     return live;
   }
+  var pubStatic = null;
   /* what the website currently knows, for the calendar's header */
   function webBadge() {
     var b = E("span", { class: "badge webSync" }); setTimeout(drawSync, 0); return b;
   }
   var loadedAt = 0;
   document.addEventListener("visibilitychange", function () {
-    if (document.visibilityState === "hidden") { if (saveT) save(true); return; }
+    if (document.visibilityState === "hidden") { if (saveT) save(true); if (pubT && pubStatic) { clearTimeout(pubT); pubStatic(); } return; }
     if (failed && !saving) { save(true); return; }
     if (localOnly || saving || saveT || !loadedAt || Date.now() - loadedAt < 60000) return;
     var s = A.settings();
@@ -164,7 +167,7 @@ window.Books = (function (A) {
       S = merge(JSON.parse(r.text), S); sha = r.sha; loadedAt = Date.now(); cache(); A.render(); toast("Books refreshed from the other device.", "ok"); clashCheck();
     }).catch(function () {});
   });
-  window.addEventListener("pagehide", function () { if (saveT) save(true); });
+  window.addEventListener("pagehide", function () { if (saveT) save(true); if (pubT && pubStatic) { clearTimeout(pubT); pubStatic(); } });
   function drawSync() {
     $$(".webSync").forEach(function (n) {
       var st = localOnly ? "local" : web.state;
