@@ -23,10 +23,10 @@ const LOCALES = [
 ];
 
 /* Arrays of records merge by identity (`slug` for excursions, `img` for the
-   gallery, `file` for tracks and clips) when the override carries that key,
+   gallery, `id` for add-ons and questions, `file` for tracks and clips) when the override carries that key,
    so the admin can reorder, add or drop an entry without shifting every
    translation after it. Anything else merges by index. */
-const IDKEYS = ["slug", "img", "file", "src"];
+const IDKEYS = ["slug", "id", "img", "file", "src"];
 function idOf(o) { if (!o || typeof o !== "object") return null; for (const k of IDKEYS) if (k in o) return k + ":" + o[k]; return null; }
 function deepMerge(base, over) {
   if (Array.isArray(base)) {
@@ -441,7 +441,7 @@ ${rows}
   </section>
 
   <section class="section--sm">
-    <div class="wrap">${plate("fins", T("A guest on the sand beside her snorkel fins"),
+    <div class="wrap">${plate("boarding", T("Guests coming back aboard Tiffany Blanc 14 from the water"),
       T("Everything the day needs is already aboard."), { k: T("Aboard"), ratio: "r169" })}</div>
   </section>
 
@@ -474,7 +474,7 @@ ${[["Half day", 950], ["Full day", 1350]].map(([k, n], i) => `        <div class
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">${T("Add-ons")}</p>
       <h2 class="d3 lines">${T("Things we can arrange")}</h2>
-      ${dl(CV.addons.map(a => [a.t, `${a.d} <span class="num">${money(a.p)}</span>`]))}
+      ${dl(CV.addons.map(a => [a.t, `${a.d} <span class="num">${money(a.p)}</span> <a class="link link--sm" href="enquire.html?extra=${a.id}">${T("Add to my enquiry")}${ARROW}</a>`]))}
       <p class="note" data-a="up">${T("A fifty percent deposit confirms a date; the balance is due seven days before departure. If the captain calls off a sailing for weather, you move the date or take the money back.")}</p>
     </div>
   </section>
@@ -556,7 +556,6 @@ ${v.plan.map((p, i) => `          <li data-a="up" style="--i:${Math.min(i, 6)}">
           <div class="stack-s"><p class="eyebrow" data-a="up">${T("Included")}</p>${list(v.has)}</div>
           <div class="stack-s"><p class="eyebrow" data-a="up">${T("Not included")}</p>${list([
             T("Alcohol, unless the itinerary says otherwise"),
-            T("Diving equipment on non-diving charters"),
             T("Add-ons listed on the excursions page"),
             T("Gratuities")])}</div>
         </div>
@@ -759,7 +758,7 @@ function contact() {
             <div class="fg fg2">
               <div class="field"><label for="t">${T("Telephone")}</label><input id="t" name="phone" type="tel" autocomplete="tel"></div>
               <div class="field"><label for="s">${T("Subject")}</label><select id="s" name="subject">
-                <option>${T("General enquiry")}</option><option>${T("Charter dates")}</option><option>${T("Diving")}</option><option>${T("A celebration")}</option><option>${T("Press")}</option>
+                <option>${T("General enquiry")}</option><option>${T("Charter dates")}</option><option>${T("A celebration")}</option><option>${T("Press")}</option>
               </select></div>
             </div>
             <div class="field"><label for="m">${T("Message")}</label><textarea id="m" name="message" required></textarea></div>
@@ -860,6 +859,7 @@ ${[2, 4, 6, 7, 8, 10, 12].map(n => `                <option value="${n}"${n === 
                 <option>${T("Mal&eacute;, west harbour")}</option><option>${T("A resort in North or South Mal&eacute; Atoll")}</option>
               </select></div>
             </div>
+            <p class="note note--pax" data-pax hidden>${T("The package price is for a party of seven. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.")}</p>
             <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="button" data-next>${T("Continue")}</button></div>
           </div>
         </div>
@@ -878,7 +878,7 @@ ${extras}
               <div class="field"><label for="ph">${T("Telephone or WhatsApp")}</label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
               <div class="field"><label for="st">${T("Where are you staying?")}</label><input type="text" id="st" name="staying" placeholder="${T("Resort, guesthouse or hotel")}"></div>
             </div>
-            <div class="field"><label for="no">${T("Anything we should know")}</label><textarea id="no" name="notes" placeholder="${T("Diet, diving certification, occasion, children aboard")}"></textarea></div>
+            <div class="field"><label for="no">${T("Anything we should know")}</label><textarea id="no" name="notes" placeholder="${T("Diet, occasion, children aboard, anything extra you would like")}"></textarea></div>
             <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="button" data-next>${T("Review")}</button></div>
           </div>
         </div>

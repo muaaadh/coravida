@@ -57,28 +57,40 @@
  "hero": {
   "clips": [
    {
-    "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows",
-    "max": 1440,
-    "src": "reef",
-    "poster": "poster-reef"
-   },
-   {
-    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air",
-    "max": 1440,
-    "src": "snorkel-pair",
-    "poster": "poster-snorkel-pair"
-   },
-   {
-    "alt": "A palm-ringed island alone in deep blue water, seen from the air",
-    "max": 1440,
-    "src": "island",
-    "poster": "poster-island"
-   },
-   {
-    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé",
-    "max": 1080,
     "src": "vessel",
-    "poster": "poster-vessel"
+    "poster": "poster-vessel",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé"
+   },
+   {
+    "src": "anchor",
+    "poster": "poster-anchor",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 at anchor above a reef edge, seen from the air"
+   },
+   {
+    "src": "reef",
+    "poster": "poster-reef",
+    "max": 1440,
+    "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows"
+   },
+   {
+    "src": "wake",
+    "poster": "poster-wake",
+    "max": 1080,
+    "alt": "A vessel underway across a shallow lagoon, seen from the air"
+   },
+   {
+    "src": "snorkel-pair",
+    "poster": "poster-snorkel-pair",
+    "max": 1440,
+    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
+   },
+   {
+    "src": "island",
+    "poster": "poster-island",
+    "max": 1440,
+    "alt": "A palm-ringed island alone in deep blue water, seen from the air"
    }
   ],
   "interval": 9000
@@ -165,12 +177,6 @@
    "p": 260,
    "t": "Aufbau auf der Sandbank",
    "id": "sandbank-set-up"
-  },
-  {
-   "d": "Zwei Flaschen, Blei und ein Guide, pro Taucher.",
-   "p": 210,
-   "t": "Tauchen",
-   "id": "diving"
   },
   {
    "d": "Velana oder Ihr Resort, je Strecke.",
@@ -392,7 +398,7 @@
     "Zeit zum Schwimmen und Schnorcheln",
     "Fotostopps"
    ],
-   "img": "palm-shore",
+   "img": "aerial-anchor",
    "area": "Nord-Malé-Atoll",
    "clip": "snorkel-pair",
    "kind": "Ganzer Tag",
@@ -575,8 +581,8 @@
    "slug": "shark-point-and-gulhi",
    "intro": "Den Tag nach Süden. Riffhaie vor Embudu, der Korallengarten vor dem Taj, mittags eine Sandbank und nachmittags Gulhi vor der Rückfahrt.",
    "plate": {
-    "img": "snorkellers",
-    "stop": 1
+    "img": "aerial-close",
+    "stop": 0
    },
    "price": 1350,
    "title": "Shark Point & Gulhi",

@@ -55,7 +55,11 @@
       h.replaceWith(el(
         '<header class="hdr" id="hdr"><div class="hdr__in">' +
           '<div class="hdr__l"><button class="burger" type="button" id="burger" aria-expanded="false" aria-controls="menu">' +
-            '<i aria-hidden="true"></i>' + t("menu", "Menu") + "</button></div>" +
+            '<i aria-hidden="true"></i>' + t("menu", "Menu") + "</button>" +
+            '<nav class="hdr__nav" aria-label="' + t("primary", "Primary navigation") + '">' + (CV.nav || []).map(function (n) {
+              var here = location.pathname.replace(/\/(index\.html)?$/, "/index.html").split("/").pop() === n.href.split("/").pop() || (n.href === "excursions.html" && /\/excursions\//.test(location.pathname));
+              return '<a href="' + pg(n.href) + '"' + (here ? ' aria-current="page"' : "") + ">" + n.label + "</a>";
+            }).join("") + "</nav></div>" +
           '<div class="hdr__m"><a class="hdr__logo" href="' + pg("index.html") + '" aria-label="' + B.name + '">' +
             '<img class="light" src="' + u("assets/img/logo-mark-white.webp") + '" alt="' + B.name + '" width="66" height="28">' +
             '<img class="dark" src="' + u("assets/img/logo-mark.webp") + '" alt="' + B.name + '" width="66" height="28"></a></div>' +
@@ -963,6 +967,12 @@
     $$("[data-next]", f).forEach(function (b) { b.addEventListener("click", function () { if (ok()) go(at + 1); }); });
     $$("[data-prev]", f).forEach(function (b) { b.addEventListener("click", function () { go(at - 1); }); });
     f.addEventListener("change", function () { if (at === steps.length - 1) sum(); });
+    /* a party that is not the priced one is quoted — say so where the number is chosen */
+    var gSel = $('[name="guests"]', f), paxNote = $("[data-pax]", f);
+    function paxCheck() { if (gSel && paxNote) paxNote.hidden = Number(gSel.value) === Number((CV.rates && CV.rates.pax) || 7); }
+    if (gSel) { gSel.addEventListener("change", paxCheck); paxCheck(); }
+    /* "Add to my enquiry" on the excursions page arrives as ?extra=<id> */
+    try { new URLSearchParams(location.search).getAll("extra").forEach(function (id) { var c = $('input[name="extra"][value="' + id.replace(/[^a-z0-9-]/g, "") + '"]', f); if (c) c.checked = true; }); } catch (x) {}
     f.addEventListener("submit", function (e) {
       e.preventDefault(); if (!ok()) return;
       check(); if (dateIn && !dateIn.checkValidity()) { go(1); dateIn.reportValidity(); return; }
@@ -1005,7 +1015,7 @@
     function fmt(d, opt) { var p = d.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(LANGTAG, opt); }
     $$(":scope > *", mount).forEach(function (n) { if (n.tagName !== "INPUT") n.remove(); });   // the hidden inputs stay
     var panel = el('<div class="gcal__panel"></div>'); mount.appendChild(panel);
-    panel.appendChild(el('<div class="gcal__bg" aria-hidden="true"></div>')).style.backgroundImage = "url(" + u("assets/img/atoll-pair-1200.webp") + ")";
+    panel.appendChild(el('<div class="gcal__bg" aria-hidden="true"></div>')).style.backgroundImage = "url(" + u("assets/img/aerial-close-1200.webp") + ")";
     var glass = el('<div class="gcal__glass">' +
       '<div class="gcal__head"><button class="gcal__nav" type="button" data-prev aria-label="' + t("prevMonth", "Previous month") + '">'  + L + '</button>' +
       '<div class="gcal__title" aria-live="polite"><span class="gcal__m"></span></div>' +

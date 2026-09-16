@@ -5,6 +5,10 @@
 module.exports = {
 
 ui: {
+  "Guests coming back aboard Tiffany Blanc 14 from the water": "Gäste kommen aus dem Wasser zurück an Bord der Tiffany Blanc 14",
+  "Add to my enquiry": "Zur Anfrage hinzufügen",
+  "The package price is for a party of seven. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "Der Paketpreis gilt für eine Gruppe von sieben. Eine andere Gruppengröße – und alles Zusätzliche, das Sie an Bord wünschen – wird auf Anfrage berechnet und kann mehr kosten. Sagen Sie uns im nächsten Schritt, was Sie sich vorstellen.",
+  "Diet, occasion, children aboard, anything extra you would like": "Ernährung, Anlass, Kinder an Bord, besondere Wünsche",
   "Availability": "Verfügbarkeit",
   "When the vessel is free": "Wann das Boot frei ist",
   "Days already taken are marked. Choose a free one and it carries through to your enquiry.": "Bereits vergebene Tage sind markiert. Wählen Sie einen freien – er wird in Ihre Anfrage übernommen.",
@@ -132,9 +136,7 @@ ui: {
   "Departs": "Abfahrt",
   "Departure point": "Abfahrtsort",
   "Details": "Angaben",
-  "Diet, diving certification, occasion, children aboard": "Ernährung, Tauchbrevet, Anlass, Kinder an Bord",
   "Discover the vessel": "Das Schiff entdecken",
-  "Diving": "Tauchen",
   "Diving equipment on non-diving charters": "Tauchausrüstung auf Nicht-Tauchcharter",
   "Does this look right?": "Stimmt das so?",
   "Duration": "Dauer",
@@ -372,7 +374,6 @@ content: {
     { id: "photographer",  t: "Fotograf", d: "Ein halber Tag an Bord, bearbeitete Dateien innerhalb einer Woche." },
     { id: "floating-breakfast",  t: "Schwimmendes Frühstück", d: "Serviert im Flachwasser, vor Anker." },
     { id: "sandbank-set-up",  t: "Aufbau auf der Sandbank", d: "Tisch, Schirm und Matten hinübergetragen." },
-    { id: "diving",  t: "Tauchen", d: "Zwei Flaschen, Blei und ein Guide, pro Taucher." },
     { id: "airport-and-resort-transfers",  t: "Flughafen- und Resorttransfers", d: "Velana oder Ihr Resort, je Strecke." }
   ],
   vessel: {

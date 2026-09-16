@@ -398,6 +398,18 @@ and pushed to every other open device by Supabase Realtime; a copy in the browse
 open instantly and work through a bad connection, catching up when it returns. Settings has
 *Load sample data* for a demonstration, *Clear all books*, and backup/restore.
 
+How two devices stay honest with each other: every edit stamps the record, and **only what
+this device changed is ever sent** (a "dirty" set, kept with the cache, so an edit made
+offline survives a reload). A row folded in from another device is never sent back. The
+database decides ties — a `before update` trigger (`keep_newer`) drops any copy that is not
+newer than the row it already holds — so a late or stale write can never overwrite a fresh
+one, whatever the device clocks say. When the tab comes back to the foreground, or the
+realtime channel reconnects, the admin asks for everything changed since a little before the
+last row it saw, so a missed event is caught. Booking and invoice numbers come from the
+counter in Settings but never below one past the highest number already in the books, so two
+devices cannot hand out the same reference. Nothing is deleted, only marked; *Restore backup*
+marks whatever the file lacks.
+
 ## The calendar
 
 The first thing in Books. One vessel, one month at a time, in the shape of Airbnb's host

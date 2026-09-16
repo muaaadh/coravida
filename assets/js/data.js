@@ -57,28 +57,40 @@
  "hero": {
   "clips": [
    {
-    "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows",
-    "max": 1440,
-    "src": "reef",
-    "poster": "poster-reef"
-   },
-   {
-    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air",
-    "max": 1440,
-    "src": "snorkel-pair",
-    "poster": "poster-snorkel-pair"
-   },
-   {
-    "alt": "A palm-ringed island alone in deep blue water, seen from the air",
-    "max": 1440,
-    "src": "island",
-    "poster": "poster-island"
-   },
-   {
-    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé",
-    "max": 1080,
     "src": "vessel",
-    "poster": "poster-vessel"
+    "poster": "poster-vessel",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé"
+   },
+   {
+    "src": "anchor",
+    "poster": "poster-anchor",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 at anchor above a reef edge, seen from the air"
+   },
+   {
+    "src": "reef",
+    "poster": "poster-reef",
+    "max": 1440,
+    "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows"
+   },
+   {
+    "src": "wake",
+    "poster": "poster-wake",
+    "max": 1080,
+    "alt": "A vessel underway across a shallow lagoon, seen from the air"
+   },
+   {
+    "src": "snorkel-pair",
+    "poster": "poster-snorkel-pair",
+    "max": 1440,
+    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
+   },
+   {
+    "src": "island",
+    "poster": "poster-island",
+    "max": 1440,
+    "alt": "A palm-ringed island alone in deep blue water, seen from the air"
    }
   ],
   "interval": 9000
@@ -165,12 +177,6 @@
    "p": 260,
    "t": "Sandbank set-up",
    "id": "sandbank-set-up"
-  },
-  {
-   "d": "Two tanks, weights and a guide, per diver.",
-   "p": 210,
-   "t": "Diving",
-   "id": "diving"
   },
   {
    "d": "Velana or your resort, each way.",
@@ -382,7 +388,7 @@
  ],
  "voyages": [
   {
-   "alt": "The Himmafushi sandbank at low water",
+   "alt": "Tiffany Blanc 14 at anchor above the reef edge",
    "has": [
     "Boat excursion",
     "Snorkelling at Fish Tank",
@@ -392,7 +398,7 @@
     "Swimming and snorkelling time",
     "Photo stops"
    ],
-   "img": "palm-shore",
+   "img": "aerial-anchor",
    "area": "North Malé Atoll",
    "clip": "snorkel-pair",
    "kind": "Full day",
@@ -575,8 +581,8 @@
    "slug": "shark-point-and-gulhi",
    "intro": "South for the day. Reef sharks at Embudu, the coral garden off Taj, a sandbank at midday, and Gulhi in the afternoon before the run home.",
    "plate": {
-    "img": "snorkellers",
-    "stop": 1
+    "img": "aerial-close",
+    "stop": 0
    },
    "price": 1350,
    "title": "Shark Point & Gulhi",

@@ -57,28 +57,40 @@
  "hero": {
   "clips": [
    {
-    "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows",
-    "max": 1440,
-    "src": "reef",
-    "poster": "poster-reef"
-   },
-   {
-    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air",
-    "max": 1440,
-    "src": "snorkel-pair",
-    "poster": "poster-snorkel-pair"
-   },
-   {
-    "alt": "A palm-ringed island alone in deep blue water, seen from the air",
-    "max": 1440,
-    "src": "island",
-    "poster": "poster-island"
-   },
-   {
-    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé",
-    "max": 1080,
     "src": "vessel",
-    "poster": "poster-vessel"
+    "poster": "poster-vessel",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé"
+   },
+   {
+    "src": "anchor",
+    "poster": "poster-anchor",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 at anchor above a reef edge, seen from the air"
+   },
+   {
+    "src": "reef",
+    "poster": "poster-reef",
+    "max": 1440,
+    "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows"
+   },
+   {
+    "src": "wake",
+    "poster": "poster-wake",
+    "max": 1080,
+    "alt": "A vessel underway across a shallow lagoon, seen from the air"
+   },
+   {
+    "src": "snorkel-pair",
+    "poster": "poster-snorkel-pair",
+    "max": 1440,
+    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
+   },
+   {
+    "src": "island",
+    "poster": "poster-island",
+    "max": 1440,
+    "alt": "A palm-ringed island alone in deep blue water, seen from the air"
    }
   ],
   "interval": 9000
@@ -165,12 +177,6 @@
    "p": 260,
    "t": "沙洲布置",
    "id": "sandbank-set-up"
-  },
-  {
-   "d": "两瓶气、配重与向导，每位潜水员。",
-   "p": 210,
-   "t": "潜水",
-   "id": "diving"
   },
   {
    "d": "维拉纳机场或你的度假村，单程。",
@@ -392,7 +398,7 @@
     "游泳与浮潜时间",
     "拍照停留"
    ],
-   "img": "palm-shore",
+   "img": "aerial-anchor",
    "area": "北马累环礁",
    "clip": "snorkel-pair",
    "kind": "全日",
@@ -575,8 +581,8 @@
    "slug": "shark-point-and-gulhi",
    "intro": "向南的一天。恩布度的礁鲨、泰姬外的珊瑚花园、正午的沙洲，以及午后的古尔希，然后返航。",
    "plate": {
-    "img": "snorkellers",
-    "stop": 1
+    "img": "aerial-close",
+    "stop": 0
    },
    "price": 1350,
    "title": "鲨鱼点与古尔希",

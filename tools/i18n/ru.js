@@ -6,6 +6,10 @@ module.exports = {
 
 /* ---- strings the generator prints ------------------------------------- */
 ui: {
+  "Guests coming back aboard Tiffany Blanc 14 from the water": "Гости возвращаются на борт Tiffany Blanc 14 из воды",
+  "Add to my enquiry": "Добавить в заявку",
+  "The package price is for a party of seven. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "Пакетная цена — для компании из семи человек. Другое число гостей и всё дополнительное, что вы хотели бы на борту, рассчитывается по запросу и может стоить дороже. Расскажите о пожеланиях на следующем шаге.",
+  "Diet, occasion, children aboard, anything extra you would like": "Питание, повод, дети на борту, любые пожелания",
   "Availability": "Свободные даты",
   "When the vessel is free": "Когда судно свободно",
   "Days already taken are marked. Choose a free one and it carries through to your enquiry.": "Занятые дни отмечены. Выберите свободный — он перейдёт в вашу заявку.",
@@ -133,9 +137,7 @@ ui: {
   "Departs": "Отход",
   "Departure point": "Место посадки",
   "Details": "Данные",
-  "Diet, diving certification, occasion, children aboard": "Питание, сертификация по дайвингу, повод, дети на борту",
   "Discover the vessel": "О судне",
-  "Diving": "Дайвинг",
   "Diving equipment on non-diving charters": "Снаряжение для дайвинга на недайвинговых чартерах",
   "Does this look right?": "Всё верно?",
   "Duration": "Длительность",
@@ -376,7 +378,6 @@ content: {
     { id: "photographer",  t: "Фотограф", d: "Полдня на борту, обработанные файлы в течение недели." },
     { id: "floating-breakfast",  t: "Плавучий завтрак", d: "Подаётся на мелководье, на якоре." },
     { id: "sandbank-set-up",  t: "Сервировка на косе", d: "Стол, зонт и маты, перенесённые на берег." },
-    { id: "diving",  t: "Дайвинг", d: "Два баллона, грузы и гид, на человека." },
     { id: "airport-and-resort-transfers",  t: "Трансферы из аэропорта и отелей", d: "Велана или ваш отель, в одну сторону." }
   ],
   vessel: {

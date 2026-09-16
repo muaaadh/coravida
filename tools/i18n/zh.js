@@ -5,6 +5,10 @@
 module.exports = {
 
 ui: {
+  "Guests coming back aboard Tiffany Blanc 14 from the water": "客人从水中回到 Tiffany Blanc 14 船上",
+  "Add to my enquiry": "加入我的咨询",
+  "The package price is for a party of seven. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "套餐价格适用于七人团。不同人数以及您想要的其他额外服务需另行报价，可能会产生额外费用。请在下一步告诉我们您的想法。",
+  "Diet, occasion, children aboard, anything extra you would like": "饮食、庆祝场合、随行儿童、任何额外需求",
   "Availability": "可预订日期",
   "When the vessel is free": "船只何时空闲",
   "Days already taken are marked. Choose a free one and it carries through to your enquiry.": "已被预订的日子已标出。选择一个空闲日，它会带入您的咨询。",
@@ -132,9 +136,7 @@ ui: {
   "Departs": "出发",
   "Departure point": "上船地点",
   "Details": "资料",
-  "Diet, diving certification, occasion, children aboard": "饮食、潜水执照、场合、随行儿童",
   "Discover the vessel": "了解这艘船",
-  "Diving": "潜水",
   "Diving equipment on non-diving charters": "非潜水行程中的潜水装备",
   "Does this look right?": "以下信息是否正确？",
   "Duration": "时长",
@@ -373,7 +375,6 @@ content: {
     { id: "photographer",  t: "摄影师", d: "船上半日，一周内交付修好的成片。" },
     { id: "floating-breakfast",  t: "漂浮早餐", d: "停泊时在浅水中供应。" },
     { id: "sandbank-set-up",  t: "沙洲布置", d: "餐桌、遮阳伞与地垫一并送上沙洲。" },
-    { id: "diving",  t: "潜水", d: "两瓶气、配重与向导，每位潜水员。" },
     { id: "airport-and-resort-transfers",  t: "机场与度假村接送", d: "维拉纳机场或你的度假村，单程。" }
   ],
   vessel: {

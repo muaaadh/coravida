@@ -72,10 +72,7 @@ create policy "staff update records" on public.records
   for update to authenticated using (true) with check (true);
 
 -- inbox: guests may only add; staff do the rest
-drop policy if exists "guests add to the inbox" on public.inbox;
-create policy "guests add to the inbox" on public.inbox
-  for insert to anon, authenticated
-  with check (status = 'new' and booking_ref is null and handled_at is null and length(data::text) < 12000);
+-- (the guests' insert policy is defined at the end of this file)
 drop policy if exists "staff read inbox" on public.inbox;
 create policy "staff read inbox" on public.inbox
   for select to authenticated using (true);
@@ -126,3 +123,29 @@ create policy "staff remove photographs" on storage.objects
 revoke all on public.records from anon;
 revoke select, update, delete, truncate, references, trigger on public.inbox from anon;
 revoke insert, update, delete, truncate, references, trigger on public.content from anon;
+
+-- ---- newer wins, decided here ------------------------------------------------
+-- Every record carries the stamp of its last edit. A copy that is not newer
+-- than what the row already holds is dropped, whichever device sends it and
+-- however late it arrives.
+create or replace function public.keep_newer() returns trigger
+language plpgsql set search_path = '' as $$
+begin
+  if new.updated <= old.updated then return null; end if;
+  return new;
+end $$;
+drop trigger if exists records_keep_newer on public.records;
+create trigger records_keep_newer before update on public.records
+  for each row execute function public.keep_newer();
+
+-- ---- the inbox takes three things from a guest and nothing else -------------
+-- The website sends an id, a kind and the form's data; the time is the
+-- server's, and the handling columns are the office's alone.
+revoke insert on public.inbox from anon;
+grant insert (id, kind, data) on public.inbox to anon;
+drop policy if exists "guests add to the inbox" on public.inbox;
+create policy "guests add to the inbox" on public.inbox
+  for insert to anon, authenticated
+  with check (status = 'new' and booking_ref is null and handled_at is null and handled_by is null
+              and at between now() - interval '5 minutes' and now() + interval '5 minutes'
+              and length(data::text) < 12000);

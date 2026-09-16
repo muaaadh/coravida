@@ -4,8 +4,9 @@
    expenses, and the handful of figures that come out of them. No journal,
    no chart of accounts — the accountant gets a CSV.
 
-   Stored as one JSON file in a private GitHub repository (Settings), cached
-   in this browser so it opens instantly and survives a bad connection.
+   Kept in the database one record per row, cached in this browser so it
+   opens instantly and survives a bad connection. Every change is stamped;
+   the newer stamp wins, here and in the database.
    ========================================================================== */
 window.Books = (function (A) {
   "use strict";
@@ -36,7 +37,14 @@ window.Books = (function (A) {
   function money(n, dp) { var cur = (S && S.settings.currency) || "USD"; var v = Number(n) || 0; return (v < 0 ? "−" : "") + cur + " " + Math.abs(v).toLocaleString("en-US", { minimumFractionDigits: dp == null ? 2 : dp, maximumFractionDigits: dp == null ? 2 : dp }); }
   function fmtDate(s) { if (!s) return "—"; var d = new Date(s + "T00:00:00"); return d.toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }); }
   function monthKey(s) { return String(s).slice(0, 7); }
-  var stamp = function (o) { o.updated = new Date().toISOString(); return o; };
+  /* stamping a record is what queues it for the database: only what this
+     device changed is ever sent, so a copy folded in from another device
+     can never travel back out and overwrite a newer one */
+  var dirty = {};
+  var stamp = function (o) { o.updated = new Date().toISOString(); if (o.id) dirty[o.id] = 1; return o; };
+  var stampSettings = function () { S.settings.updated = new Date().toISOString(); dirty.settings = 1; };
+  /* the database hands stamps back as "+00:00", we write "Z" — compare them as one form */
+  var norm = function (t) { if (!t) return ""; var d = new Date(t); return isNaN(d) ? String(t) : d.toISOString(); };
   var nameOf = function (b) { return (b && b.customer && b.customer.name) || (b && b.ref) || "Booking"; };
 
   var LISTS = ["bookings", "invoices", "payments", "expenses", "blocks", "log"];
@@ -44,7 +52,7 @@ window.Books = (function (A) {
      like everything else, so both devices see the whole story */
   function device() { return A.lsGet("cv:device", "") || (/iPhone|iPad|Android|Mobile/i.test(navigator.userAgent) ? "Phone" : "Computer"); }
   function logIt(kind, act, text, link, ref) {
-    (S.log = S.log || []).push({ id: A.uid(), at: new Date().toISOString(), who: device(), kind: kind, act: act, text: text, link: link || "", ref: ref || "", updated: new Date().toISOString() });
+    (S.log = S.log || []).push(stamp({ id: A.uid(), at: new Date().toISOString(), who: device(), kind: kind, act: act, text: text, link: link || "", ref: ref || "" }));
   }
   /* a one-line account of what an edit changed */
   function diffOf(before, after) {
@@ -63,64 +71,110 @@ window.Books = (function (A) {
     return x;
   }
   /* ---- load: the cache first, then the database; then listen ------------ */
-  var loadedAt = 0, lastSync = "", unwatch = null;
+  var loadedAt = 0, lastSeen = "", unwatch = null, renderLater = false;
+  var findIn = function (k, id) { var arr = S[k] || []; for (var i = 0; i < arr.length; i++) if (arr[i].id === id) return i; return -1; };
+  function rowToRec(r) { var rec = Object.assign({}, r.data, { id: r.id, updated: norm(r.updated) }); if (r.deleted) rec.deleted = true; else delete rec.deleted; return rec; }
+  function seen(t) { t = norm(t); if (t > lastSeen) lastSeen = t; }
+  /* rows from the database → the shape the rest of the file reads; a row
+     that arrives twice (paging) keeps its newer copy */
   function fromRows(rows) {
-    var x = blank(); x.log = [];
+    var x = blank(); x.log = []; var idx = {};
     rows.forEach(function (r) {
-      var rec = Object.assign({}, r.data, { id: r.id, updated: r.updated });
-      if (r.deleted) rec.deleted = true;
-      if (r.kind === "settings") { x.settings = Object.assign(x.settings, r.data, { updated: r.updated }); return; }
-      if (x[r.kind]) x[r.kind].push(rec);
+      seen(r.updated);
+      if (r.kind === "settings") { if (norm(r.updated) >= (x.settings.updated || "")) x.settings = Object.assign(blank().settings, r.data, { updated: norm(r.updated) }); return; }
+      if (!x[r.kind]) return;
+      var rec = rowToRec(r), k = r.kind + ":" + r.id;
+      if (k in idx) { if (rec.updated > x[r.kind][idx[k]].updated) x[r.kind][idx[k]] = rec; return; }
+      idx[k] = x[r.kind].push(rec) - 1;
     });
     return shape(x);
   }
-  function toRows(since) {
-    var rows = [];
-    LISTS.forEach(function (k) { (S[k] || []).forEach(function (rec) { if (!since || (rec.updated || "") > since) { var d = Object.assign({}, rec); delete d.updated; rows.push({ id: rec.id, kind: k, updated: rec.updated || new Date().toISOString(), deleted: !!rec.deleted, data: d }); } }); });
-    if (!since || (S.settings.updated || "") > since) { var st = Object.assign({}, S.settings); delete st.updated; rows.push({ id: "settings", kind: "settings", updated: S.settings.updated || new Date().toISOString(), deleted: false, data: st }); }
+  /* what this device changed and has not yet been told is saved */
+  function toRows() {
+    var rows = [], ids = Object.keys(dirty);
+    ids.forEach(function (id) {
+      if (id === "settings") { var st = Object.assign({}, S.settings); delete st.updated; rows.push({ id: "settings", kind: "settings", updated: S.settings.updated || new Date().toISOString(), deleted: false, data: st }); return; }
+      for (var j = 0; j < LISTS.length; j++) { var i = findIn(LISTS[j], id); if (i > -1) { var rec = S[LISTS[j]][i], d = Object.assign({}, rec); delete d.updated; delete d.deleted; rows.push({ id: rec.id, kind: LISTS[j], updated: rec.updated || new Date().toISOString(), deleted: !!rec.deleted, data: d }); return; } }
+      delete dirty[id];   // stamped but no longer in the books — nothing to send
+    });
     return rows;
   }
-  /* a row from the database, folded into what we hold (newer wins) */
+  /* a row from the database, folded into what we hold: newer wins, and the
+     record keeps its identity so an open dialog still edits the live one */
   function fold(r) {
-    if (r.kind === "settings") { if ((r.updated || "") >= (S.settings.updated || "")) S.settings = Object.assign(blank().settings, r.data, { updated: r.updated }); return true; }
+    seen(r.updated);
+    if (r.kind === "settings") {
+      if (norm(r.updated) < (S.settings.updated || "")) return false;
+      if (dirty.settings && norm(r.updated) === S.settings.updated) return false;
+      S.settings = Object.assign(blank().settings, r.data, { updated: norm(r.updated) }); delete dirty.settings; return true;
+    }
     if (!S[r.kind]) return false;
-    var rec = Object.assign({}, r.data, { id: r.id, updated: r.updated }); if (r.deleted) rec.deleted = true;
-    var i = S[r.kind].findIndex(function (x) { return x.id === r.id; });
+    var rec = rowToRec(r), i = findIn(r.kind, r.id);
     if (i < 0) { S[r.kind].push(rec); return true; }
-    if ((rec.updated || "") > (S[r.kind][i].updated || "")) { S[r.kind][i] = rec; return true; }
-    return false;
+    var cur = S[r.kind][i];
+    if (rec.updated < (cur.updated || "")) return false;             // we hold something newer (and dirty) — ours will go up
+    if (rec.updated === (cur.updated || "")) { if (dirty[r.id]) delete dirty[r.id]; return false; }   // our own write coming back
+    Object.keys(cur).forEach(function (k) { delete cur[k]; }); Object.assign(cur, rec); delete dirty[r.id];
+    return true;
   }
   function load() {
     var c = A.lsGet(KEY, null);
-    S = shape(c && c.data ? c.data : blank()); lastSync = c && c.lastSync || "";
+    S = shape(c && c.data ? c.data : blank()); dirty = c && c.dirty || {}; lastSeen = c && c.lastSeen || "";
     if (!A.signedIn()) { localOnly = true; return Promise.resolve(); }
     return DB.records.all().then(function (rows) {
       localOnly = false;
-      var pending = toRows(lastSync);                 // made here while offline or before the last save landed
-      var fresh = fromRows(rows);
-      pending.forEach(function (r) { var rec = Object.assign({}, r.data, { id: r.id, updated: r.updated }); if (r.deleted) rec.deleted = true; if (r.kind === "settings") { if ((r.updated || "") > (fresh.settings.updated || "")) fresh.settings = Object.assign(fresh.settings, r.data, { updated: r.updated }); } else { var i = fresh[r.kind].findIndex(function (x) { return x.id === r.id; }); if (i < 0) fresh[r.kind].push(rec); else if ((rec.updated || "") > (fresh[r.kind][i].updated || "")) fresh[r.kind][i] = rec; } });
+      var mine = toRows(), fresh = fromRows(rows);            // made here while offline, or before the last save landed
+      mine.forEach(function (r) {
+        var rec = rowToRec(r);
+        if (r.kind === "settings") { if (rec.updated > (fresh.settings.updated || "")) fresh.settings = Object.assign(blank().settings, r.data, { updated: rec.updated }); else delete dirty.settings; return; }
+        var i = fresh[r.kind].findIndex(function (x) { return x.id === r.id; });
+        if (i < 0) fresh[r.kind].push(rec); else if (rec.updated > fresh[r.kind][i].updated) fresh[r.kind][i] = rec; else delete dirty[r.id];   // theirs is newer — ours is dropped
+      });
       S = shape(fresh); loadedAt = Date.now(); lastSaved = new Date();
-      var p = pending.length ? DB.records.upsert(pending).then(function () { lastSync = new Date().toISOString(); }) : Promise.resolve(lastSync = lastSync || new Date().toISOString());
-      return p.then(function () { cache(); clashCheck(); publishAvailability(); listen(); });
+      return (Object.keys(dirty).length ? save(true) : Promise.resolve()).then(function () { cache(); clashCheck(); publishAvailability(); listen(); });
     }).catch(function (e) { localOnly = true; toast("Books: " + e.message + " Working from the copy on this device.", "err"); });
   }
+  /* changes made on another device arrive live; after a gap — the laptop lid,
+     a dropped connection — anything missed is fetched, back to a little before
+     the last row seen so a slow clock elsewhere cannot hide a change */
   function listen() {
     if (unwatch) return;
-    unwatch = DB.records.watch(function (r) {
-      if (fold(r)) { cache(); if (/^#(calendar|bookings|invoices|payments|expenses|reports|overview|history)/.test(location.hash)) A.render(); }
-    });
+    unwatch = DB.records.watch(function (r) { if (fold(r)) changed(); }, function (status) { if (status === "SUBSCRIBED" && loadedAt) resync(); });
   }
-  function cache() { A.lsSet(KEY, { data: S, lastSync: lastSync, at: Date.now() }); }
+  var resyncing = false;
+  function resync() {
+    if (localOnly || resyncing || !A.signedIn()) return Promise.resolve();
+    resyncing = true;
+    var from = lastSeen ? new Date(new Date(lastSeen).getTime() - 10 * 60000).toISOString() : "1970-01-01T00:00:00.000Z";
+    return DB.records.since(from).then(function (rows) { var n = 0; rows.forEach(function (r) { if (fold(r)) n++; }); if (n) changed(); })
+      .catch(function () { /* next time */ }).then(function () { resyncing = false; });
+  }
+  function changed() {
+    cache();
+    if (!$("#modal").hidden) { renderLater = true; return; }   // never pull a form out from under the office
+    if (/^#(calendar|bookings|invoices|payments|expenses|reports|overview|history|settings)/.test(location.hash) || location.hash === "" || location.hash === "#") A.render();
+  }
+  function cache() { A.lsSet(KEY, { data: S, dirty: dirty, lastSeen: lastSeen, at: Date.now() }); }
   function save(now) {
     cache();
     clearTimeout(saveT); saveT = null;
     if (localOnly) { drawSync(); return Promise.resolve(); }
     if (!now) { saveT = setTimeout(function () { save(true); }, 900); drawSync(); return Promise.resolve(); }
-    var rows = toRows(lastSync); if (!rows.length) { drawSync(); return Promise.resolve(); }
+    var rows = toRows(); if (!rows.length) { failed = ""; drawSync(); return Promise.resolve(); }
     saving = true; drawSync();
-    var stampAt = new Date().toISOString();
+    var sent = {}; rows.forEach(function (r) { sent[r.id] = r.updated; });
     return DB.records.upsert(rows)
-      .then(function () { saving = false; failed = ""; lastSaved = new Date(); lastSync = stampAt; cache(); drawSync(); publishAvailability(); })
+      .then(function () {
+        saving = false; failed = ""; lastSaved = new Date();
+        Object.keys(sent).forEach(function (id) {   // a record edited again while this was in flight stays queued
+          var cur = id === "settings" ? S.settings.updated : (function () { for (var j = 0; j < LISTS.length; j++) { var i = findIn(LISTS[j], id); if (i > -1) return S[LISTS[j]][i].updated; } return sent[id]; })();
+          if (cur === sent[id]) delete dirty[id];
+          seen(sent[id]);
+        });
+        cache(); drawSync(); publishAvailability();
+        if (Object.keys(dirty).length) return save(true);
+        if (renderLater && $("#modal").hidden) { renderLater = false; A.render(); }
+      })
       .catch(function (e) { saving = false; failed = e.message; toast("Books did not save: " + e.message, "err"); cache(); drawSync(); });
   }
   /* after any load or merge: a slot two confirmed bookings both hold is the one
@@ -146,8 +200,11 @@ window.Books = (function (A) {
   function webBadge() { var b = E("span", { class: "badge webSync" }); setTimeout(drawSync, 0); return b; }
   document.addEventListener("visibilitychange", function () {
     if (document.visibilityState === "hidden") { if (saveT) save(true); return; }
-    if (failed && !saving) save(true);
+    if ((failed || Object.keys(dirty).length) && !saving) save(true);
+    resync();
   });
+  setInterval(function () { if (document.visibilityState === "visible" && loadedAt) resync(); }, 180000);
+  var modalWatch = setInterval(function () { var m = $("#modal"); if (m && m.hidden && renderLater) { renderLater = false; A.render(); } }, 400);
   window.addEventListener("pagehide", function () { if (saveT) save(true); });
   function drawSync() {
     $$(".webSync").forEach(function (n) {
@@ -387,7 +444,7 @@ window.Books = (function (A) {
     var node = bookingForm(b);
     A.dialog({ title: "New booking", node: node, wide: true, actions: [["Cancel", "btn--ghost", null], ["Save booking", "btn--go", "ok"]], validate: function () { return validate(node) && node._check(); } }).then(function (r) {
       if (r !== "ok") return;
-      b.ref = "B-" + String(S.settings.nextBooking++).padStart(4, "0");
+      b.ref = nextRef();
       S.bookings.push(stamp(b)); logIt("booking", "created", b.ref + " · " + nameOf(b) + " · " + fmtDate(b.date) + " · " + (b.excursionTitle || "Custom") + " · " + b.status, "#bookings/" + b.id, b.ref); save();
       if (after) after(b); else { A.go("bookings/" + b.id); toast("Booking " + b.ref + " saved.", "ok"); }
     });
@@ -456,7 +513,14 @@ window.Books = (function (A) {
   }
 
   /* ---------------------------------------------------------------- invoices */
-  function nextNo() { return (S.settings.prefix || "CV") + "-" + String(S.settings.nextInvoice).padStart(4, "0"); }
+  /* numbers come from the settings counter, but never below one past what the
+     books already hold — so two devices, or a counter that never reached the
+     database, cannot hand out the same reference twice */
+  var tail = function (str) { var m = /(\d+)$/.exec(String(str || "")); return m ? +m[1] : 0; };
+  function peekInvoice() { return Math.max(Number(S.settings.nextInvoice) || 1, (S.invoices || []).reduce(function (m, i) { return Math.max(m, tail(i.no)); }, 0) + 1); }
+  function nextNo() { return (S.settings.prefix || "CV") + "-" + String(peekInvoice()).padStart(4, "0"); }
+  function takeInvoiceNo() { var n = peekInvoice(); S.settings.nextInvoice = n + 1; stampSettings(); return (S.settings.prefix || "CV") + "-" + String(n).padStart(4, "0"); }
+  function nextRef() { var n = Math.max(Number(S.settings.nextBooking) || 1, (S.bookings || []).reduce(function (m, b) { return Math.max(m, tail(b.ref)); }, 0) + 1); S.settings.nextBooking = n + 1; stampSettings(); return "B-" + String(n).padStart(4, "0"); }
   function newInvoice(b) {
     var inv = { id: A.uid(), no: "", bookingId: b ? b.id : null, date: today(), due: b ? (b.date > today() ? (addDays(b.date, -7) > today() ? addDays(b.date, -7) : today()) : addDays(today(), 7)) : addDays(today(), 7),
       customer: b ? JSON.parse(JSON.stringify(b.customer)) : {}, lines: [], tgst: S.settings.tgst, notes: "", created: new Date().toISOString() };
@@ -487,7 +551,7 @@ window.Books = (function (A) {
     node.appendChild(fld("Note on the invoice", inv, "notes", { type: "textarea", placeholder: "Optional" }));
     A.dialog({ title: "New invoice " + nextNo(), node: node, wide: true, actions: [["Cancel", "btn--ghost", null], ["Create", "btn--go", "ok"]], validate: function () { if (!inv.lines.length) { toast("Add at least one line.", "err"); return false; } return validate(node); } }).then(function (r) {
       if (r !== "ok") return;
-      inv.no = nextNo(); S.settings.nextInvoice++;
+      inv.no = takeInvoiceNo();
       if (b && b.status === "enquiry") { if (!conflict(Object.assign({}, b, { status: "confirmed" }))) { b.status = "confirmed"; stamp(b); } else toast("The booking stays an enquiry — " + conflict(Object.assign({}, b, { status: "confirmed" })) + ".", "err"); }
       S.invoices.push(stamp(inv)); logIt("invoice", "created", inv.no + " · " + (inv.customer.name || "") + " · " + money(invTotals(inv).total) + (b ? " · for " + b.ref : ""), "#invoices/" + inv.id, b ? b.ref : inv.no); save(); A.go("invoices/" + inv.id); toast("Invoice " + inv.no + " created.", "ok");
     });
@@ -627,7 +691,7 @@ window.Books = (function (A) {
   function overviewCard() {
     var t = today();
     var next = L("bookings").filter(function (b) { return b.date >= t && b.status !== "cancelled" && b.status !== "completed"; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; }).slice(0, 6);
-    var card = E("div", { class: "card" }, [E("div", { class: "card__h" }, [E("div", {}, [E("h2", { text: "Next charters" }), E("p", { text: localOnly ? "Books are on this device only until a token is added." : "Kept in your private books repository." })]), E("a", { class: "btn btn--ghost btn--sm", href: "#calendar", text: "Open calendar" })])]);
+    var card = E("div", { class: "card" }, [E("div", { class: "card__h" }, [E("div", {}, [E("h2", { text: "Next charters" }), E("p", { text: localOnly ? "Books are on this device only until you sign in." : "Kept in the books, shared by every device that signs in." })]), E("a", { class: "btn btn--ghost btn--sm", href: "#calendar", text: "Open calendar" })])]);
     var strip = E("div", { class: "strip" });
     for (var i = 0; i < 14; i++) (function (d) {
       var o = occupancy(d), x = parse(d);
@@ -654,12 +718,12 @@ window.Books = (function (A) {
     card.appendChild(E("div", { class: "acts acts--between" }, [
       E("div", { class: "acts" }, [
         E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Download backup", onclick: function () { var a = E("a", { href: "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(S, null, 2)), download: "coravida-books-" + today() + ".json" }); document.body.appendChild(a); a.click(); a.remove(); } }),
-        E("label", { class: "btn btn--ghost btn--sm" }, ["Restore backup", E("input", { type: "file", accept: "application/json", hidden: true, onchange: function (e) { var f = e.target.files[0]; if (!f) return; f.text().then(function (txt) { var j = JSON.parse(txt); if (!j || !j.bookings) throw new Error("not a books file"); return A.confirm("Restore this backup?", "It replaces everything in the books with the file's contents.", "Restore", true).then(function (ok) { if (ok) { S = shape(j); LISTS.forEach(function (k) { S[k].forEach(function (x) { delete x.deleted; stamp(x); }); }); S.settings.updated = new Date().toISOString(); logIt("books", "restored", "Backup file restored: " + L("bookings").length + " bookings, " + L("invoices").length + " invoices", "#history"); save(true); A.render(); } }); }).catch(function (x) { toast("Could not restore: " + x.message, "err"); }); } })]),
+        E("label", { class: "btn btn--ghost btn--sm" }, ["Restore backup", E("input", { type: "file", accept: "application/json", hidden: true, onchange: function (e) { var f = e.target.files[0]; if (!f) return; f.text().then(function (txt) { var j = JSON.parse(txt); if (!j || !j.bookings) throw new Error("not a books file"); return A.confirm("Restore this backup?", "It replaces everything in the books with the file's contents.", "Restore", true).then(function (ok) { if (ok) { var was = S; S = shape(j); LISTS.forEach(function (k) { S[k].forEach(function (x) { delete x.deleted; stamp(x); }); (was[k] || []).forEach(function (x) { if (findIn(k, x.id) < 0) S[k].push(stamp({ id: x.id, deleted: true })); }); }); stampSettings(); logIt("books", "restored", "Backup file restored: " + L("bookings").length + " bookings, " + L("invoices").length + " invoices", "#history"); save(true); A.render(); } }); }).catch(function (x) { toast("Could not restore: " + x.message, "err"); }); } })]),
         E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Load sample data", onclick: function () { A.confirm("Load sample data?", "Adds a few example bookings, invoices and expenses so you can see how the books work. Clear them again from here.", "Load").then(function (ok) { if (ok) { sample(); logIt("books", "sample", "Sample data loaded", "#history"); save(); A.render(); toast("Sample data loaded.", "ok"); } }); } })
       ]),
-      E("button", { class: "btn btn--bad btn--sm", type: "button", text: "Clear all books", onclick: function () { A.confirm("Clear every booking, invoice, payment and expense?", "Settings stay. Download a backup first if in doubt.", "Clear everything", true).then(function (ok) { if (ok) { var n = L("bookings").length; ["bookings", "invoices", "payments", "expenses", "blocks"].forEach(function (k) { (S[k] || []).forEach(function (x) { x.deleted = true; stamp(x); }); }); S.settings.nextInvoice = 1; S.settings.nextBooking = 1; logIt("books", "cleared", "Everything cleared (" + n + " bookings) — earlier versions remain on GitHub", "#history"); save(); A.render(); } }); } })
+      E("button", { class: "btn btn--bad btn--sm", type: "button", text: "Clear all books", onclick: function () { A.confirm("Clear every booking, invoice, payment and expense?", "Settings stay. Download a backup first if in doubt.", "Clear everything", true).then(function (ok) { if (ok) { var n = L("bookings").length; ["bookings", "invoices", "payments", "expenses", "blocks"].forEach(function (k) { (S[k] || []).forEach(function (x) { x.deleted = true; stamp(x); }); }); S.settings.nextInvoice = 1; S.settings.nextBooking = 1; stampSettings(); logIt("books", "cleared", "Everything cleared (" + n + " bookings) — History keeps the story", "#history"); save(); A.render(); } }); } })
     ]));
-    card.appendChild(E("button", { class: "btn btn--go", type: "button", text: "Save books settings", onclick: function () { st.updated = new Date().toISOString(); logIt("settings", "saved", "T-GST " + st.tgst + "% · " + st.currency + " · invoices " + st.prefix + "-", "#settings"); save(); toast("Saved.", "ok"); } }));
+    card.appendChild(E("button", { class: "btn btn--go", type: "button", text: "Save books settings", onclick: function () { stampSettings(); logIt("settings", "saved", "T-GST " + st.tgst + "% · " + st.currency + " · invoices " + st.prefix + "-", "#settings"); save(); toast("Saved.", "ok"); } }));
     return card;
   }
   function sample() {
@@ -668,12 +732,12 @@ window.Books = (function (A) {
     var offs = [-40, -24, -9, 3, 12, 26], done = 0;
     names.forEach(function (n, i) {
       var v = V[i % V.length] || { slug: "custom", title: "Custom charter", price: 1200 };
-      var b = { id: A.uid() + i, ref: "B-" + String(S.settings.nextBooking++).padStart(4, "0"), status: offs[i] < 0 ? "completed" : i === 5 ? "enquiry" : "confirmed", date: addDays(t, offs[i]), slot: slotFor(v), excursion: v.slug, excursionTitle: v.title, guests: i === 2 ? 4 : 7, price: i === 2 ? 800 : v.price,
+      var b = { id: A.uid() + i, ref: nextRef(), status: offs[i] < 0 ? "completed" : i === 5 ? "enquiry" : "confirmed", date: addDays(t, offs[i]), slot: slotFor(v), excursion: v.slug, excursionTitle: v.title, guests: i === 2 ? 4 : 7, price: i === 2 ? 800 : v.price,
         customer: { name: n[0], email: n[1], phone: n[2], staying: n[3] }, addons: i % 2 ? [{ id: "floating-breakfast", t: "Floating breakfast", p: 180 }] : [], notes: i === 3 ? "Anniversary — a cake aboard would be welcome." : "", created: new Date().toISOString() };
       S.bookings.push(stamp(b));
       if (i < 5) {
-        var inv = { id: A.uid() + "i" + i, no: nextNo(), bookingId: b.id, date: addDays(b.date, -14), due: addDays(b.date, -7), customer: b.customer, lines: [{ d: b.excursionTitle + " · " + fmtDate(b.date) + " · " + b.guests + " guests", qty: 1, unit: b.price }].concat(b.addons.map(function (a) { return { d: a.t, qty: 1, unit: a.p }; })), tgst: S.settings.tgst, notes: "", created: new Date().toISOString() };
-        S.settings.nextInvoice++; S.invoices.push(stamp(inv));
+        var inv = { id: A.uid() + "i" + i, no: takeInvoiceNo(), bookingId: b.id, date: addDays(b.date, -14), due: addDays(b.date, -7), customer: b.customer, lines: [{ d: b.excursionTitle + " · " + fmtDate(b.date) + " · " + b.guests + " guests", qty: 1, unit: b.price }].concat(b.addons.map(function (a) { return { d: a.t, qty: 1, unit: a.p }; })), tgst: S.settings.tgst, notes: "", created: new Date().toISOString() };
+        S.invoices.push(stamp(inv));
         var x = invTotals(inv);
         if (i < 3) S.payments.push(stamp({ id: A.uid() + "p" + i, invoiceId: inv.id, date: addDays(inv.date, 2), amount: x.total, method: i === 1 ? "card" : "bank", ref: "TRF-" + (48210 + i) }));
         else if (i === 3) S.payments.push(stamp({ id: A.uid() + "p" + i, invoiceId: inv.id, date: addDays(inv.date, 1), amount: round2(x.total / 2), method: "bank", ref: "Deposit" }));
@@ -690,5 +754,5 @@ window.Books = (function (A) {
   return { load: load, save: save, summary: summary, money: money, overviewCard: overviewCard, settingsCard: settingsCard, data: function () { return S; },
            live: L, today: today, addDays: addDays, daysBetween: daysBetween, fmtDate: fmtDate, iso: iso, parse: parse,
            occupancy: occupancy, conflict: conflict, block: block, unblock: unblock, availability: availability, blocksOn: blocksOn,
-           SLOTS: SLOTS, REASONS: REASONS, slotLabel: slotLabel, reasonLabel: reasonLabel, slotFor: slotFor, newBooking: newBooking, editBooking: editBooking, sync: drawSync, undo: undo, joinDone: joinDone, nameOf: nameOf, clashCheck: clashCheck, logIt: logIt, device: device, invTotals: invTotals, shape: shape, setAll: function (x) { S = shape(x); }, webBadge: webBadge, connectBanner: connectBanner, localOnly: function () { return localOnly; }, publishAvailability: publishAvailability };
+           SLOTS: SLOTS, REASONS: REASONS, slotLabel: slotLabel, reasonLabel: reasonLabel, slotFor: slotFor, newBooking: newBooking, editBooking: editBooking, sync: drawSync, undo: undo, joinDone: joinDone, nameOf: nameOf, clashCheck: clashCheck, logIt: logIt, device: device, invTotals: invTotals, shape: shape, setAll: function (x) { S = shape(x); }, resync: resync, pending: function () { return Object.keys(dirty); }, webBadge: webBadge, connectBanner: connectBanner, localOnly: function () { return localOnly; }, publishAvailability: publishAvailability };
 })(window.Admin);
