@@ -137,7 +137,7 @@
       '<footer class="ftr">' +
         '<div class="deep__bg" aria-hidden="true">' +
           '<img src="' + u("assets/img/poster-sunbeams-1200.webp") + '" alt="" loading="lazy" decoding="async" width="1200" height="675">' +
-          '<video data-src="sunbeams" data-max="1080" muted loop playsinline preload="none" tabindex="-1"></video>' +
+          '<video data-src="sunbeams" data-max="2160" muted loop playsinline preload="none" tabindex="-1"></video>' +
         "</div>" +
         '<div class="wrap"><div class="ftr__top">' +
         '<div data-a="up"><img src="' + u("assets/img/logo-full-white.webp") + '" alt="' + B.name + '" width="90" height="46" loading="lazy">' +
@@ -156,46 +156,59 @@
 
   /* ---- The sea ---------------------------------------------------------- */
   /* One 1440-unit period, tiled twice inside a 2880 viewBox, so a -50% shift
-     loops seamlessly. Each layer drifts at its own speed and direction. */
+     loops seamlessly. Four swells, back to front, each a sum of two sines
+     (a steep face, a long back) so no two crests look alike; each drifts at
+     its own pace and breathes up and down on a second, slower clock. The
+     front swell is the footer's own navy, so where the divider ends nothing
+     shows — the film beneath only fades in further down. */
   var PERIOD = 1440, SEAH = 240;
-  function crest(y0, segs) {
-    var d = "M0," + y0, x;
-    for (var t = 0; t < 2; t++) {
-      var o = t * PERIOD;
-      for (var i = 0; i < segs.length; i++) {
-        var g = segs[i];
-        d += " C" + (g[0] + o) + "," + g[1] + " " + (g[2] + o) + "," + g[3] + " " + (g[4] + o) + "," + g[5];
-      }
+  function crest(y0, amp, k1, k2, phase, lean) {
+    var pts = [], step = 20, n = (PERIOD * 2) / step;
+    for (var i = 0; i <= n; i++) {
+      var x = i * step, th = (x / PERIOD) * Math.PI * 2 * k1 + phase;
+      var y = y0 - amp * (Math.sin(th) + lean * Math.sin(2 * th + 0.9) + 0.22 * Math.sin(th * (k2 / k1) + 1.7));
+      pts.push([x, y]);
+    }
+    // Catmull-Rom through the points → cubic Béziers, so the surface is smooth
+    var d = "M" + pts[0][0] + "," + pts[0][1].toFixed(1);
+    for (var j = 0; j < pts.length - 1; j++) {
+      var p0 = pts[j ? j - 1 : j], p1 = pts[j], p2 = pts[j + 1], p3 = pts[j + 2 < pts.length ? j + 2 : j + 1];
+      d += " C" + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + "," + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) +
+        " " + (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + "," + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) +
+        " " + p2[0] + "," + p2[1].toFixed(1);
     }
     return d;
   }
-  var LAYERS = [
-    { y: 88,  s: [[150,36,250,126,390,96],[520,68,610,140,740,110],[880,82,970,40,1090,66],[1220,90,1330,128,1440,88]] },
-    { y: 114, s: [[110,166,270,62,410,104],[550,144,630,60,770,94],[910,128,1020,56,1160,88],[1300,118,1360,150,1440,114]] },
-    { y: 146, s: [[160,192,290,96,430,136],[570,176,670,100,810,132],[950,166,1070,92,1210,124],[1350,158,1400,178,1440,146]] }
+  var LAYERS = [                              // y0, amplitude, waves per period, second harmonic, phase, lean
+    { y: 84,  a: 14, k1: 2, k2: 5, ph: 0.4, lean: 0.18 },
+    { y: 108, a: 17, k1: 3, k2: 7, ph: 2.1, lean: 0.28 },
+    { y: 134, a: 19, k1: 4, k2: 9, ph: 4.0, lean: 0.34 },
+    { y: 158, a: 16, k1: 5, k2: 11, ph: 1.2, lean: 0.4 }
   ];
   function sea(host) {
-    var fill = function (d) { return d + " L" + (PERIOD * 2) + "," + SEAH + " L0," + SEAH + " Z"; };
-    var body = "";
+    // every fill runs on past the bottom edge, so a swell breathing upward never shows the one behind it
+    var fill = function (d) { return d + " L" + (PERIOD * 2) + "," + (SEAH + 80) + " L0," + (SEAH + 80) + " Z"; };
+    var body = "", front = "";
     LAYERS.forEach(function (L, i) {
-      body += '<g class="sea__l l' + (i + 1) + '"><path class="wv" d="' + fill(crest(L.y, L.s)) + '"/></g>';
+      var d = crest(L.y, L.a, L.k1, L.k2, L.ph, L.lean);
+      if (i === LAYERS.length - 1) front = d;
+      body += '<g class="sea__l l' + (i + 1) + '"><g class="sea__b b' + (i + 1) + '"><path class="wv" d="' + fill(d) + '"/>' +
+        (i === LAYERS.length - 1 ? '<path class="lip" d="' + fill(d) + '"/><path class="foam" d="' + d + '"/><path class="foam foam--2" d="' + d + '"/>' : "") +
+        "</g></g>";
     });
-    var front = crest(LAYERS[2].y, LAYERS[2].s);
-    // light refracting down through the surface
-    body += '<g class="sea__l l3 sea__rg"><path class="sea__refr" d="' + fill(front) + '"/></g>';
-    // chromatic split along the crest: three channels, a hair apart
-    body += '<g class="sea__l l3 sea__chr">' +
-      '<path class="ch r" d="' + front + '"/>' +
-      '<path class="ch g" d="' + front + '"/>' +
-      '<path class="ch b" d="' + front + '"/>' +
-      '<path class="ch f" d="' + front + '"/></g>';
+    // light coming down through the surface, and the sheen a low sun leaves on the backs of the swells
+    body = '<g class="sea__l l3 sea__rg"><g class="sea__b b3"><path class="sea__sheen" d="' + fill(crest(LAYERS[2].y, LAYERS[2].a, LAYERS[2].k1, LAYERS[2].k2, LAYERS[2].ph, LAYERS[2].lean)) + '"/></g></g>' + body;
     var w = el('<div class="sea" aria-hidden="true"><svg viewBox="0 0 ' + (PERIOD * 2) + " " + SEAH +
       '" preserveAspectRatio="none">' +
-      '<defs><linearGradient id="cvRefr" gradientUnits="userSpaceOnUse" x1="0" y1="126" x2="0" y2="240">' +
-      '<stop offset="0" stop-color="#D8ECFF" stop-opacity=".16"/>' +
-      '<stop offset=".16" stop-color="#8CBEEA" stop-opacity=".05"/>' +
-      '<stop offset=".55" stop-color="#3E7FC4" stop-opacity=".012"/>' +
-      '<stop offset="1" stop-color="#03224D" stop-opacity="0"/></linearGradient></defs>' +
+      '<defs>' +
+      '<linearGradient id="cvW1" gradientUnits="userSpaceOnUse" x1="0" y1="60" x2="0" y2="240"><stop offset="0" stop-color="#DCE9F7"/><stop offset="1" stop-color="#9FBEE0"/></linearGradient>' +
+      '<linearGradient id="cvW2" gradientUnits="userSpaceOnUse" x1="0" y1="80" x2="0" y2="240"><stop offset="0" stop-color="#8FB4DC"/><stop offset="1" stop-color="#4677B0"/></linearGradient>' +
+      '<linearGradient id="cvW3" gradientUnits="userSpaceOnUse" x1="0" y1="110" x2="0" y2="240"><stop offset="0" stop-color="#3F76B5"/><stop offset="1" stop-color="#153F78"/></linearGradient>' +
+      '<linearGradient id="cvLip" gradientUnits="userSpaceOnUse" x1="0" y1="140" x2="0" y2="214"><stop offset="0" stop-color="#4A8AD0" stop-opacity=".95"/><stop offset=".22" stop-color="#245FA3" stop-opacity=".7"/><stop offset=".55" stop-color="#0B3468" stop-opacity=".35"/><stop offset="1" stop-color="#03224D" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="cvFoam" gradientUnits="userSpaceOnUse" x1="0" y1="140" x2="0" y2="168"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".5" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>' +
+      '<linearGradient id="cvSheen" gradientUnits="userSpaceOnUse" x1="0" y1="112" x2="0" y2="200"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".22"/><stop offset=".3" stop-color="#BFDCFF" stop-opacity=".06"/><stop offset="1" stop-color="#03224D" stop-opacity="0"/></linearGradient>' +
+      '<filter id="cvSoft" x="-2%" y="-20%" width="104%" height="140%"><feGaussianBlur stdDeviation="1.1"/></filter>' +
+      '</defs>' +
       body + "</svg></div>");
     var cx = "background-image:url(" + u("assets/img/caustics.webp") + ")";
     var deep = el('<div class="sea-deep" aria-hidden="true"><i style="' + cx + '"></i><i style="' + cx + '"></i></div>');
@@ -265,10 +278,17 @@
   }
 
   /* ---- Video ------------------------------------------------------------ */
+  /* the smallest tier that is not smaller than the screen's own pixels once the
+     clip covers it — on a tall phone that is the height that counts, not the
+     width. A 2× laptop gets the 2160 cut, a 1080p monitor the 1080; a phone
+     stops at 1440, which is already four times its width. Never above the
+     clip's own source. */
+  var TIERS = [720, 1080, 1440, 2160];
   function tier(max) {
-    var w = window.innerWidth * (window.devicePixelRatio > 1.5 ? 1.4 : 1);
-    var t = w > 1900 ? 1440 : w > 1200 ? 1080 : w > 700 ? 720 : 540;
-    return Math.min(t, max || 1080);
+    var dpr = window.devicePixelRatio || 1, need = Math.max(window.innerWidth, window.innerHeight * 16 / 9) * dpr;
+    var top = TOUCH && window.innerWidth < 900 ? 1440 : TIERS[TIERS.length - 1], t = top;
+    for (var i = 0; i < TIERS.length; i++) if (TIERS[i] * 16 / 9 >= need) { t = TIERS[i]; break; }
+    return Math.min(t, top, max || 1080);
   }
   function load(v, base, max) {
     if (v.dataset.started) return v;

@@ -57,40 +57,40 @@
  "hero": {
   "clips": [
    {
+    "src": "snorkel-pair",
+    "poster": "poster-snorkel-pair",
+    "max": 2160,
+    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
+   },
+   {
+    "src": "boat-reef",
+    "poster": "poster-boat-reef",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 turning along a reef edge, seen from the air"
+   },
+   {
     "src": "vessel",
     "poster": "poster-vessel",
     "max": 1080,
     "alt": "Tiffany Blanc 14 underway on deep blue water off Malé"
    },
    {
-    "src": "anchor",
-    "poster": "poster-anchor",
+    "src": "boat-orbit",
+    "poster": "poster-boat-orbit",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 at anchor above a reef edge, seen from the air"
+    "alt": "Tiffany Blanc 14 underway, circled from the air"
    },
    {
-    "src": "reef",
-    "poster": "poster-reef",
-    "max": 1440,
-    "alt": "Aerial over a Maldivian reef, boats at anchor in the turquoise shallows"
-   },
-   {
-    "src": "wake",
-    "poster": "poster-wake",
+    "src": "boat-drift",
+    "poster": "poster-boat-drift",
     "max": 1080,
-    "alt": "A vessel underway across a shallow lagoon, seen from the air"
+    "alt": "Tiffany Blanc 14 at rest on deep blue water, from directly above"
    },
    {
-    "src": "snorkel-pair",
-    "poster": "poster-snorkel-pair",
-    "max": 1440,
-    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
-   },
-   {
-    "src": "island",
-    "poster": "poster-island",
-    "max": 1440,
-    "alt": "A palm-ringed island alone in deep blue water, seen from the air"
+    "src": "boat-blue",
+    "poster": "poster-boat-blue",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 on open water, seen from the air"
    }
   ],
   "interval": 9000
@@ -455,7 +455,7 @@
    "title": "Остров и снорклинг",
    "guests": "До 12",
    "season": "Круглый год",
-   "clipMax": 1440,
+   "clipMax": 2160,
    "departs": "08:30 · Хулхумале",
    "duration": "9.5 часов"
   },
@@ -510,7 +510,7 @@
    "title": "Риф и коса",
    "guests": "До 12",
    "season": "Круглый год",
-   "clipMax": 1440,
+   "clipMax": 2160,
    "departs": "09:00 · Хулхумале",
    "duration": "4 часа"
   },
@@ -588,7 +588,7 @@
    "title": "Шарк-Пойнт и Гулхи",
    "guests": "До 12",
    "season": "Круглый год",
-   "clipMax": 1440,
+   "clipMax": 2160,
    "departs": "09:00 · Хулхумале",
    "duration": "9 часов"
   },
@@ -604,7 +604,7 @@
    ],
    "img": "aerial-underway",
    "area": "Южный Мале Атолл",
-   "clip": "wake",
+   "clip": "boat-orbit",
    "kind": "Полдня",
    "line": "Шарк-Пойнт, песчаная коса и солнце, садящееся по дороге домой.",
    "plan": [

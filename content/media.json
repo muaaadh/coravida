@@ -122,64 +122,64 @@
       "poster": "poster-anchor"
     },
     {
-      "name": "island",
-      "max": 1440,
-      "poster": "poster-island"
+      "name": "boat-blue",
+      "max": 1080,
+      "poster": "poster-boat-blue"
     },
     {
-      "name": "mask",
-      "max": 1440,
-      "poster": "poster-mask"
+      "name": "boat-drift",
+      "max": 1080,
+      "poster": "poster-boat-drift"
+    },
+    {
+      "name": "boat-harbour",
+      "max": 1080,
+      "poster": "poster-boat-harbour"
+    },
+    {
+      "name": "boat-orbit",
+      "max": 1080,
+      "poster": "poster-boat-orbit"
+    },
+    {
+      "name": "boat-reef",
+      "max": 1080,
+      "poster": "poster-boat-reef"
     },
     {
       "name": "ray",
-      "max": 1080,
+      "max": 2160,
       "poster": "poster-ray"
     },
     {
-      "name": "reef",
-      "max": 1440,
-      "poster": "poster-reef"
-    },
-    {
       "name": "shallows",
-      "max": 1440,
+      "max": 2160,
       "poster": "poster-shallows"
     },
     {
       "name": "shark",
-      "max": 1440,
+      "max": 2160,
       "poster": "poster-shark"
     },
     {
       "name": "snorkel-pair",
-      "max": 1440,
+      "max": 2160,
       "poster": "poster-snorkel-pair"
     },
     {
-      "name": "spit",
-      "max": 1080,
-      "poster": "poster-spit"
-    },
-    {
       "name": "sunbeams",
-      "max": 1440,
+      "max": 2160,
       "poster": "poster-sunbeams"
     },
     {
       "name": "turtle",
-      "max": 1440,
+      "max": 2160,
       "poster": "poster-turtle"
     },
     {
       "name": "vessel",
       "max": 1080,
       "poster": "poster-vessel"
-    },
-    {
-      "name": "wake",
-      "max": 1080,
-      "poster": "poster-wake"
     }
   ],
   "tracks": [

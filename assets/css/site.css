@@ -837,7 +837,9 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
 /* --- The deep -----------------------------------------------------------
    The closing section sits below the sea divider, so it carries the light
    coming down through the surface. Held well back — the headline has to win. */
-.deep__bg{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.deep__bg{position:absolute;inset:0;z-index:-1;overflow:hidden;pointer-events:none;
+  -webkit-mask-image:linear-gradient(transparent 0,transparent var(--seah),#000 calc(var(--seah) + 220px));
+  mask-image:linear-gradient(transparent 0,transparent var(--seah),#000 calc(var(--seah) + 220px))}
 .deep__bg img,.deep__bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   opacity:.34;filter:saturate(.8)}
 .deep__bg video{opacity:0;transition:opacity 1.4s var(--e)}
@@ -928,7 +930,7 @@ img.lz.ld{opacity:1}
   .lines .ln>span{transform:none!important}
   .lines--whole{opacity:1!important;transform:none!important}
   .hero__s img,.hero__s video{animation:none!important;transform:scale(1.02)!important}
-  .sea__l,.sea-deep i{animation:none}
+  .sea__l,.sea__b,.sea .foam,.sea-deep i{animation:none}
 }
 
 /* --- The sea ------------------------------------------------------------ */
@@ -936,34 +938,42 @@ img.lz.ld{opacity:1}
   --rise:34px;transform:translateY(calc(-100% + var(--rise)));transition:transform 1.6s var(--eo)}
 .sea.in{--rise:0px}
 .sea svg{width:200%;max-width:none;height:100%;display:block}
-.sea__l{transform-box:view-box;transform-origin:0 0;will-change:transform}
-.sea .l1 .wv{fill:#3B6FA8;opacity:.28}
-.sea .l2 .wv{fill:#12457C;opacity:.55}
-.sea .l3 .wv{fill:#03224D}
-.sea .l1{animation:swell 31s linear infinite}
-.sea .l2{animation:swell 21s linear infinite reverse}
-.sea .l3{animation:swell 14s linear infinite}
+.sea__l,.sea__b{transform-box:view-box;transform-origin:0 0;will-change:transform}
+/* each swell drifts on one clock and breathes on another: two nested groups,
+   because one element cannot run two transforms at once */
+.sea .l1{animation:swell 44s linear infinite}
+.sea .l2{animation:swell 29s linear infinite reverse}
+.sea .l3{animation:swell 21s linear infinite}
+.sea .l4{animation:swell 16s linear infinite reverse}
+.sea .b1{animation:bob 9.5s ease-in-out infinite alternate;--amp:3px}
+.sea .b2{animation:bob 7.6s ease-in-out infinite alternate-reverse;--amp:4px}
+.sea .b3{animation:bob 6.4s ease-in-out infinite alternate;--amp:5px}
+.sea .b4{animation:bob 5.3s ease-in-out infinite alternate-reverse;--amp:6px}
 @keyframes swell{to{transform:translateX(-50%)}}
+@keyframes bob{from{transform:translateY(calc(var(--amp) * -1))}to{transform:translateY(var(--amp))}}
+.sea .l1 .wv{fill:url(#cvW1);opacity:.55}
+.sea .l2 .wv{fill:url(#cvW2);opacity:.85}
+.sea .l3 .wv{fill:url(#cvW3)}
+.sea .l4 .wv{fill:#03224D}
+/* the crest catches the light; the foam is a broken white line that never quite settles */
+.sea .lip{fill:url(#cvLip)}
+/* the foam's stroke is a vertical gradient: white where the line rides a crest, gone in the troughs */
+.sea .foam{fill:none;stroke:url(#cvFoam);stroke-width:2.6;stroke-linecap:round;opacity:.7;filter:url(#cvSoft);
+  stroke-dasharray:140 46 90 70 210 38;animation:foam 38s linear infinite}
+.sea .foam--2{stroke-width:1.2;opacity:.85;filter:none;stroke-dasharray:60 120 30 200;animation:foam 23s linear infinite reverse;transform:translateY(1.5px)}
+@keyframes foam{to{stroke-dashoffset:-720}}
+/* sun on the backs of the swells */
+.sea__sheen{fill:url(#cvSheen);mix-blend-mode:screen}
 
-/* light bending down through the surface */
-.sea__refr{fill:url(#cvRefr);mix-blend-mode:screen}
-
-/* the crest splits the light into its channels */
-.sea__chr{mix-blend-mode:screen}
-.sea__chr .ch{fill:none;stroke-width:2.6;opacity:.5}
-.sea__chr .r{stroke:#ff5a4d;transform:translate(-3px,4px)}
-.sea__chr .g{stroke:#4ce39a;transform:translate(0,5.6px)}
-.sea__chr .b{stroke:#5c95ff;transform:translate(3px,7.2px)}
-.sea__chr .f{stroke:rgba(255,255,255,.7);stroke-width:1.6;opacity:.55;transform:translate(0,1.2px)}
-
-/* caustics working across the water below the line */
-.sea-deep{position:absolute;left:0;right:0;top:0;height:min(46%,420px);overflow:hidden;pointer-events:none;z-index:1;
-  -webkit-mask-image:linear-gradient(#000 0,#000 32%,transparent 100%);mask-image:linear-gradient(#000 0,#000 32%,transparent 100%)}
-.sea-deep i{position:absolute;inset:-14% -14%;background-repeat:repeat;mix-blend-mode:screen;will-change:background-position}
-.sea-deep i:first-child{background-size:clamp(260px,20vw,420px);opacity:.05;animation:caustA 104s linear infinite}
-.sea-deep i+i{background-size:clamp(150px,12vw,250px);opacity:.035;animation:caustB 71s linear infinite}
-@keyframes caustA{to{background-position:420px 150px}}
-@keyframes caustB{to{background-position:-250px 96px}}
+/* caustics working across the water below the line — held back at the top so
+   the divider meets plain navy, and moved by exactly one tile so the loop never jumps */
+.sea-deep{position:absolute;left:0;right:0;top:0;height:min(52%,460px);overflow:hidden;pointer-events:none;z-index:1;
+  -webkit-mask-image:linear-gradient(transparent 0,transparent var(--seah),#000 calc(var(--seah) + 140px),#000 55%,transparent 100%);
+  mask-image:linear-gradient(transparent 0,transparent var(--seah),#000 calc(var(--seah) + 140px),#000 55%,transparent 100%)}
+.sea-deep i{position:absolute;inset:-14% -14%;background-repeat:repeat;mix-blend-mode:screen;will-change:background-position;background-size:var(--t) var(--t)}
+.sea-deep i:first-child{--t:clamp(260px,20vw,420px);opacity:.055;animation:caust 104s linear infinite}
+.sea-deep i+i{--t:clamp(150px,12vw,250px);opacity:.035;animation:caust 71s linear infinite reverse}
+@keyframes caust{to{background-position:var(--t) var(--t)}}
 
 /* --- Utilities ---------------------------------------------------------- */
 .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}

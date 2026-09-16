@@ -98,22 +98,34 @@ enquiry total all move together.
 
 ## The hero film
 
-Three clips cycle behind the headline — a reef, an island, the vessel underway — each
-cross-fading into the next. **The interval is content, not code:** `CV.hero.interval` in
-`assets/js/data.js`, in milliseconds, which is what an admin backend would edit.
+Six clips cycle behind the headline: one clean licensed aerial to open — two snorkellers
+over a reef edge, cut from a 4K DCI source — and then Tiffany Blanc 14 herself, five drone
+shots from the client's August 2026 flight. **The interval is content, not code:**
+`hero.interval` in `content/site.json`, in milliseconds, which the admin edits.
 
 ```js
-var hero = {
-  interval: 6000,                                     // 5–7s reads well
-  clips: [ { src: "reef", poster: "poster-reef", max: 1440, alt: "…" }, … ]
-};
+hero: {
+  interval: 9000,
+  clips: [ { src: "snorkel-pair", poster: "poster-snorkel-pair", max: 2160, alt: "…" }, … ]
+}
 ```
 
-Each clip is encoded at four widths and the tier is chosen at runtime from viewport × DPR,
-capped at `max` — `vessel` came from a 1080p source, so it never claims more. Nothing is
-fetched until the page has loaded; the next clip and **its poster** are fetched 1.4 s into
-the current one, and only while the hero is still on screen. Scroll past it, or switch
-tabs, and both the cycling and the fetching stop.
+**Every clip on the site comes from `tools/film.sh`** — one list of sources (the drone
+proxies, the GoPro reels, the licensed stock), each cut at its source's own resolution and
+encoded at near-transparent quality (x264 CRF 17–19 under a ceiling of 24 / 14 / 9 / 5 Mbps
+for the 2160 / 1440 / 1080 / 720 tiers — above what streaming services send at each size;
+no denoise, no sharpening). Every clip is a **seamless loop**: its last 0.6 s dissolve into
+its first, so a clip that plays longer than it lasts never shows a cut. The poster is the
+loop's first frame. The tier is chosen at runtime as *the smallest that is not narrower than
+the screen's own pixels* (`tier()` in site.js): a 2× laptop gets the 2160 cut, a 1080p
+monitor the 1080, a phone the 1080 — never above the clip's `max`. The drone footage exists
+only as the DJI app's 1080p proxies, so the boat's clips stop at 1080; hand over the 4K
+originals and `film.sh` cuts them at 2160 unchanged.
+
+Nothing is fetched until the page has loaded; the next clip and **its poster** are fetched
+1.4 s into the current one, and only while the hero is still on screen. Scroll past it, or
+switch tabs, and both the cycling and the fetching stop. Save-data and 2G/3G connections get
+the posters only.
 
 ## The music player
 
@@ -197,8 +209,8 @@ carries the whole layer — no library:
 | Behaviour | Hook |
 |---|---|
 | **A stop for anything that plays itself.** One 40px disc, bottom left of any hero, band or film figure, quiet until you hover and always visible on touch. WCAG 2.2.2 asks for it and none of the six references provide one. | `.filmc` |
-| **The deep.** Below the sea divider the page is under water, so the footer runs dark film behind the navy — sunlight coming down through the surface, held at 34% under a radial navy wash so the type still wins. | `.ftr .deep__bg` |
-| **The sea.** Three translucent swells drifting at their own speeds and directions; light refracting down through the surface; the crest splitting into red, green and blue a hair apart; caustics working across the water below on two layers at different scales. It rises 34px as it enters view. | built by `site.js` onto the footer — every page closes on white, and the water begins where the footer does |
+| **The deep.** Below the sea divider the page is under water, so the footer runs dark film behind the navy — sunlight coming down through the surface (a seamless 11 s loop), held at 34% under a radial navy wash so the type still wins. The film is masked out for the divider's own height and fades in over the next 220px, so the divider meets plain navy and there is no edge. | `.ftr .deep__bg` |
+| **The sea.** Four swells, back to front, each a sum of two sines (a steep face, a long back — no two crests alike), filled with a vertical gradient so the water has depth; each drifts on its own clock and breathes up and down on a second, slower one (two nested groups, since one element cannot run two transforms). The front swell is the footer's navy with a lit crest, and its foam is a stroke whose gradient is white only where the line rides a crest. Caustics work across the water below on two layers, moved by exactly one tile so the loop never jumps. It rises 34px as it enters view. | built by `site.js` onto the footer — every page closes on white, and the water begins where the footer does |
 | **The excursion index.** Four numbered rows; the photograph for whichever you are pointing at follows the cursor on an eased lag. Rows carry their own thumbnail on touch. | `.vx`, `data-thumb` |
 | Headlines rise line by line out of a mask | `class="lines"` — JS measures the real line breaks and re-splits on resize |
 | Sections fade and lift, staggered | `data-a="up\|fade"` inside `data-stagger`, which numbers any child the build did not |
@@ -373,7 +385,7 @@ touches goes through `admin/db.js`; nothing else knows a URL or a key.
 - **Photographs:** upload from the gallery or any picture picker. The browser resizes to
   2400px and sends the file to the `uploads` bucket; the build downloads new sources, cuts
   the WebP tiers with `tools/tiers.js` (sharp) and builds. New film clips remain a Dheemi
-  job (`tools/stock.sh`).
+  job (`tools/film.sh`).
 - **Account:** Settings shows who is signed in, changes the password, signs out. *Forgotten
   password* on the sign-in screen emails a reset link.
 
@@ -511,8 +523,8 @@ did not cover. All thirteen clips on the site are in use.
 
 ```sh
 bash tools/images.sh     # every photograph, from the shoot
-bash tools/hero.sh       # the client's hero clips
-bash tools/stock.sh      # the September stock, all tiers plus posters
+bash tools/film.sh       # every clip on the site, all tiers plus posters (add a name to redo one)
+bash tools/stock.sh      # the two licensed stills
 bash tools/mirror.sh     # copy the built site into the client's OneDrive folder
 ```
 
@@ -576,13 +588,13 @@ assets/
   fonts/                  Montserrat 300, Inter 400/500
 sitemap.xml               44 URLs with alternates — generated
 tools/i18n/{ru,zh,de}.js  the translations — edit these
-tools/stock.sh            encodes the September stock
+tools/stock.sh            the two licensed stills
 tools/mirror.sh           safe copy into the client's OneDrive folder
 tools/deploy.sh           pull, build, commit, push (Vercel builds from it), mirror
 tools/tiers.js            WebP tiers for admin uploads (sharp; the Action runs it)
 tools/build.js            regenerates every page in every language
 tools/images.sh           rebuilds every photograph from the shoot
-tools/hero.sh             rebuilds the hero clips and their posters
+tools/film.sh             cuts every clip (drone, GoPro, stock) at source resolution, seamless loops, posters
 ```
 
 Checked at 390 and 1440px across all 48 pages — 72 renders: no horizontal overflow, no

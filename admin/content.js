@@ -212,10 +212,10 @@
       h.clips.push({ src: c.name, poster: c.poster || "poster-" + c.name, max: c.max, alt: "" }); A.changed(); draw();
     } })]));
     var draw = list(rows, h.clips, { render: function (c, i, body) {
-      var preview = E("video", { src: VID + c.src + "-540.mp4", muted: true, playsinline: true, loop: true, preload: "metadata", class: "thumb thumb--lg", style: "width:160px;height:90px;border-radius:8px;object-fit:cover" });
+      var preview = E("video", { src: VID + c.src + "-720.mp4", muted: true, playsinline: true, loop: true, preload: "metadata", class: "thumb thumb--lg", style: "width:160px;height:90px;border-radius:8px;object-fit:cover" });
       preview.addEventListener("mouseenter", function () { preview.play().catch(function () {}); }); preview.addEventListener("mouseleave", function () { preview.pause(); });
       body.appendChild(E("div", { style: "display:flex;gap:1rem;align-items:flex-start;flex-wrap:wrap" }, [preview, E("div", { style: "flex:1;min-width:220px", class: "fg" }, [
-        clipSelect("Clip", c, "src", { onchange: function (v) { var k = clips().filter(function (x) { return x.name === v; })[0]; if (k) { c.poster = k.poster || "poster-" + v; c.max = k.max; } preview.src = VID + v + "-540.mp4"; } }),
+        clipSelect("Clip", c, "src", { onchange: function (v) { var k = clips().filter(function (x) { return x.name === v; })[0]; if (k) { c.poster = k.poster || "poster-" + v; c.max = k.max; } preview.src = VID + v + "-720.mp4"; } }),
         field("Description for screen readers", c, "alt", { max: 120, required: true })
       ])]));
     }, empty: "No clips — the home page needs at least one." });

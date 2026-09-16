@@ -318,7 +318,7 @@ ${ways}
   <section class="band">
     <div class="band__bg" data-par="0.1">
       ${img("poster-ray", "", { sizes: "100vw", cap: BANDPOSTER })}
-      <video data-src="ray" data-max="1080" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="ray" data-max="2160" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="band__in wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">${T("Below")}</p>
@@ -454,7 +454,7 @@ function excursions() {
   <section class="band band--short">
     <div class="band__bg" data-par="0.08">
       ${img("poster-shallows", "", { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="shallows" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="shallows" data-max="2160" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
   </section>
 
@@ -732,7 +732,7 @@ function about() {
         </div>
         <div class="fig r43 fig--z film" data-a="clip">
           ${img("poster-turtle", T("A green turtle over the reef"), { sizes: "(min-width:960px) 58vw, 100vw", cap: BANDPOSTER })}
-          <video data-src="turtle" data-max="1080" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+          <video data-src="turtle" data-max="2160" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
         </div>
       </div>
     </div>
@@ -841,8 +841,8 @@ function enquire() {
 
   const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
-      ${img("poster-wake", T("A vessel underway across a shallow lagoon, seen from the air"), { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="wake" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      ${img("poster-boat-harbour", T("Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air"), { sizes: "100vw", eager: true, cap: POSTER })}
+      <video data-src="boat-harbour" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${T("Enquire")}</p>
