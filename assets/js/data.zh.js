@@ -17,7 +17,7 @@
   "email": "hello@coravida.com",
   "hours": "每日 · 08:00 – 20:00 MVT",
   "form": {
-   "endpoint": "",
+   "endpoint": "https://coravida-inbox.vercel.app/api/enquire",
    "key": ""
   }
  },
@@ -661,6 +661,15 @@
   "notAvailP": "船只已被预订。想和我们联系吗？船员会为您推荐最近的空闲日期。",
   "sendWhatsApp": "通过 WhatsApp 发送",
   "waAsk": "您好，Coravida——我想在 {date}{exc} 包船，但网站显示那天已被预订。最近的空闲日期是哪天？",
+  "prevMonth": "上个月",
+  "nextMonth": "下个月",
+  "legFree": "可预订",
+  "legHalf": "仅半天可用",
+  "legTaken": "已预订",
+  "amShort": "上午",
+  "pmShort": "下午",
+  "pickHint": "先选首选日期，如有备选日期再选一个。",
+  "pickNone": "点选一天",
   "oneMore": "还差一步",
   "sendToCrew": "发送给船员",
   "alreadyWritten": "消息已经写好——选择 WhatsApp 或电子邮件，它会直接送达码头办公室。",

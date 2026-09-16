@@ -65,10 +65,11 @@
         <div class="step">
           <div class="stack-l">
             <div class="stack-s"><p class="eyebrow">第二步</p><h2 class="d3">什么时候，几个人？</h2></div>
-            <div class="fg fg2">
-              <div class="field"><label for="d1">首选日期</label><input type="date" id="d1" name="date" required></div>
-              <div class="field"><label for="d2">备选日期</label><input type="date" id="d2" name="alt"></div>
+            <div class="gcal" data-gcal="pick" data-l-pref="首选日期" data-l-alt="备选日期">
+              <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
+              <noscript><div class="fg fg2"><div class="field"><label for="d1n">首选日期</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">备选日期</label><input type="date" id="d2n" name="alt"></div></div></noscript>
             </div>
+            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <div class="fg fg2">
               <div class="field"><label for="g">人数</label><select id="g" name="guests" required>
                 <option value="2">2 人</option>

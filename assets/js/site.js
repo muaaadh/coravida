@@ -891,58 +891,74 @@
     function ok() {
       var need = $$("[required]", steps[at]);
       for (var i = 0; i < need.length; i++) if (!need[i].checkValidity()) { need[i].reportValidity(); return false; }
+      if (mount && steps[at].contains(mount) && !dateIn.value) { mount.classList.add("is-need"); setTimeout(function () { mount.classList.remove("is-need"); }, 900); return false; }
       return true;
     }
-    /* the books publish which days are gone (dates only, never a name), so a
-       visitor is told before they write to the crew */
-    var dateIn = $('[name="date"]', f), altIn = $('[name="alt"]', f), taken = null;
+    /* ---- the dates: chosen on the calendar, which knows from the books which
+       days are gone (dates only, never a name) ---------------------------- */
+    var dateIn = $('[name="date"]', f), altIn = $('[name="alt"]', f), mount = $("[data-gcal]", f), taken = null, cal = null;
+    var t0 = new Date(), minDay = t0.getFullYear() + "-" + String(t0.getMonth() + 1).padStart(2, "0") + "-" + String(t0.getDate()).padStart(2, "0");
+    function fullDay() { var v = chosen(); return !!v && !/half|evening|sunset/i.test(v.kind || ""); }
+    /* free | am (only the morning is free) | pm | taken | past */
+    function stateOf(d) {
+      if (d < minDay) return "past";
+      if (!taken) return "free";
+      if (taken.indexOf(d) > -1) return "taken";
+      var half = taken.filter(function (x) { return x.indexOf(d + ":") === 0; })[0];
+      if (half) return fullDay() ? "taken" : half.slice(-2);
+      return "free";
+    }
     function check() {
-      if (!taken) return;
       [dateIn, altIn].forEach(function (inp, i) {
-        if (!inp) return;
-        var note = inp._note, d = inp.value, v = chosen();
-        if (!d) { note.hidden = true; inp.setCustomValidity(""); return; }
-        var full = taken.indexOf(d) > -1, half = taken.filter(function (x) { return x.indexOf(d + ":") === 0; })[0];
-        var fullDay = v && !/half|evening|sunset/i.test(v.kind || ""), pre = inp._label ? inp._label + " — " : "";
-        if (full || (half && fullDay)) {
-          note.textContent = pre + (half && fullDay && !full ? t("halfDayOnly", "Only half of that day is free — choose a half-day excursion, or another day.") : t("dayTaken", "That day is already taken — please choose another."));
-          note.hidden = false; note.className = "note note--avail is-bad"; if (i === 0) inp.setCustomValidity(note.textContent); else inp.setCustomValidity("");
-        } else if (half) {
-          note.textContent = pre + t(half.slice(-2) === "pm" ? "pmFree" : "amFree", half.slice(-2) === "pm" ? "Only the afternoon is still free that day." : "Only the morning is still free that day.");
-          note.hidden = false; note.className = "note note--avail"; inp.setCustomValidity("");
-        } else { note.hidden = true; inp.setCustomValidity(""); }
+        if (!inp || !inp._note) return;
+        var note = inp._note, d = inp.value, pre = inp._label ? inp._label + " — " : "";
+        if (!d) { note.hidden = true; inp.setCustomValidity && inp.setCustomValidity(""); return; }
+        var st = stateOf(d);
+        if (st === "taken" || st === "past") {
+          var half = taken && taken.some(function (x) { return x.indexOf(d + ":") === 0; });
+          note.textContent = pre + (half && fullDay() ? t("halfDayOnly", "Only half of that day is free — choose a half-day excursion, or another day.") : t("dayTaken", "That day is already taken — please choose another."));
+          note.hidden = false; note.className = "note note--avail is-bad";
+        } else if (st === "am" || st === "pm") {
+          note.textContent = pre + t(st === "pm" ? "pmFree" : "amFree", st === "pm" ? "Only the afternoon is still free that day." : "Only the morning is still free that day.");
+          note.hidden = false; note.className = "note note--avail";
+        } else { note.hidden = true; }
       });
       /* the preferred day is gone: the enquiry stops here, and the crew are a tap away */
-      var blocked = !!dateIn.value && !dateIn.checkValidity(), card = dateIn._card, next = $("[data-next]", dateIn.closest(".step") || f);
-      if (card) {
-        card.hidden = !blocked; if (blocked) dateIn._note.hidden = true;   // the card says it
-        if (blocked) {
-          var B = CV.brand || {}, v2 = chosen(), when = new Date(dateIn.value + "T00:00:00").toLocaleDateString(LOC === "zh" ? "zh-CN" : LOC === "en" ? "en-GB" : LOC, { day: "numeric", month: "long", year: "numeric" });
-          var msg = t("waAsk", "Hello Coravida — I would like to charter on {date}{exc}, but the website says that day is taken. What is the nearest free date?").replace("{date}", when).replace("{exc}", v2 ? " (" + v2.title + ")" : "");
-          var wa = $("[data-wa]", card), tel = $("[data-tel]", card);
-          if (wa) wa.href = (B.whatsappHref || "https://wa.me/").split("?")[0] + "?text=" + encodeURIComponent(msg);
-          if (tel) { tel.href = B.phoneHref || "#"; tel.textContent = B.phone || ""; }
-        }
-      }
+      var blocked = !!dateIn.value && /taken|past/.test(stateOf(dateIn.value)), next = $("[data-next]", dateIn.closest(".step") || f);
+      showCard(blocked ? dateIn.value : null);
+      if (blocked) dateIn._note.hidden = true;   // the card says it
       if (next) next.disabled = blocked;
+      if (cal) cal.paint();
     }
-    if (dateIn) {
-      var today = new Date(), min = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
-      var row = dateIn.closest(".fg") || dateIn.parentNode, notes = document.createElement("div"); notes.className = "avail"; row.parentNode.insertBefore(notes, row.nextSibling);
+    function showCard(d) {
+      var card = dateIn._card; if (!card) return;
+      card.hidden = !d; if (!d) return;
+      var B = CV.brand || {}, v2 = chosen(), when = new Date(d + "T00:00:00").toLocaleDateString(LANGTAG, { day: "numeric", month: "long", year: "numeric" });
+      var msg = t("waAsk", "Hello Coravida — I would like to charter on {date}{exc}, but the website says that day is taken. What is the nearest free date?").replace("{date}", when).replace("{exc}", v2 ? " (" + v2.title + ")" : "");
+      var wa = $("[data-wa]", card), tel = $("[data-tel]", card);
+      if (wa) wa.href = (B.whatsappHref || "https://wa.me/").split("?")[0] + "?text=" + encodeURIComponent(msg);
+      if (tel) { tel.href = B.phoneHref || "#"; tel.textContent = B.phone || ""; }
+      $(".avail__h", card).textContent = t("notAvailH", "That day is not available") + " — " + when;
+    }
+    if (dateIn && mount) {
+      var notes = document.createElement("div"); notes.className = "avail";
       var card = el('<div class="avail__card" hidden><p class="avail__h">' + t("notAvailH", "That day is not available") + '</p>' +
         '<p>' + t("notAvailP", "The vessel is already spoken for. Would you like to get in touch? The crew will suggest the nearest free date.") + "</p>" +
         '<div class="acts"><a class="btn" data-wa rel="noopener" target="_blank">' + t("sendWhatsApp", "Send on WhatsApp") + '</a><a class="btn btn--ghost" data-tel></a></div></div>');
-      notes.appendChild(card); dateIn._card = card;
       [dateIn, altIn].forEach(function (inp, i) {
         if (!inp) return;
-        inp.min = min;
         var note = document.createElement("p"); note.className = "note note--avail"; note.hidden = true; note.id = "avail-" + i; note.setAttribute("aria-live", "polite");
-        inp.setAttribute("aria-describedby", note.id); inp._note = note; notes.appendChild(note);
-        var lab = f.querySelector('label[for="' + inp.id + '"]'); inp._label = lab ? lab.textContent.trim() : "";
-        inp.addEventListener("change", check); inp.addEventListener("input", check);
+        inp._note = note; inp._label = mount.getAttribute(i ? "data-l-alt" : "data-l-pref") || ""; notes.appendChild(note);
       });
-      f.addEventListener("change", function (e) { if (e.target.name === "excursion") check(); });
-      fetch(u("content/availability.json"), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { taken = j && j.taken || []; check(); }).catch(function () {});
+      notes.appendChild(card); dateIn._card = card;
+      cal = gcal(mount, { state: stateOf, minDay: minDay, mode: "pick", labels: { pref: dateIn._label, alt: altIn ? altIn._label : "" },
+        get: function () { return { date: dateIn.value, alt: altIn ? altIn.value : "" }; },
+        set: function (which, v) { (which === "alt" ? altIn : dateIn).value = v || ""; check(); if (at === steps.length - 1) sum(); },
+        onTaken: function (d) { showCard(d); } });
+      mount.parentNode.insertBefore(notes, mount.nextSibling);
+      f.addEventListener("change", function (e) { if (e.target.name === "excursion") { cal.repaint(); check(); } });
+      var q = new URLSearchParams(location.search).get("date");
+      loadTaken(function (list) { taken = list; cal.repaint(); if (q && /^\d{4}-\d{2}-\d{2}$/.test(q) && stateOf(q) !== "taken" && stateOf(q) !== "past") { dateIn.value = q; cal.show(q); } check(); });
     }
     $$("[data-next]", f).forEach(function (b) { b.addEventListener("click", function () { if (ok()) go(at + 1); }); });
     $$("[data-prev]", f).forEach(function (b) { b.addEventListener("click", function () { go(at - 1); }); });
@@ -958,6 +974,126 @@
       deliver(f, "enquiry", d, $("#enquireOk"));
     });
     go(0, true);
+  }
+
+  var LANGTAG = LOC === "zh" ? "zh-CN" : LOC === "en" ? "en-GB" : LOC;
+  var takenCache = null;
+  function loadTaken(cb) {
+    if (takenCache) return cb(takenCache);
+    fetch(u("content/availability.json"), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (j) { takenCache = (j && j.taken) || []; cb(takenCache); }).catch(function () { cb([]); });
+  }
+
+  /* ---- The calendar -------------------------------------------------------
+     One month of glass over a blurred lagoon. Every day is a button; the books
+     say which are gone. "pick" mode chooses a preferred day and an alternative
+     for the enquiry form; "browse" mode carries the day to the form. */
+  function gcal(mount, o) {
+    var mode = o.mode || "browse", view = null, nw = new Date(), today = o.minDay || (nw.getFullYear() + "-" + String(nw.getMonth() + 1).padStart(2, "0") + "-" + String(nw.getDate()).padStart(2, "0"));
+    var maxM = shiftM(today.slice(0, 7), 18), minM = today.slice(0, 7);
+    function shiftM(m, n) { var p = m.split("-"), d = new Date(+p[0], +p[1] - 1 + n, 1); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0"); }
+    function daysIn(m) { var p = m.split("-"); return new Date(+p[0], +p[1], 0).getDate(); }
+    function dow(d) { var p = d.split("-"); return (new Date(+p[0], +p[1] - 1, +p[2]).getDay() + 6) % 7; }
+    function fmt(d, opt) { var p = d.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]).toLocaleDateString(LANGTAG, opt); }
+    $$(":scope > *", mount).forEach(function (n) { if (n.tagName !== "INPUT") n.remove(); });   // the hidden inputs stay
+    var panel = el('<div class="gcal__panel"></div>'); mount.appendChild(panel);
+    panel.appendChild(el('<div class="gcal__bg" aria-hidden="true"></div>')).style.backgroundImage = "url(" + u("assets/img/atoll-pair-1200.webp") + ")";
+    var glass = el('<div class="gcal__glass">' +
+      '<div class="gcal__head"><button class="gcal__nav" type="button" data-prev aria-label="' + t("prevMonth", "Previous month") + '">'  + L + '</button>' +
+      '<div class="gcal__title" aria-live="polite"><span class="gcal__m"></span></div>' +
+      '<button class="gcal__nav" type="button" data-next aria-label="' + t("nextMonth", "Next month") + '">'  + R + "</button></div>" +
+      '<div class="gcal__dow"></div><div class="gcal__view"><div class="gcal__grid" role="group"></div><div class="gcal__halo gcal__halo--pref" aria-hidden="true"></div><div class="gcal__halo gcal__halo--alt" aria-hidden="true"></div></div>' +
+      '<div class="gcal__legend"><span><i class="gl gl--free"></i>' + t("legFree", "Available") + '</span><span><i class="gl gl--half"></i>' + t("legHalf", "Only half the day is free") + '</span><span><i class="gl gl--taken"></i>' + t("legTaken", "Taken") + "</span></div></div>");
+    panel.appendChild(glass);
+    var dowEl = $(".gcal__dow", glass), grid = $(".gcal__grid", glass), title = $(".gcal__m", glass), viewEl = $(".gcal__view", glass);
+    for (var i = 0; i < 7; i++) dowEl.appendChild(el("<span>" + new Date(2024, 0, 1 + i).toLocaleDateString(LANGTAG, { weekday: "narrow" }) + "</span>"));
+    var picks = null;
+    if (mode === "pick") {
+      picks = el('<div class="gcal__picks"><button type="button" class="gcal__pick" data-pick="date"><span class="k">' + o.labels.pref + '</span><span class="v"></span><span class="x" aria-hidden="true">' + X + '</span></button>' +
+        '<button type="button" class="gcal__pick" data-pick="alt"><span class="k">' + o.labels.alt + '</span><span class="v"></span><span class="x" aria-hidden="true">' + X + "</span></button></div>");
+      mount.appendChild(picks);
+      mount.appendChild(el('<p class="gcal__hint">' + t("pickHint", "Choose your preferred day, then an alternative if you have one.") + "</p>"));
+      $$(".gcal__pick", picks).forEach(function (b) { b.addEventListener("click", function () { var k = b.getAttribute("data-pick"); if (o.get()[k === "alt" ? "alt" : "date"]) { o.set(k === "alt" ? "alt" : "date", ""); paint(); } }); });
+    }
+    function build(m) {
+      grid.innerHTML = "";
+      var n = daysIn(m), lead = dow(m + "-01");
+      for (var i = 0; i < lead; i++) grid.appendChild(el('<span class="gday gday--pad"></span>'));
+      for (var d = 1; d <= n; d++) {
+        var date = m + "-" + String(d).padStart(2, "0"), st = o.state(date);
+        var c = el('<button type="button" class="gday is-' + st + (date === today ? " is-today" : "") + '" data-date="' + date + '"><span class="gday__n">' + d + "</span>" +
+          (st === "am" || st === "pm" ? '<span class="gday__h">' + (st === "am" ? t("amShort", "AM") : t("pmShort", "PM")) + "</span>" : "") + "</button>");
+        c.setAttribute("aria-label", fmt(date, { weekday: "long", day: "numeric", month: "long" }) + ", " + (st === "taken" ? t("legTaken", "Taken") : st === "past" ? "" : st === "free" ? t("legFree", "Available") : t(st === "am" ? "amFree" : "pmFree", "")));
+        if (st === "past" || st === "taken") c.setAttribute("aria-disabled", "true");
+        grid.appendChild(c);
+      }
+      for (var k = lead + n; k < Math.ceil((lead + n) / 7) * 7; k++) grid.appendChild(el('<span class="gday gday--pad"></span>'));
+      title.textContent = new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1).toLocaleDateString(LANGTAG, { month: "long", year: "numeric" });
+      $("[data-prev]", glass).disabled = m <= minM; $("[data-next]", glass).disabled = m >= maxM;
+      paint();
+    }
+    function halo(which, date) {
+      var h = $(".gcal__halo--" + which, glass), c = date && $('.gday[data-date="' + date + '"]', grid);
+      if (!c) { h.classList.remove("on"); return; }
+      var r = c.getBoundingClientRect(), v = viewEl.getBoundingClientRect();
+      h.style.transform = "translate(" + (r.left - v.left) + "px," + (r.top - v.top) + "px)"; h.style.width = r.width + "px"; h.style.height = r.height + "px";
+      h.classList.add("on");
+    }
+    function paint() {
+      var g = mode === "pick" ? o.get() : { date: "", alt: "" };
+      $$(".gday[data-date]", grid).forEach(function (c) { var d = c.getAttribute("data-date"); c.classList.toggle("is-pref", d === g.date); c.classList.toggle("is-alt", !!g.alt && d === g.alt); c.setAttribute("aria-pressed", d === g.date || d === g.alt ? "true" : "false"); });
+      if (mode === "pick") {
+        halo("pref", g.date); halo("alt", g.alt);
+        $$(".gcal__pick", picks).forEach(function (b) { var k = b.getAttribute("data-pick"), v = g[k === "alt" ? "alt" : "date"]; b.classList.toggle("on", !!v); $(".v", b).textContent = v ? fmt(v, { weekday: "short", day: "numeric", month: "short" }) : t("pickNone", "Tap a day"); });
+      }
+    }
+    function repaint() { if (view) build(view); }
+    function slide(dir) {
+      if (SLOW) return build(view);
+      grid.classList.add(dir > 0 ? "is-out-l" : "is-out-r"); $$(".gcal__halo", glass).forEach(function (h) { h.classList.remove("on"); });
+      setTimeout(function () {
+        grid.classList.remove("is-out-l", "is-out-r"); grid.classList.add("no-t", dir > 0 ? "is-in-r" : "is-in-l");
+        build(view);
+        requestAnimationFrame(function () { requestAnimationFrame(function () { grid.classList.remove("no-t"); grid.classList.remove("is-in-r", "is-in-l"); setTimeout(paint, 60); }); });
+      }, 190);
+    }
+    $("[data-prev]", glass).addEventListener("click", function () { if (view > minM) { view = shiftM(view, -1); slide(-1); } });
+    $("[data-next]", glass).addEventListener("click", function () { if (view < maxM) { view = shiftM(view, 1); slide(1); } });
+    grid.addEventListener("click", function (e) {
+      var c = e.target.closest(".gday[data-date]"); if (!c) return;
+      var d = c.getAttribute("data-date"), st = o.state(d);
+      if (st === "past") return;
+      if (st === "taken") { c.classList.remove("is-shake"); void c.offsetWidth; c.classList.add("is-shake"); if (o.onTaken) o.onTaken(d); return; }
+      if (mode === "browse") { location.href = pg((mount.getAttribute("data-enquire") || "enquire.html") + "?date=" + d); return; }
+      var g = o.get();
+      if (d === g.date) o.set("date", g.alt || ""), g.alt && o.set("alt", "");
+      else if (d === g.alt) o.set("alt", "");
+      else if (!g.date) o.set("date", d);
+      else o.set("alt", d);
+      paint();
+    });
+    grid.addEventListener("keydown", function (e) {
+      var c = e.target.closest(".gday[data-date]"); if (!c) return;
+      var d = c.getAttribute("data-date"), p = d.split("-"), dt = new Date(+p[0], +p[1] - 1, +p[2]), step = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+      if (!step) return; e.preventDefault(); dt.setDate(dt.getDate() + step);
+      var n = dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0");
+      if (n.slice(0, 7) !== view) { if (n.slice(0, 7) < minM || n.slice(0, 7) > maxM) return; view = n.slice(0, 7); build(view); }
+      var f = $('.gday[data-date="' + n + '"]', grid); if (f) f.focus();
+    });
+    window.addEventListener("resize", function () { paint(); }, { passive: true });
+    view = minM; build(view);
+    return { repaint: repaint, paint: paint, show: function (d) { if (d && d.slice(0, 7) !== view) { view = d.slice(0, 7); build(view); } else paint(); } };
+  }
+  /* browse calendars anywhere on the site */
+  function calendars() {
+    $$('[data-gcal="browse"]').forEach(function (m) {
+      var taken = null, t = new Date(), today = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+      var cal = gcal(m, { mode: "browse", minDay: today, state: function (d) {
+        if (d < today) return "past"; if (!taken) return "free"; if (taken.indexOf(d) > -1) return "taken";
+        var half = taken.filter(function (x) { return x.indexOf(d + ":") === 0; })[0]; return half ? half.slice(-2) : "free";
+      } });
+      loadTaken(function (list) { taken = list; cal.repaint(); });
+    });
   }
 
   /* ---- Delivery ---------------------------------------------------------
@@ -990,7 +1126,7 @@
     }
     if (!F.endpoint) return show(false);
     var body = {}; Object.keys(d).forEach(function (k) { body[k] = [].concat(d[k]).join(", "); });
-    body.subject = subject; if (F.key) body.access_key = F.key;
+    body.subject = subject; body.kind = kind; body.lang = LOC; body.page = location.pathname.split("/").pop() || "index.html"; if (F.key) body.access_key = F.key;
     var btn = $('[type="submit"]', f); if (btn) btn.disabled = true;
     fetch(F.endpoint, { method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" }, body: JSON.stringify(body) })
       .then(function (r) { show(r.ok); }, function () { show(false); })
@@ -1022,7 +1158,7 @@
 
   function boot() {
     chrome(); header(); menu(); heroCycle(); video(); lines(); reveals(); scrollFx(); counters(); lazyFade();
-    rails(); lightbox(); mosaic();   /* the lightbox takes its order before the columns move things */ accordion(); enquiry(); forms(); voyageIndex(); player(); language(); driver(); ready();
+    rails(); lightbox(); mosaic();   /* the lightbox takes its order before the columns move things */ accordion(); enquiry(); calendars(); forms(); voyageIndex(); player(); language(); driver(); ready();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
   else boot();

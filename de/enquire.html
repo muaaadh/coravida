@@ -65,10 +65,11 @@
         <div class="step">
           <div class="stack-l">
             <div class="stack-s"><p class="eyebrow">Schritt zwei</p><h2 class="d3">Wann, und wie viele?</h2></div>
-            <div class="fg fg2">
-              <div class="field"><label for="d1">Wunschtermin</label><input type="date" id="d1" name="date" required></div>
-              <div class="field"><label for="d2">Ausweichtermin</label><input type="date" id="d2" name="alt"></div>
+            <div class="gcal" data-gcal="pick" data-l-pref="Wunschtermin" data-l-alt="Ausweichtermin">
+              <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
+              <noscript><div class="fg fg2"><div class="field"><label for="d1n">Wunschtermin</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">Ausweichtermin</label><input type="date" id="d2n" name="alt"></div></div></noscript>
             </div>
+            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <div class="fg fg2">
               <div class="field"><label for="g">Gäste</label><select id="g" name="guests" required>
                 <option value="2">2 Gäste</option>

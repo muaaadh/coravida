@@ -17,7 +17,7 @@
   "email": "hello@coravida.com",
   "hours": "Täglich · 08:00 – 20:00 MVT",
   "form": {
-   "endpoint": "",
+   "endpoint": "https://coravida-inbox.vercel.app/api/enquire",
    "key": ""
   }
  },
@@ -661,6 +661,15 @@
   "notAvailP": "Das Boot ist bereits vergeben. Möchten Sie uns kontaktieren? Die Crew nennt Ihnen den nächsten freien Termin.",
   "sendWhatsApp": "Per WhatsApp senden",
   "waAsk": "Hallo Coravida – ich möchte am {date}{exc} chartern, aber laut Website ist der Tag vergeben. Wann ist der nächste freie Termin?",
+  "prevMonth": "Voriger Monat",
+  "nextMonth": "Nächster Monat",
+  "legFree": "Frei",
+  "legHalf": "Nur ein halber Tag frei",
+  "legTaken": "Vergeben",
+  "amShort": "Vorm.",
+  "pmShort": "Nachm.",
+  "pickHint": "Wählen Sie Ihren Wunschtag, dann bei Bedarf einen Ausweichtag.",
+  "pickNone": "Tag antippen",
   "oneMore": "Noch ein Schritt",
   "sendToCrew": "An die Crew senden",
   "alreadyWritten": "Die Nachricht ist schon geschrieben – WhatsApp oder E-Mail wählen, und sie geht direkt ans Marinabüro.",

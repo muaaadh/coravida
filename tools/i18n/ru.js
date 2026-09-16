@@ -6,6 +6,9 @@ module.exports = {
 
 /* ---- strings the generator prints ------------------------------------- */
 ui: {
+  "Availability": "Свободные даты",
+  "When the vessel is free": "Когда судно свободно",
+  "Days already taken are marked. Choose a free one and it carries through to your enquiry.": "Занятые дни отмечены. Выберите свободный — он перейдёт в вашу заявку.",
   "A vessel underway across a shallow lagoon, seen from the air": "Судно на ходу через мелкую лагуну, вид с воздуха",
   "Goes straight to the crew, on WhatsApp or by email.": "Уходит прямо экипажу — в WhatsApp или по почте.",
   "Send on WhatsApp": "Отправить в WhatsApp",
@@ -273,6 +276,7 @@ chrome: {
   dayTaken: "Этот день уже занят — выберите, пожалуйста, другой.", amFree: "В этот день свободно только утро.", pmFree: "В этот день свободна только вторая половина дня.",
   halfDayOnly: "В этот день свободна только половина дня — выберите экскурсию на полдня или другой день.",
   notAvailH: "Этот день недоступен", notAvailP: "Судно уже занято. Хотите связаться с нами? Экипаж подскажет ближайшую свободную дату.", sendWhatsApp: "Написать в WhatsApp", waAsk: "Здравствуйте, Coravida! Я хотел(а) бы арендовать судно {date}{exc}, но на сайте этот день занят. Какая ближайшая свободная дата?",
+  prevMonth: "Предыдущий месяц", nextMonth: "Следующий месяц", legFree: "Свободно", legHalf: "Свободна только половина дня", legTaken: "Занято", amShort: "Утро", pmShort: "День", pickHint: "Выберите желаемый день, затем запасной, если он есть.", pickNone: "Нажмите на день",
   oneMore: "Ещё один шаг", sendToCrew: "Отправьте экипажу", alreadyWritten: "Сообщение уже составлено — выберите WhatsApp или почту, и оно уйдёт прямо в офис марины.",
   menu: "Меню", close: "Закрыть", enquire: "Заявка", explore: "Разделы",
   primary: "Основная навигация", menuLabel: "Меню",

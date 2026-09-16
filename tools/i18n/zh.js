@@ -5,6 +5,9 @@
 module.exports = {
 
 ui: {
+  "Availability": "可预订日期",
+  "When the vessel is free": "船只何时空闲",
+  "Days already taken are marked. Choose a free one and it carries through to your enquiry.": "已被预订的日子已标出。选择一个空闲日，它会带入您的咨询。",
   "A vessel underway across a shallow lagoon, seen from the air": "一艘船穿过浅泻湖，空中俯瞰",
   "Goes straight to the crew, on WhatsApp or by email.": "直接送达船员：WhatsApp 或电子邮件。",
   "Send on WhatsApp": "通过 WhatsApp 发送",
@@ -271,6 +274,7 @@ chrome: {
   dayTaken: "那一天已被预订——请另选日期。", amFree: "那一天只剩上午可用。", pmFree: "那一天只剩下午可用。",
   halfDayOnly: "那一天只有半天可用——请选择半日行程或另选日期。",
   notAvailH: "那一天无法预订", notAvailP: "船只已被预订。想和我们联系吗？船员会为您推荐最近的空闲日期。", sendWhatsApp: "通过 WhatsApp 发送", waAsk: "您好，Coravida——我想在 {date}{exc} 包船，但网站显示那天已被预订。最近的空闲日期是哪天？",
+  prevMonth: "上个月", nextMonth: "下个月", legFree: "可预订", legHalf: "仅半天可用", legTaken: "已预订", amShort: "上午", pmShort: "下午", pickHint: "先选首选日期，如有备选日期再选一个。", pickNone: "点选一天",
   oneMore: "还差一步", sendToCrew: "发送给船员", alreadyWritten: "消息已经写好——选择 WhatsApp 或电子邮件，它会直接送达码头办公室。",
   menu: "菜单", close: "关闭", enquire: "预订咨询", explore: "浏览",
   primary: "主导航", menuLabel: "菜单",

@@ -460,6 +460,15 @@ ${[["Half day", 950], ["Full day", 1350]].map(([k, n], i) => `        <div class
 
   <section class="section">
     <div class="wrap narrow stack-l" data-stagger>
+      <p class="eyebrow" data-a="up">${T("Availability")}</p>
+      <h2 class="d3 lines">${T("When the vessel is free")}</h2>
+      <p class="lede measure" data-a="up">${T("Days already taken are marked. Choose a free one and it carries through to your enquiry.")}</p>
+      <div class="gcal gcal--browse" data-gcal="browse" data-enquire="enquire.html" data-a="up"></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">${T("Add-ons")}</p>
       <h2 class="d3 lines">${T("Things we can arrange")}</h2>
       ${dl(CV.addons.map(a => [a.t, `${a.d} <span class="num">${money(a.p)}</span>`]))}
@@ -751,6 +760,7 @@ function contact() {
               </select></div>
             </div>
             <div class="field"><label for="m">${T("Message")}</label><textarea id="m" name="message" required></textarea></div>
+            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <div class="acts"><button class="btn" type="submit">${T("Send")}</button></div>
             <p class="note">${T("Goes straight to the crew, on WhatsApp or by email.")}</p>
           </form>
@@ -833,10 +843,11 @@ ${chips}
         <div class="step">
           <div class="stack-l">
             <div class="stack-s"><p class="eyebrow">${T("Step two")}</p><h2 class="d3">${T("When, and how many?")}</h2></div>
-            <div class="fg fg2">
-              <div class="field"><label for="d1">${T("Preferred date")}</label><input type="date" id="d1" name="date" required></div>
-              <div class="field"><label for="d2">${T("Alternative date")}</label><input type="date" id="d2" name="alt"></div>
+            <div class="gcal" data-gcal="pick" data-l-pref="${T("Preferred date")}" data-l-alt="${T("Alternative date")}">
+              <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
+              <noscript><div class="fg fg2"><div class="field"><label for="d1n">${T("Preferred date")}</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">${T("Alternative date")}</label><input type="date" id="d2n" name="alt"></div></div></noscript>
             </div>
+            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <div class="fg fg2">
               <div class="field"><label for="g">${T("Guests")}</label><select id="g" name="guests" required>
 ${[2, 4, 6, 7, 8, 10, 12].map(n => `                <option value="${n}"${n === CV.rates.pax ? " selected" : ""}>${n} ${T("guests")}${n === CV.rates.pax ? " · " + T("priced") : ""}</option>`).join("\n")}

@@ -5,6 +5,9 @@
 module.exports = {
 
 ui: {
+  "Availability": "Verfügbarkeit",
+  "When the vessel is free": "Wann das Boot frei ist",
+  "Days already taken are marked. Choose a free one and it carries through to your enquiry.": "Bereits vergebene Tage sind markiert. Wählen Sie einen freien – er wird in Ihre Anfrage übernommen.",
   "A vessel underway across a shallow lagoon, seen from the air": "Ein Boot in Fahrt durch eine flache Lagune, aus der Luft",
   "Goes straight to the crew, on WhatsApp or by email.": "Geht direkt an die Crew – per WhatsApp oder E-Mail.",
   "Send on WhatsApp": "Per WhatsApp senden",
@@ -271,6 +274,7 @@ chrome: {
   dayTaken: "Dieser Tag ist schon vergeben – bitte einen anderen wählen.", amFree: "An diesem Tag ist nur noch der Vormittag frei.", pmFree: "An diesem Tag ist nur noch der Nachmittag frei.",
   halfDayOnly: "An diesem Tag ist nur ein halber Tag frei – wählen Sie eine Halbtagestour oder einen anderen Tag.",
   notAvailH: "Dieser Tag ist nicht verfügbar", notAvailP: "Das Boot ist bereits vergeben. Möchten Sie uns kontaktieren? Die Crew nennt Ihnen den nächsten freien Termin.", sendWhatsApp: "Per WhatsApp senden", waAsk: "Hallo Coravida – ich möchte am {date}{exc} chartern, aber laut Website ist der Tag vergeben. Wann ist der nächste freie Termin?",
+  prevMonth: "Voriger Monat", nextMonth: "Nächster Monat", legFree: "Frei", legHalf: "Nur ein halber Tag frei", legTaken: "Vergeben", amShort: "Vorm.", pmShort: "Nachm.", pickHint: "Wählen Sie Ihren Wunschtag, dann bei Bedarf einen Ausweichtag.", pickNone: "Tag antippen",
   oneMore: "Noch ein Schritt", sendToCrew: "An die Crew senden", alreadyWritten: "Die Nachricht ist schon geschrieben – WhatsApp oder E-Mail wählen, und sie geht direkt ans Marinabüro.",
   menu: "Menü", close: "Schließen", enquire: "Anfragen", explore: "Entdecken",
   primary: "Hauptnavigation", menuLabel: "Menü",

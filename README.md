@@ -439,13 +439,35 @@ calendar:
   be put back. Deleting is a marker, not a removal, so a deletion on one device survives
   a merge with another.
 
-## Forms
+## Enquiries — the inbox
 
-A static site has no inbox, so the contact and enquiry forms **deliver** two ways: every
-submission becomes a prepared WhatsApp message and a prepared email to the details in
-Brand & contact (the visitor picks one — in the Maldives that is how enquiries arrive), and
-if a **form endpoint** is set in the admin (Web3Forms, Formspree, anything that takes
-JSON) it is also posted there automatically.
+The enquiry and contact forms post to **`https://coravida-inbox.vercel.app/api/enquire`**
+(`brand.form.endpoint`, editable under Brand & contact): two small functions in the
+private repo **`muaaadh/coravida-inbox`**, deployed with the Vercel CLI to the project
+`coravida-inbox`, storing each submission as a private Vercel Blob. The admin's **Inbox**
+(first under Books) lists them the moment they arrive — badge on the sidebar, card on the
+Overview — with **Make a booking** (the enquiry becomes a booking, prefilled: guest,
+date, excursion, guests, add‑ons, notes), reply links (WhatsApp / email / call), Mark
+handled, Archive, Delete. The admin authenticates to the inbox with the same GitHub token
+it already holds: the function accepts a token that can read the private books
+repository. If the function is unreachable the site falls back to the prepared WhatsApp
+message and email.
+
+The guest still gets the WhatsApp and email buttons after sending, so nothing is lost if
+the office prefers to talk.
+
+## The public calendar
+
+Step two of the enquiry is a **calendar, not a date field**: a month on frosted glass
+over a blurred lagoon (`gcal()` in `site.js`), reading `content/availability.json`. Free
+days are pills of lighter glass, taken or blocked days are hatched and struck through,
+a half‑free day carries an AM/PM tag, past days are dimmed. Tap a day for the preferred
+date, another for the alternative; the chosen day pops into the brand gradient and a halo
+glides from the last pick to the new; months slide. A taken day shakes and opens the
+*not available* card with WhatsApp and the telephone; Continue stays disabled until a free
+preferred day is chosen. A full‑day excursion turns half‑free days into taken ones. The
+excursions page carries the same calendar in browse mode — a tap carries the day into the
+form (`enquire.html?date=`). Everything is localised through `toLocaleDateString`.
 
 ## Media
 
@@ -526,7 +548,7 @@ excursions/*.html         4 excursion pages — generated
 ru/  zh/  de/             the same twelve pages again — generated
 content/site.json         all content, in English — edit this, or use the admin
 content/media.json        what is built: photographs, clips, tracks — generated
-admin/                    the editor, the books, the calendar and history (app.js, content.js, books.js, calendar.js, history.js)
+admin/                    the editor, the books, the calendar, history and inbox (app.js, content.js, books.js, calendar.js, history.js, inbox.js)
 content/availability.json which days are taken — written by the books, read by the enquiry form
 .github/workflows/        build.yml — tiers, build, commit back, deploy Pages
 assets/
