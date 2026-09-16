@@ -441,10 +441,11 @@ calendar:
 
 ## Enquiries — the inbox
 
-The enquiry and contact forms post to **`https://coravida-inbox.vercel.app/api/enquire`**
+The enquiry and contact forms post to **`https://coravida-inbox-alpha.vercel.app/api/enquire`**
 (`brand.form.endpoint`, editable under Brand & contact): two small functions in the
-private repo **`muaaadh/coravida-inbox`**, deployed with the Vercel CLI to the project
-`coravida-inbox`, storing each submission as a private Vercel Blob. The admin's **Inbox**
+private repo **`muaaadh/coravida-inbox`**, deployed to the Vercel project `coravida-inbox`
+under muaaadh's account (pushes to that repo's `main` deploy automatically), storing each
+submission as a private Vercel Blob. The admin's **Inbox**
 (first under Books) lists them the moment they arrive — badge on the sidebar, card on the
 Overview — with **Make a booking** (the enquiry becomes a booking, prefilled: guest,
 date, excursion, guests, add‑ons, notes), reply links (WhatsApp / email / call), Mark

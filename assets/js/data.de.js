@@ -17,7 +17,7 @@
   "email": "hello@coravida.com",
   "hours": "Täglich · 08:00 – 20:00 MVT",
   "form": {
-   "endpoint": "https://coravida-inbox.vercel.app/api/enquire",
+   "endpoint": "https://coravida-inbox-alpha.vercel.app/api/enquire",
    "key": ""
   }
  },
