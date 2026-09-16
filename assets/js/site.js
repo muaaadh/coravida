@@ -977,11 +977,15 @@
   }
 
   var LANGTAG = LOC === "zh" ? "zh-CN" : LOC === "en" ? "en-GB" : LOC;
+  /* which days are gone: the live copy the office publishes the moment it
+     saves, then the static file in the repo as the fallback */
   var takenCache = null;
   function loadTaken(cb) {
     if (takenCache) return cb(takenCache);
-    fetch(u("content/availability.json"), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; })
-      .then(function (j) { takenCache = (j && j.taken) || []; cb(takenCache); }).catch(function () { cb([]); });
+    var F = (CV.brand || {}).form || {}, live = /\/api\/enquire\/?$/.test(F.endpoint || "") ? F.endpoint.replace(/\/api\/enquire\/?$/, "/api/availability") : "";
+    var stat = function () { return fetch(u("content/availability.json"), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }); };
+    var first = live ? Promise.race([fetch(live, { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }), new Promise(function (res) { setTimeout(function () { res(null); }, 3500); })]).catch(function () { return null; }) : Promise.resolve(null);
+    first.then(function (j) { return (j && j.taken) ? j : stat(); }).then(function (j) { takenCache = (j && j.taken) || []; cb(takenCache); }).catch(function () { cb([]); });
   }
 
   /* ---- The calendar -------------------------------------------------------

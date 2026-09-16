@@ -112,6 +112,8 @@ hr{border:0;border-top:1px solid var(--line);margin:1.25rem 0}
 .note--warn{background:var(--warn-bg)}
 .note--bad{background:var(--bad-bg);color:var(--bad)}
 .note--ok{background:var(--ok-bg)}
+.note.connect{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;font-size:.92rem}
+.note.connect b{font-weight:500}
 .note a{font-weight:500}
 .empty{padding:2.5rem 1rem;text-align:center;color:var(--body)}
 .empty h3{color:var(--ink);margin-bottom:.35rem}

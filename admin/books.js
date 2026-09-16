@@ -77,7 +77,7 @@ window.Books = (function (A) {
       var hadLocal = c && (c.dirty || c.localOnly) && LISTS.some(function (k) { return (c.data[k] || []).length; });
       S = hadLocal ? merge(R, S) : R; sha = r.sha; lastSaved = new Date(); loadedAt = Date.now();
       if (hadLocal) return save(true).then(clashCheck);
-      cache(); clashCheck();
+      cache(); clashCheck(); publishAvailability();
     }).catch(function (e) { localOnly = true; toast("Books: " + e.message + " Working on this device only.", "err"); });
   }
   /* after any merge: a slot two confirmed bookings both hold is the one thing
@@ -125,21 +125,33 @@ window.Books = (function (A) {
         failed = e.message; toast("Books did not save: " + e.message, "err"); cache(); drawSync();
       });
   }
-  /* The website's enquiry form asks which days are gone. Only dates and halves
-     travel — never a name — and only when the set actually changed. */
-  var pubT = null;
+  /* The website's calendar asks which days are gone. Only dates and halves
+     travel — never a name. Two copies: the inbox function gets it at once (the
+     calendar reads that live), and the static file in the site repo is the
+     fallback, committed only when the set actually changed. */
+  var pubT = null, web = { state: "", at: null, err: "" };
+  function availUrl() { var c = (window.Admin.C.draft || window.Admin.C.baseline) || {}, ep = c.brand && c.brand.form && c.brand.form.endpoint || ""; return /\/api\/enquire\/?$/.test(ep) ? ep.replace(/\/api\/enquire\/?$/, "/api/availability") : ""; }
   function publishAvailability() {
+    if (localOnly) { web.state = "local"; drawSync(); return; }
+    var list = availability(today().slice(0, 7) + "-01", 430), text = JSON.stringify({ taken: list }) + "\n";
+    web.state = "sending"; drawSync();
+    var live = availUrl() ? fetch(availUrl(), { method: "POST", headers: { Authorization: "Bearer " + A.token(), "Content-Type": "application/json" }, body: JSON.stringify({ taken: list }) })
+      .then(function (r) { return r.json(); }).then(function (j) { if (!j.ok) throw new Error(j.error || "refused"); web.state = "ok"; web.at = new Date(); web.err = ""; drawSync(); })
+      .catch(function (e) { web.state = "error"; web.err = e.message; drawSync(); }) : Promise.resolve();
     clearTimeout(pubT);
     pubT = setTimeout(function () {
-      // from the first of this month, so the text only changes when the books do (or once a month)
-      var list = availability(today().slice(0, 7) + "-01", 430), text = JSON.stringify({ taken: list }) + "\n";
       if (A.lsGet("cv:books:avail", "") === text) return;
       var s = A.settings();
       A.gh.read(s.repo, "content/availability.json").then(function (r) {
         if (r.text === text) { A.lsSet("cv:books:avail", text); return; }
-        return A.gh.putText(s.repo, "content/availability.json", text, "Availability: " + list.length + " day" + (list.length === 1 ? "" : "s") + " taken (books)", r.sha).then(function () { A.lsSet("cv:books:avail", text); toast("The website now knows which days are taken.", "ok"); });
-      }).catch(function (e) { toast("Could not send availability to the website: " + e.message, "err"); });
+        return A.gh.putText(s.repo, "content/availability.json", text, "Availability: " + list.length + " day" + (list.length === 1 ? "" : "s") + " taken (books)", r.sha).then(function () { A.lsSet("cv:books:avail", text); });
+      }).catch(function (e) { if (!availUrl()) toast("Could not send availability to the website: " + e.message, "err"); });
     }, 2500);
+    return live;
+  }
+  /* what the website currently knows, for the calendar's header */
+  function webBadge() {
+    var b = E("span", { class: "badge webSync" }); setTimeout(drawSync, 0); return b;
   }
   var loadedAt = 0;
   document.addEventListener("visibilitychange", function () {
@@ -154,6 +166,12 @@ window.Books = (function (A) {
   });
   window.addEventListener("pagehide", function () { if (saveT) save(true); });
   function drawSync() {
+    $$(".webSync").forEach(function (n) {
+      var st = localOnly ? "local" : web.state;
+      n.className = "webSync badge " + (st === "ok" ? "badge--ok" : st === "sending" ? "badge--info" : st === "error" || st === "local" ? "badge--bad" : "");
+      n.textContent = st === "local" ? "Website not updated — connect first" : st === "sending" ? "Updating the website…" : st === "ok" ? "Website up to date" : st === "error" ? "Website not updated" : "Website: unknown";
+      n.title = st === "error" ? web.err : st === "local" ? "Bookings and blocks made without a GitHub token stay on this device; the website cannot see them." : st === "ok" && web.at ? "Sent " + web.at.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "";
+    });
     $$(".booksSync").forEach(function (n) {
       n.className = "booksSync badge " + (localOnly ? "badge--warn" : failed ? "badge--bad" : saving || saveT ? "badge--info" : "badge--ok");
       n.textContent = localOnly ? "On this device only" : failed ? "Not saved" : saving ? "Saving…" : saveT ? "Unsaved" : lastSaved ? "Saved " + lastSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "Synced";
@@ -311,7 +329,15 @@ window.Books = (function (A) {
   }
   function empty(h, p, btn) { return E("div", { class: "empty" }, [E("h3", { text: h }), E("p", { text: p }), btn || null]); }
   function seg(opts, cur, on) { var s = E("div", { class: "seg" }); opts.forEach(function (o) { s.appendChild(E("button", { type: "button", class: o[0] === cur ? "on" : "", text: o[1], onclick: function () { on(o[0]); } })); }); return s; }
-  function head(host, title, p, extra) { host.appendChild(E("div", { class: "pagehead" }, [E("div", {}, [E("h2", { text: title }), p ? E("p", { text: p }) : null]), E("div", { class: "acts" }, [syncBadge(), extra || null])])); }
+  function head(host, title, p, extra) { host.appendChild(E("div", { class: "pagehead" }, [E("div", {}, [E("h2", { text: title }), p ? E("p", { text: p }) : null]), E("div", { class: "acts" }, [syncBadge(), extra || null])])); connectBanner(host); }
+  /* without a token nothing leaves this browser — say so where it matters */
+  function connectBanner(host) {
+    if (!localOnly) return;
+    host.appendChild(E("div", { class: "note note--bad connect" }, [
+      E("div", {}, [E("b", { text: "Not connected — this device only." }), " ", "Bookings, blocked days and enquiries made here are not saved to the books, and the website's calendar will not show them, until a GitHub token is added."]),
+      E("a", { class: "btn btn--sm", href: "#settings", text: "Connect in Settings" })
+    ]));
+  }
   function csv(name, rows) {
     var text = rows.map(function (r) { return r.map(function (c) { c = String(c == null ? "" : c); return /[",\n]/.test(c) ? '"' + c.replace(/"/g, '""') + '"' : c; }).join(","); }).join("\n");
     var a = E("a", { href: "data:text/csv;charset=utf-8," + encodeURIComponent("﻿" + text), download: name }); document.body.appendChild(a); a.click(); a.remove();
@@ -680,5 +706,5 @@ window.Books = (function (A) {
   return { load: load, save: save, summary: summary, money: money, overviewCard: overviewCard, settingsCard: settingsCard, data: function () { return S; },
            live: L, today: today, addDays: addDays, daysBetween: daysBetween, fmtDate: fmtDate, iso: iso, parse: parse,
            occupancy: occupancy, conflict: conflict, block: block, unblock: unblock, availability: availability, blocksOn: blocksOn,
-           SLOTS: SLOTS, REASONS: REASONS, slotLabel: slotLabel, reasonLabel: reasonLabel, slotFor: slotFor, newBooking: newBooking, editBooking: editBooking, sync: drawSync, undo: undo, joinDone: joinDone, nameOf: nameOf, clashCheck: clashCheck, logIt: logIt, device: device, invTotals: invTotals, shape: shape, setAll: function (x) { S = shape(x); } };
+           SLOTS: SLOTS, REASONS: REASONS, slotLabel: slotLabel, reasonLabel: reasonLabel, slotFor: slotFor, newBooking: newBooking, editBooking: editBooking, sync: drawSync, undo: undo, joinDone: joinDone, nameOf: nameOf, clashCheck: clashCheck, logIt: logIt, device: device, invTotals: invTotals, shape: shape, setAll: function (x) { S = shape(x); }, webBadge: webBadge, connectBanner: connectBanner, localOnly: function () { return localOnly; }, publishAvailability: publishAvailability };
 })(window.Admin);

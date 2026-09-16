@@ -159,7 +159,7 @@
             // consecutive free days become one block, so the panel shows one card
             var runs = []; blockable.forEach(function (d) { var r = runs[runs.length - 1]; if (r && B.addDays(r.to, 1) === d) r.to = d; else runs.push({ from: d, to: d }); });
             var done = B.joinDone(runs.map(function (r) { return B.block(r.from, r.to, reason, note, true); })); B.save(); note = "";
-            undoable(done, (one ? short(sel.a) : blockable.length + " day" + (blockable.length > 1 ? "s" : "")) + " blocked — no booking can land there."); refresh();
+            undoable(done, (one ? short(sel.a) : blockable.length + " day" + (blockable.length > 1 ? "s" : "")) + " blocked" + (B.localOnly() ? " on this device only — connect to GitHub so the website sees it." : " — the website updates in a moment.")); refresh();
           } }),
           stayBooked.length ? E("ul", { class: "cal__skip" }, stayBooked.map(function (d) { var o = B.occupancy(d), b = o.am || o.pm; return E("li", { text: short(d) + " · " + B.nameOf(b) + " stays booked" }); })) : null
         ]);
@@ -241,7 +241,7 @@
     var wrap = E("div", { class: "cal" });
     headEl = E("div", { class: "cal__head" }, [
       E("div", { class: "cal__nav" }, [A.iconBtn("chevl", "Previous month", null, "btn--ghost"), E("label", { class: "cal__jump", title: "Jump to a month" }, [E("h2", { class: "cal__m" }), (function () { var i = E("input", { type: "month", "aria-label": "Jump to a month" }); if (i.type !== "month") return E("span", { hidden: true }); i.addEventListener("change", function () { if (VALID_M.test(i.value)) { view = i.value; drawGrid(); } }); return i; })(), E("span", { class: "cal__jump__i", html: svg("down"), "aria-hidden": "true" })]), A.iconBtn("chev", "Next month", null, "btn--ghost")]),
-      E("div", { class: "acts" }, [E("span", { class: "booksSync badge" }), E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Today" }), E("button", { class: "btn btn--go btn--sm", type: "button", text: "New booking", onclick: function () { B.newBooking(sel && sel.a === sel.b ? { date: sel.a } : null, function (b) { toast("Booking " + b.ref + " saved.", "ok"); refresh(); }); } })])
+      E("div", { class: "acts" }, [B.webBadge(), E("span", { class: "booksSync badge" }), E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Today" }), E("button", { class: "btn btn--go btn--sm", type: "button", text: "New booking", onclick: function () { B.newBooking(sel && sel.a === sel.b ? { date: sel.a } : null, function (b) { toast("Booking " + b.ref + " saved.", "ok"); refresh(); }); } })])
     ]);
     headEl.querySelectorAll(".btn--icon")[0].setAttribute("data-prev", ""); headEl.querySelectorAll(".btn--icon")[1].setAttribute("data-next", "");
     headEl.querySelector(".btn--ghost.btn--sm").setAttribute("data-today", "");
@@ -251,6 +251,7 @@
     sheetEl = E("aside", { class: "cal__side" }, [panelEl]);
     wrap.appendChild(E("div", { class: "cal__main card" }, [headEl, dow, gridEl, E("div", { class: "cal__foot" }, [legend()])]));
     wrap.appendChild(sheetEl);
+    B.connectBanner(host);
     host.appendChild(wrap);
     wire(); drawGrid(); drawPanel(); B.sync();
   } });
