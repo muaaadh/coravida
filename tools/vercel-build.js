@@ -33,6 +33,14 @@ async function get(url, key, init) {
       fs.writeFileSync(path.join(ROOT, "content/site.json"), JSON.stringify(rows[0].data, null, 2) + "\n");
       console.log("build: content from the database, saved " + rows[0].updated);
     } else console.log("build: the database has no content yet — using content/site.json from the repo");
+    // the calendar's fallback copy of which days are gone, so a slow database read
+    // shows the office's real state rather than whatever was last committed
+    try {
+      const av = await (await get(e.url + "/rest/v1/content?key=eq.availability&select=data", e.key)).json();
+      const doc = av.length && av[0].data && Array.isArray(av[0].data.taken) ? av[0].data : { taken: [], at: null };
+      fs.writeFileSync(path.join(ROOT, "content/availability.json"), JSON.stringify(doc) + "\n");
+      console.log("build: availability from the database, " + doc.taken.length + " day(s) taken");
+    } catch (err) { console.warn("build: could not read availability — " + err.message); }
     // 2. photographs
     try {
       const list = await (await get(e.url + "/storage/v1/object/list/uploads", e.key, { method: "POST", headers: { apikey: e.key, Authorization: "Bearer " + e.key, "Content-Type": "application/json" }, body: JSON.stringify({ prefix: "", limit: 1000 }) })).json();

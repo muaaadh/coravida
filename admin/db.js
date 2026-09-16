@@ -51,10 +51,14 @@ window.DB = (function () {
       return page();
     },
     since: function (iso) { return sb.from("records").select("id, kind, updated, deleted, data").gt("updated", iso).then(fail).then(function (r) { return r.data; }); },
+    /* resolves with what the database kept: {id, updated} per row it accepted.
+       A row it dropped (an older copy — the keep_newer trigger) is absent,
+       and a stamp it corrected (a clock too far ahead) comes back changed. */
     upsert: function (rows) {
-      if (!rows.length) return Promise.resolve();
+      if (!rows.length) return Promise.resolve([]);
       var chunks = []; for (var i = 0; i < rows.length; i += 200) chunks.push(rows.slice(i, i + 200));
-      return chunks.reduce(function (p, c) { return p.then(function () { return sb.from("records").upsert(c, { onConflict: "id" }).then(fail); }); }, Promise.resolve());
+      var kept = [];
+      return chunks.reduce(function (p, c) { return p.then(function () { return sb.from("records").upsert(c, { onConflict: "id" }).select("id, updated").then(fail).then(function (r) { kept = kept.concat(r.data || []); }); }); }, Promise.resolve()).then(function () { return kept; });
     },
     watch: function (onRow, onStatus) {
       var ch = sb.channel("records-live").on("postgres_changes", { event: "*", schema: "public", table: "records" }, function (p) { if (p.new && p.new.id) onRow(p.new); }).subscribe(function (status) { if (onStatus) onStatus(status); });
@@ -64,7 +68,15 @@ window.DB = (function () {
 
   /* ---- inbox ----------------------------------------------------------------- */
   var inbox = {
-    list: function () { return sb.from("inbox").select("*").order("at", { ascending: false }).limit(500).then(fail).then(function (r) { return r.data.map(row); }); },
+    list: function () {
+      var out = [], from = 0, PAGE = 500;
+      function page() {
+        return sb.from("inbox").select("*").order("at", { ascending: false }).order("id", { ascending: true }).range(from, from + PAGE - 1).then(fail).then(function (r) {
+          out = out.concat(r.data.map(row)); if (r.data.length === PAGE && out.length < 5000) { from += PAGE; return page(); } return out;
+        });
+      }
+      return page();
+    },
     update: function (id, patch) {
       var u = { handled_at: new Date().toISOString() }; if (patch.status) u.status = patch.status; if (patch.bookingRef) u.booking_ref = patch.bookingRef; if (patch.by) u.handled_by = patch.by;
       return sb.from("inbox").update(u).eq("id", id).select().single().then(fail).then(function (r) { return row(r.data); });
@@ -72,7 +84,14 @@ window.DB = (function () {
     remove: function (id) { return sb.from("inbox").delete().eq("id", id).then(fail); },
     watch: function (onChange) { var ch = sb.channel("inbox-live").on("postgres_changes", { event: "*", schema: "public", table: "inbox" }, function () { onChange(); }).subscribe(); return function () { sb.removeChannel(ch); }; }
   };
-  function row(r) { var e = Object.assign({}, r.data || {}); e.id = r.id; e.at = r.at; e.kind = r.kind; e.status = r.status; e.bookingRef = r.booking_ref || e.bookingRef; e.handledAt = r.handled_at; e.handledBy = r.handled_by; return e; }
+  /* only the form's own fields come out of a guest's data; what the office
+     decides (status, booking, who handled it) comes from the columns alone */
+  var FORM = ["name", "email", "phone", "staying", "subject", "excursion", "excursionTitle", "date", "alt", "guests", "pickup", "extras", "extra", "total", "message", "notes", "lang", "page"];
+  function row(r) {
+    var d = r.data || {}, e = {};
+    FORM.forEach(function (k) { if (d[k] != null) e[k] = typeof d[k] === "string" ? d[k].slice(0, 4000) : d[k]; });
+    e.id = r.id; e.at = r.at; e.kind = r.kind; e.status = r.status; e.bookingRef = r.booking_ref || null; e.handledAt = r.handled_at; e.handledBy = r.handled_by; return e;
+  }
 
   /* ---- photographs the admin uploads ------------------------------------------- */
   var storage = {

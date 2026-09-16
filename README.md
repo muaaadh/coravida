@@ -408,7 +408,10 @@ realtime channel reconnects, the admin asks for everything changed since a littl
 last row it saw, so a missed event is caught. Booking and invoice numbers come from the
 counter in Settings but never below one past the highest number already in the books, so two
 devices cannot hand out the same reference. Nothing is deleted, only marked; *Restore backup*
-marks whatever the file lacks.
+marks whatever the file lacks. The upsert's reply tells the admin which stamps the database
+kept: a stamp from a clock running more than two minutes ahead is pulled back to the server's
+time (so one wrong clock cannot lock a record), and a write the database dropped because it
+held something newer is fetched back and the office is told.
 
 ## The calendar
 
@@ -451,8 +454,12 @@ outright — a removed record is only marked — and Settings offers a full back
 ## Enquiries — the inbox
 
 The enquiry and contact forms insert straight into the **`inbox` table** with the public
-key — the public key may only *insert* there (RLS: `status = 'new'`, nothing else), never
-read. The admin's **Inbox** (first under Books) lists them the moment they arrive, live —
+key — the public key may only *insert* there, and only the three columns `id`, `kind`,
+`data` (a column-level grant; the time is the server's, the handling columns are the
+office's), never read. The admin reads only the form's own fields out of `data`, so a guest
+cannot smuggle a status or a booking reference in. A budget trigger (`inbox_budget`, 30 an
+hour / 150 a day) refuses a flood; the site then falls back to WhatsApp and e-mail, so a
+guest always reaches the office. The admin's **Inbox** (first under Books) lists them the moment they arrive, live —
 badge on the sidebar, card on the Overview — with **Make a booking** (the enquiry becomes
 a booking, prefilled: guest, date, excursion, guests, add‑ons, notes), reply links
 (WhatsApp / email / call), Mark handled, Archive, Delete. If the database is unreachable

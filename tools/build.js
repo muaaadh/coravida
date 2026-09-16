@@ -27,6 +27,7 @@ const LOCALES = [
    so the admin can reorder, add or drop an entry without shifting every
    translation after it. Anything else merges by index. */
 const IDKEYS = ["slug", "id", "img", "file", "src"];
+const MISALIGNED = [];
 function idOf(o) { if (!o || typeof o !== "object") return null; for (const k of IDKEYS) if (k in o) return k + ":" + o[k]; return null; }
 function deepMerge(base, over) {
   if (Array.isArray(base)) {
@@ -36,6 +37,7 @@ function deepMerge(base, over) {
       const byId = new Map(over.map(o => [idOf(o), o]));
       return base.map(v => { const o = byId.get(idOf(v)); return o ? deepMerge(v, o) : v; });
     }
+    if (over.length !== base.length && typeof base[0] === "object") MISALIGNED.push(`${LOC.code}: a list of ${base.length} has ${over.length} translations (${over.map(o => o && (o.t || o.h || o.d || o.q)).filter(Boolean)[0] || "…"}) — check the order in tools/i18n/${LOC.code}.js`);
     return base.map((v, i) => (i in over ? deepMerge(v, over[i]) : v));
   }
   if (base && typeof base === "object") {
@@ -51,15 +53,27 @@ function deepMerge(base, over) {
 let LOC = LOCALES[0], CV = EN, DICT = {};
 let AR = "";
 const WRITTEN = [];                            // the file list, collected on the English pass                                   // to the site root from the page being written
-const MISSING = new Map();
+const MISSING = new Map(), ASKED = new Map();      // per locale: strings with no translation / dictionary keys used
 function T(s) {
   if (LOC.code === "en") return s;
   const hit = DICT[s];
+  (ASKED.get(LOC.code) || ASKED.set(LOC.code, new Set()).get(LOC.code)).add(s);
   if (hit) return hit;
   if (!MISSING.has(LOC.code)) MISSING.set(LOC.code, new Set());
   MISSING.get(LOC.code).add(s);
   return s;
 }
+
+/* the party the package price is quoted for is content (rates.pax); the copy
+   says it in words, in each language, so the office can change it */
+const NUMWORD = {
+  en: ["", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"],
+  ru: ["", "одного", "двух", "трёх", "четырёх", "пяти", "шести", "семи", "восьми", "девяти", "десяти", "одиннадцати", "двенадцати"],
+  de: ["", "einer", "zwei", "drei", "vier", "fünf", "sechs", "sieben", "acht", "neun", "zehn", "elf", "zwölf"],
+  zh: ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"]
+};
+const paxWord = () => (NUMWORD[LOC.code] || NUMWORD.en)[Number(CV.rates.pax)] || String(CV.rates.pax);
+const TP = s => T(s).replace(/\{n\}/g, paxWord());
 
 const IMGDIR = path.join(ROOT, "assets/img");
 const have = new Set(fs.readdirSync(IMGDIR));
@@ -107,6 +121,17 @@ for (const f of have) {
 }
 tiers.forEach(a => a.sort((x, y) => x - y));
 
+/* the address a page is known by: a home page is its directory, not index.html */
+const pub = (dir, file) => SITE + dir + (file === "index.html" ? "" : file);
+/* the largest tier not wider than `want` — or the largest there is — for the
+   places that name one file rather than a srcset */
+function tier(name, want) {
+  const set = tiers.get(name) || [];
+  if (!set.length) return `${name}-${want}.webp`;
+  const under = set.filter(w => w <= want);
+  return `${name}-${under.length ? under[under.length - 1] : set[0]}.webp`;
+}
+
 /* responsive <img> */
 function img(name, alt, { sizes = "100vw", eager = false, cap = 0 } = {}) {
   let set = tiers.get(name) || [];
@@ -148,16 +173,17 @@ const link = (href, text) => `<a class="link" href="${href}">${text} ${ARROW}</a
 const linkL = (href, text) => `<a class="link link--light" href="${href}">${text} ${ARROW}</a>`;
 
 function head({ title, desc, og, r, path: pagePath }) {
-  const alt = LOCALES.map(l =>
-    `<link rel="alternate" hreflang="${l.lang}" href="${SITE}${l.dir}${pagePath}">`).join("\n") +
-    `\n<link rel="alternate" hreflang="x-default" href="${SITE}${pagePath}">`;
+  const alt = `<link rel="canonical" href="${pub(LOC.dir, pagePath)}">\n` + LOCALES.map(l =>
+    `<link rel="alternate" hreflang="${l.lang}" href="${pub(l.dir, pagePath)}">`).join("\n") +
+    `\n<link rel="alternate" hreflang="x-default" href="${pub("", pagePath)}">`;
   return `<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${r}assets/img/${og}-1600.webp">
+<meta property="og:image" content="${SITE}assets/img/${tier(og, 1600)}">
+<meta property="og:url" content="${pub(LOC.dir, pagePath)}">
 <meta property="og:type" content="website">
 <link rel="icon" href="${r}assets/img/favicon.png" type="image/png">
 <link rel="preload" href="${r}assets/fonts/montserrat-300.woff2" as="font" type="font/woff2" crossorigin>
@@ -230,7 +256,7 @@ function priceCard(v, r = "", { compact = false } = {}) {
   return `<div class="price${compact ? " price--sm" : ""}" data-a="up">
           <p class="price__k">${v.kind}</p>
           <p class="price__v">${v.price == null ? T("On request") : money(v.price)}</p>
-          <p class="price__n">${T("For a party of seven, the whole vessel. Any other number is priced on enquiry.")}</p>${
+          <p class="price__n">${TP("For a party of {n}, the whole vessel. Any other number is priced on enquiry.")}</p>${
     rows.length ? `
           <dl class="price__d">${rows.map(x => `
             <div><dt>${x[0]}</dt><dd>${x[1]}</dd></div>`).join("")}
@@ -246,7 +272,8 @@ const list = items => `<ul class="stack-s" data-stagger>` + items.map((t, i) =>
 function home() {
   at(0);
   const v = CV.voyages;
-  const feat = ["island-and-snorkelling", "shark-point-and-gulhi", "sunset-adventure"].map(s => v.find(x => x.slug === s));
+  const feat = ["island-and-snorkelling", "shark-point-and-gulhi", "sunset-adventure"].map(s => v.find(x => x.slug === s)).filter(Boolean);
+  v.forEach(x => { if (feat.length < 3 && !feat.includes(x)) feat.push(x); });   // the office may rename or remove one
   const ways = feat.map((x, i) => `            <li data-a="up" style="--i:${i}">
               <a class="way" href="excursions/${x.slug}.html">
                 <span class="way__t d4">${x.title}</span>
@@ -409,7 +436,7 @@ ${cta()}`;
 /* ------------------------------------------------------------- VOYAGES -- */
 function excursions() {
   at(0);
-  const rows = CV.voyages.map((v, i) => `        <a class="vx__row" href="excursions/${v.slug}.html" data-thumb="assets/img/${v.img}-900.webp" data-alt="${esc(v.alt)}" data-a="up" style="--i:${Math.min(i,4)}">
+  const rows = CV.voyages.map((v, i) => `        <a class="vx__row" href="excursions/${v.slug}.html" data-thumb="assets/img/${tier(v.img, 900)}" data-alt="${esc(v.alt)}" data-a="up" style="--i:${Math.min(i,4)}">
           <span class="vx__n">${String(i + 1).padStart(2, "0")}</span>
           <span class="vx__t">${v.title}</span>
           <span class="vx__m">${v.kind} &middot; ${v.duration} &middot; ${v.area}</span>
@@ -419,8 +446,8 @@ function excursions() {
   const main = `  <section class="phero">
     <div class="wrap narrow stack-l" data-stagger>
       <p class="eyebrow" data-a="up">${T("Excursions")}</p>
-      <h1 class="d1 lines">${T("Four ways to leave the harbour")}</h1>
-      <p class="lede" data-a="up">${T("Four ways out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.")}</p>
+      <h1 class="d1 lines">${CV.voyages.length === 4 ? T("Four ways to leave the harbour") : T("Ways to leave the harbour")}</h1>
+      <p class="lede" data-a="up">${CV.voyages.length === 4 ? T("Four ways out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.") : T("Out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.")}</p>
     </div>
   </section>
 
@@ -433,7 +460,7 @@ function excursions() {
 
   <section class="section">
     <div class="wrap narrow stack-l" data-stagger>
-      <p class="eyebrow" data-a="up">${T("The four")}</p>
+      <p class="eyebrow" data-a="up">${CV.voyages.length === 4 ? T("The four") : T("The excursions")}</p>
       <div class="vx">
 ${rows}
       </div>
@@ -454,7 +481,7 @@ ${rows}
 ${[["Half day", 950], ["Full day", 1350]].map(([k, n], i) => `        <div class="price" data-a="up" style="--i:${i}">
           <p class="price__k">${T(k)}</p>
           <p class="price__v">${money(n)}</p>
-          <p class="price__n">${T("For a party of seven, the whole vessel. Any other number is priced on enquiry.")}</p>
+          <p class="price__n">${TP("For a party of {n}, the whole vessel. Any other number is priced on enquiry.")}</p>
           <a class="btn" href="enquire.html">${T("Enquire")}</a>
         </div>`).join("\n")}
       </div>
@@ -484,7 +511,7 @@ ${cta()}`;
   page({
     file: "excursions.html", pageAttr: "excursions.html", light: true, og: "palm-shore",
     title: T("Excursions — Coravida"),
-    desc: T("Four private excursions aboard Tiffany Blanc 14 out of Hulhumalé: Fish Tank and the Himmafushi sandbank, Shark Point and Gulhi, and two half days including a sunset run."),
+    desc: CV.voyages.length === 4 ? T("Four private excursions aboard Tiffany Blanc 14 out of Hulhumalé: Fish Tank and the Himmafushi sandbank, Shark Point and Gulhi, and two half days including a sunset run.") : T("Private excursions aboard Tiffany Blanc 14 out of Hulhumalé, each a charter of the whole vessel."),
     main
   });
 }
@@ -612,7 +639,7 @@ function gallery() {
     const set = CV.gallery.filter(g => g.cat === cat);
     if (!set.length) return "";
     const items = set.map((g, i) => `          <figure data-a="up" style="--i:${i % 3}">
-            <button type="button" data-lb="assets/img/${g.img}-1600.webp" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="${T("Open")}: ${esc(g.cap)}">
+            <button type="button" data-lb="assets/img/${tier(g.img, 1600)}" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="${T("Open")}: ${esc(g.cap)}">
               ${img(g.img, g.cap, { sizes: "(min-width:1200px) 560px, (min-width:560px) 50vw, 100vw", eager: k++ < 2 })}
             </button>
             <figcaption>${g.cap}</figcaption>
@@ -852,14 +879,14 @@ ${chips}
             <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
             <div class="fg fg2">
               <div class="field"><label for="g">${T("Guests")}</label><select id="g" name="guests" required>
-${[2, 4, 6, 7, 8, 10, 12].map(n => `                <option value="${n}"${n === CV.rates.pax ? " selected" : ""}>${n} ${T("guests")}${n === CV.rates.pax ? " · " + T("priced") : ""}</option>`).join("\n")}
+${[2, 4, 6, 7, 8, 10, 12].concat(Number(CV.rates.pax) || []).filter((n, i, a) => a.indexOf(n) === i).sort((a, b) => a - b).map(n => `                <option value="${n}"${n === CV.rates.pax ? " selected" : ""}>${n} ${T("guests")}${n === CV.rates.pax ? " · " + T("priced") : ""}</option>`).join("\n")}
               </select></div>
               <div class="field"><label for="p">${T("Departure point")}</label><select id="p" name="pickup">
                 <option>${T("Hulhumal&eacute; Marina")}</option><option>${T("Velana International Airport jetty")}</option>
                 <option>${T("Mal&eacute;, west harbour")}</option><option>${T("A resort in North or South Mal&eacute; Atoll")}</option>
               </select></div>
             </div>
-            <p class="note note--pax" data-pax hidden>${T("The package price is for a party of seven. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.")}</p>
+            <p class="note note--pax" data-pax hidden>${TP("The package price is for a party of {n}. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.")}</p>
             <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="button" data-next>${T("Continue")}</button></div>
           </div>
         </div>
@@ -894,7 +921,7 @@ ${extras}
               <div class="sum__r"><span class="k">${T("Add-ons")}</span><span data-s-e>&mdash;</span></div>
               <div class="sum__t"><span class="k">${T("Indicative total")}</span><span class="v" data-s-t>&mdash;</span></div>
             </div>
-            <p class="note">${T("Package rates cover a party of seven, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.")}</p>
+            <p class="note">${TP("Package rates cover a party of {n}, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held.")}</p>
             <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="submit">${T("Send the enquiry")}</button></div>
           </div>
         </div>
@@ -991,16 +1018,15 @@ for (const loc of LOCALES) {
 
 /* one sitemap for all four languages, each URL declaring its alternates */
 const urls = [];
-for (const loc of LOCALES) for (const f of WRITTEN) if (!/404\.html$/.test(f)) urls.push(loc.dir + f);
+for (const loc of LOCALES) for (const f of WRITTEN) if (!/404\.html$/.test(f)) urls.push([loc.dir, f]);
 fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
   '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n' +
-  urls.map(u => {
-    const file = u.replace(/^(ru|zh|de)\//, "");
+  urls.map(([dir, file]) => {
     const alts = LOCALES.map(l =>
-      `    <xhtml:link rel="alternate" hreflang="${l.lang}" href="${SITE}${l.dir}${file}"/>`).join("\n");
-    return `  <url>\n    <loc>${SITE}${u}</loc>\n${alts}\n` +
-      `    <xhtml:link rel="alternate" hreflang="x-default" href="${SITE}${file}"/>\n  </url>`;
+      `    <xhtml:link rel="alternate" hreflang="${l.lang}" href="${pub(l.dir, file)}"/>`).join("\n");
+    return `  <url>\n    <loc>${pub(dir, file)}</loc>\n${alts}\n` +
+      `    <xhtml:link rel="alternate" hreflang="x-default" href="${pub("", file)}"/>\n  </url>`;
   }).join("\n") + "\n</urlset>\n");
 console.log(`\nsitemap.xml — ${urls.length} URLs`);
 
@@ -1011,3 +1037,11 @@ for (const [code, set] of MISSING) {
   [...set].slice(0, 12).forEach(s => console.log("   ¬ " + s));
 }
 console.log(gaps ? `\n${gaps} strings still in English` : "\nevery string translated");
+/* the other direction: dictionary entries nothing asks for any more */
+for (const loc of LOCALES) {
+  if (loc.code === "en") continue;
+  const dict = require(path.join(ROOT, "tools/i18n", loc.code + ".js")).ui || {}, asked = ASKED.get(loc.code) || new Set();
+  const dead = Object.keys(dict).filter(k => !asked.has(k));
+  if (dead.length) console.log(`${loc.code}: ${dead.length} dictionary entr${dead.length === 1 ? "y" : "ies"} this build did not need (copy for content the office may choose is fine to keep) — ` + dead.map(k => k.slice(0, 40)).join(" | "));
+}
+MISALIGNED.filter((m, i, a) => a.indexOf(m) === i).forEach(m => console.log("\n⚠ " + m));

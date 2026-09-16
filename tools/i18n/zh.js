@@ -5,9 +5,13 @@
 module.exports = {
 
 ui: {
+  "Ways to leave the harbour": "离港的方式",
+  "Out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.": "从胡鲁马累码头出发，每一程都是整船私人包船。",
+  "The excursions": "航程",
+  "Private excursions aboard Tiffany Blanc 14 out of Hulhumalé, each a charter of the whole vessel.": "从胡鲁马累出发、乘 Tiffany Blanc 14 的私人航程，每一程都是整船包船。",
   "Guests coming back aboard Tiffany Blanc 14 from the water": "客人从水中回到 Tiffany Blanc 14 船上",
   "Add to my enquiry": "加入我的咨询",
-  "The package price is for a party of seven. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "套餐价格适用于七人团。不同人数以及您想要的其他额外服务需另行报价，可能会产生额外费用。请在下一步告诉我们您的想法。",
+  "The package price is for a party of {n}. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "套餐价格适用于{n}人团。不同人数以及您想要的其他额外服务需另行报价，可能会产生额外费用。请在下一步告诉我们您的想法。",
   "Diet, occasion, children aboard, anything extra you would like": "饮食、庆祝场合、随行儿童、任何额外需求",
   "Availability": "可预订日期",
   "When the vessel is free": "船只何时空闲",
@@ -19,17 +23,13 @@ ui: {
   "Islands": "岛屿",
   "Everything the day needs is already aboard.":
     "这一天需要的一切，都已在船上。",
-  "A guest on the sand beside her snorkel fins":
-    "沙滩上的客人，身旁是她的脚蹼",
   "Tiffany Blanc 14 from directly above, underway":
     "正上方视角：航行中的 Tiffany Blanc 14",
   "At anchor above the reef edge, guests over the side.":
     "停泊在礁缘之上，客人在舷外戏水。",
   "A green turtle over the reef": "礁上的绿海龟",
-  "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
-    "七人、整船的价格。人数不同，价格另行报出。",
-  "A snorkeller at the surface in clear water":
-    "清澈水面上的浮潜者",
+  "For a party of {n}, the whole vessel. Any other number is priced on enquiry.":
+    "{n}人、整船的价格。人数不同，价格另行报出。",
   "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
     "一支自胡鲁马累码头出发的小型船队，以及熟悉队中每一艘船的船员。",
   "Charters":
@@ -52,50 +52,32 @@ ui: {
     "你看到的那艘船，就是你出海时坐的那艘",
   "We keep the fleet small on purpose. The boat you were shown is the boat you sail on, nothing is shared with another party, and nothing is subcontracted.":
     "我们刻意把船队保持得很小。你看到的那艘船，就是你出海时坐的那艘 — 不与其他客人拼船，也不转包。",
-  "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
-    "两个价格均为七人、整船的费用。船上人数不同，价格另行报出。",
   "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
     "每条行程都是整船包船 — 含船员、燃油与港口费。",
-  "for the whole vessel, seven aboard. Any other number is priced on enquiry.":
-    "为整船、七人在船的价格。人数不同，价格另行报出。",
   "Full day":
     "全日",
   "Half day":
     "半日",
-  "Package rates cover a party of seven, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
-    "套餐价格为七人、整船的费用；船上人数不同，价格另行报出。在占用任何日期之前，我们都会以书面确认最终金额。此表单为演示用途，不会发送任何内容。",
+  "Package rates cover a party of {n}, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held.":
+    "套餐价格为{n}人、整船的费用；船上人数不同，价格另行报出。在占用任何日期之前，我们都会以书面确认最终金额。",
   "priced":
     "套餐价",
   "Chef": "厨师",
   "Berth": "泊位",
-  "Office": "办公地址",
-  "Hours": "营业时间",
   "From": "起价",
-  "for the whole vessel, not per guest.": "为整船价格，非每人价格。",
   "A fifty percent deposit confirms a date; the balance is due seven days before departure. If the captain calls off a sailing for weather, you move the date or take the money back.":
     "支付百分之五十订金即锁定日期；余款于出发前七天结清。若船长因天气取消出海，你可以改期，或全额取回款项。",
   "A flybridge cruiser stripped back and refitted in 2025, run by a crew of three. Twelve aboard for the day, four asleep on the water.":
     "一艘 2025 年拆解重修的飞桥游艇，三名船员随行。日间可载十二人，四人可在水上过夜。",
-  "An indication only, in US dollars, for the whole vessel. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
-    "仅为参考价，以美元计，整船价格。在占用任何日期之前，我们都会以书面确认最终金额。此表单为演示用途，不会发送任何内容。",
-  "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included. Rates are quoted on enquiry against your dates and guest count.":
-    "每条行程都是整船包船 — 含船员、燃油与港口费。价格按你的日期与人数在咨询时报出。",
   "Every excursion is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.":
     "每条行程都是整船包船。若都不合适，请选择最接近的一条，并在第三步告诉我们。",
-  "Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.":
-    "自胡鲁马累码头出发的 Tiffany Blanc 14 包船。船上只有你们一行人、三名船员，以及出海当天早晨才定下的航线。",
   "The crew reply within a day, usually sooner. If your dates are tight, call the marina office.":
     "船员会在一天内回复，通常更快。若日期紧张，请致电码头办公室。",
-  "Three crew take her out, and it is the same three every sailing &mdash; a captain who reads the weather, a chef, and a deckhand who has the ladder down before you ask.":
-    "三个人把她开出去，而且每次出海都是这三个人 — 一位读天气的船长、一位厨师，以及一位不等你开口就把梯子放下的水手。",
   "Timings are indicative. The captain sets the final route on the morning, for tide, wind and light.":
     "时间仅供参考。最终航线由船长在当天早晨根据潮汐、风与光线确定。",
-  "We run a single boat rather than a fleet, so the vessel you were shown is the vessel you sail on. Nothing is shared and nothing is subcontracted.":
-    "我们只经营一艘船，而不是一支船队 — 你看到的那艘，就是你出海时坐的那艘。不拼船，也不转包。",
   "A 14-metre flybridge cruiser refitted in 2025 and run by a crew of three, berthed at Hulhumalé Marina, Malé.":
     "一艘 14 米飞桥游艇，2025 年翻修，三名船员随行，停泊于马累胡鲁马累码头。",
   "A celebration": "庆祝活动",
-  "A demonstration form &mdash; nothing is sent.": "此为演示表单 — 不会发送任何内容。",
   "A private charter of Tiffany Blanc 14 from Hulhumalé Marina.": "自胡鲁马累码头出发的 Tiffany Blanc 14 包船。",
   "A quieter way through the atolls": "更安静地穿过环礁",
   "A resort in North or South Mal&eacute; Atoll": "北马累或南马累环礁的度假村",
@@ -108,7 +90,6 @@ ui: {
   "Add-ons": "附加服务",
   "Add-ons listed on the excursions page": "行程页面所列的附加服务",
   "Alcohol, unless the itinerary says otherwise": "酒类，除非行程另有说明",
-  "All rates": "全部价格",
   "Also aboard": "同样出海",
   "Alternative date": "备选日期",
   "And then the water opens": "然后水面豁然打开",
@@ -127,8 +108,6 @@ ui: {
   "Continue": "继续",
   "Cooks aboard, off the Mal&eacute; market that morning.": "在船上烹饪，食材当天清晨采自马累市场。",
   "Coravida &middot; Maldives": "Coravida · 马尔代夫",
-  "Coravida runs one vessel out of Hulhumalé Marina with the same crew of three on every sailing.":
-    "Coravida 自胡鲁马累码头运营一艘船，每次出海都是同样的三名船员。",
   "Coravida — Private charters through the Maldivian atolls": "Coravida — 穿行马尔代夫环礁的私人包船",
   "Date": "日期",
   "Dates": "日期",
@@ -136,8 +115,6 @@ ui: {
   "Departs": "出发",
   "Departure point": "上船地点",
   "Details": "资料",
-  "Discover the vessel": "了解这艘船",
-  "Diving equipment on non-diving charters": "非潜水行程中的潜水装备",
   "Does this look right?": "以下信息是否正确？",
   "Duration": "时长",
   "Email": "电子邮箱",
@@ -154,8 +131,6 @@ ui: {
     "自胡鲁马累码头出发的四条航线，每一条都是整船包船。",
   "Four ways to leave the harbour": "离开港口的四种方式",
   "Fourteen metres": "十四米",
-  "Fourteen metres, refitted in 2025. Twelve aboard for the day, four asleep on the water.":
-    "十四米，2025 年翻修。日间可载十二人，四人可在水上过夜。",
   "Gallery": "影像",
   "Gallery — Coravida": "影像 — Coravida",
   "General enquiry": "一般咨询",
@@ -177,9 +152,6 @@ ui: {
   "On paper": "技术参数",
   "On request": "价格面议",
   "One vessel": "一艘船",
-  "One vessel is the point": "只有一艘船，这正是重点",
-  "One vessel out of Hulhumal&eacute; Marina, and the same crew aboard every time.":
-    "自胡鲁马累码头出发的一艘船，每次都是同一组船员。",
   "Open": "打开",
   "Or simply tell us your dates": "或者直接告诉我们你的日期",
   "Photographs of Tiffany Blanc 14, the Maldivian atolls she runs through, and the reefs below them.":
@@ -191,8 +163,6 @@ ui: {
     "Tiffany Blanc 14 的私人日间包船与过夜行程 — 一艘停泊于马累胡鲁马累码头的 14 米飞桥游艇。",
   "Questions": "常见问题",
   "Rates": "价格",
-  "Rates on request — we confirm in writing before anything is held.":
-    "价格面议 — 在占用任何日期之前，我们都会以书面确认。",
   "Reach us": "联系我们",
   "Reads the weather, sets the route, and decides whether the day happens at all.":
     "判读天气，规划航线，并决定这一天是否成行。",
@@ -203,7 +173,6 @@ ui: {
     "珊瑚礁、水道，以及那个早晨恰好经过的一切。",
   "Reserve Tiffany Blanc 14 for a day, a sunset or twelve nights at anchor.":
     "预订 Tiffany Blanc 14 — 一天、一场日落，或十二个停泊的夜晚。",
-  "Reserve the vessel": "预订这艘船",
   "Resort, guesthouse or hotel": "度假村、民宿或酒店",
   "Returns": "返回",
   "Review": "确认",
@@ -238,7 +207,6 @@ ui: {
   "The page you asked for is not at this address.": "你要找的页面不在这个地址。",
   "The sea, at your own pace": "以你自己的节奏出海",
   "The vessel": "关于船",
-  "The vessel, the atolls, and what is under them.": "这艘船、这些环礁，以及它们之下的世界。",
   "Things we can arrange": "我们可以安排的",
   "This one drifted": "这一张随流漂开",
   "Three people, every sailing": "每次出海，都是这三个人",

@@ -125,7 +125,7 @@
   /* resize in the browser so a phone photograph does not put 6 MB in the
      repository; the build cuts the web tiers from this */
   function upload(file) {
-    if (C.readonly) { toast("Add a GitHub token in Settings before uploading.", "err"); return Promise.resolve(null); }
+    if (C.readonly) { toast("Sign in before uploading.", "err"); return Promise.resolve(null); }
     var base = A.slug(file.name.replace(/\.[^.]+$/, "")) || "photo";
     var taken = images().map(function (i) { return i.name; });
     var node = E("div", {}), nameIn = E("input", { value: base });
@@ -135,6 +135,7 @@
       nm = A.slug(nameIn.value);
       if (!nm) { toast("Give it a name.", "err"); return false; }
       if (taken.indexOf(nm) > -1) { toast("There is already a photograph called " + nm + ".", "err"); return false; }
+      if (/^(poster-|logo|favicon|caustics|icon)/.test(nm)) { toast("That name belongs to the site's own artwork — choose another.", "err"); return false; }
       return true;
     } }).then(function (r) {
       if (r !== "ok") return null;
@@ -148,7 +149,7 @@
         var pv = document.createElement("canvas"); var ps = Math.min(1, 480 / w); pv.width = Math.round(w * ps); pv.height = Math.round(h * ps);
         pv.getContext("2d").drawImage(bm, 0, 0, pv.width, pv.height);
         var u = { name: nm, b64: dataUrl.split(",")[1], preview: pv.toDataURL("image/jpeg", 0.8), w: w, h: h };
-        if (w < 900) { toast("That picture is only " + w + "px wide — it will look soft. Use a larger one if you can.", "err"); }
+        if (w < 900) { toast("That picture is only " + w + "px wide — it will look soft on a large screen. Use a larger one if you can.", "err"); }
         C.uploads.push(u);
         var bytes = C.uploads.reduce(function (t, x) { return t + x.b64.length; }, 0);
         if (bytes < 4.2e6) A.lsSet(A.KEY.uploads, C.uploads); else toast("Uploads are held in memory now — publish before closing this tab.", "err");
@@ -310,14 +311,14 @@
   /* ---------------------------------------------------------------- Add-ons */
   A.register({ id: "addons", group: "Website", label: "Add-ons", icon: "plus", render: function (host) {
     if (!ready(host)) return;
-    var Ad = C.draft.addons, R = C.draft.rates;
+    var Ad = C.draft.addons, R = C.draft.rates, named = new WeakSet();
     var card = E("div", { class: "card" }), rows = E("div", { class: "rows" });
     head(host, "Add-ons", "Extras offered on the enquiry form and the excursions page, each with its price.",
       E("button", { class: "btn btn--go", type: "button", text: "Add one", onclick: function () { Ad.push({ id: "addon-" + A.uid().slice(-4), t: "", d: "", p: 0 }); A.changed(); draw(); } }));
     var draw = list(rows, Ad, { render: function (a, i, body) {
-      body.appendChild(E("div", { class: "fg fg--price" }, [field("Name", a, "t", { required: true, max: 40, onchange: function (t) { if (!a._fixed) a.id = A.slug(t) || a.id; } }), field("Price", a, "p", { type: "number", min: 0, prefix: R.currency })]));
+      body.appendChild(E("div", { class: "fg fg--price" }, [field("Name", a, "t", { required: true, max: 40, onchange: function (t) { if (!named.has(a)) a.id = A.slug(t) || a.id; } }), field("Price", a, "p", { type: "number", min: 0, prefix: R.currency })]));
       body.appendChild(field("One line", a, "d", { max: 90 }));
-      a._fixed = !!a.id;
+      if (a.id) named.add(a);   // an add-on keeps its id once it has one: links and bookings refer to it
     } });
     card.appendChild(rows); host.appendChild(card);
   } });

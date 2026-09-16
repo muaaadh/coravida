@@ -164,13 +164,18 @@ window.Books = (function (A) {
     saving = true; drawSync();
     var sent = {}; rows.forEach(function (r) { sent[r.id] = r.updated; });
     return DB.records.upsert(rows)
-      .then(function () {
+      .then(function (kept) {
         saving = false; failed = ""; lastSaved = new Date();
+        var stored = {}; (kept || []).forEach(function (k) { stored[k.id] = norm(k.updated); });
+        var lost = 0;
         Object.keys(sent).forEach(function (id) {   // a record edited again while this was in flight stays queued
-          var cur = id === "settings" ? S.settings.updated : (function () { for (var j = 0; j < LISTS.length; j++) { var i = findIn(LISTS[j], id); if (i > -1) return S[LISTS[j]][i].updated; } return sent[id]; })();
-          if (cur === sent[id]) delete dirty[id];
-          seen(sent[id]);
+          var rec = id === "settings" ? S.settings : (function () { for (var j = 0; j < LISTS.length; j++) { var i = findIn(LISTS[j], id); if (i > -1) return S[LISTS[j]][i]; } return null; })();
+          if (!rec || rec.updated !== sent[id]) return;
+          delete dirty[id];
+          if (stored[id]) { rec.updated = stored[id]; seen(stored[id]); }   // the stamp the database kept (a fast clock is corrected here)
+          else lost++;                                                        // the database held something newer — it arrives by resync
         });
+        if (lost) resync().then(function () { toast(lost + " change" + (lost > 1 ? "s" : "") + " made elsewhere " + (lost > 1 ? "were" : "was") + " newer and kept.", "info"); });
         cache(); drawSync(); publishAvailability();
         if (Object.keys(dirty).length) return save(true);
         if (renderLater && $("#modal").hidden) { renderLater = false; A.render(); }

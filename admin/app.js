@@ -214,7 +214,7 @@ window.Admin = (function () {
           return DB.storage.upload(u.name, new Blob([bytes], { type: "image/jpeg" }));
         });
       });
-      chain.then(function () { status("Saving content…", "busy"); return DB.content.set("site", C.draft); })
+      chain.then(function () { status("Saving content…", "busy"); return DB.content.set("site", JSON.parse(JSON.stringify(C.draft, function (k, v) { return k.charAt(0) === "_" ? undefined : v; }))); })   // editor-only keys stay here
         .then(function () { return rebuild(); })
         .then(function () {
           C.baseline = clone(C.draft); C.uploads = []; lsSet(KEY.uploads, []); localStorage.removeItem(KEY.draft);

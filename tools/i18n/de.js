@@ -5,9 +5,13 @@
 module.exports = {
 
 ui: {
+  "Ways to leave the harbour": "Wege aus dem Hafen",
+  "Out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.": "Ab Hulhumalé Marina, jede Fahrt ein privater Charter des ganzen Schiffs.",
+  "The excursions": "Die Ausflüge",
+  "Private excursions aboard Tiffany Blanc 14 out of Hulhumalé, each a charter of the whole vessel.": "Private Ausflüge an Bord der Tiffany Blanc 14 ab Hulhumalé, jeder ein Charter des ganzen Schiffs.",
   "Guests coming back aboard Tiffany Blanc 14 from the water": "Gäste kommen aus dem Wasser zurück an Bord der Tiffany Blanc 14",
   "Add to my enquiry": "Zur Anfrage hinzufügen",
-  "The package price is for a party of seven. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "Der Paketpreis gilt für eine Gruppe von sieben. Eine andere Gruppengröße – und alles Zusätzliche, das Sie an Bord wünschen – wird auf Anfrage berechnet und kann mehr kosten. Sagen Sie uns im nächsten Schritt, was Sie sich vorstellen.",
+  "The package price is for a party of {n}. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "Der Paketpreis gilt für eine Gruppe von {n}. Eine andere Gruppengröße – und alles Zusätzliche, das Sie an Bord wünschen – wird auf Anfrage berechnet und kann mehr kosten. Sagen Sie uns im nächsten Schritt, was Sie sich vorstellen.",
   "Diet, occasion, children aboard, anything extra you would like": "Ernährung, Anlass, Kinder an Bord, besondere Wünsche",
   "Availability": "Verfügbarkeit",
   "When the vessel is free": "Wann das Boot frei ist",
@@ -19,17 +23,13 @@ ui: {
   "Islands": "Inseln",
   "Everything the day needs is already aboard.":
     "Alles, was der Tag braucht, ist schon an Bord.",
-  "A guest on the sand beside her snorkel fins":
-    "Ein Gast am Strand neben ihren Schnorchelflossen",
   "Tiffany Blanc 14 from directly above, underway":
     "Tiffany Blanc 14 von direkt oben, in Fahrt",
   "At anchor above the reef edge, guests over the side.":
     "Vor Anker über der Riffkante, Gäste über der Seite.",
   "A green turtle over the reef": "Eine grüne Schildkröte über dem Riff",
-  "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
-    "Für sieben Personen, das ganze Schiff. Jede andere Zahl wird auf Anfrage kalkuliert.",
-  "A snorkeller at the surface in clear water":
-    "Ein Schnorchler an der Oberfläche in klarem Wasser",
+  "For a party of {n}, the whole vessel. Any other number is priced on enquiry.":
+    "Für {n} Personen, das ganze Schiff. Jede andere Zahl wird auf Anfrage kalkuliert.",
   "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
     "Eine kleine Flotte ab Hulhumalé Marina — und eine Crew, die jedes Boot darin kennt.",
   "Charters":
@@ -52,50 +52,32 @@ ui: {
     "Das Boot, das Sie gesehen haben, ist das Boot, auf dem Sie fahren",
   "We keep the fleet small on purpose. The boat you were shown is the boat you sail on, nothing is shared with another party, and nothing is subcontracted.":
     "Wir halten die Flotte bewusst klein. Das Boot, das Sie gesehen haben, ist das Boot, auf dem Sie fahren — nichts wird mit einer anderen Gesellschaft geteilt und nichts weitervergeben.",
-  "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
-    "Beide Preise gelten für sieben Personen und das ganze Schiff. Jede andere Zahl an Bord wird auf Anfrage kalkuliert.",
   "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
     "Jeder Ausflug ist ein Privatcharter des ganzen Schiffes — Crew, Treibstoff und Hafengebühren inbegriffen.",
-  "for the whole vessel, seven aboard. Any other number is priced on enquiry.":
-    "für das ganze Schiff, sieben an Bord. Jede andere Zahl wird auf Anfrage kalkuliert.",
   "Full day":
     "Ganzer Tag",
   "Half day":
     "Halber Tag",
-  "Package rates cover a party of seven, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
-    "Die Paketpreise gelten für sieben Personen und das ganze Schiff; jede andere Zahl an Bord wird auf Anfrage kalkuliert. Den endgültigen Betrag bestätigen wir schriftlich, bevor etwas reserviert wird. Dieses Formular ist eine Demonstration und sendet nichts.",
+  "Package rates cover a party of {n}, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held.":
+    "Die Paketpreise gelten für {n} Personen und das ganze Schiff; jede andere Zahl an Bord wird auf Anfrage kalkuliert. Den endgültigen Betrag bestätigen wir schriftlich, bevor etwas reserviert wird.",
   "priced":
     "Paketpreis",
   "Chef": "Koch",
   "Berth": "Liegeplatz",
-  "Office": "Büro",
-  "Hours": "Öffnungszeiten",
   "From": "Ab",
-  "for the whole vessel, not per guest.": "für das ganze Schiff, nicht pro Gast.",
   "A fifty percent deposit confirms a date; the balance is due seven days before departure. If the captain calls off a sailing for weather, you move the date or take the money back.":
     "Eine Anzahlung von fünfzig Prozent bestätigt einen Termin; der Rest ist sieben Tage vor Abfahrt fällig. Sagt der Kapitän wegen des Wetters ab, verschieben Sie den Termin oder bekommen das Geld zurück.",
   "A flybridge cruiser stripped back and refitted in 2025, run by a crew of three. Twelve aboard for the day, four asleep on the water.":
     "Ein Flybridge-Cruiser, 2025 entkernt und refittet, geführt von einer dreiköpfigen Crew. Zwölf an Bord für den Tag, vier schlafen auf dem Wasser.",
-  "An indication only, in US dollars, for the whole vessel. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
-    "Nur ein Richtwert, in US-Dollar, für das ganze Schiff. Den endgültigen Betrag bestätigen wir schriftlich, bevor etwas reserviert wird. Dieses Formular ist eine Demonstration und sendet nichts.",
-  "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included. Rates are quoted on enquiry against your dates and guest count.":
-    "Jeder Ausflug ist ein Privatcharter des ganzen Schiffes — Crew, Treibstoff und Hafengebühren inbegriffen. Preise nennen wir auf Anfrage, passend zu Ihren Terminen und der Gästezahl.",
   "Every excursion is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.":
     "Jeder Ausflug ist ein Privatcharter des ganzen Schiffes. Passt keiner davon, wählen Sie den nächstliegenden und schreiben Sie es uns in Schritt drei.",
-  "Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.":
-    "Privatcharter ab Hulhumalé Marina an Bord der Tiffany Blanc 14. Eine Gesellschaft an Bord, eine dreiköpfige Crew und eine Route, die am Morgen der Fahrt gezeichnet wird.",
   "The crew reply within a day, usually sooner. If your dates are tight, call the marina office.":
     "Die Crew antwortet innerhalb eines Tages, meist früher. Wird die Zeit knapp, rufen Sie im Marinabüro an.",
-  "Three crew take her out, and it is the same three every sailing &mdash; a captain who reads the weather, a chef, and a deckhand who has the ladder down before you ask.":
-    "Drei Leute fahren sie hinaus, und es sind jedes Mal dieselben drei — ein Kapitän, der das Wetter liest, ein Koch und ein Decksmann, der die Leiter unten hat, bevor Sie fragen.",
   "Timings are indicative. The captain sets the final route on the morning, for tide, wind and light.":
     "Die Zeiten sind Richtwerte. Die endgültige Route legt der Kapitän am Morgen fest — nach Tide, Wind und Licht.",
-  "We run a single boat rather than a fleet, so the vessel you were shown is the vessel you sail on. Nothing is shared and nothing is subcontracted.":
-    "Wir betreiben ein einziges Boot statt einer Flotte — das Schiff, das Sie gesehen haben, ist das Schiff, auf dem Sie fahren. Nichts wird geteilt und nichts weitervergeben.",
   "A 14-metre flybridge cruiser refitted in 2025 and run by a crew of three, berthed at Hulhumalé Marina, Malé.":
     "Ein 14-Meter-Flybridge-Cruiser, 2025 refittet, geführt von einer dreiköpfigen Crew, mit Liegeplatz in der Hulhumalé Marina, Malé.",
   "A celebration": "Ein Anlass",
-  "A demonstration form &mdash; nothing is sent.": "Ein Demonstrationsformular — es wird nichts gesendet.",
   "A private charter of Tiffany Blanc 14 from Hulhumalé Marina.": "Ein Privatcharter der Tiffany Blanc 14 ab Hulhumalé Marina.",
   "A quieter way through the atolls": "Ein stillerer Weg durch die Atolle",
   "A resort in North or South Mal&eacute; Atoll": "Ein Resort im Nord- oder Süd-Malé-Atoll",
@@ -108,7 +90,6 @@ ui: {
   "Add-ons": "Zusatzleistungen",
   "Add-ons listed on the excursions page": "Zusatzleistungen von der Ausflugsseite",
   "Alcohol, unless the itinerary says otherwise": "Alkohol, sofern das Programm nichts anderes sagt",
-  "All rates": "Alle Preise",
   "Also aboard": "Ebenfalls unterwegs",
   "Alternative date": "Ausweichtermin",
   "And then the water opens": "Und dann öffnet sich das Wasser",
@@ -127,8 +108,6 @@ ui: {
   "Continue": "Weiter",
   "Cooks aboard, off the Mal&eacute; market that morning.": "Kocht an Bord, vom Markt in Malé am selben Morgen.",
   "Coravida &middot; Maldives": "Coravida · Malediven",
-  "Coravida runs one vessel out of Hulhumalé Marina with the same crew of three on every sailing.":
-    "Coravida fährt ein einziges Schiff ab Hulhumalé Marina — mit derselben dreiköpfigen Crew auf jeder Fahrt.",
   "Coravida — Private charters through the Maldivian atolls": "Coravida — Privatcharter durch die maledivischen Atolle",
   "Date": "Datum",
   "Dates": "Termine",
@@ -136,8 +115,6 @@ ui: {
   "Departs": "Abfahrt",
   "Departure point": "Abfahrtsort",
   "Details": "Angaben",
-  "Discover the vessel": "Das Schiff entdecken",
-  "Diving equipment on non-diving charters": "Tauchausrüstung auf Nicht-Tauchcharter",
   "Does this look right?": "Stimmt das so?",
   "Duration": "Dauer",
   "Email": "E-Mail",
@@ -154,8 +131,6 @@ ui: {
     "Vier Wege aus der Hulhumalé Marina — jeder ein Privatcharter des ganzen Schiffes.",
   "Four ways to leave the harbour": "Vier Wege, den Hafen zu verlassen",
   "Fourteen metres": "Vierzehn Meter",
-  "Fourteen metres, refitted in 2025. Twelve aboard for the day, four asleep on the water.":
-    "Vierzehn Meter, 2025 refittet. Zwölf an Bord für den Tag, vier schlafen auf dem Wasser.",
   "Gallery": "Galerie",
   "Gallery — Coravida": "Galerie — Coravida",
   "General enquiry": "Allgemeine Anfrage",
@@ -177,9 +152,6 @@ ui: {
   "On paper": "Auf dem Papier",
   "On request": "Auf Anfrage",
   "One vessel": "Ein Schiff",
-  "One vessel is the point": "Ein Schiff — genau darum geht es",
-  "One vessel out of Hulhumal&eacute; Marina, and the same crew aboard every time.":
-    "Ein Schiff ab Hulhumalé Marina — und jedes Mal dieselbe Crew an Bord.",
   "Open": "Öffnen",
   "Or simply tell us your dates": "Oder nennen Sie uns einfach Ihre Termine",
   "Photographs of Tiffany Blanc 14, the Maldivian atolls she runs through, and the reefs below them.":
@@ -191,8 +163,6 @@ ui: {
     "Private Tagescharter und Übernachtungsausflüge an Bord der Tiffany Blanc 14, einem 14-Meter-Flybridge-Cruiser mit Liegeplatz in der Hulhumalé Marina, Malé.",
   "Questions": "Fragen",
   "Rates": "Preise",
-  "Rates on request — we confirm in writing before anything is held.":
-    "Preise auf Anfrage — wir bestätigen schriftlich, bevor etwas reserviert wird.",
   "Reach us": "Erreichen Sie uns",
   "Reads the weather, sets the route, and decides whether the day happens at all.":
     "Liest das Wetter, legt die Route fest und entscheidet, ob der Tag überhaupt stattfindet.",
@@ -203,7 +173,6 @@ ui: {
     "Riffe, Kanäle und was an jenem Morgen gerade hindurchzieht.",
   "Reserve Tiffany Blanc 14 for a day, a sunset or twelve nights at anchor.":
     "Reservieren Sie die Tiffany Blanc 14 für einen Tag, einen Sonnenuntergang oder zwölf Nächte vor Anker.",
-  "Reserve the vessel": "Das Schiff reservieren",
   "Resort, guesthouse or hotel": "Resort, Guesthouse oder Hotel",
   "Returns": "Rückkehr",
   "Review": "Prüfen",
@@ -238,7 +207,6 @@ ui: {
   "The page you asked for is not at this address.": "Die gesuchte Seite liegt nicht unter dieser Adresse.",
   "The sea, at your own pace": "Das Meer, in Ihrem Tempo",
   "The vessel": "Das Schiff",
-  "The vessel, the atolls, and what is under them.": "Das Schiff, die Atolle und was darunter liegt.",
   "Things we can arrange": "Was wir arrangieren können",
   "This one drifted": "Hier hat die Strömung getragen",
   "Three people, every sailing": "Drei Menschen, jede Fahrt",

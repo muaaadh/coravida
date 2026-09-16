@@ -6,9 +6,13 @@ module.exports = {
 
 /* ---- strings the generator prints ------------------------------------- */
 ui: {
+  "Ways to leave the harbour": "Как выйти из гавани",
+  "Out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.": "Из марины Хулхумале — каждый выход это частный чартер всего судна.",
+  "The excursions": "Экскурсии",
+  "Private excursions aboard Tiffany Blanc 14 out of Hulhumalé, each a charter of the whole vessel.": "Частные экскурсии на Tiffany Blanc 14 из Хулхумале — каждая это чартер всего судна.",
   "Guests coming back aboard Tiffany Blanc 14 from the water": "Гости возвращаются на борт Tiffany Blanc 14 из воды",
   "Add to my enquiry": "Добавить в заявку",
-  "The package price is for a party of seven. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "Пакетная цена — для компании из семи человек. Другое число гостей и всё дополнительное, что вы хотели бы на борту, рассчитывается по запросу и может стоить дороже. Расскажите о пожеланиях на следующем шаге.",
+  "The package price is for a party of {n}. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.": "Пакетная цена — для компании из {n} человек. Другое число гостей и всё дополнительное, что вы хотели бы на борту, рассчитывается по запросу и может стоить дороже. Расскажите о пожеланиях на следующем шаге.",
   "Diet, occasion, children aboard, anything extra you would like": "Питание, повод, дети на борту, любые пожелания",
   "Availability": "Свободные даты",
   "When the vessel is free": "Когда судно свободно",
@@ -20,17 +24,13 @@ ui: {
   "Islands": "Острова",
   "Everything the day needs is already aboard.":
     "Всё, что нужно для этого дня, уже на борту.",
-  "A guest on the sand beside her snorkel fins":
-    "Гостья на песке рядом со своими ластами",
   "Tiffany Blanc 14 from directly above, underway":
     "Tiffany Blanc 14 сверху, на ходу",
   "At anchor above the reef edge, guests over the side.":
     "На якоре над кромкой рифа, гости за бортом.",
   "A green turtle over the reef": "Зелёная черепаха над рифом",
-  "For a party of seven, the whole vessel. Any other number is priced on enquiry.":
-    "За всё судно, компания из семи человек. Любое другое число считаем по запросу.",
-  "A snorkeller at the surface in clear water":
-    "Сноркелер у поверхности в прозрачной воде",
+  "For a party of {n}, the whole vessel. Any other number is priced on enquiry.":
+    "За всё судно, компания из {n} человек. Любое другое число считаем по запросу.",
   "A small fleet out of Hulhumal&eacute; Marina, and a crew who know every boat in it.":
     "Небольшой флот из марины Хулхумале и экипаж, который знает каждое судно в нём.",
   "Charters":
@@ -53,50 +53,32 @@ ui: {
     "Судно, которое вам показали, — то самое, на котором вы пойдёте",
   "We keep the fleet small on purpose. The boat you were shown is the boat you sail on, nothing is shared with another party, and nothing is subcontracted.":
     "Мы намеренно держим флот небольшим. Судно, которое вам показали, — то самое, на котором вы пойдёте: ничего общего с другой компанией и ничего на субподряде.",
-  "Both figures are for a party of seven, for the whole vessel. Any other number aboard is priced on enquiry.":
-    "Обе цены — за всё судно для компании из семи человек. Любое другое число на борту считаем по запросу.",
   "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included.":
     "Каждая экскурсия — частный чартер всего судна: экипаж, топливо и портовые сборы включены.",
-  "for the whole vessel, seven aboard. Any other number is priced on enquiry.":
-    "за всё судно, семеро на борту. Любое другое число считаем по запросу.",
   "Full day":
     "Полный день",
   "Half day":
     "Полдня",
-  "Package rates cover a party of seven, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
-    "Пакетные цены рассчитаны на компанию из семи человек и на всё судно; любое другое число на борту считаем по запросу. Окончательную сумму подтверждаем письменно до того, как что-либо бронируется. Эта форма — демонстрация и ничего не отправляет.",
+  "Package rates cover a party of {n}, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held.":
+    "Пакетные цены рассчитаны на компанию из {n} человек и на всё судно; любое другое число на борту считаем по запросу. Окончательную сумму подтверждаем письменно до того, как что-либо бронируется.",
   "priced":
     "по тарифу",
   "Chef": "Повар",
   "Berth": "Стоянка",
-  "Office": "Офис",
-  "Hours": "Часы работы",
   "From": "От",
-  "for the whole vessel, not per guest.": "за всё судно, а не с человека.",
   "A fifty percent deposit confirms a date; the balance is due seven days before departure. If the captain calls off a sailing for weather, you move the date or take the money back.":
     "Депозит пятьдесят процентов подтверждает дату; остаток — за семь дней до выхода. Если капитан отменяет выход из-за погоды, вы переносите дату или забираете деньги.",
   "A flybridge cruiser stripped back and refitted in 2025, run by a crew of three. Twelve aboard for the day, four asleep on the water.":
     "Флайбридж-круизер, разобранный до основания и обновлённый в 2025 году, с экипажем из трёх человек. Двенадцать на борту днём, четверо ночуют на воде.",
-  "An indication only, in US dollars, for the whole vessel. We confirm the final figure in writing before anything is held. This form is a demonstration and sends nothing.":
-    "Только ориентир, в долларах США, за всё судно. Окончательную сумму мы подтверждаем письменно до того, как что-либо бронируется. Эта форма — демонстрация и ничего не отправляет.",
-  "Every excursion is a private charter of the whole vessel — crew, fuel and harbour dues included. Rates are quoted on enquiry against your dates and guest count.":
-    "Каждая экскурсия — частный чартер всего судна: экипаж, топливо и портовые сборы включены. Тарифы называем по запросу, исходя из ваших дат и числа гостей.",
   "Every excursion is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.":
     "Каждая экскурсия — частный чартер всего судна. Если ни одна не подходит, выберите ближайшую и напишите нам на третьем шаге.",
-  "Private charters out of Hulhumal&eacute; Marina aboard Tiffany Blanc 14. One party aboard, a crew of three, and a route drawn the morning you sail.":
-    "Частные чартеры из марины Хулхумале на борту Tiffany Blanc 14. Одна компания на борту, экипаж из трёх человек и маршрут, который рисуют утром выхода.",
   "The crew reply within a day, usually sooner. If your dates are tight, call the marina office.":
     "Экипаж отвечает в течение суток, обычно раньше. Если даты горят, позвоните в офис марины.",
-  "Three crew take her out, and it is the same three every sailing &mdash; a captain who reads the weather, a chef, and a deckhand who has the ladder down before you ask.":
-    "Её выводят три человека, и это одни и те же трое каждый выход — капитан, который читает погоду, повар и матрос, который опускает трап раньше, чем вы попросите.",
   "Timings are indicative. The captain sets the final route on the morning, for tide, wind and light.":
     "Время ориентировочное. Окончательный маршрут капитан назначает утром — по приливу, ветру и свету.",
-  "We run a single boat rather than a fleet, so the vessel you were shown is the vessel you sail on. Nothing is shared and nothing is subcontracted.":
-    "Мы держим одно судно, а не флот, поэтому судно, которое вам показали, — то самое, на котором вы пойдёте. Ничего общего и ничего на субподряде.",
   "A 14-metre flybridge cruiser refitted in 2025 and run by a crew of three, berthed at Hulhumalé Marina, Malé.":
     "14-метровый флайбридж-круизер, обновлённый в 2025 году, с экипажем из трёх человек. Стоянка — марина Хулхумале, Мале.",
   "A celebration": "Праздник",
-  "A demonstration form &mdash; nothing is sent.": "Демонстрационная форма — ничего не отправляется.",
   "A private charter of Tiffany Blanc 14 from Hulhumalé Marina.": "Частный чартер Tiffany Blanc 14 из марины Хулхумале.",
   "A quieter way through the atolls": "Тихий путь через атоллы",
   "A resort in North or South Mal&eacute; Atoll": "Отель на Северном или Южном Мале Атолле",
@@ -109,7 +91,6 @@ ui: {
   "Add-ons": "Дополнительно",
   "Add-ons listed on the excursions page": "Дополнительные услуги со страницы экскурсий",
   "Alcohol, unless the itinerary says otherwise": "Алкоголь, если в программе не указано иное",
-  "All rates": "Все тарифы",
   "Also aboard": "Ещё в море",
   "Alternative date": "Запасная дата",
   "And then the water opens": "А затем открывается вода",
@@ -128,8 +109,6 @@ ui: {
   "Continue": "Далее",
   "Cooks aboard, off the Mal&eacute; market that morning.": "Готовит на борту, с утреннего рынка Мале.",
   "Coravida &middot; Maldives": "Coravida · Мальдивы",
-  "Coravida runs one vessel out of Hulhumalé Marina with the same crew of three on every sailing.":
-    "Coravida ходит на одном судне из марины Хулхумале, и экипаж из трёх человек всегда один и тот же.",
   "Coravida — Private charters through the Maldivian atolls": "Coravida — частные чартеры по мальдивским атоллам",
   "Date": "Дата",
   "Dates": "Даты",
@@ -137,8 +116,6 @@ ui: {
   "Departs": "Отход",
   "Departure point": "Место посадки",
   "Details": "Данные",
-  "Discover the vessel": "О судне",
-  "Diving equipment on non-diving charters": "Снаряжение для дайвинга на недайвинговых чартерах",
   "Does this look right?": "Всё верно?",
   "Duration": "Длительность",
   "Email": "Эл. почта",
@@ -155,8 +132,6 @@ ui: {
     "Четыре маршрута из марины Хулхумале — каждый частный чартер всего судна.",
   "Four ways to leave the harbour": "Четыре способа выйти из гавани",
   "Fourteen metres": "Четырнадцать метров",
-  "Fourteen metres, refitted in 2025. Twelve aboard for the day, four asleep on the water.":
-    "Четырнадцать метров, обновлена в 2025 году. Двенадцать человек днём, четверо ночуют на воде.",
   "Gallery": "Галерея",
   "Gallery — Coravida": "Галерея — Coravida",
   "General enquiry": "Общий вопрос",
@@ -178,9 +153,6 @@ ui: {
   "On paper": "На бумаге",
   "On request": "По запросу",
   "One vessel": "Одно судно",
-  "One vessel is the point": "Одно судно — в этом весь смысл",
-  "One vessel out of Hulhumal&eacute; Marina, and the same crew aboard every time.":
-    "Одно судно из марины Хулхумале и один и тот же экипаж на борту каждый раз.",
   "Open": "Открыть",
   "Or simply tell us your dates": "Или просто назовите нам даты",
   "Photographs of Tiffany Blanc 14, the Maldivian atolls she runs through, and the reefs below them.":
@@ -192,8 +164,6 @@ ui: {
     "Частные дневные чартеры и ночёвки на борту Tiffany Blanc 14 — 14-метрового флайбридж-круизера со стоянкой в марине Хулхумале, Мале.",
   "Questions": "Вопросы",
   "Rates": "Тарифы",
-  "Rates on request — we confirm in writing before anything is held.":
-    "Тарифы по запросу — мы подтверждаем письменно до того, как что-либо бронируется.",
   "Reach us": "Связаться",
   "Reads the weather, sets the route, and decides whether the day happens at all.":
     "Читает погоду, прокладывает маршрут и решает, состоится ли день вообще.",
@@ -204,7 +174,6 @@ ui: {
     "Рифы, каналы и всё, что проходит через них тем утром.",
   "Reserve Tiffany Blanc 14 for a day, a sunset or twelve nights at anchor.":
     "Зарезервируйте Tiffany Blanc 14 на день, на закат или на двенадцать ночей на якоре.",
-  "Reserve the vessel": "Забронировать судно",
   "Resort, guesthouse or hotel": "Отель, гестхаус или курорт",
   "Returns": "Возвращение",
   "Review": "Проверка",
@@ -239,7 +208,6 @@ ui: {
   "The page you asked for is not at this address.": "Страницы, которую вы искали, по этому адресу нет.",
   "The sea, at your own pace": "Море в вашем ритме",
   "The vessel": "Судно",
-  "The vessel, the atolls, and what is under them.": "Судно, атоллы и то, что под ними.",
   "Things we can arrange": "Что мы можем организовать",
   "This one drifted": "Здесь снесло течением",
   "Three people, every sailing": "Три человека, каждый выход",

@@ -127,16 +127,40 @@ revoke insert, update, delete, truncate, references, trigger on public.content f
 -- ---- newer wins, decided here ------------------------------------------------
 -- Every record carries the stamp of its last edit. A copy that is not newer
 -- than what the row already holds is dropped, whichever device sends it and
--- however late it arrives.
+-- however late it arrives. A stamp from a clock running ahead is pulled back
+-- to now, so one wrong clock cannot lock a record against every other device;
+-- the admin reads the stamp the database kept from the upsert's reply.
 create or replace function public.keep_newer() returns trigger
 language plpgsql set search_path = '' as $$
 begin
-  if new.updated <= old.updated then return null; end if;
+  if new.updated > now() + interval '2 minutes' then new.updated := now(); end if;
+  if tg_op = 'UPDATE' and new.updated <= old.updated then return null; end if;
   return new;
 end $$;
 drop trigger if exists records_keep_newer on public.records;
-create trigger records_keep_newer before update on public.records
+create trigger records_keep_newer before insert or update on public.records
   for each row execute function public.keep_newer();
+
+-- ---- the inbox cannot be flooded ---------------------------------------------
+-- The public key may add to the inbox, so a script could add without end and
+-- bury real enquiries. A marina office hears from a handful of guests a day;
+-- past a generous budget the insert is refused and the website falls back to
+-- the prepared WhatsApp / e-mail message, so a guest still reaches the office.
+create or replace function public.inbox_budget() returns trigger
+language plpgsql security definer set search_path = '' as $$
+declare recent int; today int;
+begin
+  select count(*) into recent from public.inbox where at > now() - interval '1 hour';
+  select count(*) into today  from public.inbox where at > now() - interval '1 day';
+  if recent >= 30 or today >= 150 then
+    raise exception 'The inbox is busy — please reach us on WhatsApp or by e-mail.' using errcode = 'P0001';
+  end if;
+  return new;
+end $$;
+revoke all on function public.inbox_budget() from public, anon, authenticated;
+drop trigger if exists inbox_budget on public.inbox;
+create trigger inbox_budget before insert on public.inbox
+  for each row execute function public.inbox_budget();
 
 -- ---- the inbox takes three things from a guest and nothing else -------------
 -- The website sends an id, a kind and the form's data; the time is the
@@ -148,4 +172,5 @@ create policy "guests add to the inbox" on public.inbox
   for insert to anon, authenticated
   with check (status = 'new' and booking_ref is null and handled_at is null and handled_by is null
               and at between now() - interval '5 minutes' and now() + interval '5 minutes'
+              and length(id) <= 40 and kind in ('enquiry','contact')
               and length(data::text) < 12000);
