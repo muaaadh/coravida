@@ -344,6 +344,12 @@ The same twelve exist again under `/ru/`, `/zh/` and `/de/`. `sitemap.xml` lists
 
 ## Changing the content
 
+> The Vercel build takes `content/site.json` **from the database** (`content.site`), not
+> from the repo. `tools/deploy.sh` therefore runs `tools/content-up.sh`, which PATCHes the
+> file into that row (service key in `.env.local` as `SUPABASE_SERVICE_KEY`). Skip that and
+> a content edit made in the repo is ignored by the next build — and if it retired a
+> picture or a clip the database still names, the build fails with "no image tiers".
+
 Everything is in **`content/site.json`** — brand facts and contact details, the hero clips
 and their interval, the music tracks, navigation, the four excursions (hour-by-hour
 itineraries, inclusions, the price for seven), add-ons, the vessel, gallery captions and

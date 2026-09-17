@@ -10,6 +10,10 @@ cd "$(dirname "$0")/.."
 MSG="${1:-Site update}"
 git pull --rebase --autostash origin main
 node tools/build.js
+# The Vercel build takes its content from the database, not from this repo:
+# a content change made here must go up too, or the next build ignores it
+# (and fails if it names a picture or clip that no longer exists).
+bash tools/content-up.sh
 git add -A
 if git diff --cached --quiet; then echo "nothing to commit"; else git commit -m "$MSG"; fi
 git push origin main
