@@ -185,6 +185,32 @@
    "id": "airport-and-resort-transfers"
   }
  ],
+ "arrange": [
+  {
+   "id": "lunch-aboard",
+   "t": "Mittag- oder Abendessen an Bord"
+  },
+  {
+   "id": "celebration",
+   "t": "Geburtstags- oder Jubiläumsdeko – Torte, Dekoration"
+  },
+  {
+   "id": "candlelit-dinner",
+   "t": "Candlelight-Dinner bei Sonnenuntergang"
+  },
+  {
+   "id": "party",
+   "t": "Soundanlage und Partylicht"
+  },
+  {
+   "id": "fishing",
+   "t": "Angelausrüstung und Köder"
+  },
+  {
+   "id": "longer-day",
+   "t": "Zusätzliche Stopps oder ein längerer Tag"
+  }
+ ],
  "vessel": {
   "name": "Tiffany Blanc 14",
   "spec": [
@@ -420,8 +446,8 @@
      "t": "11:00"
     },
     {
-     "d": "Mittagessen an Bord und freie Zeit.",
-     "h": "Mittagessen",
+     "d": "Eine Pause zum Mittagessen und freie Zeit. Das Mittagessen ist nicht Teil des Pakets – bringen Sie Ihres mit oder buchen Sie einen Koch an Bord.",
+     "h": "Mittagspause",
      "t": "12:30"
     },
     {
@@ -457,7 +483,13 @@
    "season": "Ganzjährig",
    "clipMax": 2160,
    "departs": "08:30 · Hulhumalé",
-   "duration": "9,5 Stunden"
+   "duration": "9,5 Stunden",
+   "not": [
+    "Mittagessen – die Mittagspause ist eine Pause; bringen Sie Ihres mit oder buchen Sie einen Koch an Bord",
+    "Alkohol",
+    "Extras und alles, was auf Wunsch organisiert wird",
+    "Trinkgeld"
+   ]
   },
   {
    "alt": "Gäste schwimmen von der Plattform in tiefblauem Wasser",
@@ -466,7 +498,7 @@
     "Schnorcheln am Fish Tank",
     "Stopp an der Sandbank",
     "Schwimmen und Ausruhen",
-    "Delfinfahrt zurück nach Hulhumalé"
+    "Landschaftliche Rückfahrt nach Hulhumalé, mit Blick nach Delfinen"
    ],
    "img": "swim-boat",
    "area": "Nord-Malé-Atoll",
@@ -512,7 +544,13 @@
    "season": "Ganzjährig",
    "clipMax": 2160,
    "departs": "09:00 · Hulhumalé",
-   "duration": "4 Stunden"
+   "duration": "4 Stunden",
+   "not": [
+    "Mahlzeiten – Wasser und Softdrinks sind an Bord; ein Koch kann dazugebucht werden",
+    "Alkohol",
+    "Extras und alles, was auf Wunsch organisiert wird",
+    "Trinkgeld"
+   ]
   },
   {
    "alt": "Riff-Fische über Korallen im Süd-Malé-Atoll",
@@ -524,7 +562,8 @@
     "Stopp an der Sandbank",
     "Landgang auf Gulhi",
     "Mittagessen",
-    "Sonnenuntergangsfahrt"
+    "Sonnenuntergangsfahrt",
+    "Schwimmen, Schnorcheln und Fotogelegenheiten"
    ],
    "img": "ray-sand",
    "area": "Süd-Malé-Atoll",
@@ -590,7 +629,12 @@
    "season": "Ganzjährig",
    "clipMax": 2160,
    "departs": "09:00 · Hulhumalé",
-   "duration": "9 Stunden"
+   "duration": "9 Stunden",
+   "not": [
+    "Alkohol",
+    "Extras und alles, was auf Wunsch organisiert wird",
+    "Trinkgeld"
+   ]
   },
   {
    "alt": "Tiffany Blanc 14 in Fahrt auf tiefblauem Wasser vor Malé",
@@ -600,7 +644,8 @@
     "Stopp an der Sandbank",
     "Abendsnack und Getränke",
     "Sonnenuntergangsfahrt",
-    "Schwimmen und Schnorcheln"
+    "Schwimmen und Schnorcheln",
+    "Fotogelegenheiten"
    ],
    "img": "aerial-underway",
    "area": "Süd-Malé-Atoll",
@@ -651,12 +696,19 @@
    "season": "Ganzjährig",
    "clipMax": 1080,
    "departs": "13:30 · Hulhumalé",
-   "duration": "4,5 Stunden"
+   "duration": "4,5 Stunden",
+   "not": [
+    "Abendessen – der Abendsnack und Getränke sind enthalten, eine Mahlzeit nicht",
+    "Alkohol",
+    "Extras und alles, was auf Wunsch organisiert wird",
+    "Trinkgeld"
+   ]
   }
  ],
  "ui": {
   "pauseFilm": "Film anhalten",
   "playFilm": "Film abspielen",
+  "quotedOnRequest": "auf Anfrage",
   "charterOnEnquiry": "Charter auf Anfrage",
   "guestsWord": "Gäste",
   "dayTaken": "Dieser Tag ist schon vergeben – bitte einen anderen wählen.",

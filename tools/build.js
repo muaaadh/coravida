@@ -581,10 +581,8 @@ ${v.plan.map((p, i) => `          <li data-a="up" style="--i:${Math.min(i, 6)}">
         </div>
         <div class="g2">
           <div class="stack-s"><p class="eyebrow" data-a="up">${T("Included")}</p>${list(v.has)}</div>
-          <div class="stack-s"><p class="eyebrow" data-a="up">${T("Not included")}</p>${list([
-            T("Alcohol, unless the itinerary says otherwise"),
-            T("Add-ons listed on the excursions page"),
-            T("Gratuities")])}</div>
+          <div class="stack-s"><p class="eyebrow" data-a="up">${T("Not included")}</p>${list(v.not && v.not.length ? v.not : [T("Alcohol"), T("Add-ons, and anything arranged on request"), T("Gratuities")])}
+            <p class="small mute">${T("Anything beyond the package is quoted before a date is held, and may cost more.")} <a class="link link--sm" href="../enquire.html?excursion=${v.slug}">${T("Ask about it in the enquiry")}${ARROW}</a></p></div>
         </div>
       </div>
     </div>
@@ -838,6 +836,8 @@ function enquire() {
               <label for="v${i}">${v.title} &middot; ${v.kind}</label>`).join("\n");
   const extras = CV.addons.map((a, i) => `              <input type="checkbox" id="x${i}" name="extra" value="${a.id}" data-label="${esc(a.t)}" data-price="${a.p}">
               <label for="x${i}">${a.t} &middot; ${a.p}</label>`).join("\n");
+  const arrange = (CV.arrange || []).map((a, i) => `              <input type="checkbox" id="q${i}" name="arrange" value="${a.id}" data-label="${esc(a.t)}">
+              <label for="q${i}">${a.t}</label>`).join("\n");
 
   const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
@@ -893,10 +893,16 @@ ${[2, 4, 6, 7, 8, 10, 12].concat(Number(CV.rates.pax) || []).filter((n, i, a) =>
 
         <div class="step">
           <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">${T("Step three")}</p><h2 class="d3">${T("Anything to add?")}</h2></div>
+            <div class="stack-s"><p class="eyebrow">${T("Step three")}</p><h2 class="d3">${T("Anything to add?")}</h2>
+              <p class="note">${T("The package covers what its page lists. Anything you add here is extra: the add-ons have a price, the rest we quote — and the estimate on the next step will say so.")}</p></div>
+            <div class="stack-s"><p class="eyebrow">${T("Add-ons, priced")}</p>
             <div class="chips">
 ${extras}
-            </div>
+            </div></div>
+            <div class="stack-s"><p class="eyebrow">${T("We can also arrange — quoted on request")}</p>
+            <div class="chips chips--ask">
+${arrange}
+            </div></div>
             <div class="fg fg2">
               <div class="field"><label for="nm">${T("Name")}</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
               <div class="field"><label for="em">${T("Email")}</label><input type="email" id="em" name="email" autocomplete="email" required></div>
@@ -919,9 +925,10 @@ ${extras}
               <div class="sum__r"><span class="k">${T("Date")}</span><span data-s-d>&mdash;</span></div>
               <div class="sum__r"><span class="k">${T("Guests")}</span><span data-s-g>&mdash;</span></div>
               <div class="sum__r"><span class="k">${T("Add-ons")}</span><span data-s-e>&mdash;</span></div>
-              <div class="sum__t"><span class="k">${T("Indicative total")}</span><span class="v" data-s-t>&mdash;</span></div>
+              <div class="sum__r"><span class="k">${T("On request")}</span><span data-s-q>&mdash;</span></div>
+              <div class="sum__t"><span class="k">${T("Estimate")}</span><span class="v" data-s-t>&mdash;</span></div>
             </div>
-            <p class="note">${TP("Package rates cover a party of {n}, for the whole vessel; any other number aboard is priced on enquiry. We confirm the final figure in writing before anything is held.")}</p>
+            <p class="note">${TP("An estimate, not a quote. It covers the package for a party of {n} and the priced add-ons you chose. A different party size, anything on request, and anything else you ask for is quoted separately and may cost more. We confirm the final figure in writing before a date is held.")}</p>
             <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="submit">${T("Send the enquiry")}</button></div>
           </div>
         </div>

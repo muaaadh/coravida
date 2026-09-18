@@ -94,7 +94,9 @@
 
         <div class="step">
           <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Шаг третий</p><h2 class="d3">Что-нибудь добавить?</h2></div>
+            <div class="stack-s"><p class="eyebrow">Шаг третий</p><h2 class="d3">Что-нибудь добавить?</h2>
+              <p class="note">Пакет включает то, что перечислено на его странице. Всё, что вы добавите здесь, — сверх пакета: у дополнительных услуг есть цена, остальное мы рассчитаем отдельно — и оценка на следующем шаге это покажет.</p></div>
+            <div class="stack-s"><p class="eyebrow">Дополнительные услуги с ценой</p>
             <div class="chips">
               <input type="checkbox" id="x0" name="extra" value="private-chef-aboard" data-label="Личный повар на борту" data-price="320">
               <label for="x0">Личный повар на борту &middot; 320</label>
@@ -106,7 +108,22 @@
               <label for="x3">Сервировка на косе &middot; 260</label>
               <input type="checkbox" id="x4" name="extra" value="airport-and-resort-transfers" data-label="Трансферы из аэропорта и отелей" data-price="120">
               <label for="x4">Трансферы из аэропорта и отелей &middot; 120</label>
-            </div>
+            </div></div>
+            <div class="stack-s"><p class="eyebrow">Мы также можем организовать — цена по запросу</p>
+            <div class="chips chips--ask">
+              <input type="checkbox" id="q0" name="arrange" value="lunch-aboard" data-label="Обед или ужин на борту">
+              <label for="q0">Обед или ужин на борту</label>
+              <input type="checkbox" id="q1" name="arrange" value="celebration" data-label="Оформление дня рождения или годовщины — торт, декор">
+              <label for="q1">Оформление дня рождения или годовщины — торт, декор</label>
+              <input type="checkbox" id="q2" name="arrange" value="candlelit-dinner" data-label="Ужин при свечах на закате">
+              <label for="q2">Ужин при свечах на закате</label>
+              <input type="checkbox" id="q3" name="arrange" value="party" data-label="Звуковая система и световое оформление">
+              <label for="q3">Звуковая система и световое оформление</label>
+              <input type="checkbox" id="q4" name="arrange" value="fishing" data-label="Рыболовные снасти и наживка">
+              <label for="q4">Рыболовные снасти и наживка</label>
+              <input type="checkbox" id="q5" name="arrange" value="longer-day" data-label="Дополнительные остановки или более длинный день">
+              <label for="q5">Дополнительные остановки или более длинный день</label>
+            </div></div>
             <div class="fg fg2">
               <div class="field"><label for="nm">Имя</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
               <div class="field"><label for="em">Эл. почта</label><input type="email" id="em" name="email" autocomplete="email" required></div>
@@ -129,9 +146,10 @@
               <div class="sum__r"><span class="k">Дата</span><span data-s-d>&mdash;</span></div>
               <div class="sum__r"><span class="k">Гости</span><span data-s-g>&mdash;</span></div>
               <div class="sum__r"><span class="k">Дополнительно</span><span data-s-e>&mdash;</span></div>
-              <div class="sum__t"><span class="k">Ориентировочная сумма</span><span class="v" data-s-t>&mdash;</span></div>
+              <div class="sum__r"><span class="k">По запросу</span><span data-s-q>&mdash;</span></div>
+              <div class="sum__t"><span class="k">Оценка</span><span class="v" data-s-t>&mdash;</span></div>
             </div>
-            <p class="note">Пакетные цены рассчитаны на компанию из семи человек и на всё судно; любое другое число на борту считаем по запросу. Окончательную сумму подтверждаем письменно до того, как что-либо бронируется.</p>
+            <p class="note">Это оценка, а не окончательная цена. Она включает пакет для компании из семи человек и выбранные дополнительные услуги с ценой. Другое число гостей, всё по запросу и любые другие пожелания рассчитываются отдельно и могут стоить дороже. Окончательную сумму подтверждаем письменно до бронирования даты.</p>
             <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Назад</button><button class="btn" type="submit">Отправить заявку</button></div>
           </div>
         </div>

@@ -5,6 +5,16 @@
 module.exports = {
 
 ui: {
+  "Anything beyond the package is quoted before a date is held, and may cost more.": "Alles über das Paket hinaus wird kalkuliert, bevor ein Termin reserviert wird, und kann mehr kosten.",
+  "Ask about it in the enquiry": "In der Anfrage danach fragen",
+  "Add-ons, and anything arranged on request": "Extras und alles, was auf Wunsch organisiert wird",
+  "Alcohol": "Alkohol",
+  "The package covers what its page lists. Anything you add here is extra: the add-ons have a price, the rest we quote — and the estimate on the next step will say so.": "Das Paket umfasst, was seine Seite aufführt. Alles, was Sie hier hinzufügen, kommt dazu: Die Extras haben einen Preis, den Rest kalkulieren wir – und die Schätzung im nächsten Schritt weist das aus.",
+  "Add-ons, priced": "Extras mit Preis",
+  "We can also arrange — quoted on request": "Wir organisieren auch – Preis auf Anfrage",
+  "On request": "Auf Anfrage",
+  "Estimate": "Schätzung",
+  "An estimate, not a quote. It covers the package for a party of {n} and the priced add-ons you chose. A different party size, anything on request, and anything else you ask for is quoted separately and may cost more. We confirm the final figure in writing before a date is held.": "Eine Schätzung, kein Angebot. Sie umfasst das Paket für eine Gruppe von {n} und die gewählten Extras mit Preis. Eine andere Gruppengröße, alles auf Anfrage und jeder weitere Wunsch werden gesondert kalkuliert und können mehr kosten. Den endgültigen Betrag bestätigen wir schriftlich, bevor ein Termin reserviert wird.",
   "Ways to leave the harbour": "Wege aus dem Hafen",
   "Out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.": "Ab Hulhumalé Marina, jede Fahrt ein privater Charter des ganzen Schiffs.",
   "The excursions": "Die Ausflüge",
@@ -88,8 +98,6 @@ ui: {
   "About": "Über uns",
   "About — Coravida": "Über uns — Coravida",
   "Add-ons": "Zusatzleistungen",
-  "Add-ons listed on the excursions page": "Zusatzleistungen von der Ausflugsseite",
-  "Alcohol, unless the itinerary says otherwise": "Alkohol, sofern das Programm nichts anderes sagt",
   "Also aboard": "Ebenfalls unterwegs",
   "Alternative date": "Ausweichtermin",
   "And then the water opens": "Und dann öffnet sich das Wasser",
@@ -240,7 +248,7 @@ ui: {
 
 chrome: {
   pauseFilm: "Film anhalten", playFilm: "Film abspielen",
-  charterOnEnquiry: "Charter auf Anfrage", guestsWord: "Gäste",
+  quotedOnRequest: "auf Anfrage", charterOnEnquiry: "Charter auf Anfrage", guestsWord: "Gäste",
   dayTaken: "Dieser Tag ist schon vergeben – bitte einen anderen wählen.", amFree: "An diesem Tag ist nur noch der Vormittag frei.", pmFree: "An diesem Tag ist nur noch der Nachmittag frei.",
   halfDayOnly: "An diesem Tag ist nur ein halber Tag frei – wählen Sie eine Halbtagestour oder einen anderen Tag.",
   notAvailH: "Dieser Tag ist nicht verfügbar", notAvailP: "Das Boot ist bereits vergeben. Möchten Sie uns kontaktieren? Die Crew nennt Ihnen den nächsten freien Termin.", sendWhatsApp: "Per WhatsApp senden", waAsk: "Hallo Coravida – ich möchte am {date}{exc} chartern, aber laut Website ist der Tag vergeben. Wann ist der nächste freie Termin?",
@@ -270,6 +278,7 @@ content: {
   voyages: [
     { slug: "island-and-snorkelling", 
       has: ["Bootsausflug", "Schnorcheln am Fish Tank", "Sandbank Himmafushi", "Landgang auf Himmafushi", "Sonnenuntergangsfahrt", "Zeit zum Schwimmen und Schnorcheln", "Fotostopps"],
+      not: ["Mittagessen – die Mittagspause ist eine Pause; bringen Sie Ihres mit oder buchen Sie einen Koch an Bord", "Alkohol", "Extras und alles, was auf Wunsch organisiert wird", "Trinkgeld"],
       title: "Insel & Schnorcheln", kind: "Ganzer Tag", duration: "9,5 Stunden", area: "Nord-Malé-Atoll",
       departs: "08:30 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
       line: "Fish Tank, die Sandbank von Himmafushi, die Insel selbst — und heimwärts unter dem Sonnenuntergang.",
@@ -279,7 +288,7 @@ content: {
         { h: "Hulhumalé", d: "Eine landschaftliche Ausfahrt vom Steg." },
         { h: "Fish Tank", d: "Schnorcheln über dem Riff, zwischen den Tropenfischen, nach denen der Platz heißt." },
         { h: "Sandbank Himmafushi", d: "Schwimmen, schnorcheln und die türkise Lagune. Das beste Licht für Fotos." },
-        { h: "Mittagessen", d: "Mittagessen an Bord und freie Zeit." },
+        { h: "Mittagspause", d: "Eine Pause zum Mittagessen und freie Zeit. Das Mittagessen ist nicht Teil des Pakets – bringen Sie Ihres mit oder buchen Sie einen Koch an Bord." },
         { h: "Himmafushi", d: "An Land auf einer Einheimischeninsel — die Gemeinde, die Läden und der Hafen." },
         { h: "Freie Zeit", d: "Noch mehr Schwimmen und Schnorcheln — oder das Deck." },
         { h: "Sonnenuntergangsfahrt", d: "Zurück Richtung Hulhumalé, während das Licht geht." },
@@ -287,7 +296,8 @@ content: {
       ]
     },
     { slug: "reef-and-sandbank", 
-      has: ["Bootsfahrt", "Schnorcheln am Fish Tank", "Stopp an der Sandbank", "Schwimmen und Ausruhen", "Delfinfahrt zurück nach Hulhumalé"],
+      has: ["Bootsfahrt", "Schnorcheln am Fish Tank", "Stopp an der Sandbank", "Schwimmen und Ausruhen", "Landschaftliche Rückfahrt nach Hulhumalé, mit Blick nach Delfinen"],
+      not: ["Mahlzeiten – Wasser und Softdrinks sind an Bord; ein Koch kann dazugebucht werden", "Alkohol", "Extras und alles, was auf Wunsch organisiert wird", "Trinkgeld"],
       title: "Riff & Sandbank", kind: "Halber Tag", duration: "4 Stunden", area: "Nord-Malé-Atoll",
       departs: "09:00 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
       line: "Fish Tank, eine weiße Sandbank und eine Rückfahrt mit Delfinen.",
@@ -302,7 +312,8 @@ content: {
       ]
     },
     { slug: "shark-point-and-gulhi", 
-      has: ["Ganztägiger Bootsausflug", "Drei Schnorchelplätze", "Schnorcheln am Shark Point", "Schnorcheln im Korallengarten", "Stopp an der Sandbank", "Landgang auf Gulhi", "Mittagessen", "Sonnenuntergangsfahrt"],
+      has: ["Ganztägiger Bootsausflug", "Drei Schnorchelplätze", "Schnorcheln am Shark Point", "Schnorcheln im Korallengarten", "Stopp an der Sandbank", "Landgang auf Gulhi", "Mittagessen", "Sonnenuntergangsfahrt", "Schwimmen, Schnorcheln und Fotogelegenheiten"],
+      not: ["Alkohol", "Extras und alles, was auf Wunsch organisiert wird", "Trinkgeld"],
       title: "Shark Point & Gulhi", kind: "Ganzer Tag", duration: "9 Stunden", area: "Süd-Malé-Atoll",
       departs: "09:00 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
       line: "Drei Schnorchelstopps, eine Sandbank und Gulhi, bevor die Sonne geht.",
@@ -321,7 +332,8 @@ content: {
       ]
     },
     { slug: "sunset-adventure", 
-      has: ["Bootsausflug", "Schnorcheln am Shark Point", "Stopp an der Sandbank", "Abendsnack und Getränke", "Sonnenuntergangsfahrt", "Schwimmen und Schnorcheln"],
+      has: ["Bootsausflug", "Schnorcheln am Shark Point", "Stopp an der Sandbank", "Abendsnack und Getränke", "Sonnenuntergangsfahrt", "Schwimmen und Schnorcheln", "Fotogelegenheiten"],
+      not: ["Abendessen – der Abendsnack und Getränke sind enthalten, eine Mahlzeit nicht", "Alkohol", "Extras und alles, was auf Wunsch organisiert wird", "Trinkgeld"],
       title: "Sonnenuntergangs-Abenteuer", kind: "Halber Tag", duration: "4,5 Stunden", area: "Süd-Malé-Atoll",
       departs: "13:30 · Hulhumalé", guests: "Bis zu 12", season: "Ganzjährig",
       line: "Shark Point, eine Sandbank und die Sonne, die auf dem Heimweg untergeht.",
@@ -336,6 +348,14 @@ content: {
         { h: "Steg Hulhumalé", d: "Längsseits." }
       ]
     }
+  ],
+  arrange: [
+    { id: "lunch-aboard", t: "Mittag- oder Abendessen an Bord" },
+    { id: "celebration", t: "Geburtstags- oder Jubiläumsdeko – Torte, Dekoration" },
+    { id: "candlelit-dinner", t: "Candlelight-Dinner bei Sonnenuntergang" },
+    { id: "party", t: "Soundanlage und Partylicht" },
+    { id: "fishing", t: "Angelausrüstung und Köder" },
+    { id: "longer-day", t: "Zusätzliche Stopps oder ein längerer Tag" },
   ],
   addons: [
     { id: "private-chef-aboard",  t: "Privatkoch an Bord", d: "Drei Gänge, unterwegs gekocht." },

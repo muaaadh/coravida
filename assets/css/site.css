@@ -587,6 +587,8 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
 .fg{display:grid;gap:clamp(1.25rem,2.5vw,2rem);grid-template-columns:1fr}
 @media(min-width:700px){.fg2{grid-template-columns:1fr 1fr}}
 .chips{display:flex;flex-wrap:wrap;gap:.5rem}
+.chips--ask label{border-style:dashed}
+.chips--ask input:checked+label{background:var(--navy);box-shadow:none}
 .chips input{position:absolute;opacity:0;pointer-events:none}
 .chips label{display:inline-flex;align-items:center;min-height:44px;border:1px solid var(--line);border-radius:999px;padding:.6rem 1.35rem;cursor:pointer;transition:background .35s,color .35s,border-color .35s}
 .chips label:hover{border-color:var(--navy);color:var(--navy)}

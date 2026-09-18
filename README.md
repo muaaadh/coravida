@@ -469,7 +469,7 @@ in Settings). **History** lists it all, filterable and searchable, with CSV expo
 booking's page shows its own story; the Overview shows the latest five. Nothing is deleted
 outright — a removed record is only marked — and Settings offers a full backup file.
 
-## Enquiries — the inbox
+## Enquiries — the board
 
 The enquiry and contact forms insert straight into the **`inbox` table** with the public
 key — the public key may only *insert* there, and only the three columns `id`, `kind`,
@@ -477,12 +477,30 @@ key — the public key may only *insert* there, and only the three columns `id`,
 office's), never read. The admin reads only the form's own fields out of `data`, so a guest
 cannot smuggle a status or a booking reference in. A budget trigger (`inbox_budget`, 30 an
 hour / 150 a day) refuses a flood; the site then falls back to WhatsApp and e-mail, so a
-guest always reaches the office. The admin's **Inbox** (first under Books) lists them the moment they arrive, live —
-badge on the sidebar, card on the Overview — with **Make a booking** (the enquiry becomes
-a booking, prefilled: guest, date, excursion, guests, add‑ons, notes), reply links
-(WhatsApp / email / call), Mark handled, Archive, Delete. If the database is unreachable
-the site falls back to the prepared WhatsApp message and email; the guest gets those
-buttons after sending anyway. A honeypot field on both forms keeps robots out.
+guest always reaches the office.
+
+In the admin, **Enquiries** (first under Books) is a board. Every enquiry lands in **New**
+the moment it arrives — live, with a badge on the sidebar and a count on the Overview — and
+the office moves it along: **Contacted → Quoted → Booked**, or **Lost**; Archived is off
+the board. Drag a card between columns, or open it and use *Move to*. Moving a card to
+Booked opens **Make a booking**, prefilled from the enquiry (guest, date, excursion, guests,
+priced add-ons; the on-request items, the site's estimate and the notes go into the
+booking's notes) and the card carries the booking reference from then on. Cards show the
+estimate the guest saw and a **To quote** tag when they asked for something without a
+price. Open a card for the reply links (WhatsApp / e-mail / call) and everything they wrote.
+
+### What the guest is told about the price
+
+The enquiry form's step three splits what can be added into **Add-ons, priced** (the
+add-ons list, each with its price) and **We can also arrange — quoted on request** (the
+`arrange` list in content: cake and decorations, a candlelit dinner, fishing gear, a longer
+day…). Step four's total is labelled **Estimate**, with the plain statement that it is an
+estimate and not a quote: it covers the package at the priced party size plus the priced
+add-ons; a different party size, anything on request and anything else asked for is quoted
+separately and may cost more; the final figure is confirmed in writing before a date is
+held. Each excursion page lists **Not included** for that package (from the client's
+inclusion lists: lunch is not part of the Island & Snorkelling day or the half days; the
+Shark Point day includes it) with a line that anything beyond the package may cost more.
 
 ## The public calendar
 

@@ -895,6 +895,8 @@
       $("[data-s-d]").textContent = d ? new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "—";
       $("[data-s-g]").textContent = g ? g + " " + t("guestsWord", "guests") : "—";
       $("[data-s-e]").textContent = ex.length ? ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ") : t("none", "None");
+      var ask = $$('input[name="arrange"]:checked', f), q = $("[data-s-q]");
+      if (q) q.textContent = ask.length ? ask.map(function (i) { return i.getAttribute("data-label"); }).join(", ") + " — " + t("quotedOnRequest", "quoted on request") : t("none", "None");
       var add = ex.reduce(function (s, i) { return s + Number(i.getAttribute("data-price") || 0); }, 0);
       /* the package price only holds at the party size the client quoted;
          at any other number the charter itself goes back to an enquiry */
@@ -991,8 +993,12 @@
     var gSel = $('[name="guests"]', f), paxNote = $("[data-pax]", f);
     function paxCheck() { if (gSel && paxNote) paxNote.hidden = Number(gSel.value) === Number((CV.rates && CV.rates.pax) || 7); }
     if (gSel) { gSel.addEventListener("change", paxCheck); paxCheck(); }
-    /* "Add to my enquiry" on the excursions page arrives as ?extra=<id> */
-    try { new URLSearchParams(location.search).getAll("extra").forEach(function (id) { var c = $('input[name="extra"][value="' + id.replace(/[^a-z0-9-]/g, "") + '"]', f); if (c) c.checked = true; }); } catch (x) {}
+    /* "Add to my enquiry" on the excursions page arrives as ?extra=<id>; an excursion page sends ?excursion=<slug> */
+    try {
+      var qs = new URLSearchParams(location.search);
+      qs.getAll("extra").forEach(function (id) { var c = $('input[name="extra"][value="' + id.replace(/[^a-z0-9-]/g, "") + '"]', f); if (c) c.checked = true; });
+      var ex0 = qs.get("excursion"); if (ex0) { var r0 = $('input[name="excursion"][value="' + ex0.replace(/[^a-z0-9-]/g, "") + '"]', f); if (r0 && !r0.checked) { r0.checked = true; r0.dispatchEvent(new Event("change", { bubbles: true })); } }
+    } catch (x) {}
     f.addEventListener("submit", function (e) {
       e.preventDefault(); if (!ok()) return;
       check(); if (dateIn && !dateIn.checkValidity()) { go(1); dateIn.reportValidity(); return; }
@@ -1000,6 +1006,8 @@
       var v = chosen(); if (v) d.excursionTitle = v.title;
       var ex = $$('input[name="extra"]:checked', f);
       if (ex.length) d.extras = ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ");
+      var ask = $$('input[name="arrange"]:checked', f);
+      if (ask.length) d.arrange = ask.map(function (i) { return i.getAttribute("data-label"); }).join(", "); else delete d.arrange;
       d.total = ($("[data-s-t]") || {}).textContent || "";
       deliver(f, "enquiry", d, $("#enquireOk"));
     });
@@ -1142,8 +1150,8 @@
   function deliver(f, kind, d, o) {
     var B = CV.brand || {}, F = B.form || {};
     var lines = [], skip = { at: 1, total: 0 };
-    var order = ["name", "email", "phone", "staying", "subject", "excursionTitle", "date", "alt", "guests", "pickup", "extras", "total", "message", "notes"];
-    var label = { name: "Name", email: "Email", phone: "Phone", staying: "Staying at", subject: "Subject", excursionTitle: "Excursion", date: "Date", alt: "Alternative date", guests: "Guests", pickup: "Departure", extras: "Extras", total: "Total", message: "Message", notes: "Notes" };
+    var order = ["name", "email", "phone", "staying", "subject", "excursionTitle", "date", "alt", "guests", "pickup", "extras", "arrange", "total", "message", "notes"];
+    var label = { name: "Name", email: "Email", phone: "Phone", staying: "Staying at", subject: "Subject", excursionTitle: "Excursion", date: "Date", alt: "Alternative date", guests: "Guests", pickup: "Departure", extras: "Extras", arrange: "On request", total: "Estimate", message: "Message", notes: "Notes" };
     order.forEach(function (k) { if (d[k] && String(d[k]).trim() && !skip[k]) lines.push(label[k] + ": " + [].concat(d[k]).join(", ")); });
     var subject = (kind === "enquiry" ? "Charter enquiry" : "Enquiry") + (d.excursionTitle ? " — " + d.excursionTitle : "") + (d.date ? " · " + d.date : "");
     var text = subject + "\n\n" + lines.join("\n") + "\n\n— sent from " + location.host;

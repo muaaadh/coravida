@@ -266,7 +266,7 @@
     var R = C.draft.rates;
     host.appendChild(E("div", { class: "crumb", html: "<a href='#excursions'>Excursions</a> › " + esc(v.title) }));
     head(host, v.title, "Address on the site: excursions/" + v.slug + ".html", E("a", { class: "btn btn--ghost btn--sm", href: A.siteUrl() + "excursions/" + v.slug + ".html", target: "_blank", rel: "noopener", text: "View page ↗" }));
-    v.plate = v.plate || { img: "", stop: 0 }; v.plan = v.plan || []; v.has = v.has || [];
+    v.plate = v.plate || { img: "", stop: 0 }; v.plan = v.plan || []; v.has = v.has || []; v.not = v.not || [];
     host.appendChild(E("div", { class: "card" }, [E("h3", { text: "Essentials" }),
       E("div", { class: "fg fg2" }, [
         field("Title", v, "title", { required: true, max: 40 }),
@@ -298,6 +298,7 @@
     } });
     planCard.appendChild(planRows); host.appendChild(planCard);
     host.appendChild(E("div", { class: "card" }, [E("h3", { text: "What is included" }), chips(v.has, "e.g. Lunch aboard — Enter to add")]));
+    host.appendChild(E("div", { class: "card" }, [E("h3", { text: "What is not included" }), E("p", { class: "sub", text: "Say it plainly — lunch on a day that has none, alcohol, gratuities. The page adds that anything beyond the package is quoted and may cost more." }), chips(v.not, "e.g. Lunch — bring your own, or add a chef aboard — Enter to add")]));
     stopSel = field("Caption it with this stop", v.plate, "stop", { type: "select", options: stopOpts(), onchange: function (val) { v.plate.stop = Number(val); } });
     host.appendChild(E("div", { class: "card" }, [E("h3", { text: "Pictures and film" }),
       clipSelect("Film at the top of the page", v, "clip", { onchange: function (n) { var k = clips().filter(function (x) { return x.name === n; })[0]; if (k) v.clipMax = k.max; } }),
@@ -321,6 +322,16 @@
       if (a.id) named.add(a);   // an add-on keeps its id once it has one: links and bookings refer to it
     } });
     card.appendChild(rows); host.appendChild(card);
+    /* things the office can arrange but does not price up front */
+    C.draft.arrange = C.draft.arrange || [];
+    var Aq = C.draft.arrange, card2 = E("div", { class: "card" }), rows2 = E("div", { class: "rows" });
+    card2.appendChild(E("div", { class: "card__h" }, [E("div", {}, [E("h2", { text: "We can also arrange" }), E("p", { text: "Offered on the enquiry form without a price — a guest ticks what they want and the office quotes it. Cake and decorations, a candlelit dinner, fishing gear…" })]),
+      E("button", { class: "btn btn--go btn--sm", type: "button", text: "Add one", onclick: function () { Aq.push({ id: "ask-" + A.uid().slice(-4), t: "" }); A.changed(); draw2(); } })]));
+    var draw2 = list(rows2, Aq, { render: function (a, i, body) {
+      body.appendChild(field("What", a, "t", { required: true, max: 60, onchange: function (t) { if (!named.has(a)) a.id = A.slug(t) || a.id; } }));
+      if (a.id) named.add(a);
+    } });
+    card2.appendChild(rows2); host.appendChild(card2);
   } });
 
   /* ---------------------------------------------------------------- Our vessels */

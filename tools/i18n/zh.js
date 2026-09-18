@@ -5,6 +5,16 @@
 module.exports = {
 
 ui: {
+  "Anything beyond the package is quoted before a date is held, and may cost more.": "套餐以外的任何内容都会在锁定日期前另行报价，可能产生额外费用。",
+  "Ask about it in the enquiry": "在咨询中询问",
+  "Add-ons, and anything arranged on request": "附加服务，以及按需安排的一切",
+  "Alcohol": "酒类",
+  "The package covers what its page lists. Anything you add here is extra: the add-ons have a price, the rest we quote — and the estimate on the next step will say so.": "套餐包含其页面所列内容。您在此添加的任何项目均为额外项目：附加服务有明确价格，其余由我们另行报价——下一步的估价会如实注明。",
+  "Add-ons, priced": "附加服务（含价格）",
+  "We can also arrange — quoted on request": "我们也可安排——按需报价",
+  "On request": "按需报价",
+  "Estimate": "估价",
+  "An estimate, not a quote. It covers the package for a party of {n} and the priced add-ons you chose. A different party size, anything on request, and anything else you ask for is quoted separately and may cost more. We confirm the final figure in writing before a date is held.": "这是估价，并非最终报价。它包含{n}人团的套餐及您所选的含价附加服务。不同人数、按需安排的项目以及其他任何要求均另行报价，可能产生额外费用。锁定日期前，我们会以书面形式确认最终金额。",
   "Ways to leave the harbour": "离港的方式",
   "Out of Hulhumal&eacute; Marina, each a private charter of the whole vessel.": "从胡鲁马累码头出发，每一程都是整船私人包船。",
   "The excursions": "航程",
@@ -88,8 +98,6 @@ ui: {
   "About": "关于",
   "About — Coravida": "关于 — Coravida",
   "Add-ons": "附加服务",
-  "Add-ons listed on the excursions page": "行程页面所列的附加服务",
-  "Alcohol, unless the itinerary says otherwise": "酒类，除非行程另有说明",
   "Also aboard": "同样出海",
   "Alternative date": "备选日期",
   "And then the water opens": "然后水面豁然打开",
@@ -240,7 +248,7 @@ ui: {
 
 chrome: {
   pauseFilm: "暂停影片", playFilm: "播放影片",
-  charterOnEnquiry: "包船价格另议", guestsWord: "人",
+  quotedOnRequest: "按需报价", charterOnEnquiry: "包船价格另议", guestsWord: "人",
   dayTaken: "那一天已被预订——请另选日期。", amFree: "那一天只剩上午可用。", pmFree: "那一天只剩下午可用。",
   halfDayOnly: "那一天只有半天可用——请选择半日行程或另选日期。",
   notAvailH: "那一天无法预订", notAvailP: "船只已被预订。想和我们联系吗？船员会为您推荐最近的空闲日期。", sendWhatsApp: "通过 WhatsApp 发送", waAsk: "您好，Coravida——我想在 {date}{exc} 包船，但网站显示那天已被预订。最近的空闲日期是哪天？",
@@ -271,6 +279,7 @@ content: {
   voyages: [
     { slug: "island-and-snorkelling", 
       has: ["出海行程", "Fish Tank 浮潜", "希玛富士沙洲", "登岛希玛富士", "日落航段", "游泳与浮潜时间", "拍照停留"],
+      not: ["午餐——中午停留为休息时间；请自备，或加订船上私厨", "酒类", "附加服务，以及按需安排的一切", "小费"],
       title: "海岛与浮潜", kind: "全日", duration: "9.5 小时", area: "北马累环礁",
       departs: "08:30 · 胡鲁马累", guests: "最多 12 人", season: "全年",
       line: "Fish Tank、希玛富士沙洲、海岛本身，以及日落中的归程。",
@@ -280,7 +289,7 @@ content: {
         { h: "胡鲁马累", d: "从码头出发的一段风景航程。" },
         { h: "Fish Tank", d: "在礁石上浮潜，与这处潜点得名的热带鱼群同游。" },
         { h: "希玛富士沙洲", d: "游泳、浮潜与绿松石色的潟湖。一天中最好的拍摄光线。" },
-        { h: "午餐", d: "船上午餐与自由活动。" },
+        { h: "午餐休息", d: "午餐与自由活动时间。午餐不含在套餐内——请自备，或加订船上私厨。" },
         { h: "希玛富士", d: "登上当地海岛 — 社区、店铺与港口。" },
         { h: "自由活动", d: "继续游泳浮潜，或留在甲板上。" },
         { h: "日落航段", d: "在光线散去时驶回胡鲁马累。" },
@@ -288,7 +297,8 @@ content: {
       ]
     },
     { slug: "reef-and-sandbank", 
-      has: ["出海行程", "Fish Tank 浮潜", "沙洲停留", "游泳与休息", "返回胡鲁马累的海豚航段"],
+      has: ["出海行程", "Fish Tank 浮潜", "沙洲停留", "游泳与休息", "风景航程返回胡鲁马累，沿途留意海豚"],
+      not: ["餐食——船上备有水和软饮；可加订私厨", "酒类", "附加服务，以及按需安排的一切", "小费"],
       title: "礁石与沙洲", kind: "半日", duration: "4 小时", area: "北马累环礁",
       departs: "09:00 · 胡鲁马累", guests: "最多 12 人", season: "全年",
       line: "Fish Tank、一片白色沙洲，以及一段寻找海豚的归程。",
@@ -303,7 +313,8 @@ content: {
       ]
     },
     { slug: "shark-point-and-gulhi", 
-      has: ["全日出海行程", "三处浮潜点", "鲨鱼点浮潜", "珊瑚花园浮潜", "沙洲停留", "登岛古尔希", "午餐", "日落航段"],
+      has: ["全日出海行程", "三处浮潜点", "鲨鱼点浮潜", "珊瑚花园浮潜", "沙洲停留", "登岛古尔希", "午餐", "日落航段", "游泳、浮潜与拍照"],
+      not: ["酒类", "附加服务，以及按需安排的一切", "小费"],
       title: "鲨鱼点与古尔希", kind: "全日", duration: "9 小时", area: "南马累环礁",
       departs: "09:00 · 胡鲁马累", guests: "最多 12 人", season: "全年",
       line: "三处浮潜点、一片沙洲，以及日落前的古尔希。",
@@ -322,7 +333,8 @@ content: {
       ]
     },
     { slug: "sunset-adventure", 
-      has: ["出海行程", "鲨鱼点浮潜", "沙洲停留", "傍晚小食与饮品", "日落航段", "游泳与浮潜"],
+      has: ["出海行程", "鲨鱼点浮潜", "沙洲停留", "傍晚小食与饮品", "日落航段", "游泳与浮潜", "拍照机会"],
+      not: ["晚餐——包含傍晚小食与饮品，不含正餐", "酒类", "附加服务，以及按需安排的一切", "小费"],
       title: "日落之旅", kind: "半日", duration: "4.5 小时", area: "南马累环礁",
       departs: "13:30 · 胡鲁马累", guests: "最多 12 人", season: "全年",
       line: "鲨鱼点、一片沙洲，以及归途中沉下去的太阳。",
@@ -337,6 +349,14 @@ content: {
         { h: "胡鲁马累码头", d: "靠泊。" }
       ]
     }
+  ],
+  arrange: [
+    { id: "lunch-aboard", t: "船上午餐或晚餐" },
+    { id: "celebration", t: "生日或纪念日布置——蛋糕、装饰" },
+    { id: "candlelit-dinner", t: "日落烛光晚餐" },
+    { id: "party", t: "音响系统与派对灯光" },
+    { id: "fishing", t: "钓具与鱼饵" },
+    { id: "longer-day", t: "额外停靠点，或更长的一天" },
   ],
   addons: [
     { id: "private-chef-aboard",  t: "船上私厨", d: "三道菜，航行中现做。" },

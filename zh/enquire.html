@@ -94,7 +94,9 @@
 
         <div class="step">
           <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">第三步</p><h2 class="d3">还需要什么？</h2></div>
+            <div class="stack-s"><p class="eyebrow">第三步</p><h2 class="d3">还需要什么？</h2>
+              <p class="note">套餐包含其页面所列内容。您在此添加的任何项目均为额外项目：附加服务有明确价格，其余由我们另行报价——下一步的估价会如实注明。</p></div>
+            <div class="stack-s"><p class="eyebrow">附加服务（含价格）</p>
             <div class="chips">
               <input type="checkbox" id="x0" name="extra" value="private-chef-aboard" data-label="船上私厨" data-price="320">
               <label for="x0">船上私厨 &middot; 320</label>
@@ -106,7 +108,22 @@
               <label for="x3">沙洲布置 &middot; 260</label>
               <input type="checkbox" id="x4" name="extra" value="airport-and-resort-transfers" data-label="机场与度假村接送" data-price="120">
               <label for="x4">机场与度假村接送 &middot; 120</label>
-            </div>
+            </div></div>
+            <div class="stack-s"><p class="eyebrow">我们也可安排——按需报价</p>
+            <div class="chips chips--ask">
+              <input type="checkbox" id="q0" name="arrange" value="lunch-aboard" data-label="船上午餐或晚餐">
+              <label for="q0">船上午餐或晚餐</label>
+              <input type="checkbox" id="q1" name="arrange" value="celebration" data-label="生日或纪念日布置——蛋糕、装饰">
+              <label for="q1">生日或纪念日布置——蛋糕、装饰</label>
+              <input type="checkbox" id="q2" name="arrange" value="candlelit-dinner" data-label="日落烛光晚餐">
+              <label for="q2">日落烛光晚餐</label>
+              <input type="checkbox" id="q3" name="arrange" value="party" data-label="音响系统与派对灯光">
+              <label for="q3">音响系统与派对灯光</label>
+              <input type="checkbox" id="q4" name="arrange" value="fishing" data-label="钓具与鱼饵">
+              <label for="q4">钓具与鱼饵</label>
+              <input type="checkbox" id="q5" name="arrange" value="longer-day" data-label="额外停靠点，或更长的一天">
+              <label for="q5">额外停靠点，或更长的一天</label>
+            </div></div>
             <div class="fg fg2">
               <div class="field"><label for="nm">姓名</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
               <div class="field"><label for="em">电子邮箱</label><input type="email" id="em" name="email" autocomplete="email" required></div>
@@ -129,9 +146,10 @@
               <div class="sum__r"><span class="k">日期</span><span data-s-d>&mdash;</span></div>
               <div class="sum__r"><span class="k">人数</span><span data-s-g>&mdash;</span></div>
               <div class="sum__r"><span class="k">附加服务</span><span data-s-e>&mdash;</span></div>
-              <div class="sum__t"><span class="k">参考总价</span><span class="v" data-s-t>&mdash;</span></div>
+              <div class="sum__r"><span class="k">价格面议</span><span data-s-q>&mdash;</span></div>
+              <div class="sum__t"><span class="k">估价</span><span class="v" data-s-t>&mdash;</span></div>
             </div>
-            <p class="note">套餐价格为七人、整船的费用；船上人数不同，价格另行报出。在占用任何日期之前，我们都会以书面确认最终金额。</p>
+            <p class="note">这是估价，并非最终报价。它包含七人团的套餐及您所选的含价附加服务。不同人数、按需安排的项目以及其他任何要求均另行报价，可能产生额外费用。锁定日期前，我们会以书面形式确认最终金额。</p>
             <div class="acts"><button class="btn btn--ghost" type="button" data-prev>返回</button><button class="btn" type="submit">发送咨询</button></div>
           </div>
         </div>

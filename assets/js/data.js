@@ -185,6 +185,32 @@
    "id": "airport-and-resort-transfers"
   }
  ],
+ "arrange": [
+  {
+   "id": "lunch-aboard",
+   "t": "Lunch or dinner aboard"
+  },
+  {
+   "id": "celebration",
+   "t": "Birthday or anniversary set-up — cake, decorations"
+  },
+  {
+   "id": "candlelit-dinner",
+   "t": "Candlelit dinner at sunset"
+  },
+  {
+   "id": "party",
+   "t": "Sound system and party lights"
+  },
+  {
+   "id": "fishing",
+   "t": "Fishing gear and bait"
+  },
+  {
+   "id": "longer-day",
+   "t": "Extra stops, or a longer day"
+  }
+ ],
  "vessel": {
   "name": "Tiffany Blanc 14",
   "spec": [
@@ -420,8 +446,8 @@
      "t": "11:00"
     },
     {
-     "d": "Lunch aboard, and free time.",
-     "h": "Lunch",
+     "d": "A break for lunch and free time. Lunch is not part of this package — bring your own, or add a chef aboard.",
+     "h": "Lunch break",
      "t": "12:30"
     },
     {
@@ -457,7 +483,13 @@
    "season": "Year round",
    "clipMax": 2160,
    "departs": "08:30 · Hulhumalé",
-   "duration": "9.5 hours"
+   "duration": "9.5 hours",
+   "not": [
+    "Lunch — the midday stop is a break; bring your own, or add a chef aboard",
+    "Alcohol",
+    "Add-ons, and anything arranged on request",
+    "Gratuities"
+   ]
   },
   {
    "alt": "Guests swimming off the platform in deep blue water",
@@ -466,7 +498,7 @@
     "Fish Tank snorkelling",
     "Sandbank visit",
     "Swimming and relaxation",
-    "Dolphin cruise back to Hulhumalé"
+    "Scenic cruise back to Hulhumalé, watching for dolphins"
    ],
    "img": "swim-boat",
    "area": "North Malé Atoll",
@@ -512,7 +544,13 @@
    "season": "Year round",
    "clipMax": 2160,
    "departs": "09:00 · Hulhumalé",
-   "duration": "4 hours"
+   "duration": "4 hours",
+   "not": [
+    "Meals — water and soft drinks are aboard; a chef can be added",
+    "Alcohol",
+    "Add-ons, and anything arranged on request",
+    "Gratuities"
+   ]
   },
   {
    "alt": "Reef fish over coral in the South Malé Atoll",
@@ -524,7 +562,8 @@
     "Sandbank visit",
     "Gulhi local island visit",
     "Lunch",
-    "Sunset cruise"
+    "Sunset cruise",
+    "Swimming, snorkelling and photo opportunities"
    ],
    "img": "ray-sand",
    "area": "South Malé Atoll",
@@ -590,7 +629,12 @@
    "season": "Year round",
    "clipMax": 2160,
    "departs": "09:00 · Hulhumalé",
-   "duration": "9 hours"
+   "duration": "9 hours",
+   "not": [
+    "Alcohol",
+    "Add-ons, and anything arranged on request",
+    "Gratuities"
+   ]
   },
   {
    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé",
@@ -600,7 +644,8 @@
     "Sandbank visit",
     "Evening snack and refreshments",
     "Sunset cruise",
-    "Swimming and snorkelling"
+    "Swimming and snorkelling",
+    "Photo opportunities"
    ],
    "img": "aerial-underway",
    "area": "South Malé Atoll",
@@ -651,7 +696,13 @@
    "season": "Year round",
    "clipMax": 1080,
    "departs": "13:30 · Hulhumalé",
-   "duration": "4.5 hours"
+   "duration": "4.5 hours",
+   "not": [
+    "Dinner — the evening snack and refreshments are included, a meal is not",
+    "Alcohol",
+    "Add-ons, and anything arranged on request",
+    "Gratuities"
+   ]
   }
  ]
 };})();

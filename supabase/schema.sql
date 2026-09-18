@@ -9,7 +9,9 @@
 --             itself as JSON, with the columns the queries need beside it.
 --             Staff only.
 --   inbox     what guests send through the forms. Anyone may add one (and only
---             add); staff read, update and delete.
+--             add); staff read, update and delete. Its status is a column on
+--             the admin's board: new → contacted → quoted → booked, or lost;
+--             archived is off the board.
 --
 -- "Staff" = any signed-in user. Sign-ups are closed; accounts are created by
 -- the office. Every table has RLS on.
@@ -36,7 +38,7 @@ create table if not exists public.inbox (
   id          text primary key,
   at          timestamptz not null default now(),
   kind        text not null default 'enquiry' check (kind in ('enquiry','contact')),
-  status      text not null default 'new' check (status in ('new','handled','archived')),
+  status      text not null default 'new' check (status in ('new','contacted','quoted','booked','lost','archived')),
   data        jsonb not null,
   booking_ref text,
   handled_at  timestamptz,
@@ -174,3 +176,10 @@ create policy "guests add to the inbox" on public.inbox
               and at between now() - interval '5 minutes' and now() + interval '5 minutes'
               and length(id) <= 40 and kind in ('enquiry','contact')
               and length(data::text) < 12000);
+
+-- ---- the board (2026-09-19) ----------------------------------------------------
+-- The inbox became a board: an enquiry moves new → contacted → quoted → booked,
+-- or lost. Rows from before the board are placed where they belong.
+alter table public.inbox drop constraint if exists inbox_status_check;
+update public.inbox set status = case when booking_ref is not null then 'booked' else 'contacted' end where status = 'handled';
+alter table public.inbox add constraint inbox_status_check check (status in ('new','contacted','quoted','booked','lost','archived'));

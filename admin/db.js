@@ -86,7 +86,7 @@ window.DB = (function () {
   };
   /* only the form's own fields come out of a guest's data; what the office
      decides (status, booking, who handled it) comes from the columns alone */
-  var FORM = ["name", "email", "phone", "staying", "subject", "excursion", "excursionTitle", "date", "alt", "guests", "pickup", "extras", "extra", "total", "message", "notes", "lang", "page"];
+  var FORM = ["name", "email", "phone", "staying", "subject", "excursion", "excursionTitle", "date", "alt", "guests", "pickup", "extras", "extra", "arrange", "total", "message", "notes", "lang", "page"];
   function row(r) {
     var d = r.data || {}, e = {};
     FORM.forEach(function (k) { if (d[k] != null) e[k] = typeof d[k] === "string" ? d[k].slice(0, 4000) : d[k]; });
