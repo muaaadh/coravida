@@ -57,43 +57,63 @@
  "hero": {
   "clips": [
    {
-    "src": "snorkel-pair",
-    "poster": "poster-snorkel-pair",
-    "max": 2160,
-    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
-   },
-   {
-    "src": "boat-reef",
-    "poster": "poster-boat-reef",
+    "src": "boat-harbour",
+    "poster": "poster-boat-harbour",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 turning along a reef edge, seen from the air"
+    "alt": "航拍 Tiffany Blanc 14 驶离胡鲁马累码头",
+    "cap": "08:30 · 驶离胡鲁马累"
    },
    {
     "src": "vessel",
     "poster": "poster-vessel",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé"
+    "alt": "Tiffany Blanc 14 在马累近海的深蓝海面上航行",
+    "cap": "航行中，穿越环礁"
+   },
+   {
+    "src": "boat-reef",
+    "poster": "poster-boat-reef",
+    "max": 1080,
+    "alt": "航拍 Tiffany Blanc 14 沿礁缘转向",
+    "cap": "沿着礁缘"
+   },
+   {
+    "src": "reef-split",
+    "poster": "poster-reef-split",
+    "max": 1080,
+    "alt": "半水面半水下的礁石，云朵映在清澈的水面上",
+    "cap": "水面之下"
+   },
+   {
+    "src": "sandbank-palms",
+    "poster": "poster-sandbank-palms",
+    "max": 2160,
+    "alt": "沙洲浅滩上的棕榈树影",
+    "cap": "正午的沙洲"
+   },
+   {
+    "src": "local-island",
+    "poster": "poster-local-island",
+    "max": 2160,
+    "alt": "航拍的本地小岛与泻湖水道",
+    "cap": "登上本地小岛"
    },
    {
     "src": "boat-orbit",
     "poster": "poster-boat-orbit",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 underway, circled from the air"
+    "alt": "航拍环绕停泊中的 Tiffany Blanc 14",
+    "cap": "午后，停泊"
    },
    {
-    "src": "boat-drift",
-    "poster": "poster-boat-drift",
+    "src": "sunset",
+    "poster": "poster-sunset",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 at rest on deep blue water, from directly above"
-   },
-   {
-    "src": "boat-blue",
-    "poster": "poster-boat-blue",
-    "max": 1080,
-    "alt": "Tiffany Blanc 14 on open water, seen from the air"
+    "alt": "马尔代夫日落下静泊的船",
+    "cap": "伴着日落归航"
    }
   ],
-  "interval": 9000
+  "interval": 8000
  },
  "brand": {
   "form": {
@@ -426,7 +446,7 @@
    ],
    "img": "aerial-anchor",
    "area": "北马累环礁",
-   "clip": "snorkel-pair",
+   "clip": "local-island",
    "kind": "全日",
    "line": "Fish Tank、希玛富士沙洲、海岛本身，以及日落中的归程。",
    "plan": [
@@ -502,7 +522,7 @@
    ],
    "img": "swim-boat",
    "area": "北马累环礁",
-   "clip": "shallows",
+   "clip": "sandbank-palms",
    "kind": "半日",
    "line": "Fish Tank、一片白色沙洲，以及一段寻找海豚的归程。",
    "plan": [
@@ -567,7 +587,7 @@
    ],
    "img": "ray-sand",
    "area": "南马累环礁",
-   "clip": "shark",
+   "clip": "nurse-shark",
    "kind": "全日",
    "line": "三处浮潜点、一片沙洲，以及日落前的古尔希。",
    "plan": [
@@ -627,7 +647,7 @@
    "title": "鲨鱼点与古尔希",
    "guests": "最多 12 人",
    "season": "全年",
-   "clipMax": 2160,
+   "clipMax": 1080,
    "departs": "09:00 · 胡鲁马累",
    "duration": "9 小时",
    "not": [
@@ -649,7 +669,7 @@
    ],
    "img": "aerial-underway",
    "area": "南马累环礁",
-   "clip": "boat-orbit",
+   "clip": "sunset",
    "kind": "半日",
    "line": "鲨鱼点、一片沙洲，以及归途中沉下去的太阳。",
    "plan": [

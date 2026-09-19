@@ -122,6 +122,11 @@
       "poster": "poster-anchor"
     },
     {
+      "name": "anchorage",
+      "max": 2160,
+      "poster": "poster-anchorage"
+    },
+    {
       "name": "boat-blue",
       "max": 1080,
       "poster": "poster-boat-blue"
@@ -147,9 +152,34 @@
       "poster": "poster-boat-reef"
     },
     {
+      "name": "jetty",
+      "max": 2160,
+      "poster": "poster-jetty"
+    },
+    {
+      "name": "local-island",
+      "max": 2160,
+      "poster": "poster-local-island"
+    },
+    {
+      "name": "nurse-shark",
+      "max": 1080,
+      "poster": "poster-nurse-shark"
+    },
+    {
       "name": "ray",
       "max": 2160,
       "poster": "poster-ray"
+    },
+    {
+      "name": "reef-split",
+      "max": 1080,
+      "poster": "poster-reef-split"
+    },
+    {
+      "name": "sandbank-palms",
+      "max": 2160,
+      "poster": "poster-sandbank-palms"
     },
     {
       "name": "shallows",
@@ -170,6 +200,11 @@
       "name": "sunbeams",
       "max": 2160,
       "poster": "poster-sunbeams"
+    },
+    {
+      "name": "sunset",
+      "max": 1080,
+      "poster": "poster-sunset"
     },
     {
       "name": "turtle",

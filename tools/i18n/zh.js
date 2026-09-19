@@ -265,6 +265,16 @@ chrome: {
 },
 
 content: {
+  hero: { clips: [
+    { src: "boat-harbour", cap: "08:30 · 驶离胡鲁马累", alt: "航拍 Tiffany Blanc 14 驶离胡鲁马累码头" },
+    { src: "vessel", cap: "航行中，穿越环礁", alt: "Tiffany Blanc 14 在马累近海的深蓝海面上航行" },
+    { src: "boat-reef", cap: "沿着礁缘", alt: "航拍 Tiffany Blanc 14 沿礁缘转向" },
+    { src: "reef-split", cap: "水面之下", alt: "半水面半水下的礁石，云朵映在清澈的水面上" },
+    { src: "sandbank-palms", cap: "正午的沙洲", alt: "沙洲浅滩上的棕榈树影" },
+    { src: "local-island", cap: "登上本地小岛", alt: "航拍的本地小岛与泻湖水道" },
+    { src: "boat-orbit", cap: "午后，停泊", alt: "航拍环绕停泊中的 Tiffany Blanc 14" },
+    { src: "sunset", cap: "伴着日落归航", alt: "马尔代夫日落下静泊的船" },
+  ] },
   brand: {
     tagline: "穿行马尔代夫环礁的私人包船",
     marina: "胡鲁马累码头",

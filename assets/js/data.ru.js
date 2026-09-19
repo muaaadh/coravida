@@ -57,43 +57,63 @@
  "hero": {
   "clips": [
    {
-    "src": "snorkel-pair",
-    "poster": "poster-snorkel-pair",
-    "max": 2160,
-    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
-   },
-   {
-    "src": "boat-reef",
-    "poster": "poster-boat-reef",
+    "src": "boat-harbour",
+    "poster": "poster-boat-harbour",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 turning along a reef edge, seen from the air"
+    "alt": "Tiffany Blanc 14 выходит из марины Хулхумале, вид с воздуха",
+    "cap": "08:30 · Выходим из Хулхумале"
    },
    {
     "src": "vessel",
     "poster": "poster-vessel",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé"
+    "alt": "Tiffany Blanc 14 в пути по глубокой синей воде у Мале",
+    "cap": "В пути, через атолл"
+   },
+   {
+    "src": "boat-reef",
+    "poster": "poster-boat-reef",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 поворачивает вдоль края рифа, вид с воздуха",
+    "cap": "Вдоль края рифа"
+   },
+   {
+    "src": "reef-split",
+    "poster": "poster-reef-split",
+    "max": 1080,
+    "alt": "Риф наполовину над водой, наполовину под ней, облака над прозрачной водой",
+    "cap": "Под поверхностью"
+   },
+   {
+    "src": "sandbank-palms",
+    "poster": "poster-sandbank-palms",
+    "max": 2160,
+    "alt": "Тени пальм на отмели песчаной косы",
+    "cap": "Песчаная коса в полдень"
+   },
+   {
+    "src": "local-island",
+    "poster": "poster-local-island",
+    "max": 2160,
+    "alt": "Местный остров и протоки его лагуны с высоты",
+    "cap": "На местном острове"
    },
    {
     "src": "boat-orbit",
     "poster": "poster-boat-orbit",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 underway, circled from the air"
+    "alt": "Tiffany Blanc 14 на якоре, облёт с воздуха",
+    "cap": "На якоре, после полудня"
    },
    {
-    "src": "boat-drift",
-    "poster": "poster-boat-drift",
+    "src": "sunset",
+    "poster": "poster-sunset",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 at rest on deep blue water, from directly above"
-   },
-   {
-    "src": "boat-blue",
-    "poster": "poster-boat-blue",
-    "max": 1080,
-    "alt": "Tiffany Blanc 14 on open water, seen from the air"
+    "alt": "Лодка в покое под мальдивским закатом",
+    "cap": "Домой под закат"
    }
   ],
-  "interval": 9000
+  "interval": 8000
  },
  "brand": {
   "form": {
@@ -426,7 +446,7 @@
    ],
    "img": "aerial-anchor",
    "area": "Северный Мале Атолл",
-   "clip": "snorkel-pair",
+   "clip": "local-island",
    "kind": "Полный день",
    "line": "Fish Tank, песчаная коса Химмафуши, сам остров и дорога домой под закат.",
    "plan": [
@@ -502,7 +522,7 @@
    ],
    "img": "swim-boat",
    "area": "Северный Мале Атолл",
-   "clip": "shallows",
+   "clip": "sandbank-palms",
    "kind": "Полдня",
    "line": "Fish Tank, белая песчаная коса и дорога домой с дельфинами.",
    "plan": [
@@ -567,7 +587,7 @@
    ],
    "img": "ray-sand",
    "area": "Южный Мале Атолл",
-   "clip": "shark",
+   "clip": "nurse-shark",
    "kind": "Полный день",
    "line": "Три точки снорклинга, песчаная коса и Гулхи до захода солнца.",
    "plan": [
@@ -627,7 +647,7 @@
    "title": "Шарк-Пойнт и Гулхи",
    "guests": "До 12",
    "season": "Круглый год",
-   "clipMax": 2160,
+   "clipMax": 1080,
    "departs": "09:00 · Хулхумале",
    "duration": "9 часов",
    "not": [
@@ -649,7 +669,7 @@
    ],
    "img": "aerial-underway",
    "area": "Южный Мале Атолл",
-   "clip": "boat-orbit",
+   "clip": "sunset",
    "kind": "Полдня",
    "line": "Шарк-Пойнт, песчаная коса и солнце, садящееся по дороге домой.",
    "plan": [

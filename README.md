@@ -98,15 +98,19 @@ enquiry total all move together.
 
 ## The hero film
 
-Six clips cycle behind the headline: one clean licensed aerial to open — two snorkellers
-over a reef edge, cut from a 4K DCI source — and then Tiffany Blanc 14 herself, five drone
-shots from the client's August 2026 flight. **The interval is content, not code:**
-`hero.interval` in `content/site.json`, in milliseconds, which the admin edits.
+Eight clips cycle behind the headline and tell one day in order — leaving Hulhumalé,
+underway across the atoll, along the reef edge, under the surface, a sandbank at midday,
+ashore on a local island, at anchor in the afternoon, home under the sunset. Four are the
+client's own drone footage of Tiffany Blanc 14; four are licensed stock for the parts of
+the day the drone did not film. Each clip carries a chapter line bottom-left (`cap` on the
+clip, translated per language, with a hairline that fills over the clip's hold). **The
+interval is content, not code:** `hero.interval` in `content/site.json`, in milliseconds,
+which the admin edits.
 
 ```js
 hero: {
-  interval: 9000,
-  clips: [ { src: "snorkel-pair", poster: "poster-snorkel-pair", max: 2160, alt: "…" }, … ]
+  interval: 8000,
+  clips: [ { src: "boat-harbour", poster: "poster-boat-harbour", max: 1080, cap: "08:30 · Leaving Hulhumalé", alt: "…" }, … ]
 }
 ```
 

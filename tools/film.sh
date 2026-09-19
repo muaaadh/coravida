@@ -33,6 +33,14 @@ CLIPS=(
   "boat-reef|$D/dji_fly_20260828_085835_0_1788104951518_video_cache.mp4|2|10|1080|30"
   "boat-orbit|$D/dji_fly_20260828_095805_0_1788104951520_video_cache.mp4|0|9.6|1080|30"
   "boat-harbour|$D/dji_fly_20260828_085720_0_1788104951517_video_cache.mp4|0|7.6|1080|30"
+  # the September 20 stock — the rest of the journey the drone did not film
+  "jetty|$S/freepik_video_2857218.mp4|3|11|2160|30"
+  "reef-split|$S/freepik_video_548754.mp4|6|10|1080|30"
+  "anchorage|$S/freepik_video_6976827.mp4|0|8.4|2160|30"
+  "local-island|$S/freepik_video_737108.mp4|0|8.3|2160|24"
+  "nurse-shark|$S/freepik_video_817596.mp4|0|5.1|1080|30"
+  "sandbank-palms|$S/magnific_Video_8862217.mp4|0|5.8|2160|24"
+  "sunset|$S/freepik_video_1056013.mp4|0|9.4|1080|24"
 )
 
 # quality first, with a ceiling well above what streaming services send at

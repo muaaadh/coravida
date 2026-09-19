@@ -296,6 +296,9 @@ ${slides}
       <h1 class="d1 lines">${T("A quieter way through the atolls")}</h1>
       <p data-a="up">${linkL("excursions.html", T("The excursions"))}</p>
     </div>
+    <ol class="hero__chaps" aria-hidden="true" style="--hold:${(CV.hero.interval || 8000)}ms">
+${CV.hero.clips.map((c, i) => `      <li${i === 0 ? ' class="on"' : ""}><span class="hero__chap__n">${String(i + 1).padStart(2, "0")}</span><span class="hero__chap__t">${c.cap || ""}</span></li>`).join("\n")}
+    </ol>
   </section>
 
   <section class="section">
@@ -453,8 +456,8 @@ function excursions() {
 
   <section class="band band--short">
     <div class="band__bg" data-par="0.08">
-      ${img("poster-shallows", "", { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="shallows" data-max="2160" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      ${img("poster-anchorage", "", { sizes: "100vw", eager: true, cap: POSTER })}
+      <video data-src="anchorage" data-max="2160" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
   </section>
 
@@ -642,7 +645,14 @@ function gallery() {
             </button>
             <figcaption>${g.cap}</figcaption>
           </figure>`).join("\n");
-    return `  <section class="section${gi % 2 ? " section--mist" : ""}">
+    return (gi === 3 ? `  <section class="band band--short">
+    <div class="band__bg" data-par="0.08">
+      ${img("poster-reef-split", "", { sizes: "100vw", cap: POSTER })}
+      <video data-src="reef-split" data-max="1080" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+    </div>
+  </section>
+
+` : "") + `  <section class="section${gi % 2 ? " section--mist" : ""}">
     <div class="wrap stack-l">
       <div class="galhead" data-stagger>
         <p class="eyebrow" data-a="up">${String(gi + 1).padStart(2, "0")}</p>
@@ -801,6 +811,13 @@ function contact() {
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="band band--short">
+    <div class="band__bg" data-par="0.08">
+      ${img("poster-jetty", "", { sizes: "100vw", cap: POSTER })}
+      <video data-src="jetty" data-max="2160" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
   </section>
 

@@ -367,10 +367,12 @@
       p.removeAttribute("data-src"); p.removeAttribute("data-srcset");
     }
 
+    var chaps = $$(".hero__chaps li", stage);
     function show(n) {
       var prev = at; at = (n + slides.length) % slides.length;
       slides[at].classList.add("on");
       if (prev !== at) slides[prev].classList.remove("on");
+      chaps.forEach(function (li, k) { li.classList.toggle("on", k === at); });   // the chapter this clip is
       poster(slides[at]);
       var st = $("img", slides[at]); if (st) st.style.visibility = "";
       var v = vids[at];

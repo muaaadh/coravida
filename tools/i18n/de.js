@@ -265,6 +265,16 @@ chrome: {
 },
 
 content: {
+  hero: { clips: [
+    { src: "boat-harbour", cap: "08:30 · Ablegen in Hulhumalé", alt: "Tiffany Blanc 14 verlässt die Hulhumalé Marina, aus der Luft" },
+    { src: "vessel", cap: "Unterwegs, hinaus über das Atoll", alt: "Tiffany Blanc 14 unterwegs auf tiefblauem Wasser vor Malé" },
+    { src: "boat-reef", cap: "Entlang der Riffkante", alt: "Tiffany Blanc 14 dreht entlang einer Riffkante, aus der Luft" },
+    { src: "reef-split", cap: "Unter der Oberfläche", alt: "Das Riff halb über, halb unter der Oberfläche, Wolken über klarem Wasser" },
+    { src: "sandbank-palms", cap: "Eine Sandbank am Mittag", alt: "Palmenschatten über den Untiefen einer Sandbank" },
+    { src: "local-island", cap: "An Land auf einer Einheimischeninsel", alt: "Eine Einheimischeninsel und ihre Lagunenkanäle aus der Luft" },
+    { src: "boat-orbit", cap: "Vor Anker, der Nachmittag", alt: "Tiffany Blanc 14 vor Anker, aus der Luft umkreist" },
+    { src: "sunset", cap: "Heim im Sonnenuntergang", alt: "Ein Boot in Ruhe unter einem maledivischen Sonnenuntergang" },
+  ] },
   brand: {
     tagline: "Privatcharter durch die maledivischen Atolle",
     hours: "Täglich · 08:00 – 20:00 MVT",

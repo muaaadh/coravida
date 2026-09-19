@@ -327,6 +327,18 @@ figure{margin:0}
 /* a phone puts the headline lower, over the brightest part of the water —
    the only place the scrim has to work harder than the reference set does */
 @media(max-width:700px){.hero::after{background:radial-gradient(ellipse 108% 56% at 50% 56%,rgba(2,20,45,.54),rgba(2,20,45,0) 80%),linear-gradient(180deg,rgba(2,20,45,.30) 0%,rgba(2,20,45,.10) 20%,rgba(2,20,45,.34) 48%,rgba(2,20,45,.62) 100%)}}
+/* the journey's chapter, bottom left: one line per clip, the current one lit,
+   a hairline that fills over the clip's hold so the next feels expected */
+.hero__chaps{position:absolute;left:var(--gut);right:var(--gut);bottom:clamp(1.3rem,4vh,2.4rem);z-index:2;margin:0;padding:0;list-style:none;color:#fff;pointer-events:none;height:1.4rem}
+.hero__chaps li{position:absolute;left:0;bottom:0;display:flex;align-items:center;gap:.7rem;font-family:var(--ui);font-size:.6875rem;letter-spacing:.2em;text-transform:uppercase;opacity:0;transform:translateY(6px);transition:opacity .9s var(--e),transform .9s var(--e);text-shadow:0 1px 10px rgba(3,34,77,.5)}
+.hero__chaps li.on{opacity:1;transform:none}
+.hero__chap__n{opacity:.6}
+.hero__chaps li::after{content:"";width:34px;height:1px;background:rgba(255,255,255,.35);position:relative;overflow:hidden}
+.hero__chaps li.on::after{background:linear-gradient(90deg,#fff var(--p,0%),rgba(255,255,255,.35) 0);animation:chap var(--hold,8000ms) linear forwards}
+@keyframes chap{from{--p:0%}to{--p:100%}}
+@property --p{syntax:"<percentage>";inherits:false;initial-value:0%}
+@media(max-width:700px){.hero__chaps{right:auto;max-width:60%}.hero__chaps li{font-size:.6rem;letter-spacing:.16em}}
+@media(prefers-reduced-motion:reduce){.hero__chaps li.on::after{animation:none}}
 .hero__in{position:relative;align-self:center;width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--gut);text-align:center;color:#fff}
 .hero__in .eyebrow{color:#fff;text-shadow:0 1px 10px rgba(2,16,36,.85),0 0 30px rgba(2,16,36,.5)}
 .hero__in h1{color:#fff;max-width:24ch;margin-inline:auto;text-shadow:0 1px 44px rgba(2,16,36,.35)}

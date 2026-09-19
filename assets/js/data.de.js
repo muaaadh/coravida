@@ -57,43 +57,63 @@
  "hero": {
   "clips": [
    {
-    "src": "snorkel-pair",
-    "poster": "poster-snorkel-pair",
-    "max": 2160,
-    "alt": "Two snorkellers over a reef edge in clear shallow water, seen from the air"
-   },
-   {
-    "src": "boat-reef",
-    "poster": "poster-boat-reef",
+    "src": "boat-harbour",
+    "poster": "poster-boat-harbour",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 turning along a reef edge, seen from the air"
+    "alt": "Tiffany Blanc 14 verlässt die Hulhumalé Marina, aus der Luft",
+    "cap": "08:30 · Ablegen in Hulhumalé"
    },
    {
     "src": "vessel",
     "poster": "poster-vessel",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé"
+    "alt": "Tiffany Blanc 14 unterwegs auf tiefblauem Wasser vor Malé",
+    "cap": "Unterwegs, hinaus über das Atoll"
+   },
+   {
+    "src": "boat-reef",
+    "poster": "poster-boat-reef",
+    "max": 1080,
+    "alt": "Tiffany Blanc 14 dreht entlang einer Riffkante, aus der Luft",
+    "cap": "Entlang der Riffkante"
+   },
+   {
+    "src": "reef-split",
+    "poster": "poster-reef-split",
+    "max": 1080,
+    "alt": "Das Riff halb über, halb unter der Oberfläche, Wolken über klarem Wasser",
+    "cap": "Unter der Oberfläche"
+   },
+   {
+    "src": "sandbank-palms",
+    "poster": "poster-sandbank-palms",
+    "max": 2160,
+    "alt": "Palmenschatten über den Untiefen einer Sandbank",
+    "cap": "Eine Sandbank am Mittag"
+   },
+   {
+    "src": "local-island",
+    "poster": "poster-local-island",
+    "max": 2160,
+    "alt": "Eine Einheimischeninsel und ihre Lagunenkanäle aus der Luft",
+    "cap": "An Land auf einer Einheimischeninsel"
    },
    {
     "src": "boat-orbit",
     "poster": "poster-boat-orbit",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 underway, circled from the air"
+    "alt": "Tiffany Blanc 14 vor Anker, aus der Luft umkreist",
+    "cap": "Vor Anker, der Nachmittag"
    },
    {
-    "src": "boat-drift",
-    "poster": "poster-boat-drift",
+    "src": "sunset",
+    "poster": "poster-sunset",
     "max": 1080,
-    "alt": "Tiffany Blanc 14 at rest on deep blue water, from directly above"
-   },
-   {
-    "src": "boat-blue",
-    "poster": "poster-boat-blue",
-    "max": 1080,
-    "alt": "Tiffany Blanc 14 on open water, seen from the air"
+    "alt": "Ein Boot in Ruhe unter einem maledivischen Sonnenuntergang",
+    "cap": "Heim im Sonnenuntergang"
    }
   ],
-  "interval": 9000
+  "interval": 8000
  },
  "brand": {
   "form": {
@@ -426,7 +446,7 @@
    ],
    "img": "aerial-anchor",
    "area": "Nord-Malé-Atoll",
-   "clip": "snorkel-pair",
+   "clip": "local-island",
    "kind": "Ganzer Tag",
    "line": "Fish Tank, die Sandbank von Himmafushi, die Insel selbst — und heimwärts unter dem Sonnenuntergang.",
    "plan": [
@@ -502,7 +522,7 @@
    ],
    "img": "swim-boat",
    "area": "Nord-Malé-Atoll",
-   "clip": "shallows",
+   "clip": "sandbank-palms",
    "kind": "Halber Tag",
    "line": "Fish Tank, eine weiße Sandbank und eine Rückfahrt mit Delfinen.",
    "plan": [
@@ -567,7 +587,7 @@
    ],
    "img": "ray-sand",
    "area": "Süd-Malé-Atoll",
-   "clip": "shark",
+   "clip": "nurse-shark",
    "kind": "Ganzer Tag",
    "line": "Drei Schnorchelstopps, eine Sandbank und Gulhi, bevor die Sonne geht.",
    "plan": [
@@ -627,7 +647,7 @@
    "title": "Shark Point & Gulhi",
    "guests": "Bis zu 12",
    "season": "Ganzjährig",
-   "clipMax": 2160,
+   "clipMax": 1080,
    "departs": "09:00 · Hulhumalé",
    "duration": "9 Stunden",
    "not": [
@@ -649,7 +669,7 @@
    ],
    "img": "aerial-underway",
    "area": "Süd-Malé-Atoll",
-   "clip": "boat-orbit",
+   "clip": "sunset",
    "kind": "Halber Tag",
    "line": "Shark Point, eine Sandbank und die Sonne, die auf dem Heimweg untergeht.",
    "plan": [
