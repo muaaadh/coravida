@@ -152,6 +152,11 @@ function held(name) {
     .replace(/ src="/, ' data-src="').replace(/ srcset="/, ' data-srcset="');
 }
 
+/* the drone clips are the DJI files as written — not re-encoded, so no loop
+   dissolve; the page advances (hero) or dips (a page hero) at their end */
+const RAW = new Set(["vessel", "anchor", "boat-drift", "boat-blue", "boat-reef", "boat-orbit", "boat-harbour"]);
+const rawAttr = name => RAW.has(name) ? " data-raw" : "";
+
 /* animated figure: clip-wipe reveal + inner scale */
 function fig(name, alt, { ratio = "r43", href = null, sizes = "(min-width:960px) 58vw, 100vw", z = true, eager = false, anim = "clip", i = null, par = null, cls = "", cap = 0 } = {}) {
   const inner = img(name, alt, { sizes, eager, cap });
@@ -284,7 +289,7 @@ function home() {
 
   const slides = CV.hero.clips.map((c, i) => `        <div class="hero__s">
           ${i === 0 ? img(c.poster, c.alt, { sizes: "100vw", eager: true, cap: POSTER }) : held(c.poster)}
-          <video data-src="${c.src}" data-max="${c.max}" muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+          <video data-src="${c.src}" data-max="${c.max}"${rawAttr(c.src)} muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
         </div>`).join("\n");
 
   const main = `  <section class="hero" data-hero>
@@ -387,7 +392,7 @@ function vessel() {
   const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       ${img("poster-anchor", T("Tiffany Blanc 14 at anchor above a reef edge"), { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="anchor" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="anchor" data-max="1080" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${T("Our vessels")}</p>
@@ -534,7 +539,7 @@ function excursionPages() {
     const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       ${img(v.clip ? "poster-" + v.clip : v.img, v.alt, { sizes: "100vw", eager: true, cap: POSTER })}${v.clip ? `
-      <video data-src="${v.clip}" data-max="${v.clipMax || 1080}" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>` : ""}
+      <video data-src="${v.clip}" data-max="${v.clipMax || 1080}"${rawAttr(v.clip)} data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>` : ""}
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${v.kind} &middot; ${v.area}</p>
@@ -859,7 +864,7 @@ function enquire() {
   const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       ${img("poster-boat-harbour", T("Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air"), { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="boat-harbour" data-max="1080" data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="boat-harbour" data-max="1080" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${T("Enquire")}</p>

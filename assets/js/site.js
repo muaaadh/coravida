@@ -320,7 +320,7 @@
      will ever see again — take it out of the compositor a beat after the fade. */
   function retire(v) {
     var still = v.parentElement && v.parentElement.querySelector("img");
-    if (!still) return;
+    if (!still || v.hasAttribute("data-raw")) return;
     setTimeout(function () { if (v.classList.contains("on")) still.style.visibility = "hidden"; }, 1500);
   }
   function show(v) {
@@ -334,6 +334,16 @@
   function fadeIn(v) {
     if (v.readyState >= 3) return show(v);
     v.addEventListener("canplay", function () { show(v); }, { once: true });
+  }
+  /* the drone clips are the camera's own files, so they cannot dissolve into
+     themselves: a looping one dips to its poster for a third of a second at
+     the cut instead of jumping */
+  function softLoop(v) {
+    if (!v.hasAttribute("data-raw") || v.dataset.soft) return; v.dataset.soft = "1";
+    v.addEventListener("timeupdate", function () {
+      if (!v.duration) return;
+      if (v.duration - v.currentTime < 0.34) v.classList.add("dip"); else if (v.currentTime < 0.6) v.classList.remove("dip");
+    });
   }
 
   /* the hero holds one clip, then hands over to the next */
@@ -376,7 +386,10 @@
       poster(slides[at]);
       var st = $("img", slides[at]); if (st) st.style.visibility = "";
       var v = vids[at];
-      if (v) { load(v, v.getAttribute("data-src"), +v.getAttribute("data-max")); v.currentTime = 0; fadeIn(v); }
+      if (v) {
+        if (v.hasAttribute("data-raw") && !v.dataset.hand) { v.dataset.hand = "1"; v.loop = false; v.addEventListener("ended", function () { if (seen && vids[at] === v) show(at + 1); }); }
+        load(v, v.getAttribute("data-src"), +v.getAttribute("data-max")); v.currentTime = 0; fadeIn(v);
+      }
       var nxi = (at + 1) % slides.length, nx = vids[nxi];   // fetch the next one while this plays
       setTimeout(function () {
         if (!seen) return;
@@ -418,7 +431,7 @@
     var vids = $$("video[data-src]").filter(function (v) { return !v.closest("[data-hero]"); });
     if (!vids.length || SLOW || SAVE) return;
 
-    function start(v) { fadeIn(load(v, v.getAttribute("data-src"), +v.getAttribute("data-max"))); }
+    function start(v) { softLoop(v); fadeIn(load(v, v.getAttribute("data-src"), +v.getAttribute("data-max"))); }
 
     var eager = vids.filter(function (v) { return v.hasAttribute("data-eager"); });
     function go() { eager.forEach(start); }

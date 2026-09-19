@@ -318,6 +318,7 @@ figure{margin:0}
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .hero__s video{opacity:0;transition:opacity 1.1s var(--e)}
 .hero__s video.on{opacity:1}
+.hero__s video.on.dip,.hero__bg>video.on.dip,.band__bg video.on.dip,.fig.film video.on.dip{opacity:0;transition:opacity .3s var(--e)}
 /* a slow drift on whichever slide is showing, so a still frame never feels frozen */
 .hero__s img,.hero__s video,.hero__bg>img,.hero__bg>video{transform:scale(1.1)}
 .hero__s.on img,.hero__s.on video,.hero__s:first-child img,.hero__s:first-child video{
