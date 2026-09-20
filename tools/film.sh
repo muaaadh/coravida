@@ -18,7 +18,9 @@ OUT="$ROOT/assets/video"; IMG="$ROOT/assets/img"
 mkdir -p "$OUT" "$IMG"
 F=0.6   # the dissolve that closes the loop
 
-# name | source | start | length | max tier | frame rate
+# name | source | start | length | max tier | frame rate | slow (optional: 1.5 = half again as long)
+# A clip that would loop inside the hero's hold is stretched instead — slow
+# aerials read as intended, and the chapter never shows its own start twice.
 CLIPS=(
   "snorkel-pair|$S/freepik_video_3385011.mov|0|9|2160|24"
   "turtle|$S/freepik_video_5854360.mp4|0|6.7|2160|24"
@@ -30,9 +32,9 @@ CLIPS=(
   "jetty|$S/freepik_video_2857218.mp4|3|11|2160|30"
   "reef-split|$S/freepik_video_548754.mp4|6|10|1080|30"
   "anchorage|$S/freepik_video_6976827.mp4|0|8.4|2160|30"
-  "local-island|$S/freepik_video_737108.mp4|0|8.3|2160|24"
+  "local-island|$S/freepik_video_737108.mp4|0|8.3|2160|24|1.2"
   "nurse-shark|$S/freepik_video_817596.mp4|0|5.1|1080|30"
-  "sandbank-palms|$S/magnific_Video_8862217.mp4|0|5.8|2160|24"
+  "sandbank-palms|$S/magnific_Video_8862217.mp4|0|5.8|2160|24|1.7"
   "sunset|$S/freepik_video_1056013.mp4|0|9.4|1080|24"
   "ocean|$S/pexels_video_37532984_ocean.mp4|0|12|2160|25"
 )
@@ -67,9 +69,14 @@ crf () { case $1 in 2160|1440) echo 17 ;; 1080) echo 18 ;; *) echo 19 ;; esac; }
 cap () { case $1 in 2160) echo 24M ;; 1440) echo 14M ;; 1080) echo 9M ;; *) echo 5M ;; esac; }
 buf () { case $1 in 2160) echo 48M ;; 1440) echo 28M ;; 1080) echo 18M ;; *) echo 10M ;; esac; }
 one () {
-  IFS='|' read -r name src ss dur max fps <<< "$1"
+  IFS='|' read -r name src ss dur max fps slow <<< "$1"
   [ -f "$src" ] || { echo "!! $name: source missing — $src"; return; }
   local hw=""; case "$src" in *.MP4) hw="-hwaccel videotoolbox" ;; esac   # the GoPro's 5.3K HEVC decodes in hardware
+  if [ -n "$slow" ] && [ "$slow" != "1" ]; then                           # stretch first, blending frames so it stays smooth
+    local tmp="${TMPDIR:-/tmp}/cv-slow-$name.mp4"
+    ffmpeg -v error -nostdin $hw -ss "$ss" -t "$dur" -i "$src" -an -sn -dn -vf "setpts=${slow}*PTS,minterpolate=mi_mode=blend:fps=$fps" -c:v libx264 -crf 12 -preset fast -pix_fmt yuv420p -y "$tmp" </dev/null
+    src="$tmp"; ss=0; dur=$(python3 -c "print(round($dur*$slow,2))"); hw=""
+  fi
   local main; main=$(python3 -c "print(round($dur-$F,3))"); local tail; tail=$(python3 -c "print(round($dur-$F,3))")
   local loop="[0:v]trim=start=$F:end=$main,setpts=PTS-STARTPTS[m];[0:v]trim=start=$tail:end=$dur,setpts=PTS-STARTPTS[t];[0:v]trim=start=0:end=$F,setpts=PTS-STARTPTS[h];[t][h]xfade=transition=fade:duration=$F:offset=0[b];[m][b]concat=n=2:v=1:a=0,fps=$fps"
   echo "· $name  ($dur s from $ss, up to $max)"

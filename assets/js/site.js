@@ -385,9 +385,23 @@
       chaps.forEach(function (li, k) { li.classList.toggle("on", k === at); });   // the chapter this clip is
       poster(slides[at]);
       var st = $("img", slides[at]); if (st) st.style.visibility = "";
-      var v = vids[at];
+      var v = vids[at], hold = (CV.hero && CV.hero.interval) || 6000;
       if (v) {
-        if (v.hasAttribute("data-raw") && !v.dataset.hand) { v.dataset.hand = "1"; v.loop = false; v.addEventListener("ended", function () { if (seen && vids[at] === v) show(at + 1); }); }
+        /* a clip that cannot outlast the hold — a raw drone file, or a loop shorter
+           than the hold — hands over at its own end rather than showing its start
+           twice; the chapter's hairline is told the shorter hold */
+        if (!v.dataset.hand) {
+          v.dataset.hand = "1";
+          var arm = function () {
+            var d = v.duration;
+            if (v.hasAttribute("data-raw") || (d && d * 1000 < hold + 250)) {
+              v.loop = false;
+              if (d && chaps[at] && d * 1000 < hold) chaps[at].style.setProperty("--hold", Math.round(d * 1000) + "ms");
+            }
+          };
+          v.addEventListener("ended", function () { if (seen && vids[at] === v) show(at + 1); });
+          if (v.readyState >= 1) arm(); else v.addEventListener("loadedmetadata", arm, { once: true });
+        }
         load(v, v.getAttribute("data-src"), +v.getAttribute("data-max")); v.currentTime = 0; fadeIn(v);
       }
       var nxi = (at + 1) % slides.length, nx = vids[nxi];   // fetch the next one while this plays
