@@ -34,6 +34,7 @@ CLIPS=(
   "nurse-shark|$S/freepik_video_817596.mp4|0|5.1|1080|30"
   "sandbank-palms|$S/magnific_Video_8862217.mp4|0|5.8|2160|24"
   "sunset|$S/freepik_video_1056013.mp4|0|9.4|1080|24"
+  "ocean|$S/pexels_video_37532984_ocean.mp4|0|12|2160|25"
 )
 
 # quality first, with a ceiling well above what streaming services send at

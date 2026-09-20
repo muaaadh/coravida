@@ -73,7 +73,13 @@ const NUMWORD = {
   zh: ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"]
 };
 const paxWord = () => (NUMWORD[LOC.code] || NUMWORD.en)[Number(CV.rates.pax)] || String(CV.rates.pax);
-const TP = s => T(s).replace(/\{n\}/g, paxWord());
+/* a translation that drops the {n} slot would print the sentence without the party size — say so at build time */
+const DROPPED = new Set();
+const TP = s => {
+  const r = T(s);
+  if (r !== s && /\{n\}/.test(s) && !/\{n\}/.test(r) && !DROPPED.has(LOC.code + s)) { DROPPED.add(LOC.code + s); console.log(`⚠ ${LOC.code}: the translation of "${s.slice(0, 48)}…" has no {n} — the party size will be missing`); }
+  return r.replace(/\{n\}/g, paxWord());
+};
 
 const IMGDIR = path.join(ROOT, "assets/img");
 const have = new Set(fs.readdirSync(IMGDIR));
@@ -297,7 +303,6 @@ function home() {
 ${slides}
     </div>
     <div class="hero__in stack" data-stagger>
-      <p class="eyebrow" data-a="fade">${T("Coravida &middot; Maldives")}</p>
       <h1 class="d1 lines">${T("A quieter way through the atolls")}</h1>
       <p data-a="up">${linkL("excursions.html", T("The excursions"))}</p>
     </div>
@@ -392,7 +397,7 @@ function vessel() {
   const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       ${img("poster-anchor", T("Tiffany Blanc 14 at anchor above a reef edge"), { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="anchor" data-max="1080" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="anchor" data-max="2160" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${T("Our vessels")}</p>
@@ -851,109 +856,115 @@ ${cta("", T("Or simply tell us your dates"))}`;
   });
 }
 
-/* ------------------------------------------------------------- ENQUIRE -- */
+/* ------------------------------------------------------------- ENQUIRE --
+   One quiet page: four questions in reading order, one optional row, one
+   estimate, one button. The price is shown where each choice is made. */
 function enquire() {
   at(0);
-  const chips = CV.voyages.map((v, i) => `              <input type="radio" id="v${i}" name="excursion" value="${v.slug}"${i === 0 ? " checked" : ""}>
-              <label for="v${i}">${v.title} &middot; ${v.kind}</label>`).join("\n");
-  const extras = CV.addons.map((a, i) => `              <input type="checkbox" id="x${i}" name="extra" value="${a.id}" data-label="${esc(a.t)}" data-price="${a.p}">
-              <label for="x${i}">${a.t} &middot; ${a.p}</label>`).join("\n");
-  const arrange = (CV.arrange || []).map((a, i) => `              <input type="checkbox" id="q${i}" name="arrange" value="${a.id}" data-label="${esc(a.t)}">
-              <label for="q${i}">${a.t}</label>`).join("\n");
+  const pax = Number(CV.rates.pax) || 7;
+  /* the excursions as hairline rows: title, one line of facts, the package price */
+  const picks = CV.voyages.map((v, i) => `            <input type="radio" id="v${i}" name="excursion" value="${v.slug}"${i === 0 ? " checked" : ""}>
+            <label for="v${i}" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">${v.title}</span>
+              <span class="pick__m">${[v.kind, v.duration, v.area, v.departs ? T("Departs") + "&nbsp;" + v.departs : ""].filter(Boolean).join(" &middot; ")}</span>
+              <span class="pick__p"><span class="num">${rate(v)}</span>${v.price == null ? "" : `<span class="pick__n">${TP("for a party of {n}")}</span>`}</span>
+            </label>`).join("\n");
+  const sizes = [2, 4, 6, 7, 8, 10, 12].concat(pax).filter((n, i, a) => a.indexOf(n) === i).sort((a, b) => a - b);
+  const guests = sizes.map((n, i) => `              <input type="radio" id="g${i}" name="guests" value="${n}"${n === pax ? " checked" : ""} required>
+              <label for="g${i}">${n}${n === pax ? `<span class="chips__tag">${T("package price")}</span>` : ""}</label>`).join("\n");
+  const extras = CV.addons.map((a, i) => `                <input type="checkbox" id="x${i}" name="extra" value="${a.id}" data-label="${esc(a.t)}" data-price="${a.p}">
+                <label for="x${i}"><span class="chips__t">${a.t}<span class="chips__tag">+ ${money(a.p)}</span></span>${a.d ? `<span class="chips__d">${a.d}</span>` : ""}</label>`).join("\n");
+  const arrange = (CV.arrange || []).map((a, i) => `                <input type="checkbox" id="q${i}" name="arrange" value="${a.id}" data-label="${esc(a.t)}">
+                <label for="q${i}">${a.t}</label>`).join("\n");
 
   const main = `  <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       ${img("poster-boat-harbour", T("Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air"), { sizes: "100vw", eager: true, cap: POSTER })}
-      <video data-src="boat-harbour" data-max="1080" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="boat-harbour" data-max="2160" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">${T("Enquire")}</p>
       <h1 class="d1 lines">${T("Reserve a vessel")}</h1>
-      <p class="lede lede--light" data-a="up">${T("Four short steps. Nothing is charged and no date is held until we have written back.")}</p>
+      <p class="lede lede--light" data-a="up">${T("An excursion, a day, and how many are coming. Nothing is charged and no date is held until we have written back.")}</p>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap narrow form">
-      <ul class="steps" data-a="up">
-        <li class="on">${T("Excursion")}</li><li>${T("Dates")}</li><li>${T("Details")}</li><li>${T("Review")}</li>
-      </ul>
+      <form id="enquire" class="enq" novalidate>
 
-      <form id="enquire" novalidate>
-        <div class="step on">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">${T("Step one")}</p><h2 class="d3">${T("Which excursion?")}</h2></div>
-            <div class="chips">
-${chips}
-            </div>
-            <p class="note">${T("Every excursion is a private charter of the whole vessel. If none of these fit, choose the closest and tell us in step three.")}</p>
-            <div class="acts"><button class="btn" type="button" data-next>${T("Continue")}</button></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">${T("Excursion")}</p><h2 class="d3" id="h-exc">${T("Which excursion?")}</h2></div>
+          <div class="pick" role="radiogroup" aria-labelledby="h-exc">
+${picks}
+          </div>
+          <p class="note">${T("Every excursion is a private charter of the whole vessel. If none of these fit, choose the closest and tell us below.")}</p>
+        </div>
+
+        <div class="part">
+          <div class="part__h"><p class="eyebrow">${T("Day")}</p><h2 class="d3" id="h-day">${T("When?")}</h2></div>
+          <div class="gcal" data-gcal="pick" data-l-pref="${T("Preferred date")}" data-l-alt="${T("Alternative date")}">
+            <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
+            <noscript><div class="fg fg2"><div class="field"><label for="d1n">${T("Preferred date")}</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">${T("Alternative date")}</label><input type="date" id="d2n" name="alt"></div></div></noscript>
           </div>
         </div>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">${T("Step two")}</p><h2 class="d3">${T("When, and how many?")}</h2></div>
-            <div class="gcal" data-gcal="pick" data-l-pref="${T("Preferred date")}" data-l-alt="${T("Alternative date")}">
-              <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
-              <noscript><div class="fg fg2"><div class="field"><label for="d1n">${T("Preferred date")}</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">${T("Alternative date")}</label><input type="date" id="d2n" name="alt"></div></div></noscript>
-            </div>
-            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <div class="fg fg2">
-              <div class="field"><label for="g">${T("Guests")}</label><select id="g" name="guests" required>
-${[2, 4, 6, 7, 8, 10, 12].concat(Number(CV.rates.pax) || []).filter((n, i, a) => a.indexOf(n) === i).sort((a, b) => a - b).map(n => `                <option value="${n}"${n === CV.rates.pax ? " selected" : ""}>${n} ${T("guests")}${n === CV.rates.pax ? " · " + T("priced") : ""}</option>`).join("\n")}
-              </select></div>
-              <div class="field"><label for="p">${T("Departure point")}</label><select id="p" name="pickup">
-                <option>${T("Hulhumal&eacute; Marina")}</option><option>${T("Velana International Airport jetty")}</option>
-                <option>${T("Mal&eacute;, west harbour")}</option><option>${T("A resort in North or South Mal&eacute; Atoll")}</option>
-              </select></div>
-            </div>
-            <p class="note note--pax" data-pax hidden>${TP("The package price is for a party of {n}. A different party size — and anything extra you would like aboard — is quoted on enquiry and may cost more. Tell us what you have in mind in the next step.")}</p>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="button" data-next>${T("Continue")}</button></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">${T("Guests")}</p><h2 class="d3" id="h-gst">${T("How many aboard?")}</h2></div>
+          <div class="chips chips--n" role="radiogroup" aria-labelledby="h-gst">
+${guests}
+          </div>
+          <p class="note note--pax" data-pax data-tpl="${esc(TP("The package price is for a party of {n}. For {g} guests we send a firm price with our reply, and it may cost more."))}" hidden></p>
+          <div class="fg fg2">
+            <div class="field"><label for="p">${T("Departure point")}</label><select id="p" name="pickup">
+              <option>${T("Hulhumal&eacute; Marina")}</option><option>${T("Velana International Airport jetty")}</option>
+              <option>${T("Mal&eacute;, west harbour")}</option><option>${T("A resort in North or South Mal&eacute; Atoll")}</option>
+            </select></div>
+            <div class="field"><label for="st">${T("Where are you staying?")} <span class="opt">${T("optional")}</span></label><input type="text" id="st" name="staying" placeholder="${T("Resort, guesthouse or hotel")}"></div>
           </div>
         </div>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">${T("Step three")}</p><h2 class="d3">${T("Anything to add?")}</h2>
-              <p class="note">${T("The package covers what its page lists. Anything you add here is extra: the add-ons have a price, the rest we quote — and the estimate on the next step will say so.")}</p></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">${T("You")}</p><h2 class="d3" id="h-you">${T("Where do we write back?")}</h2></div>
+          <div class="fg fg2">
+            <div class="field"><label for="nm">${T("Name")}</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="em">${T("Email")}</label><input type="email" id="em" name="email" autocomplete="email" required></div>
+          </div>
+          <div class="field"><label for="ph">${T("Telephone or WhatsApp")} <span class="opt">${T("optional")}</span></label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
+        </div>
+
+        <details class="more" data-a="up">
+          <summary class="more__s"><span class="more__t"><span class="more__h">${T("Anything else?")}</span><span class="small">${T("Add-ons, things we can arrange, and notes. All optional.")}</span></span><i aria-hidden="true"></i></summary>
+          <div class="more__in">
             <div class="stack-s"><p class="eyebrow">${T("Add-ons, priced")}</p>
-            <div class="chips">
+              <div class="chips chips--x">
 ${extras}
-            </div></div>
+              </div></div>
             <div class="stack-s"><p class="eyebrow">${T("We can also arrange — quoted on request")}</p>
-            <div class="chips chips--ask">
+              <div class="chips chips--ask">
 ${arrange}
-            </div></div>
-            <div class="fg fg2">
-              <div class="field"><label for="nm">${T("Name")}</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
-              <div class="field"><label for="em">${T("Email")}</label><input type="email" id="em" name="email" autocomplete="email" required></div>
-            </div>
-            <div class="fg fg2">
-              <div class="field"><label for="ph">${T("Telephone or WhatsApp")}</label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
-              <div class="field"><label for="st">${T("Where are you staying?")}</label><input type="text" id="st" name="staying" placeholder="${T("Resort, guesthouse or hotel")}"></div>
-            </div>
+              </div></div>
+            <p class="note">${T("Add-ons join the estimate. Anything on request is quoted separately and may cost more.")}</p>
             <div class="field"><label for="no">${T("Anything we should know")}</label><textarea id="no" name="notes" placeholder="${T("Diet, occasion, children aboard, anything extra you would like")}"></textarea></div>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="button" data-next>${T("Review")}</button></div>
           </div>
-        </div>
+        </details>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">${T("Step four")}</p><h2 class="d3">${T("Does this look right?")}</h2></div>
-            <div class="sum">
-              <div class="sum__r"><span class="k">${T("Excursion")}</span><span data-s-v>&mdash;</span></div>
-              <div class="sum__r"><span class="k">${T("Where")}</span><span data-s-a>&mdash;</span></div>
-              <div class="sum__r"><span class="k">${T("Date")}</span><span data-s-d>&mdash;</span></div>
-              <div class="sum__r"><span class="k">${T("Guests")}</span><span data-s-g>&mdash;</span></div>
-              <div class="sum__r"><span class="k">${T("Add-ons")}</span><span data-s-e>&mdash;</span></div>
-              <div class="sum__r"><span class="k">${T("On request")}</span><span data-s-q>&mdash;</span></div>
-              <div class="sum__t"><span class="k">${T("Estimate")}</span><span class="v" data-s-t>&mdash;</span></div>
-            </div>
-            <p class="note">${TP("An estimate, not a quote. It covers the package for a party of {n} and the priced add-ons you chose. A different party size, anything on request, and anything else you ask for is quoted separately and may cost more. We confirm the final figure in writing before a date is held.")}</p>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>${T("Back")}</button><button class="btn" type="submit">${T("Send the enquiry")}</button></div>
+        <div class="est" data-a="up" data-quoted="${esc(T("To be quoted"))}" data-ask="${esc(T("On request"))}" data-party="${esc(T("for a party of {n}"))}">
+          <p class="eyebrow">${T("Your enquiry")}</p>
+          <div class="est__l">
+            <div class="est__r"><span class="k">${T("Preferred date")}</span><span class="v" data-s-d>&mdash;</span></div>
+            <div class="est__r" data-s-row hidden><span class="k">${T("Alternative date")}</span><span class="v" data-s-a></span></div>
+            <div data-s-lines></div>
           </div>
+          <div class="est__t"><span class="k">${T("Estimate")}</span><span class="v num" data-s-t aria-live="polite">&mdash;</span></div>
+          <p class="note" data-s-note="priced">${TP("An estimate, not a quote. It covers the package for a party of {n} and the priced add-ons you chose. A different party size, anything on request, and anything else you ask for is quoted separately and may cost more. We confirm the final figure in writing before a date is held.")}</p>
+          <p class="note" data-s-note="quoted" hidden>${TP("The package price is for a party of {n}. For a different number we send a firm price with our reply, and it may cost more. Priced add-ons are already counted; anything on request is quoted separately. We confirm the final figure in writing before a date is held.")}</p>
+          <p class="note est__warn" data-s-taken hidden>${T("Your preferred day is taken — please choose another above.")}</p>
+          <p class="small est__p">${T("Sending this holds nothing and charges nothing. We check the day, price your party and reply in writing; the date is held once you confirm.")}</p>
+          <div class="acts"><button class="btn" type="submit">${T("Send the enquiry")}</button></div>
         </div>
+        <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       </form>
 
       <div class="ok" id="enquireOk">

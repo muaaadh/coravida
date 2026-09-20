@@ -57,23 +57,16 @@
  "hero": {
   "clips": [
    {
-    "src": "boat-harbour",
-    "poster": "poster-boat-harbour",
-    "max": 1080,
-    "alt": "Tiffany Blanc 14 выходит из марины Хулхумале, вид с воздуха",
-    "cap": "08:30 · Выходим из Хулхумале"
-   },
-   {
     "src": "vessel",
     "poster": "poster-vessel",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 в пути по глубокой синей воде у Мале",
     "cap": "В пути, через атолл"
    },
    {
     "src": "boat-reef",
     "poster": "poster-boat-reef",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 поворачивает вдоль края рифа, вид с воздуха",
     "cap": "Вдоль края рифа"
    },
@@ -101,7 +94,7 @@
    {
     "src": "boat-orbit",
     "poster": "poster-boat-orbit",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 на якоре, облёт с воздуха",
     "cap": "На якоре, после полудня"
    },
@@ -771,7 +764,7 @@
   "onRequest": "По запросу",
   "none": "Нет",
   "siteBy": "Сайт —",
-  "nudge": "Включите звук",
+  "nudge": "Звук включится при первом касании",
   "language": "Язык",
   "required": "Заполните это поле",
   "invalidEmail": "Проверьте адрес почты"

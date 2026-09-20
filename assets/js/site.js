@@ -136,8 +136,8 @@
     return el(
       '<footer class="ftr">' +
         '<div class="deep__bg" aria-hidden="true">' +
-          '<img src="' + u("assets/img/poster-sunbeams-1200.webp") + '" alt="" loading="lazy" decoding="async" width="1200" height="675">' +
-          '<video data-src="sunbeams" data-max="2160" muted loop playsinline preload="none" tabindex="-1"></video>' +
+          '<img src="' + u("assets/img/poster-ocean-1200.webp") + '" alt="" loading="lazy" decoding="async" width="1200" height="675">' +
+          '<video data-src="ocean" data-max="2160" muted loop playsinline preload="none" tabindex="-1"></video>' +
         "</div>" +
         '<div class="wrap"><div class="ftr__top">' +
         '<div data-a="up"><img src="' + u("assets/img/logo-full-white.webp") + '" alt="' + B.name + '" width="90" height="46" loading="lazy">' +
@@ -201,7 +201,7 @@
     var w = el('<div class="sea" aria-hidden="true"><svg viewBox="0 0 ' + (PERIOD * 2) + " " + SEAH +
       '" preserveAspectRatio="none">' +
       '<defs>' +
-      '<linearGradient id="cvW1" gradientUnits="userSpaceOnUse" x1="0" y1="60" x2="0" y2="240"><stop offset="0" stop-color="#DCE9F7"/><stop offset="1" stop-color="#9FBEE0"/></linearGradient>' +
+      '<linearGradient id="cvW1" gradientUnits="userSpaceOnUse" x1="0" y1="56" x2="0" y2="240"><stop offset="0" stop-color="#E4EFFA" stop-opacity="0"/><stop offset=".3" stop-color="#CDDDF0" stop-opacity=".55"/><stop offset="1" stop-color="#9FBEE0"/></linearGradient>' +
       '<linearGradient id="cvW2" gradientUnits="userSpaceOnUse" x1="0" y1="80" x2="0" y2="240"><stop offset="0" stop-color="#8FB4DC"/><stop offset="1" stop-color="#4677B0"/></linearGradient>' +
       '<linearGradient id="cvW3" gradientUnits="userSpaceOnUse" x1="0" y1="110" x2="0" y2="240"><stop offset="0" stop-color="#3F76B5"/><stop offset="1" stop-color="#153F78"/></linearGradient>' +
       '<linearGradient id="cvLip" gradientUnits="userSpaceOnUse" x1="0" y1="140" x2="0" y2="214"><stop offset="0" stop-color="#4A8AD0" stop-opacity=".95"/><stop offset=".22" stop-color="#245FA3" stop-opacity=".7"/><stop offset=".55" stop-color="#0B3468" stop-opacity=".35"/><stop offset="1" stop-color="#03224D" stop-opacity="0"/></linearGradient>' +
@@ -562,7 +562,7 @@
       wrap.classList.toggle("playing", on);
       elPlay.innerHTML = on ? ICON.pause : ICON.play;
       elPlay.setAttribute("aria-label", on ? t("pause", "Pause") : t("play", "Play"));
-      store("on", on ? "1" : "0");
+      if (on) store("on", "1"); else if (paused) store("on", "0");
     }
     audio.addEventListener("play", function () { setPlaying(true); });
     audio.addEventListener("pause", function () { setPlaying(false); });
@@ -584,7 +584,7 @@
     $("#musX").addEventListener("click", function () {
       wrap.classList.remove("open"); $("#musB").setAttribute("aria-expanded", "false"); store("open", "0");
     });
-    elPlay.addEventListener("click", function () { audio.paused ? play() : audio.pause(); });
+    elPlay.addEventListener("click", function () { if (audio.paused) { paused = false; play(); } else { paused = true; store("on", "0"); audio.pause(); } });
     $("#musPrev").addEventListener("click", function () { cue(i - 1, !audio.paused || wrap.classList.contains("playing")); });
     $("#musNext").addEventListener("click", function () { cue(i + 1, !audio.paused || wrap.classList.contains("playing")); });
     function seek(e) {
@@ -599,12 +599,32 @@
       if (e.key === "ArrowLeft") audio.currentTime = Math.max(0, audio.currentTime - 5);
     });
 
+    /* The music starts by itself. A browser will not let a page make a sound
+       before the visitor has touched it, so: try at once (a visitor who has
+       already been on another page of the site is usually allowed), and if
+       that is refused, start on their first tap, click or key anywhere. A
+       visitor who pauses is not started again this visit. */
+    var paused = false;                              // a pause the visitor chose, this visit
+    function autoStart() {
+      if (SLOW || read("on") === "0") return;         // paused on purpose earlier in the visit
+      var armed = false;
+      function attempt() {
+        if (paused) return off();
+        if (!ready) cue(i, false);
+        var p = audio.play();
+        if (p && p.then) p.then(off, function () { if (!armed) arm(); });
+      }
+      function arm() { armed = true; ["pointerdown", "keydown", "touchstart"].forEach(function (ev) { document.addEventListener(ev, attempt, { passive: true, capture: true }); }); }
+      function off() { ["pointerdown", "keydown", "touchstart"].forEach(function (ev) { document.removeEventListener(ev, attempt, { capture: true }); }); }
+      attempt();
+    }
+
     /* One quiet invitation, five seconds, once per visit. It never appears if
        the player is already open or already playing, and any use kills it. */
     function nudge() {
       if (SLOW || read("open") === "1" || read("on") === "1" || read("nudged") === "1") return;
       var n = el('<div class="mus__n" role="status"><span>' +
-        t("nudge", "Turn the sound on") + "</span>" +
+        t("nudge", "Sound on at your first tap") + "</span>" +
         '<i class="mus__nq" aria-hidden="true"></i></div>');
       wrap.appendChild(n);
       /* mark it seen the moment it appears — not when it leaves — so a visitor
@@ -637,9 +657,8 @@
       audio.addEventListener("loadedmetadata", function () {
         if (at > 0 && at < audio.duration) audio.currentTime = at;
       }, { once: true });
-      var p = audio.play();
-      if (p && p.catch) p.catch(function () { setPlaying(false); });
     }
+    autoStart();
   }
 
   /* ---- Voyage index: the photograph follows the cursor ------------------- */
@@ -890,10 +909,15 @@
   /* ---- Ready ------------------------------------------------------------- */
   function ready() { requestAnimationFrame(function () { document.body.classList.add("loaded"); }); }
 
-  /* ---- Enquiry --------------------------------------------------------- */
+  /* ---- Enquiry ---------------------------------------------------------
+     One page, no wizard: four questions in reading order, one optional row,
+     and a live estimate above the one Send button. The calendar owns its own
+     month arrows (data-cal-prev / data-cal-next), so no form hook can catch them. */
   function enquiry() {
     var f = $("#enquire"); if (!f) return;
-    var steps = $$(".step", f), marks = $$(".steps li"), at = 0;
+    var est = $(".est", f), more = $(".more", f), warn = $("[data-s-taken]", f), paxNote = $("[data-pax]", f);
+    var pax = Number((CV.rates && CV.rates.pax) || 7);
+    var dateIn = $('[name="date"]', f), altIn = $('[name="alt"]', f), mount = $("[data-gcal]", f), taken = null, cal = null;
     function money(n) {
       var c = (CV.rates && CV.rates.currency) || "USD";
       return c + " " + Number(n).toLocaleString(LOC === "zh" || LOC === "en" ? "en-US" : LOC);
@@ -902,42 +926,53 @@
       var v = $('input[name="excursion"]:checked', f);
       return v ? (CV.voyages || []).filter(function (x) { return x.slug === v.value; })[0] : null;
     }
+    function guests() { var r = $('input[name="guests"]:checked', f); return Number(r ? r.value : 0); }
+    function when(d) { return new Date(d + "T00:00:00").toLocaleDateString(LANGTAG, { weekday: "short", day: "numeric", month: "long", year: "numeric" }); }
+    function put(sel, txt) { var n = $(sel, f); if (n) n.textContent = txt; return n; }
+    function lit(k) { return (est && est.getAttribute("data-" + k)) || ""; }   // the strings the build translated for this block
+    function row(k, v) { var r = el('<div class="est__r"><span class="k"></span><span class="v"></span></div>'); $(".k", r).textContent = k; $(".v", r).textContent = v; return r; }
+    /* the estimate: every line the figure is made of, then the figure. The
+       package price only holds at the party size the client quoted; at any
+       other number the charter itself is quoted in the reply. */
     function sum() {
-      var v = chosen(), g = Number(($('[name="guests"]', f) || {}).value || 0), d = ($('[name="date"]', f) || {}).value || "";
-      var ex = $$('input[name="extra"]:checked', f);
-      $("[data-s-v]").textContent = v ? v.title : "—";
-      $("[data-s-a]").textContent = v ? v.area + " · " + v.duration : "—";
-      $("[data-s-d]").textContent = d ? new Date(d + "T00:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }) : "—";
-      $("[data-s-g]").textContent = g ? g + " " + t("guestsWord", "guests") : "—";
-      $("[data-s-e]").textContent = ex.length ? ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ") : t("none", "None");
-      var ask = $$('input[name="arrange"]:checked', f), q = $("[data-s-q]");
-      if (q) q.textContent = ask.length ? ask.map(function (i) { return i.getAttribute("data-label"); }).join(", ") + " — " + t("quotedOnRequest", "quoted on request") : t("none", "None");
+      var v = chosen(), g = guests(), d = dateIn ? dateIn.value : "", a = altIn ? altIn.value : "";
+      var ex = $$('input[name="extra"]:checked', f), ask = $$('input[name="arrange"]:checked', f);
       var add = ex.reduce(function (s, i) { return s + Number(i.getAttribute("data-price") || 0); }, 0);
-      /* the package price only holds at the party size the client quoted;
-         at any other number the charter itself goes back to an enquiry */
-      var pax = (CV.rates && CV.rates.pax) || 7;
-      var priced = v && v.price != null && g === pax;
-      $("[data-s-t]").textContent = !v ? "—"
-        : priced ? money(v.price + add)
-        : add ? money(add) + " + " + t("charterOnEnquiry", "charter on enquiry")
-        : t("onRequest", "On request");
+      var priced = !!v && v.price != null && g === pax;
+      put("[data-s-d]", d ? when(d) : "—");
+      var alt = put("[data-s-a]", a ? when(a) : ""); if (alt) alt.closest("[data-s-row]").hidden = !a;
+      var lines = $("[data-s-lines]", f);
+      if (lines) {
+        lines.innerHTML = "";
+        if (v) lines.appendChild(row(v.title + " · " + lit("party").replace("{n}", g), v.price == null ? lit("ask") : priced ? money(v.price) : lit("quoted")));
+        ex.forEach(function (i) { lines.appendChild(row(i.getAttribute("data-label"), money(i.getAttribute("data-price") || 0))); });
+        ask.forEach(function (i) { lines.appendChild(row(i.getAttribute("data-label"), lit("ask"))); });
+      }
+      put("[data-s-t]", !v ? "—" : priced ? money(v.price + add) : lit("quoted"));
+      $$("[data-s-note]", f).forEach(function (n) { n.hidden = n.getAttribute("data-s-note") !== (priced || !v ? "priced" : "quoted"); });
+      return { total: ($("[data-s-t]", f) || {}).textContent || "", extras: add };
     }
-    function go(n, quiet) {
-      at = Math.max(0, Math.min(steps.length - 1, n));
-      steps.forEach(function (s, k) { s.classList.toggle("on", k === at); });
-      marks.forEach(function (m, k) { m.classList.toggle("on", k === at); m.classList.toggle("done", k < at); });
-      if (at === steps.length - 1) sum();
-      if (!quiet) window.scrollTo({ top: f.getBoundingClientRect().top + window.scrollY - 140, behavior: SLOW ? "auto" : "smooth" });
+    /* a party that is not the priced one is quoted — say so where the number is chosen, with the number */
+    function paxCheck() {
+      if (!paxNote) return;
+      var g = guests(), same = g === pax;
+      paxNote.hidden = same;
+      if (!same) paxNote.textContent = (paxNote.getAttribute("data-tpl") || "").replace("{g}", g);
     }
+    function need(n, quiet) {
+      n.scrollIntoView({ behavior: SLOW ? "auto" : "smooth", block: "center" });
+      if (!quiet) { n.classList.add("is-need"); setTimeout(function () { n.classList.remove("is-need"); }, 900); }
+    }
+    /* in reading order: a day, then the name and email, then the day must be free */
     function ok() {
-      var need = $$("[required]", steps[at]);
-      for (var i = 0; i < need.length; i++) if (!need[i].checkValidity()) { need[i].reportValidity(); return false; }
-      if (mount && steps[at].contains(mount) && !dateIn.value) { mount.classList.add("is-need"); setTimeout(function () { mount.classList.remove("is-need"); }, 900); return false; }
+      if (mount && !dateIn.value) { need(mount); return false; }
+      var req = $$("[required]", f);
+      for (var i = 0; i < req.length; i++) if (!req[i].checkValidity()) { req[i].reportValidity(); return false; }
+      if (mount && /taken|past/.test(stateOf(dateIn.value))) { need(dateIn._card || mount, true); return false; }
       return true;
     }
     /* ---- the dates: chosen on the calendar, which knows from the books which
        days are gone (dates only, never a name) ---------------------------- */
-    var dateIn = $('[name="date"]', f), altIn = $('[name="alt"]', f), mount = $("[data-gcal]", f), taken = null, cal = null;
     var t0 = new Date(), minDay = t0.getFullYear() + "-" + String(t0.getMonth() + 1).padStart(2, "0") + "-" + String(t0.getDate()).padStart(2, "0");
     function fullDay() { var v = chosen(); return !!v && !/half|evening|sunset/i.test(v.kind || ""); }
     /* free | am (only the morning is free) | pm | taken | past */
@@ -964,11 +999,12 @@
           note.hidden = false; note.className = "note note--avail";
         } else { note.hidden = true; }
       });
-      /* the preferred day is gone: the enquiry stops here, and the crew are a tap away */
-      var blocked = !!dateIn.value && /taken|past/.test(stateOf(dateIn.value)), next = $("[data-next]", dateIn.closest(".step") || f);
+      /* the preferred day is gone: the card says so by the calendar, a line says so by the button, and the crew are a tap away */
+      var blocked = !!dateIn.value && /taken|past/.test(stateOf(dateIn.value));
       showCard(blocked ? dateIn.value : null);
       if (blocked) dateIn._note.hidden = true;   // the card says it
-      if (next) next.disabled = blocked;
+      if (warn) warn.hidden = !blocked;
+      if (mount) mount.classList.toggle("has-date", !!dateIn.value);   // the alternative tile appears once there is a day to back up
       if (cal) cal.paint();
     }
     function showCard(d) {
@@ -994,39 +1030,39 @@
       notes.appendChild(card); dateIn._card = card;
       cal = gcal(mount, { state: stateOf, minDay: minDay, mode: "pick", labels: { pref: dateIn._label, alt: altIn ? altIn._label : "" },
         get: function () { return { date: dateIn.value, alt: altIn ? altIn.value : "" }; },
-        set: function (which, v) { (which === "alt" ? altIn : dateIn).value = v || ""; check(); if (at === steps.length - 1) sum(); },
+        set: function (which, v) {
+          if (which === "alt") { if (altIn) altIn.value = v || ""; }
+          else { dateIn.value = v || ""; if (!dateIn.value && altIn && altIn.value) { dateIn.value = altIn.value; altIn.value = ""; } }   // a lone alternative becomes the preferred day
+          check(); sum();
+        },
         onTaken: function (d) { showCard(d); } });
       mount.parentNode.insertBefore(notes, mount.nextSibling);
       f.addEventListener("change", function (e) { if (e.target.name === "excursion") { cal.repaint(); check(); } });
       var q = new URLSearchParams(location.search).get("date");
-      loadTaken(function (list) { taken = list; cal.repaint(); if (q && /^\d{4}-\d{2}-\d{2}$/.test(q) && stateOf(q) !== "taken" && stateOf(q) !== "past") { dateIn.value = q; cal.show(q); } check(); });
+      loadTaken(function (list) { taken = list; cal.repaint(); if (q && /^\d{4}-\d{2}-\d{2}$/.test(q) && stateOf(q) !== "taken" && stateOf(q) !== "past") { dateIn.value = q; cal.show(q); } check(); sum(); });
     }
-    $$("[data-next]", f).forEach(function (b) { b.addEventListener("click", function () { if (ok()) go(at + 1); }); });
-    $$("[data-prev]", f).forEach(function (b) { b.addEventListener("click", function () { go(at - 1); }); });
-    f.addEventListener("change", function () { if (at === steps.length - 1) sum(); });
-    /* a party that is not the priced one is quoted — say so where the number is chosen */
-    var gSel = $('[name="guests"]', f), paxNote = $("[data-pax]", f);
-    function paxCheck() { if (gSel && paxNote) paxNote.hidden = Number(gSel.value) === Number((CV.rates && CV.rates.pax) || 7); }
-    if (gSel) { gSel.addEventListener("change", paxCheck); paxCheck(); }
+    /* the estimate is live: every tap anywhere on the form updates it */
+    f.addEventListener("change", function (e) { if (e.target.name === "guests") paxCheck(); sum(); });
     /* "Add to my enquiry" on the excursions page arrives as ?extra=<id>; an excursion page sends ?excursion=<slug> */
     try {
       var qs = new URLSearchParams(location.search);
       qs.getAll("extra").forEach(function (id) { var c = $('input[name="extra"][value="' + id.replace(/[^a-z0-9-]/g, "") + '"]', f); if (c) c.checked = true; });
       var ex0 = qs.get("excursion"); if (ex0) { var r0 = $('input[name="excursion"][value="' + ex0.replace(/[^a-z0-9-]/g, "") + '"]', f); if (r0 && !r0.checked) { r0.checked = true; r0.dispatchEvent(new Event("change", { bubbles: true })); } }
+      if (more && $$('input[name="extra"]:checked, input[name="arrange"]:checked', f).length) more.open = true;   // something optional was pre-ticked: show it
     } catch (x) {}
     f.addEventListener("submit", function (e) {
       e.preventDefault(); if (!ok()) return;
-      check(); if (dateIn && !dateIn.checkValidity()) { go(1); dateIn.reportValidity(); return; }
+      var s = sum();
       var d = {}; new FormData(f).forEach(function (v, k) { d[k] = d[k] ? [].concat(d[k], v) : v; });
       var v = chosen(); if (v) d.excursionTitle = v.title;
       var ex = $$('input[name="extra"]:checked', f);
-      if (ex.length) d.extras = ex.map(function (i) { return i.getAttribute("data-label"); }).join(", ");
+      if (ex.length) { d.extras = ex.map(function (i) { return i.getAttribute("data-label"); }).join(", "); d.extrasTotal = money(s.extras); }
       var ask = $$('input[name="arrange"]:checked', f);
       if (ask.length) d.arrange = ask.map(function (i) { return i.getAttribute("data-label"); }).join(", "); else delete d.arrange;
-      d.total = ($("[data-s-t]") || {}).textContent || "";
+      d.total = s.total;
       deliver(f, "enquiry", d, $("#enquireOk"));
     });
-    go(0, true);
+    paxCheck(); sum();
   }
 
   var LANGTAG = LOC === "zh" ? "zh-CN" : LOC === "en" ? "en-GB" : LOC;
@@ -1060,9 +1096,9 @@
     var panel = el('<div class="gcal__panel"></div>'); mount.appendChild(panel);
     panel.appendChild(el('<div class="gcal__bg" aria-hidden="true"></div>')).style.backgroundImage = "url(" + u("assets/img/aerial-close-1200.webp") + ")";
     var glass = el('<div class="gcal__glass">' +
-      '<div class="gcal__head"><button class="gcal__nav" type="button" data-prev aria-label="' + t("prevMonth", "Previous month") + '">'  + L + '</button>' +
+      '<div class="gcal__head"><button class="gcal__nav" type="button" data-cal-prev aria-label="' + t("prevMonth", "Previous month") + '">'  + L + '</button>' +
       '<div class="gcal__title" aria-live="polite"><span class="gcal__m"></span></div>' +
-      '<button class="gcal__nav" type="button" data-next aria-label="' + t("nextMonth", "Next month") + '">'  + R + "</button></div>" +
+      '<button class="gcal__nav" type="button" data-cal-next aria-label="' + t("nextMonth", "Next month") + '">'  + R + "</button></div>" +
       '<div class="gcal__dow"></div><div class="gcal__view"><div class="gcal__grid" role="group"></div><div class="gcal__halo gcal__halo--pref" aria-hidden="true"></div><div class="gcal__halo gcal__halo--alt" aria-hidden="true"></div></div>' +
       '<div class="gcal__legend"><span><i class="gl gl--free"></i>' + t("legFree", "Available") + '</span><span><i class="gl gl--half"></i>' + t("legHalf", "Only half the day is free") + '</span><span><i class="gl gl--taken"></i>' + t("legTaken", "Taken") + "</span></div></div>");
     panel.appendChild(glass);
@@ -1090,7 +1126,7 @@
       }
       for (var k = lead + n; k < Math.ceil((lead + n) / 7) * 7; k++) grid.appendChild(el('<span class="gday gday--pad"></span>'));
       title.textContent = new Date(+m.slice(0, 4), +m.slice(5, 7) - 1, 1).toLocaleDateString(LANGTAG, { month: "long", year: "numeric" });
-      $("[data-prev]", glass).disabled = m <= minM; $("[data-next]", glass).disabled = m >= maxM;
+      $("[data-cal-prev]", glass).disabled = m <= minM; $("[data-cal-next]", glass).disabled = m >= maxM;
       paint();
     }
     function halo(which, date) {
@@ -1118,8 +1154,8 @@
         requestAnimationFrame(function () { requestAnimationFrame(function () { grid.classList.remove("no-t"); grid.classList.remove("is-in-r", "is-in-l"); setTimeout(paint, 60); }); });
       }, 190);
     }
-    $("[data-prev]", glass).addEventListener("click", function () { if (view > minM) { view = shiftM(view, -1); slide(-1); } });
-    $("[data-next]", glass).addEventListener("click", function () { if (view < maxM) { view = shiftM(view, 1); slide(1); } });
+    $("[data-cal-prev]", glass).addEventListener("click", function () { if (view > minM) { view = shiftM(view, -1); slide(-1); } });
+    $("[data-cal-next]", glass).addEventListener("click", function () { if (view < maxM) { view = shiftM(view, 1); slide(1); } });
     grid.addEventListener("click", function (e) {
       var c = e.target.closest(".gday[data-date]"); if (!c) return;
       var d = c.getAttribute("data-date"), st = o.state(d);
@@ -1165,8 +1201,8 @@
   function deliver(f, kind, d, o) {
     var B = CV.brand || {}, F = B.form || {};
     var lines = [], skip = { at: 1, total: 0 };
-    var order = ["name", "email", "phone", "staying", "subject", "excursionTitle", "date", "alt", "guests", "pickup", "extras", "arrange", "total", "message", "notes"];
-    var label = { name: "Name", email: "Email", phone: "Phone", staying: "Staying at", subject: "Subject", excursionTitle: "Excursion", date: "Date", alt: "Alternative date", guests: "Guests", pickup: "Departure", extras: "Extras", arrange: "On request", total: "Estimate", message: "Message", notes: "Notes" };
+    var order = ["name", "email", "phone", "staying", "subject", "excursionTitle", "date", "alt", "guests", "pickup", "extras", "extrasTotal", "arrange", "total", "message", "notes"];
+    var label = { name: "Name", email: "Email", phone: "Phone", staying: "Staying at", subject: "Subject", excursionTitle: "Excursion", date: "Date", alt: "Alternative date", guests: "Guests", pickup: "Departure", extras: "Extras", extrasTotal: "Add-ons total", arrange: "On request", total: "Estimate", message: "Message", notes: "Notes" };
     order.forEach(function (k) { if (d[k] && String(d[k]).trim() && !skip[k]) lines.push(label[k] + ": " + [].concat(d[k]).join(", ")); });
     var subject = (kind === "enquiry" ? "Charter enquiry" : "Enquiry") + (d.excursionTitle ? " — " + d.excursionTitle : "") + (d.date ? " · " + d.date : "");
     var text = subject + "\n\n" + lines.join("\n") + "\n\n— sent from " + location.host;

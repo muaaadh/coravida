@@ -30,129 +30,150 @@
   <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       <img src="../assets/img/poster-boat-harbour-1200.webp" srcset="../assets/img/poster-boat-harbour-900.webp 900w, ../assets/img/poster-boat-harbour-1200.webp 1200w, ../assets/img/poster-boat-harbour-1600.webp 1600w" sizes="100vw" width="1200" height="676" alt="Tiffany Blanc 14 выходит из марины Хулхумале, вид с воздуха" fetchpriority="high" decoding="async">
-      <video data-src="boat-harbour" data-max="1080" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="boat-harbour" data-max="2160" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">Заявка</p>
       <h1 class="d1 lines">Забронировать судно</h1>
-      <p class="lede lede--light" data-a="up">Четыре коротких шага. Ничего не списывается и ни одна дата не бронируется, пока мы не ответим.</p>
+      <p class="lede lede--light" data-a="up">Экскурсия, день и сколько вас будет. Ничего не списывается и дата не бронируется, пока мы не ответим письменно.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap narrow form">
-      <ul class="steps" data-a="up">
-        <li class="on">Экскурсия</li><li>Даты</li><li>Данные</li><li>Проверка</li>
-      </ul>
+      <form id="enquire" class="enq" novalidate>
 
-      <form id="enquire" novalidate>
-        <div class="step on">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Шаг первый</p><h2 class="d3">Какая экскурсия?</h2></div>
-            <div class="chips">
-              <input type="radio" id="v0" name="excursion" value="island-and-snorkelling" checked>
-              <label for="v0">Остров и снорклинг &middot; Полный день</label>
-              <input type="radio" id="v1" name="excursion" value="reef-and-sandbank">
-              <label for="v1">Риф и коса &middot; Полдня</label>
-              <input type="radio" id="v2" name="excursion" value="shark-point-and-gulhi">
-              <label for="v2">Шарк-Пойнт и Гулхи &middot; Полный день</label>
-              <input type="radio" id="v3" name="excursion" value="sunset-adventure">
-              <label for="v3">Закатное приключение &middot; Полдня</label>
-            </div>
-            <p class="note">Каждая экскурсия — частный чартер всего судна. Если ни одна не подходит, выберите ближайшую и напишите нам на третьем шаге.</p>
-            <div class="acts"><button class="btn" type="button" data-next>Далее</button></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">Экскурсия</p><h2 class="d3" id="h-exc">Какая экскурсия?</h2></div>
+          <div class="pick" role="radiogroup" aria-labelledby="h-exc">
+            <input type="radio" id="v0" name="excursion" value="island-and-snorkelling" checked>
+            <label for="v0" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">Остров и снорклинг</span>
+              <span class="pick__m">Полный день &middot; 9.5 часов &middot; Северный Мале Атолл &middot; Отход&nbsp;08:30 · Хулхумале</span>
+              <span class="pick__p"><span class="num">USD 1 350</span><span class="pick__n">для компании из семи человек</span></span>
+            </label>
+            <input type="radio" id="v1" name="excursion" value="reef-and-sandbank">
+            <label for="v1" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">Риф и коса</span>
+              <span class="pick__m">Полдня &middot; 4 часа &middot; Северный Мале Атолл &middot; Отход&nbsp;09:00 · Хулхумале</span>
+              <span class="pick__p"><span class="num">USD 950</span><span class="pick__n">для компании из семи человек</span></span>
+            </label>
+            <input type="radio" id="v2" name="excursion" value="shark-point-and-gulhi">
+            <label for="v2" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">Шарк-Пойнт и Гулхи</span>
+              <span class="pick__m">Полный день &middot; 9 часов &middot; Южный Мале Атолл &middot; Отход&nbsp;09:00 · Хулхумале</span>
+              <span class="pick__p"><span class="num">USD 1 350</span><span class="pick__n">для компании из семи человек</span></span>
+            </label>
+            <input type="radio" id="v3" name="excursion" value="sunset-adventure">
+            <label for="v3" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">Закатное приключение</span>
+              <span class="pick__m">Полдня &middot; 4.5 часа &middot; Южный Мале Атолл &middot; Отход&nbsp;13:30 · Хулхумале</span>
+              <span class="pick__p"><span class="num">USD 950</span><span class="pick__n">для компании из семи человек</span></span>
+            </label>
+          </div>
+          <p class="note">Каждая экскурсия — частный чартер всего судна. Если ничего не подходит точно, выберите ближайшее и расскажите ниже.</p>
+        </div>
+
+        <div class="part">
+          <div class="part__h"><p class="eyebrow">День</p><h2 class="d3" id="h-day">Когда?</h2></div>
+          <div class="gcal" data-gcal="pick" data-l-pref="Желаемая дата" data-l-alt="Запасная дата">
+            <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
+            <noscript><div class="fg fg2"><div class="field"><label for="d1n">Желаемая дата</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">Запасная дата</label><input type="date" id="d2n" name="alt"></div></div></noscript>
           </div>
         </div>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Шаг второй</p><h2 class="d3">Когда и сколько вас?</h2></div>
-            <div class="gcal" data-gcal="pick" data-l-pref="Желаемая дата" data-l-alt="Запасная дата">
-              <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
-              <noscript><div class="fg fg2"><div class="field"><label for="d1n">Желаемая дата</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">Запасная дата</label><input type="date" id="d2n" name="alt"></div></div></noscript>
-            </div>
-            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <div class="fg fg2">
-              <div class="field"><label for="g">Гости</label><select id="g" name="guests" required>
-                <option value="2">2 гостей</option>
-                <option value="4">4 гостей</option>
-                <option value="6">6 гостей</option>
-                <option value="7" selected>7 гостей · по тарифу</option>
-                <option value="8">8 гостей</option>
-                <option value="10">10 гостей</option>
-                <option value="12">12 гостей</option>
-              </select></div>
-              <div class="field"><label for="p">Место посадки</label><select id="p" name="pickup">
-                <option>Марина Хулхумале</option><option>Причал международного аэропорта Велана</option>
-                <option>Мале, западная гавань</option><option>Отель на Северном или Южном Мале Атолле</option>
-              </select></div>
-            </div>
-            <p class="note note--pax" data-pax hidden>Пакетная цена — для компании из семи человек. Другое число гостей и всё дополнительное, что вы хотели бы на борту, рассчитывается по запросу и может стоить дороже. Расскажите о пожеланиях на следующем шаге.</p>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Назад</button><button class="btn" type="button" data-next>Далее</button></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">Гости</p><h2 class="d3" id="h-gst">Сколько человек на борту?</h2></div>
+          <div class="chips chips--n" role="radiogroup" aria-labelledby="h-gst">
+              <input type="radio" id="g0" name="guests" value="2" required>
+              <label for="g0">2</label>
+              <input type="radio" id="g1" name="guests" value="4" required>
+              <label for="g1">4</label>
+              <input type="radio" id="g2" name="guests" value="6" required>
+              <label for="g2">6</label>
+              <input type="radio" id="g3" name="guests" value="7" checked required>
+              <label for="g3">7<span class="chips__tag">пакетная цена</span></label>
+              <input type="radio" id="g4" name="guests" value="8" required>
+              <label for="g4">8</label>
+              <input type="radio" id="g5" name="guests" value="10" required>
+              <label for="g5">10</label>
+              <input type="radio" id="g6" name="guests" value="12" required>
+              <label for="g6">12</label>
+          </div>
+          <p class="note note--pax" data-pax data-tpl="Пакетная цена — для компании из семи человек. Для {g} гостей мы пришлём точную цену вместе с ответом, и она может быть выше." hidden></p>
+          <div class="fg fg2">
+            <div class="field"><label for="p">Место посадки</label><select id="p" name="pickup">
+              <option>Марина Хулхумале</option><option>Причал международного аэропорта Велана</option>
+              <option>Мале, западная гавань</option><option>Отель на Северном или Южном Мале Атолле</option>
+            </select></div>
+            <div class="field"><label for="st">Где вы остановились? <span class="opt">необязательно</span></label><input type="text" id="st" name="staying" placeholder="Отель, гестхаус или курорт"></div>
           </div>
         </div>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Шаг третий</p><h2 class="d3">Что-нибудь добавить?</h2>
-              <p class="note">Пакет включает то, что перечислено на его странице. Всё, что вы добавите здесь, — сверх пакета: у дополнительных услуг есть цена, остальное мы рассчитаем отдельно — и оценка на следующем шаге это покажет.</p></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">Вы</p><h2 class="d3" id="h-you">Куда написать ответ?</h2></div>
+          <div class="fg fg2">
+            <div class="field"><label for="nm">Имя</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="em">Эл. почта</label><input type="email" id="em" name="email" autocomplete="email" required></div>
+          </div>
+          <div class="field"><label for="ph">Телефон или WhatsApp <span class="opt">необязательно</span></label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
+        </div>
+
+        <details class="more" data-a="up">
+          <summary class="more__s"><span class="more__t"><span class="more__h">Что-нибудь ещё?</span><span class="small">Дополнительные услуги, то, что мы можем организовать, и пожелания. Всё необязательно.</span></span><i aria-hidden="true"></i></summary>
+          <div class="more__in">
             <div class="stack-s"><p class="eyebrow">Дополнительные услуги с ценой</p>
-            <div class="chips">
-              <input type="checkbox" id="x0" name="extra" value="private-chef-aboard" data-label="Личный повар на борту" data-price="320">
-              <label for="x0">Личный повар на борту &middot; 320</label>
-              <input type="checkbox" id="x1" name="extra" value="photographer" data-label="Фотограф" data-price="450">
-              <label for="x1">Фотограф &middot; 450</label>
-              <input type="checkbox" id="x2" name="extra" value="floating-breakfast" data-label="Плавучий завтрак" data-price="180">
-              <label for="x2">Плавучий завтрак &middot; 180</label>
-              <input type="checkbox" id="x3" name="extra" value="sandbank-set-up" data-label="Сервировка на косе" data-price="260">
-              <label for="x3">Сервировка на косе &middot; 260</label>
-              <input type="checkbox" id="x4" name="extra" value="airport-and-resort-transfers" data-label="Трансферы из аэропорта и отелей" data-price="120">
-              <label for="x4">Трансферы из аэропорта и отелей &middot; 120</label>
-            </div></div>
+              <div class="chips chips--x">
+                <input type="checkbox" id="x0" name="extra" value="private-chef-aboard" data-label="Личный повар на борту" data-price="320">
+                <label for="x0"><span class="chips__t">Личный повар на борту<span class="chips__tag">+ USD 320</span></span><span class="chips__d">Три блюда, приготовленные на ходу.</span></label>
+                <input type="checkbox" id="x1" name="extra" value="photographer" data-label="Фотограф" data-price="450">
+                <label for="x1"><span class="chips__t">Фотограф<span class="chips__tag">+ USD 450</span></span><span class="chips__d">Полдня на борту, обработанные файлы в течение недели.</span></label>
+                <input type="checkbox" id="x2" name="extra" value="floating-breakfast" data-label="Плавучий завтрак" data-price="180">
+                <label for="x2"><span class="chips__t">Плавучий завтрак<span class="chips__tag">+ USD 180</span></span><span class="chips__d">Подаётся на мелководье, на якоре.</span></label>
+                <input type="checkbox" id="x3" name="extra" value="sandbank-set-up" data-label="Сервировка на косе" data-price="260">
+                <label for="x3"><span class="chips__t">Сервировка на косе<span class="chips__tag">+ USD 260</span></span><span class="chips__d">Стол, зонт и маты, перенесённые на берег.</span></label>
+                <input type="checkbox" id="x4" name="extra" value="airport-and-resort-transfers" data-label="Трансферы из аэропорта и отелей" data-price="120">
+                <label for="x4"><span class="chips__t">Трансферы из аэропорта и отелей<span class="chips__tag">+ USD 120</span></span><span class="chips__d">Велана или ваш отель, в одну сторону.</span></label>
+              </div></div>
             <div class="stack-s"><p class="eyebrow">Мы также можем организовать — цена по запросу</p>
-            <div class="chips chips--ask">
-              <input type="checkbox" id="q0" name="arrange" value="lunch-aboard" data-label="Обед или ужин на борту">
-              <label for="q0">Обед или ужин на борту</label>
-              <input type="checkbox" id="q1" name="arrange" value="celebration" data-label="Оформление дня рождения или годовщины — торт, декор">
-              <label for="q1">Оформление дня рождения или годовщины — торт, декор</label>
-              <input type="checkbox" id="q2" name="arrange" value="candlelit-dinner" data-label="Ужин при свечах на закате">
-              <label for="q2">Ужин при свечах на закате</label>
-              <input type="checkbox" id="q3" name="arrange" value="party" data-label="Звуковая система и световое оформление">
-              <label for="q3">Звуковая система и световое оформление</label>
-              <input type="checkbox" id="q4" name="arrange" value="fishing" data-label="Рыболовные снасти и наживка">
-              <label for="q4">Рыболовные снасти и наживка</label>
-              <input type="checkbox" id="q5" name="arrange" value="longer-day" data-label="Дополнительные остановки или более длинный день">
-              <label for="q5">Дополнительные остановки или более длинный день</label>
-            </div></div>
-            <div class="fg fg2">
-              <div class="field"><label for="nm">Имя</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
-              <div class="field"><label for="em">Эл. почта</label><input type="email" id="em" name="email" autocomplete="email" required></div>
-            </div>
-            <div class="fg fg2">
-              <div class="field"><label for="ph">Телефон или WhatsApp</label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
-              <div class="field"><label for="st">Где вы остановились?</label><input type="text" id="st" name="staying" placeholder="Отель, гестхаус или курорт"></div>
-            </div>
+              <div class="chips chips--ask">
+                <input type="checkbox" id="q0" name="arrange" value="lunch-aboard" data-label="Обед или ужин на борту">
+                <label for="q0">Обед или ужин на борту</label>
+                <input type="checkbox" id="q1" name="arrange" value="celebration" data-label="Оформление дня рождения или годовщины — торт, декор">
+                <label for="q1">Оформление дня рождения или годовщины — торт, декор</label>
+                <input type="checkbox" id="q2" name="arrange" value="candlelit-dinner" data-label="Ужин при свечах на закате">
+                <label for="q2">Ужин при свечах на закате</label>
+                <input type="checkbox" id="q3" name="arrange" value="party" data-label="Звуковая система и световое оформление">
+                <label for="q3">Звуковая система и световое оформление</label>
+                <input type="checkbox" id="q4" name="arrange" value="fishing" data-label="Рыболовные снасти и наживка">
+                <label for="q4">Рыболовные снасти и наживка</label>
+                <input type="checkbox" id="q5" name="arrange" value="longer-day" data-label="Дополнительные остановки или более длинный день">
+                <label for="q5">Дополнительные остановки или более длинный день</label>
+              </div></div>
+            <p class="note">Дополнительные услуги входят в оценку. Всё по запросу рассчитывается отдельно и может стоить дороже.</p>
             <div class="field"><label for="no">Что нам стоит знать</label><textarea id="no" name="notes" placeholder="Питание, повод, дети на борту, любые пожелания"></textarea></div>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Назад</button><button class="btn" type="button" data-next>Проверка</button></div>
           </div>
-        </div>
+        </details>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Шаг четвёртый</p><h2 class="d3">Всё верно?</h2></div>
-            <div class="sum">
-              <div class="sum__r"><span class="k">Экскурсия</span><span data-s-v>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Откуда</span><span data-s-a>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Дата</span><span data-s-d>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Гости</span><span data-s-g>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Дополнительно</span><span data-s-e>&mdash;</span></div>
-              <div class="sum__r"><span class="k">По запросу</span><span data-s-q>&mdash;</span></div>
-              <div class="sum__t"><span class="k">Оценка</span><span class="v" data-s-t>&mdash;</span></div>
-            </div>
-            <p class="note">Это оценка, а не окончательная цена. Она включает пакет для компании из семи человек и выбранные дополнительные услуги с ценой. Другое число гостей, всё по запросу и любые другие пожелания рассчитываются отдельно и могут стоить дороже. Окончательную сумму подтверждаем письменно до бронирования даты.</p>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Назад</button><button class="btn" type="submit">Отправить заявку</button></div>
+        <div class="est" data-a="up" data-quoted="Цена по запросу" data-ask="По запросу" data-party="для компании из {n} человек">
+          <p class="eyebrow">Ваша заявка</p>
+          <div class="est__l">
+            <div class="est__r"><span class="k">Желаемая дата</span><span class="v" data-s-d>&mdash;</span></div>
+            <div class="est__r" data-s-row hidden><span class="k">Запасная дата</span><span class="v" data-s-a></span></div>
+            <div data-s-lines></div>
           </div>
+          <div class="est__t"><span class="k">Оценка</span><span class="v num" data-s-t aria-live="polite">&mdash;</span></div>
+          <p class="note" data-s-note="priced">Это оценка, а не окончательная цена. Она включает пакет для компании из семи человек и выбранные дополнительные услуги с ценой. Другое число гостей, всё по запросу и любые другие пожелания рассчитываются отдельно и могут стоить дороже. Окончательную сумму подтверждаем письменно до бронирования даты.</p>
+          <p class="note" data-s-note="quoted" hidden>Пакетная цена — для компании из семи человек. Для другого числа гостей мы пришлём точную цену вместе с ответом, и она может быть выше. Дополнительные услуги с ценой уже учтены; всё по запросу рассчитывается отдельно. Окончательную сумму подтверждаем письменно до бронирования даты.</p>
+          <p class="note est__warn" data-s-taken hidden>Выбранный день занят — пожалуйста, выберите другой выше.</p>
+          <p class="small est__p">Отправка ничего не бронирует и ничего не списывает. Мы проверим день, рассчитаем цену для вашей компании и ответим письменно; дата бронируется после вашего подтверждения.</p>
+          <div class="acts"><button class="btn" type="submit">Отправить заявку</button></div>
         </div>
+        <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       </form>
 
       <div class="ok" id="enquireOk">

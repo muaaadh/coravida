@@ -122,9 +122,19 @@ no denoise, no sharpening). Every clip is a **seamless loop**: its last 0.6 s di
 its first, so a clip that plays longer than it lasts never shows a cut. The poster is the
 loop's first frame. The tier is chosen at runtime as *the smallest that is not narrower than
 the screen's own pixels* (`tier()` in site.js): a 2× laptop gets the 2160 cut, a 1080p
-monitor the 1080, a phone the 1080 — never above the clip's `max`. The drone footage exists
-only as the DJI app's 1080p proxies, so the boat's clips stop at 1080; hand over the 4K
-originals and `film.sh` cuts them at 2160 unchanged.
+monitor the 1080, a phone the 1080 — never above the clip's `max`.
+
+**The drone clips are a special case.** The footage exists only as the DJI app's 1080p
+proxies (`…_video_cache.mp4`, 1080p60, ~8 Mbps), so their 1080 tier is the camera's own
+file, cut by stream copy — not re-encoded (`film.sh --raw`). Because a raw file cannot
+dissolve into itself, those `<video>`s carry `data-raw`: the hero plays one to its end and
+hands over, a looping page hero dips to its poster for a third of a second at the cut. For
+screens with more pixels than 1080p, `tools/enhance.sh` cuts the raw clip into frames,
+enlarges each 2× with Real-ESRGAN (the video model, `realesr-animevideov3`, run through
+`~/.local/coravida-esr/realesrgan-ncnn-vulkan`; ~0.5 s a frame on an Apple GPU) and encodes
+2160 and 1440 tiers from the result — measurably crisper than a browser's own upscaling,
+which is what a Retina screen was doing before. Hand over the 4K originals from the drone
+and both scripts become unnecessary.
 
 Nothing is fetched until the page has loaded; the next clip and **its poster** are fetched
 1.4 s into the current one, and only while the hero is still on screen. Scroll past it, or
@@ -144,11 +154,18 @@ until you open it. It plays four Creative Commons tracks chosen for the room the
 | Across pages | Track, position, playing state and whether the panel was open all persist in `sessionStorage` and resume on the next page. |
 | While playing | The button pulses a slow marine ring and the equaliser bars move. |
 
-Nothing autoplays. `preload="none"` means an untouched player costs zero bytes.
+**The music starts by itself** (client's request, 2026-09-20) — as far as a browser allows.
+No browser lets a page make a sound before the visitor has touched it, so `autoStart()`
+tries at once (a visitor who has already been on another page of the site is usually
+allowed, and the track and position carry across in sessionStorage), and if refused it
+starts on the first tap, click or key anywhere on the page. A visitor who presses pause is
+not started again for the rest of the visit (`cv.mus.on = "0"` is written only by that
+press, never by a refused autoplay). `preload="none"` still means an untouched player costs
+zero bytes.
 
 **One invitation, then silence.** A second and a half after the page settles, a small glass
-pill appears beside the button — *Turn the sound on* — holds for seven seconds, and removes
-itself; a failsafe clears it at ten regardless. It is skipped entirely if the player is
+pill appears beside the button — *Sound on at your first tap* — holds for seven seconds, and
+removes itself; a failsafe clears it at ten regardless. It is skipped entirely if the player is
 already open or already playing, any interaction kills it early, and it is marked as seen
 the moment it *appears* — not when it leaves — so a visitor who moves to the next page
 inside the window never sees it twice.
@@ -407,11 +424,14 @@ The accounting a one-vessel charter company actually needs, and nothing it does 
   guests, add-ons; the package price fills itself in at the party size the site quotes.
 - **Invoices** — from a booking (full, 50% deposit, or balance) or blank; T-GST at the rate
   in Settings (17% since July 2025); status derived from payments; print to PDF on
-  Coravida paper with the bank details.
+  Coravida paper — the primary lockup from the brand guidelines (`assets/img/logo-full.webp`,
+  cut from the PDF at 400 dpi) with the bank details.
 - **Payments received** and **Expenses** (fuel, crew, marina, provisions, maintenance…).
 - **Reports** — invoiced, T-GST to remit, received, expenses, net, outstanding; twelve-month
-  bars; expenses by category; charters by excursion; CSV export of everything for the
-  accountant.
+  bars; expenses by category; charters by excursion. **Extract (CSV)** writes the chosen
+  period as one file — the summary, then every invoice, payment and expense behind it, and
+  the charters by excursion — and **Print / PDF** prints the page. Each list has its own CSV
+  too.
 
 No journal, no chart of accounts, no bills or vendors — those were the JH Yachts demo and
 nobody at a marina office needs them. Every record is **a row in the `records` table**
@@ -493,18 +513,36 @@ booking's notes) and the card carries the booking reference from then on. Cards 
 estimate the guest saw and a **To quote** tag when they asked for something without a
 price. Open a card for the reply links (WhatsApp / e-mail / call) and everything they wrote.
 
-### What the guest is told about the price
+### The enquiry form — one quiet page
 
-The enquiry form's step three splits what can be added into **Add-ons, priced** (the
-add-ons list, each with its price) and **We can also arrange — quoted on request** (the
-`arrange` list in content: cake and decorations, a candlelit dinner, fishing gear, a longer
-day…). Step four's total is labelled **Estimate**, with the plain statement that it is an
-estimate and not a quote: it covers the package at the priced party size plus the priced
-add-ons; a different party size, anything on request and anything else asked for is quoted
-separately and may cost more; the final figure is confirmed in writing before a date is
-held. Each excursion page lists **Not included** for that package (from the client's
-inclusion lists: lunch is not part of the Island & Snorkelling day or the half days; the
-Shark Point day includes it) with a line that anything beyond the package may cost more.
+Rebuilt 2026-09-20 after the client asked for it to be "cleaner and more understandable"
+(three designers, three judges; the minimal one-page proposal won unanimously). No wizard:
+four questions in reading order, one optional row, one estimate, one button.
+
+1. **Which excursion?** — hairline rows, radio dot, the title, one meta line (kind ·
+   duration · atoll · departs), and the price *where the choice is made*, with "for a party
+   of seven" under it (or "On request").
+2. **When?** — the glass calendar; the Alternative-date tile appears once a preferred day is
+   picked. A taken day shows the availability card as before.
+3. **How many aboard?** — chips 2 4 6 **7 package price** 8 10 12; any other number shows a
+   blue line naming it: "For 10 guests we send a firm price with our reply, and it may cost
+   more." Departure point and "Where are you staying? *optional*" sit beside it.
+4. **Where do we write back?** — Name, Email (required), Telephone or WhatsApp *optional*.
+5. **Anything else?** — a `<details>` closed by default (it opens itself when `?extra=`
+   pre-ticks something): **Add-ons, priced** as tiles with `+ USD 320` and the one-line
+   description, **We can also arrange — quoted on request** as dashed chips, one note that
+   add-ons join the estimate and on-request items are quoted separately, and the notes field.
+6. **Your enquiry** — an itemised estimate that updates as they choose: the day(s), the
+   excursion at "for a party of 7" → its price (or **To be quoted** at any other size), one
+   row per add-on, one per on-request item → "On request"; then **ESTIMATE** in display size,
+   the estimate-not-a-quote note (a different one when the party size differs), a red line
+   if the preferred day is taken, the reassurance "Sending this holds nothing and charges
+   nothing…", and **Send the enquiry**.
+
+Validation on Send: no day → the calendar shakes and scrolls into view; then native
+validation on Name/Email; a taken day scrolls to the availability card. The data contract is
+unchanged (excursion, date, alt, guests, pickup, extra[], arrange[], name, email, phone,
+staying, notes, honeypot) plus `extrasTotal`; `deliver()` and the board are untouched.
 
 ## The public calendar
 
@@ -551,7 +589,8 @@ did not cover. All thirteen clips on the site are in use.
 
 ```sh
 bash tools/images.sh     # every photograph, from the shoot
-bash tools/film.sh       # every clip on the site, all tiers plus posters (add a name to redo one)
+bash tools/film.sh       # every clip on the site, all tiers plus posters (add a name to redo one; --raw for the drone clips)
+bash tools/enhance.sh    # the drone clips' 2160/1440 tiers, enlarged with Real-ESRGAN (about an hour)
 bash tools/stock.sh      # the two licensed stills
 bash tools/mirror.sh     # copy the built site into the client's OneDrive folder
 ```
@@ -623,6 +662,7 @@ tools/tiers.js            WebP tiers for admin uploads (sharp; the Action runs i
 tools/build.js            regenerates every page in every language
 tools/images.sh           rebuilds every photograph from the shoot
 tools/film.sh             cuts every clip (drone, GoPro, stock) at source resolution, seamless loops, posters
+tools/enhance.sh          enlarges the drone clips 2× with Real-ESRGAN for the 2160/1440 tiers
 ```
 
 Checked at 390 and 1440px across all 48 pages — 72 renders: no horizontal overflow, no

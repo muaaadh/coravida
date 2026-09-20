@@ -57,23 +57,16 @@
  "hero": {
   "clips": [
    {
-    "src": "boat-harbour",
-    "poster": "poster-boat-harbour",
-    "max": 1080,
-    "alt": "Tiffany Blanc 14 leaving Hulhumalé Marina, seen from the air",
-    "cap": "08:30 · Leaving Hulhumalé"
-   },
-   {
     "src": "vessel",
     "poster": "poster-vessel",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 underway on deep blue water off Malé",
     "cap": "Underway, out across the atoll"
    },
    {
     "src": "boat-reef",
     "poster": "poster-boat-reef",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 turning along a reef edge, seen from the air",
     "cap": "Along the reef edge"
    },
@@ -101,7 +94,7 @@
    {
     "src": "boat-orbit",
     "poster": "poster-boat-orbit",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 at anchor, circled from the air",
     "cap": "At anchor, the afternoon"
    },

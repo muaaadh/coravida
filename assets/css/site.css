@@ -103,8 +103,8 @@ main>section:last-child{padding-bottom:calc(var(--sec) * .55 + var(--seah))}
 .d1,.d2,.d3{text-wrap:balance}
 .d1{font-size:clamp(2.7rem,5.8vw,5.6rem);line-height:1.02;letter-spacing:-.038em}
 .d2,.menu__nav a,.vx__t,.stats .v{font-size:clamp(2.15rem,4vw,3.7rem);line-height:1.08;letter-spacing:-.032em}
-.d3,.sum__t .v{font-size:clamp(1.55rem,2.4vw,2.2rem);line-height:1.18;letter-spacing:-.022em}
-.eyebrow,.link,.btn,.burger,.menu__x,.cap .k,.kv,.vx__m,.stats .k,.dl dt,.lb__c,.field label,.chips label,.steps li,.sum__r .k,.mus__line,.ftr h4{font-family:var(--ui);font-size:.6875rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;line-height:1.4;color:var(--body)}
+.d3,.est__t .v{font-size:clamp(1.55rem,2.4vw,2.2rem);line-height:1.18;letter-spacing:-.022em}
+.eyebrow,.link,.btn,.burger,.menu__x,.cap .k,.kv,.vx__m,.stats .k,.dl dt,.lb__c,.field label,.est__t .k,.mus__line,.ftr h4{font-family:var(--ui);font-size:.6875rem;font-weight:500;letter-spacing:.26em;text-transform:uppercase;line-height:1.4;color:var(--body)}
 .eyebrow{margin:0}
 .lede{font-size:clamp(1.1rem,1.15vw,1.25rem);line-height:1.85;color:var(--body)}
 .small{font-size:.9375rem;line-height:1.8;color:var(--body)}
@@ -118,7 +118,7 @@ main>section:last-child{padding-bottom:calc(var(--sec) * .55 + var(--seah))}
 .section--tail{padding-bottom:var(--sec)}
 /* the footer carries the sea on pages that do not close on a navy section */
 figure{margin:0}
-.steps{margin-bottom:var(--s5)}
+
 .lede--light{color:rgba(255,255,255,.86)}
 /* a line of prose over film still has to be a line of prose */
 .hero__in .lede{max-width:52ch;margin-inline:auto}
@@ -225,8 +225,8 @@ figure{margin:0}
 /* uppercase and wide tracking are Latin conventions; neither suits Han */
 :root[lang^="zh"] .eyebrow,:root[lang^="zh"] .link,:root[lang^="zh"] .btn,:root[lang^="zh"] .burger,
 :root[lang^="zh"] .menu__x,:root[lang^="zh"] .kv,:root[lang^="zh"] .vx__m,:root[lang^="zh"] .stats .k,
-:root[lang^="zh"] .dl dt,:root[lang^="zh"] .field label,:root[lang^="zh"] .chips label,
-:root[lang^="zh"] .steps li,:root[lang^="zh"] .sum__r .k,:root[lang^="zh"] .mus__line,
+:root[lang^="zh"] .dl dt,:root[lang^="zh"] .field label,:root[lang^="zh"] .est__t .k,
+:root[lang^="zh"] .mus__line,
 :root[lang^="zh"] .ftr h4,:root[lang^="zh"] .lb__c,:root[lang^="zh"] .cap .k{
   text-transform:none;letter-spacing:.12em;font-size:.75rem}
 :root[lang^="zh"] .lang__b{letter-spacing:.06em}
@@ -599,25 +599,78 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
 .field select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%2351688A' stroke-width='1.3'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right .2rem center;background-size:11px}
 .fg{display:grid;gap:clamp(1.25rem,2.5vw,2rem);grid-template-columns:1fr}
 @media(min-width:700px){.fg2{grid-template-columns:1fr 1fr}}
-.chips{display:flex;flex-wrap:wrap;gap:.5rem}
+/* chips: a pill per option, sentence case, the price or the kind as a quiet tag */
+.chips{display:flex;flex-wrap:wrap;gap:.6rem}
+.chips input{position:absolute;opacity:0;pointer-events:none}
+.chips label{display:inline-flex;align-items:baseline;gap:.6rem;max-width:100%;min-height:44px;border:1px solid var(--line);border-radius:999px;padding:.6rem 1.2rem;cursor:pointer;font-size:.9375rem;line-height:1.35;color:var(--ink);transition:background .35s,color .35s,border-color .35s,box-shadow .35s}
+.chips__tag{font-size:.75rem;color:var(--body);white-space:nowrap;transition:color .35s}
+.chips label:hover{border-color:var(--navy)}
+.chips input:checked+label{background:linear-gradient(180deg,var(--marine),var(--ocean));border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(12,111,219,.22)}
+.chips input:checked+label .chips__tag,.chips input:checked+label .chips__d{color:rgba(255,255,255,.82)}
+.chips input:focus-visible+label{outline:2px solid var(--marine);outline-offset:3px}
 .chips--ask label{border-style:dashed}
 .chips--ask input:checked+label{background:var(--navy);box-shadow:none}
-.chips input{position:absolute;opacity:0;pointer-events:none}
-.chips label{display:inline-flex;align-items:center;min-height:44px;border:1px solid var(--line);border-radius:999px;padding:.6rem 1.35rem;cursor:pointer;transition:background .35s,color .35s,border-color .35s}
-.chips label:hover{border-color:var(--navy);color:var(--navy)}
-.chips input:checked+label{background:linear-gradient(180deg,var(--marine),var(--ocean));border-color:transparent;color:#fff;box-shadow:0 4px 14px rgba(12,111,219,.22)}
-.chips input:focus-visible+label{outline:2px solid var(--marine);outline-offset:3px}
-.steps{display:flex;gap:1.5rem;flex-wrap:wrap}
-.steps li{display:flex;gap:.6rem;transition:color .4s}
-.steps li.on{color:var(--navy)}
-.steps li.done{color:var(--marine)}
-.step{display:none}
-.step.on{display:block;animation:up .6s var(--eo)}
+/* the party: a number a thumb can hit */
+.chips--n label{min-width:56px;justify-content:center;padding-inline:1rem}
+/* a priced add-on says what it is: two lines, so the pills become tiles that line up */
+.chips--x{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:.6rem}
+.chips--x label{display:grid;gap:.2rem;align-content:start;border-radius:var(--r-s);padding:.85rem 1.1rem}
+.chips__t{display:flex;justify-content:space-between;align-items:baseline;gap:.75rem}
+.chips__d{font-size:.8125rem;line-height:1.5;color:var(--body);transition:color .35s}
 @keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.sum{border:1px solid var(--line);border-radius:var(--r);padding:clamp(1.5rem,3vw,2.25rem);display:grid;gap:1rem}
-.sum__r{display:flex;justify-content:space-between;gap:1.5rem;font-size:.9375rem}
-.sum__t{border-top:1px solid var(--line);padding-top:1rem;display:flex;justify-content:space-between;align-items:baseline}
 .note{max-width:62ch;font-size:.8125rem;color:var(--body);line-height:1.75}
+/* --- The enquiry: four questions, one optional row, one estimate, one button */
+.enq{display:grid;gap:var(--s5)}
+.part>*+*{margin-top:var(--s3)}
+.part>.note{margin-top:var(--s2)}
+.part>.avail{margin-top:0}
+.part__h{display:grid;gap:var(--s1)}
+.field label .opt{text-transform:none;letter-spacing:.02em;font-weight:400;color:var(--body);opacity:.8;margin-left:.35rem}
+/* the excursions: hairline rows, the price where the choice is made */
+.pick{border-top:1px solid var(--line)}
+.pick input{position:absolute;opacity:0;pointer-events:none}
+.pick__r{display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto;column-gap:1rem;row-gap:.3rem;padding:1.15rem 0;border-bottom:1px solid var(--line);cursor:pointer}
+.pick__dot{grid-row:1/3;align-self:start;margin-top:.35rem;width:16px;height:16px;border-radius:50%;border:1px solid rgba(3,34,77,.35);position:relative;transition:border-color .3s}
+.pick__dot::after{content:"";position:absolute;inset:3px;border-radius:50%;background:var(--marine);transform:scale(0);transition:transform .35s var(--eo)}
+.pick__t{grid-column:2;font-family:var(--dsp);font-size:clamp(1.15rem,1.6vw,1.35rem);line-height:1.25;letter-spacing:-.015em;color:var(--ink);transition:color .3s}
+.pick__m{grid-column:2;grid-row:2;font-size:.8125rem;line-height:1.6;color:var(--body)}
+.pick__p{grid-column:3;grid-row:1/3;display:grid;justify-items:end;gap:.15rem;text-align:right;color:var(--ink)}
+.pick__p .num{font-size:clamp(1.15rem,1.6vw,1.35rem);line-height:1.25;letter-spacing:-.015em}
+.pick__n{font-size:.75rem;color:var(--body);white-space:nowrap}
+.pick__r:hover .pick__t{color:var(--marine)}
+.pick__r:hover .pick__dot,.pick input:checked+.pick__r .pick__dot{border-color:var(--marine)}
+.pick input:checked+.pick__r .pick__dot::after{transform:scale(1)}
+.pick input:focus-visible+.pick__r{outline:2px solid var(--marine);outline-offset:3px;border-radius:4px}
+@media(max-width:560px){.pick__r{grid-template-columns:auto 1fr}.pick__p{grid-column:2;grid-row:3;display:flex;align-items:baseline;gap:.6rem;text-align:left;margin-top:.15rem}}
+/* everything optional, behind one row */
+.more{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.more__s{list-style:none;display:flex;align-items:flex-start;justify-content:space-between;gap:2rem;padding:1.6rem 0;cursor:pointer;color:var(--ink);transition:color .3s}
+.more__s::-webkit-details-marker{display:none}
+.more__s:hover{color:var(--marine)}
+.more__t{display:grid;gap:.3rem}
+.more__h{font-family:var(--dsp);font-size:clamp(1.2rem,1.6vw,1.45rem);line-height:1.25;letter-spacing:-.015em}
+.more__s i{flex:0 0 auto;width:12px;height:12px;position:relative;margin-top:.55rem}
+.more__s i::before,.more__s i::after{content:"";position:absolute;background:var(--marine);transition:transform .45s var(--eo)}
+.more__s i::before{inset:5.5px 0 auto 0;height:1px}
+.more__s i::after{inset:0 5.5px auto auto;width:1px;height:12px}
+.more[open] .more__s i::after{transform:scaleY(0)}
+.more__in{padding:var(--s1) 0 var(--s4);animation:up .5s var(--eo)}
+.more__in>*+*{margin-top:var(--s3)}
+/* the estimate: the lines the figure is made of, the figure, the one button */
+.est{display:grid;gap:var(--s2)}
+.est__l{display:grid;gap:.55rem}
+.est__l>[data-s-lines]{display:contents}
+.est__r{display:flex;justify-content:space-between;gap:1.5rem;font-size:.9375rem;line-height:1.5}
+.est__r .k{color:var(--body)}
+.est__r .v{color:var(--ink);text-align:right;white-space:nowrap}
+.est__t{display:flex;justify-content:space-between;align-items:baseline;gap:1.5rem;padding-top:var(--s2);border-top:1px solid var(--line)}
+.est__t .v{color:var(--ink);text-align:right}
+.est__warn{color:#B4232C;max-width:none}
+.est__p{color:var(--ink)}
+.est .acts{margin-top:var(--s1)}
+.enq .btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
+/* the back-up tile appears once there is a day to back up */
+.gcal:not(.has-date) .gcal__pick[data-pick="alt"]{display:none}
 /* --- The glass calendar --------------------------------------------------
    A month on frosted glass over a blurred lagoon: the glass has something to
    refract, the days are pills of lighter glass, and the chosen day is the one
@@ -633,7 +686,7 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
   border:1px solid rgba(255,255,255,.35);border-radius:inherit;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.5),inset 0 -1px 0 rgba(255,255,255,.12),0 30px 70px -32px rgba(3,34,77,.6)}
 .gcal__head{display:flex;align-items:center;justify-content:space-between;gap:.75rem;margin-bottom:.9rem}
-.gcal__title{font-family:var(--display);font-size:clamp(1.25rem,2.2vw,1.55rem);letter-spacing:-.02em;color:#fff;text-shadow:0 1px 14px rgba(3,34,77,.6);text-align:center}
+.gcal__title{font-family:var(--dsp);font-size:clamp(1.25rem,2.2vw,1.55rem);letter-spacing:-.02em;color:#fff;text-shadow:0 1px 14px rgba(3,34,77,.6);text-align:center}
 .gcal__nav{width:42px;height:42px;border-radius:999px;display:grid;place-items:center;color:var(--ink);background:rgba(255,255,255,.86);border:1px solid rgba(255,255,255,.85);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 6px 18px -10px rgba(3,34,77,.35);transition:background .3s var(--e),transform .4s var(--eo),opacity .3s}
 .gcal__nav svg{width:12px;height:12px}
@@ -682,7 +735,7 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
 .gcal__pick{display:grid;grid-template-columns:1fr auto;align-items:center;gap:.25rem .75rem;text-align:left;padding:.85rem 1rem;border-radius:var(--r-ui);
   background:var(--mist);border:1px solid var(--line);color:var(--ink);cursor:default;transition:background .3s,border-color .3s,transform .35s var(--eo)}
 .gcal__pick .k{grid-column:1;font-family:var(--ui);font-size:.6875rem;letter-spacing:.2em;text-transform:uppercase;color:var(--body)}
-.gcal__pick .v{grid-column:1;font-size:1.05rem;color:var(--mute);transition:color .3s}
+.gcal__pick .v{grid-column:1;font-size:1.05rem;color:var(--body);transition:color .3s}
 .gcal__pick .x{grid-column:2;grid-row:1/3;width:30px;height:30px;border-radius:999px;display:none;place-items:center;color:var(--body);background:rgba(3,34,77,.06)}
 .gcal__pick .x svg{width:10px;height:10px}
 .gcal__pick.on{cursor:pointer;background:#fff;border-color:var(--marine)}
@@ -701,10 +754,10 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
 .link--sm{font-size:.625rem;margin-left:.6rem;white-space:nowrap}
 .note--avail.is-bad{color:#B4232C}
 .avail__card{margin-top:1rem;padding:1.4rem 1.5rem;border-radius:var(--r);background:var(--mist);display:grid;gap:.6rem}
-.avail__card .avail__h{font-family:var(--display);font-size:1.35rem;letter-spacing:-.02em;color:var(--ink)}
+.avail__card .avail__h{font-family:var(--dsp);font-size:1.35rem;letter-spacing:-.02em;color:var(--ink)}
 .avail__card p{color:var(--body);max-width:44rem}
 .avail__card .acts{margin-top:.5rem}
-.step .btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none;transform:none}
+
 .ok{display:none;text-align:center}
 .ok .acts{justify-content:center}
 .ok .measure{margin-inline:auto}
@@ -846,7 +899,7 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
      side columns stay equal so the logo is truly centred */
   .hdr__in{gap:.5rem;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)}
   .hdr .btn,.menu__bar .btn{padding-inline:1.1rem}
-  .steps{gap:.9rem 1.1rem}
+
 }
 
 /* --- The deep -----------------------------------------------------------
@@ -856,28 +909,28 @@ body.lock .mus{opacity:0;pointer-events:none;transition:opacity .3s}
   -webkit-mask-image:linear-gradient(transparent 0,transparent var(--seah),#000 calc(var(--seah) + 220px));
   mask-image:linear-gradient(transparent 0,transparent var(--seah),#000 calc(var(--seah) + 220px))}
 .deep__bg img,.deep__bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:.34;filter:saturate(.8)}
+  opacity:.55;filter:saturate(.85)}
 .deep__bg video{opacity:0;transition:opacity 1.4s var(--e)}
-.deep__bg video.on{opacity:.34}
+.deep__bg video.on{opacity:.55}
 /* navy at the edges so the sea divider still meets a solid colour */
 .deep__bg::after{content:"";position:absolute;inset:0;
-  background:radial-gradient(120% 90% at 50% 45%,rgba(3,34,77,.35),var(--navy) 78%)}
+  background:radial-gradient(120% 90% at 50% 45%,rgba(3,34,77,.22),rgba(3,34,77,.72) 82%),linear-gradient(180deg,rgba(3,34,77,.1),rgba(3,34,77,.55))}
 @media(prefers-reduced-motion:reduce){.deep__bg video{display:none}}
 
 /* --- Footer ------------------------------------------------------------- */
 .ftr{position:relative;isolation:isolate;background:var(--navy);color:rgba(255,255,255,.6);
-  padding-block:clamp(5rem,9vw,8rem) calc(clamp(2rem,4vw,2.5rem) + 4.5rem)}   /* the floating player sits over the last line otherwise */
+  padding-block:clamp(3.2rem,6vw,4.6rem) calc(clamp(1.4rem,3vw,1.8rem) + 4.5rem)}   /* the floating player sits over the last line otherwise */
 .ftr>.wrap{position:relative;z-index:1}
-.ftr h4{color:rgba(255,255,255,.58);margin-bottom:1.4rem}
+.ftr h4{color:rgba(255,255,255,.58);margin-bottom:1rem}
 .ftr__top{display:grid;gap:clamp(2.5rem,5vw,4rem);grid-template-columns:1fr}
 @media(min-width:480px) and (max-width:859px){.ftr__top{grid-template-columns:1fr 1fr}.ftr__top>div:first-child{grid-column:1/-1}}
 @media(min-width:860px){.ftr__top{grid-template-columns:1.4fr .8fr 1fr}}
-.ftr img{height:46px;width:auto}
+.ftr img{height:clamp(72px,7vw,96px);width:auto}
 .ftr a{transition:color .3s}
 .ftr a:hover{color:#fff}
 .ftr li+li{margin-top:.7rem}
-.ftr__b{margin-top:clamp(3rem,6vw,4.5rem);padding-top:1.6rem;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-wrap:wrap;gap:.75rem 2rem;justify-content:space-between;font-size:.8125rem;color:rgba(255,255,255,.62)}
-@media(max-width:560px){.ftr__b{flex-direction:column;gap:.5rem}}
+.ftr__b{margin-top:clamp(2rem,4vw,2.8rem);padding-top:1.2rem;border-top:1px solid rgba(255,255,255,.12);display:flex;flex-wrap:wrap;gap:.75rem 2rem;justify-content:space-between;font-size:.8125rem;color:rgba(255,255,255,.62)}
+@media(max-width:560px){.ftr__b{flex-direction:column;gap:.5rem}.ftr{padding-bottom:calc(clamp(1.4rem,3vw,1.8rem) + 7rem)}}   /* the player and its invitation sit over the last line otherwise */
 
 /* ==========================================================================
    MOTION

@@ -599,7 +599,7 @@ window.Books = (function (A) {
       ])]));
     var paper = E("div", { class: "paper" });
     paper.appendChild(E("div", { class: "paper__top" }, [
-      E("div", { class: "paper__brand" }, [E("img", { src: "../assets/img/logo-mark.webp", alt: "" }), E("div", {}, [E("strong", { text: B.name || "Coravida" }), E("span", { text: (B.legal || "") + (B.address ? " · " + B.address.join(", ") : "") }), E("br"), E("span", { text: [B.phone, B.email].filter(Boolean).join(" · ") })])]),
+      E("div", { class: "paper__brand" }, [E("img", { src: "../assets/img/logo-full.webp", alt: B.name || "Coravida" }), E("div", {}, [E("span", { text: (B.legal || "") + (B.address ? " · " + B.address.join(", ") : "") }), E("br"), E("span", { text: [B.phone, B.email].filter(Boolean).join(" · ") })])]),
       E("div", { class: "paper__meta" }, [E("strong", { text: "Invoice " + inv.no }), "Date " + fmtDate(inv.date), E("br"), "Due " + fmtDate(inv.due)])
     ]));
     paper.appendChild(E("div", { class: "paper__cols" }, [
@@ -665,6 +665,7 @@ window.Books = (function (A) {
     var sub = inv.reduce(function (s, i) { return s + invTotals(i).sub; }, 0), tax = inv.reduce(function (s, i) { return s + invTotals(i).tax; }, 0);
     var rec = pay.reduce(function (s, p) { return s + (Number(p.amount) || 0); }, 0), spent = exp.reduce(function (s, e) { return s + (Number(e.amount) || 0); }, 0);
     var out = L("invoices").reduce(function (s, i) { return s + Math.max(0, invTotals(i).balance); }, 0);
+    var byEx = {}; L("bookings").filter(function (b) { return inR(b.date) && b.status !== "cancelled"; }).forEach(function (b) { var key = b.excursionTitle || "Custom"; byEx[key] = byEx[key] || { n: 0, v: 0 }; byEx[key].n++; byEx[key].v += bookingTotal(b); });
     head(host, "Reports", "The figures that matter, for the period you choose. Everything is before T-GST unless it says otherwise.", seg([["month", "This month"], ["last", "Last month"], ["year", "This year"], ["all", "All time"]], per, function (v) { A.lsSet("cv:books:per", v); A.render(); }));
     var k = E("div", { class: "kpis" });
     k.appendChild(A.kpi("Invoiced", money(sub, 0), inv.length + " invoice" + (inv.length === 1 ? "" : "s")));
@@ -674,6 +675,26 @@ window.Books = (function (A) {
     k.appendChild(A.kpi("Net", money(sub - spent, 0), "invoiced less expenses"));
     k.appendChild(A.kpi("Outstanding now", money(out, 0), "across all open invoices"));
     host.appendChild(k);
+    /* the extract: the whole period as one file the accountant opens in a
+       spreadsheet — the figures above, then every invoice, payment and expense
+       behind them — or the page itself as a PDF */
+    var label = { month: "this month", last: "last month", year: "this year", all: "all time" }[per] || per, stampName = "coravida-report-" + (per === "month" ? m : per === "last" ? lmk : per === "year" ? y : "all") + ".csv";
+    host.appendChild(E("div", { class: "acts noprint", style: "margin:-.4rem 0 1.2rem" }, [
+      E("button", { class: "btn btn--ghost btn--sm", type: "button", text: "Extract (CSV)", onclick: function () {
+        var rows = [["Coravida — report, " + label, "", "", "", "", ""], ["Generated", new Date().toISOString().slice(0, 16).replace("T", " "), "", "", "", ""], [],
+          ["Summary", "", "", "", "", ""], ["Invoiced (before T-GST)", sub], ["T-GST collected", tax], ["Received", rec], ["Expenses", spent], ["Net", sub - spent], ["Outstanding now (all open invoices)", out], [],
+          ["Invoices", "", "", "", "", ""], ["No", "Date", "Due", "Customer", "Subtotal", "T-GST", "Total", "Paid", "Balance", "Status"]]
+          .concat(inv.map(function (i) { var x = invTotals(i); return [i.no, i.date, i.due, i.customer.name || "", x.sub, x.tax, x.total, x.paid, x.balance, invStatus(i)[1]]; }))
+          .concat([[], ["Payments", "", "", "", "", ""], ["Date", "Invoice", "Customer", "Amount", "Method", "Reference"]])
+          .concat(pay.map(function (p) { var i = byId(L("invoices"), p.invoiceId) || {}; return [p.date, i.no || "", (i.customer || {}).name || "", p.amount, (METHODS.filter(function (x) { return x[0] === p.method; })[0] || [p.method, p.method])[1], p.ref || ""]; }))
+          .concat([[], ["Expenses", "", "", "", "", ""], ["Date", "Category", "Description", "Paid by", "Amount"]])
+          .concat(exp.map(function (e) { return [e.date, (CATS.filter(function (x) { return x[0] === e.category; })[0] || [e.category, e.category])[1], e.desc || "", (METHODS.filter(function (x) { return x[0] === e.paidBy; })[0] || [e.paidBy, e.paidBy || ""])[1], e.amount]; }))
+          .concat([[], ["Charters by excursion", "", "", "", "", ""], ["Excursion", "Charters", "Value"]])
+          .concat(Object.keys(byEx).map(function (k2) { return [k2, byEx[k2].n, byEx[k2].v]; }));
+        csv(stampName, rows); logIt("books", "extract", "Report extracted — " + label, "#reports");
+      } }),
+      E("button", { class: "btn btn--ghost btn--sm", type: "button", html: svg("print") + " Print / PDF", onclick: function () { window.print(); } })
+    ]));
     // twelve months, revenue vs expenses
     var months = [], d = parse(t.slice(0, 7) + "-01"); d.setMonth(d.getMonth() - 11);
     for (var i = 0; i < 12; i++) { months.push(iso(d).slice(0, 7)); d.setMonth(d.getMonth() + 1); }
@@ -686,7 +707,6 @@ window.Books = (function (A) {
     var byCat = {}; exp.forEach(function (e) { byCat[e.category] = (byCat[e.category] || 0) + (Number(e.amount) || 0); });
     var catRows = Object.keys(byCat).sort(function (a, b) { return byCat[b] - byCat[a]; }).map(function (c) { return { item: c, cells: [(CATS.filter(function (x) { return x[0] === c; })[0] || [c])[1], money(byCat[c]), spent ? Math.round(byCat[c] / spent * 100) + "%" : "—"] }; });
     g.appendChild(E("div", { class: "card" }, [E("h3", { text: "Expenses by category" }), catRows.length ? table([["Category"], ["Amount", "r"], ["Share", "r"]], catRows) : E("p", { class: "small mute", text: "No expenses in this period." })]));
-    var byEx = {}; L("bookings").filter(function (b) { return inR(b.date) && b.status !== "cancelled"; }).forEach(function (b) { var key = b.excursionTitle || "Custom"; byEx[key] = byEx[key] || { n: 0, v: 0 }; byEx[key].n++; byEx[key].v += bookingTotal(b); });
     var exRows = Object.keys(byEx).sort(function (a, b) { return byEx[b].v - byEx[a].v; }).map(function (k) { return { item: k, cells: [k, String(byEx[k].n), money(byEx[k].v, 0)] }; });
     g.appendChild(E("div", { class: "card" }, [E("h3", { text: "Charters by excursion" }), exRows.length ? table([["Excursion"], ["Charters", "r"], ["Value", "r"]], exRows) : E("p", { class: "small mute", text: "No charters in this period." })]));
     host.appendChild(g);

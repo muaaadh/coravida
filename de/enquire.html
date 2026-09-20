@@ -30,129 +30,150 @@
   <section class="hero hero--mid hero--low">
     <div class="hero__bg" data-par="0.06">
       <img src="../assets/img/poster-boat-harbour-1200.webp" srcset="../assets/img/poster-boat-harbour-900.webp 900w, ../assets/img/poster-boat-harbour-1200.webp 1200w, ../assets/img/poster-boat-harbour-1600.webp 1600w" sizes="100vw" width="1200" height="676" alt="Tiffany Blanc 14 beim Auslaufen aus der Hulhumalé Marina, aus der Luft" fetchpriority="high" decoding="async">
-      <video data-src="boat-harbour" data-max="1080" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
+      <video data-src="boat-harbour" data-max="2160" data-raw data-eager muted loop playsinline preload="none" aria-hidden="true" tabindex="-1"></video>
     </div>
     <div class="hero__in stack" data-stagger>
       <p class="eyebrow" data-a="fade">Anfragen</p>
       <h1 class="d1 lines">Ein Schiff reservieren</h1>
-      <p class="lede lede--light" data-a="up">Vier kurze Schritte. Es wird nichts abgebucht und kein Termin reserviert, bis wir geantwortet haben.</p>
+      <p class="lede lede--light" data-a="up">Ein Ausflug, ein Tag, und wie viele kommen. Nichts wird berechnet und kein Termin reserviert, bevor wir geantwortet haben.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="wrap narrow form">
-      <ul class="steps" data-a="up">
-        <li class="on">Ausflug</li><li>Termine</li><li>Angaben</li><li>Prüfen</li>
-      </ul>
+      <form id="enquire" class="enq" novalidate>
 
-      <form id="enquire" novalidate>
-        <div class="step on">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Schritt eins</p><h2 class="d3">Welcher Ausflug?</h2></div>
-            <div class="chips">
-              <input type="radio" id="v0" name="excursion" value="island-and-snorkelling" checked>
-              <label for="v0">Insel & Schnorcheln &middot; Ganzer Tag</label>
-              <input type="radio" id="v1" name="excursion" value="reef-and-sandbank">
-              <label for="v1">Riff & Sandbank &middot; Halber Tag</label>
-              <input type="radio" id="v2" name="excursion" value="shark-point-and-gulhi">
-              <label for="v2">Shark Point & Gulhi &middot; Ganzer Tag</label>
-              <input type="radio" id="v3" name="excursion" value="sunset-adventure">
-              <label for="v3">Sonnenuntergangs-Abenteuer &middot; Halber Tag</label>
-            </div>
-            <p class="note">Jeder Ausflug ist ein Privatcharter des ganzen Schiffes. Passt keiner davon, wählen Sie den nächstliegenden und schreiben Sie es uns in Schritt drei.</p>
-            <div class="acts"><button class="btn" type="button" data-next>Weiter</button></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">Ausflug</p><h2 class="d3" id="h-exc">Welcher Ausflug?</h2></div>
+          <div class="pick" role="radiogroup" aria-labelledby="h-exc">
+            <input type="radio" id="v0" name="excursion" value="island-and-snorkelling" checked>
+            <label for="v0" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">Insel & Schnorcheln</span>
+              <span class="pick__m">Ganzer Tag &middot; 9,5 Stunden &middot; Nord-Malé-Atoll &middot; Abfahrt&nbsp;08:30 · Hulhumalé</span>
+              <span class="pick__p"><span class="num">USD 1.350</span><span class="pick__n">für eine Gruppe von sieben</span></span>
+            </label>
+            <input type="radio" id="v1" name="excursion" value="reef-and-sandbank">
+            <label for="v1" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">Riff & Sandbank</span>
+              <span class="pick__m">Halber Tag &middot; 4 Stunden &middot; Nord-Malé-Atoll &middot; Abfahrt&nbsp;09:00 · Hulhumalé</span>
+              <span class="pick__p"><span class="num">USD 950</span><span class="pick__n">für eine Gruppe von sieben</span></span>
+            </label>
+            <input type="radio" id="v2" name="excursion" value="shark-point-and-gulhi">
+            <label for="v2" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">Shark Point & Gulhi</span>
+              <span class="pick__m">Ganzer Tag &middot; 9 Stunden &middot; Süd-Malé-Atoll &middot; Abfahrt&nbsp;09:00 · Hulhumalé</span>
+              <span class="pick__p"><span class="num">USD 1.350</span><span class="pick__n">für eine Gruppe von sieben</span></span>
+            </label>
+            <input type="radio" id="v3" name="excursion" value="sunset-adventure">
+            <label for="v3" class="pick__r">
+              <i class="pick__dot" aria-hidden="true"></i>
+              <span class="pick__t">Sonnenuntergangs-Abenteuer</span>
+              <span class="pick__m">Halber Tag &middot; 4,5 Stunden &middot; Süd-Malé-Atoll &middot; Abfahrt&nbsp;13:30 · Hulhumalé</span>
+              <span class="pick__p"><span class="num">USD 950</span><span class="pick__n">für eine Gruppe von sieben</span></span>
+            </label>
+          </div>
+          <p class="note">Jeder Ausflug ist ein privater Charter des ganzen Schiffs. Passt keiner genau, wählen Sie den nächsten und sagen Sie es uns unten.</p>
+        </div>
+
+        <div class="part">
+          <div class="part__h"><p class="eyebrow">Tag</p><h2 class="d3" id="h-day">Wann?</h2></div>
+          <div class="gcal" data-gcal="pick" data-l-pref="Wunschtermin" data-l-alt="Ausweichtermin">
+            <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
+            <noscript><div class="fg fg2"><div class="field"><label for="d1n">Wunschtermin</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">Ausweichtermin</label><input type="date" id="d2n" name="alt"></div></div></noscript>
           </div>
         </div>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Schritt zwei</p><h2 class="d3">Wann, und wie viele?</h2></div>
-            <div class="gcal" data-gcal="pick" data-l-pref="Wunschtermin" data-l-alt="Ausweichtermin">
-              <input type="hidden" id="d1" name="date"><input type="hidden" id="d2" name="alt">
-              <noscript><div class="fg fg2"><div class="field"><label for="d1n">Wunschtermin</label><input type="date" id="d1n" name="date"></div><div class="field"><label for="d2n">Ausweichtermin</label><input type="date" id="d2n" name="alt"></div></div></noscript>
-            </div>
-            <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <div class="fg fg2">
-              <div class="field"><label for="g">Gäste</label><select id="g" name="guests" required>
-                <option value="2">2 Gäste</option>
-                <option value="4">4 Gäste</option>
-                <option value="6">6 Gäste</option>
-                <option value="7" selected>7 Gäste · Paketpreis</option>
-                <option value="8">8 Gäste</option>
-                <option value="10">10 Gäste</option>
-                <option value="12">12 Gäste</option>
-              </select></div>
-              <div class="field"><label for="p">Abfahrtsort</label><select id="p" name="pickup">
-                <option>Hulhumalé Marina</option><option>Steg des Velana International Airport</option>
-                <option>Malé, Westhafen</option><option>Ein Resort im Nord- oder Süd-Malé-Atoll</option>
-              </select></div>
-            </div>
-            <p class="note note--pax" data-pax hidden>Der Paketpreis gilt für eine Gruppe von sieben. Eine andere Gruppengröße – und alles Zusätzliche, das Sie an Bord wünschen – wird auf Anfrage berechnet und kann mehr kosten. Sagen Sie uns im nächsten Schritt, was Sie sich vorstellen.</p>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Zurück</button><button class="btn" type="button" data-next>Weiter</button></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">Gäste</p><h2 class="d3" id="h-gst">Wie viele an Bord?</h2></div>
+          <div class="chips chips--n" role="radiogroup" aria-labelledby="h-gst">
+              <input type="radio" id="g0" name="guests" value="2" required>
+              <label for="g0">2</label>
+              <input type="radio" id="g1" name="guests" value="4" required>
+              <label for="g1">4</label>
+              <input type="radio" id="g2" name="guests" value="6" required>
+              <label for="g2">6</label>
+              <input type="radio" id="g3" name="guests" value="7" checked required>
+              <label for="g3">7<span class="chips__tag">Paketpreis</span></label>
+              <input type="radio" id="g4" name="guests" value="8" required>
+              <label for="g4">8</label>
+              <input type="radio" id="g5" name="guests" value="10" required>
+              <label for="g5">10</label>
+              <input type="radio" id="g6" name="guests" value="12" required>
+              <label for="g6">12</label>
+          </div>
+          <p class="note note--pax" data-pax data-tpl="Der Paketpreis gilt für eine Gruppe von sieben. Für {g} Gäste schicken wir einen festen Preis mit unserer Antwort, und er kann höher sein." hidden></p>
+          <div class="fg fg2">
+            <div class="field"><label for="p">Abfahrtsort</label><select id="p" name="pickup">
+              <option>Hulhumalé Marina</option><option>Steg des Velana International Airport</option>
+              <option>Malé, Westhafen</option><option>Ein Resort im Nord- oder Süd-Malé-Atoll</option>
+            </select></div>
+            <div class="field"><label for="st">Wo wohnen Sie? <span class="opt">optional</span></label><input type="text" id="st" name="staying" placeholder="Resort, Guesthouse oder Hotel"></div>
           </div>
         </div>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Schritt drei</p><h2 class="d3">Noch etwas dazu?</h2>
-              <p class="note">Das Paket umfasst, was seine Seite aufführt. Alles, was Sie hier hinzufügen, kommt dazu: Die Extras haben einen Preis, den Rest kalkulieren wir – und die Schätzung im nächsten Schritt weist das aus.</p></div>
+        <div class="part" data-a="up">
+          <div class="part__h"><p class="eyebrow">Sie</p><h2 class="d3" id="h-you">Wohin dürfen wir antworten?</h2></div>
+          <div class="fg fg2">
+            <div class="field"><label for="nm">Name</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
+            <div class="field"><label for="em">E-Mail</label><input type="email" id="em" name="email" autocomplete="email" required></div>
+          </div>
+          <div class="field"><label for="ph">Telefon oder WhatsApp <span class="opt">optional</span></label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
+        </div>
+
+        <details class="more" data-a="up">
+          <summary class="more__s"><span class="more__t"><span class="more__h">Noch etwas?</span><span class="small">Extras, was wir organisieren können, und Anmerkungen. Alles optional.</span></span><i aria-hidden="true"></i></summary>
+          <div class="more__in">
             <div class="stack-s"><p class="eyebrow">Extras mit Preis</p>
-            <div class="chips">
-              <input type="checkbox" id="x0" name="extra" value="private-chef-aboard" data-label="Privatkoch an Bord" data-price="320">
-              <label for="x0">Privatkoch an Bord &middot; 320</label>
-              <input type="checkbox" id="x1" name="extra" value="photographer" data-label="Fotograf" data-price="450">
-              <label for="x1">Fotograf &middot; 450</label>
-              <input type="checkbox" id="x2" name="extra" value="floating-breakfast" data-label="Schwimmendes Frühstück" data-price="180">
-              <label for="x2">Schwimmendes Frühstück &middot; 180</label>
-              <input type="checkbox" id="x3" name="extra" value="sandbank-set-up" data-label="Aufbau auf der Sandbank" data-price="260">
-              <label for="x3">Aufbau auf der Sandbank &middot; 260</label>
-              <input type="checkbox" id="x4" name="extra" value="airport-and-resort-transfers" data-label="Flughafen- und Resorttransfers" data-price="120">
-              <label for="x4">Flughafen- und Resorttransfers &middot; 120</label>
-            </div></div>
+              <div class="chips chips--x">
+                <input type="checkbox" id="x0" name="extra" value="private-chef-aboard" data-label="Privatkoch an Bord" data-price="320">
+                <label for="x0"><span class="chips__t">Privatkoch an Bord<span class="chips__tag">+ USD 320</span></span><span class="chips__d">Drei Gänge, unterwegs gekocht.</span></label>
+                <input type="checkbox" id="x1" name="extra" value="photographer" data-label="Fotograf" data-price="450">
+                <label for="x1"><span class="chips__t">Fotograf<span class="chips__tag">+ USD 450</span></span><span class="chips__d">Ein halber Tag an Bord, bearbeitete Dateien innerhalb einer Woche.</span></label>
+                <input type="checkbox" id="x2" name="extra" value="floating-breakfast" data-label="Schwimmendes Frühstück" data-price="180">
+                <label for="x2"><span class="chips__t">Schwimmendes Frühstück<span class="chips__tag">+ USD 180</span></span><span class="chips__d">Serviert im Flachwasser, vor Anker.</span></label>
+                <input type="checkbox" id="x3" name="extra" value="sandbank-set-up" data-label="Aufbau auf der Sandbank" data-price="260">
+                <label for="x3"><span class="chips__t">Aufbau auf der Sandbank<span class="chips__tag">+ USD 260</span></span><span class="chips__d">Tisch, Schirm und Matten hinübergetragen.</span></label>
+                <input type="checkbox" id="x4" name="extra" value="airport-and-resort-transfers" data-label="Flughafen- und Resorttransfers" data-price="120">
+                <label for="x4"><span class="chips__t">Flughafen- und Resorttransfers<span class="chips__tag">+ USD 120</span></span><span class="chips__d">Velana oder Ihr Resort, je Strecke.</span></label>
+              </div></div>
             <div class="stack-s"><p class="eyebrow">Wir organisieren auch – Preis auf Anfrage</p>
-            <div class="chips chips--ask">
-              <input type="checkbox" id="q0" name="arrange" value="lunch-aboard" data-label="Mittag- oder Abendessen an Bord">
-              <label for="q0">Mittag- oder Abendessen an Bord</label>
-              <input type="checkbox" id="q1" name="arrange" value="celebration" data-label="Geburtstags- oder Jubiläumsdeko – Torte, Dekoration">
-              <label for="q1">Geburtstags- oder Jubiläumsdeko – Torte, Dekoration</label>
-              <input type="checkbox" id="q2" name="arrange" value="candlelit-dinner" data-label="Candlelight-Dinner bei Sonnenuntergang">
-              <label for="q2">Candlelight-Dinner bei Sonnenuntergang</label>
-              <input type="checkbox" id="q3" name="arrange" value="party" data-label="Soundanlage und Partylicht">
-              <label for="q3">Soundanlage und Partylicht</label>
-              <input type="checkbox" id="q4" name="arrange" value="fishing" data-label="Angelausrüstung und Köder">
-              <label for="q4">Angelausrüstung und Köder</label>
-              <input type="checkbox" id="q5" name="arrange" value="longer-day" data-label="Zusätzliche Stopps oder ein längerer Tag">
-              <label for="q5">Zusätzliche Stopps oder ein längerer Tag</label>
-            </div></div>
-            <div class="fg fg2">
-              <div class="field"><label for="nm">Name</label><input type="text" id="nm" name="name" autocomplete="name" required></div>
-              <div class="field"><label for="em">E-Mail</label><input type="email" id="em" name="email" autocomplete="email" required></div>
-            </div>
-            <div class="fg fg2">
-              <div class="field"><label for="ph">Telefon oder WhatsApp</label><input type="tel" id="ph" name="phone" autocomplete="tel"></div>
-              <div class="field"><label for="st">Wo wohnen Sie?</label><input type="text" id="st" name="staying" placeholder="Resort, Guesthouse oder Hotel"></div>
-            </div>
+              <div class="chips chips--ask">
+                <input type="checkbox" id="q0" name="arrange" value="lunch-aboard" data-label="Mittag- oder Abendessen an Bord">
+                <label for="q0">Mittag- oder Abendessen an Bord</label>
+                <input type="checkbox" id="q1" name="arrange" value="celebration" data-label="Geburtstags- oder Jubiläumsdeko – Torte, Dekoration">
+                <label for="q1">Geburtstags- oder Jubiläumsdeko – Torte, Dekoration</label>
+                <input type="checkbox" id="q2" name="arrange" value="candlelit-dinner" data-label="Candlelight-Dinner bei Sonnenuntergang">
+                <label for="q2">Candlelight-Dinner bei Sonnenuntergang</label>
+                <input type="checkbox" id="q3" name="arrange" value="party" data-label="Soundanlage und Partylicht">
+                <label for="q3">Soundanlage und Partylicht</label>
+                <input type="checkbox" id="q4" name="arrange" value="fishing" data-label="Angelausrüstung und Köder">
+                <label for="q4">Angelausrüstung und Köder</label>
+                <input type="checkbox" id="q5" name="arrange" value="longer-day" data-label="Zusätzliche Stopps oder ein längerer Tag">
+                <label for="q5">Zusätzliche Stopps oder ein längerer Tag</label>
+              </div></div>
+            <p class="note">Extras fließen in die Schätzung ein. Alles auf Anfrage wird gesondert kalkuliert und kann mehr kosten.</p>
             <div class="field"><label for="no">Was wir wissen sollten</label><textarea id="no" name="notes" placeholder="Ernährung, Anlass, Kinder an Bord, besondere Wünsche"></textarea></div>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Zurück</button><button class="btn" type="button" data-next>Prüfen</button></div>
           </div>
-        </div>
+        </details>
 
-        <div class="step">
-          <div class="stack-l">
-            <div class="stack-s"><p class="eyebrow">Schritt vier</p><h2 class="d3">Stimmt das so?</h2></div>
-            <div class="sum">
-              <div class="sum__r"><span class="k">Ausflug</span><span data-s-v>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Von wo</span><span data-s-a>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Datum</span><span data-s-d>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Gäste</span><span data-s-g>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Zusatzleistungen</span><span data-s-e>&mdash;</span></div>
-              <div class="sum__r"><span class="k">Auf Anfrage</span><span data-s-q>&mdash;</span></div>
-              <div class="sum__t"><span class="k">Schätzung</span><span class="v" data-s-t>&mdash;</span></div>
-            </div>
-            <p class="note">Eine Schätzung, kein Angebot. Sie umfasst das Paket für eine Gruppe von sieben und die gewählten Extras mit Preis. Eine andere Gruppengröße, alles auf Anfrage und jeder weitere Wunsch werden gesondert kalkuliert und können mehr kosten. Den endgültigen Betrag bestätigen wir schriftlich, bevor ein Termin reserviert wird.</p>
-            <div class="acts"><button class="btn btn--ghost" type="button" data-prev>Zurück</button><button class="btn" type="submit">Anfrage senden</button></div>
+        <div class="est" data-a="up" data-quoted="Wird kalkuliert" data-ask="Auf Anfrage" data-party="für eine Gruppe von {n}">
+          <p class="eyebrow">Ihre Anfrage</p>
+          <div class="est__l">
+            <div class="est__r"><span class="k">Wunschtermin</span><span class="v" data-s-d>&mdash;</span></div>
+            <div class="est__r" data-s-row hidden><span class="k">Ausweichtermin</span><span class="v" data-s-a></span></div>
+            <div data-s-lines></div>
           </div>
+          <div class="est__t"><span class="k">Schätzung</span><span class="v num" data-s-t aria-live="polite">&mdash;</span></div>
+          <p class="note" data-s-note="priced">Eine Schätzung, kein Angebot. Sie umfasst das Paket für eine Gruppe von sieben und die gewählten Extras mit Preis. Eine andere Gruppengröße, alles auf Anfrage und jeder weitere Wunsch werden gesondert kalkuliert und können mehr kosten. Den endgültigen Betrag bestätigen wir schriftlich, bevor ein Termin reserviert wird.</p>
+          <p class="note" data-s-note="quoted" hidden>Der Paketpreis gilt für eine Gruppe von sieben. Für eine andere Zahl schicken wir einen festen Preis mit unserer Antwort, und er kann höher sein. Extras mit Preis sind bereits gezählt; alles auf Anfrage wird gesondert kalkuliert. Den endgültigen Betrag bestätigen wir schriftlich, bevor ein Termin reserviert wird.</p>
+          <p class="note est__warn" data-s-taken hidden>Ihr Wunschtag ist vergeben – bitte wählen Sie oben einen anderen.</p>
+          <p class="small est__p">Das Absenden reserviert nichts und kostet nichts. Wir prüfen den Tag, kalkulieren für Ihre Gruppe und antworten schriftlich; der Termin ist reserviert, sobald Sie bestätigen.</p>
+          <div class="acts"><button class="btn" type="submit">Anfrage senden</button></div>
         </div>
+        <input type="text" name="website" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true">
       </form>
 
       <div class="ok" id="enquireOk">

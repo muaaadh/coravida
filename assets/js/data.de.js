@@ -57,23 +57,16 @@
  "hero": {
   "clips": [
    {
-    "src": "boat-harbour",
-    "poster": "poster-boat-harbour",
-    "max": 1080,
-    "alt": "Tiffany Blanc 14 verlässt die Hulhumalé Marina, aus der Luft",
-    "cap": "08:30 · Ablegen in Hulhumalé"
-   },
-   {
     "src": "vessel",
     "poster": "poster-vessel",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 unterwegs auf tiefblauem Wasser vor Malé",
     "cap": "Unterwegs, hinaus über das Atoll"
    },
    {
     "src": "boat-reef",
     "poster": "poster-boat-reef",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 dreht entlang einer Riffkante, aus der Luft",
     "cap": "Entlang der Riffkante"
    },
@@ -101,7 +94,7 @@
    {
     "src": "boat-orbit",
     "poster": "poster-boat-orbit",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 vor Anker, aus der Luft umkreist",
     "cap": "Vor Anker, der Nachmittag"
    },
@@ -771,7 +764,7 @@
   "onRequest": "Auf Anfrage",
   "none": "Keine",
   "siteBy": "Website von",
-  "nudge": "Ton einschalten",
+  "nudge": "Ton an bei der ersten Berührung",
   "language": "Sprache",
   "required": "Bitte ausfüllen",
   "invalidEmail": "Bitte E-Mail prüfen"

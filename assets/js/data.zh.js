@@ -57,23 +57,16 @@
  "hero": {
   "clips": [
    {
-    "src": "boat-harbour",
-    "poster": "poster-boat-harbour",
-    "max": 1080,
-    "alt": "航拍 Tiffany Blanc 14 驶离胡鲁马累码头",
-    "cap": "08:30 · 驶离胡鲁马累"
-   },
-   {
     "src": "vessel",
     "poster": "poster-vessel",
-    "max": 1080,
+    "max": 2160,
     "alt": "Tiffany Blanc 14 在马累近海的深蓝海面上航行",
     "cap": "航行中，穿越环礁"
    },
    {
     "src": "boat-reef",
     "poster": "poster-boat-reef",
-    "max": 1080,
+    "max": 2160,
     "alt": "航拍 Tiffany Blanc 14 沿礁缘转向",
     "cap": "沿着礁缘"
    },
@@ -101,7 +94,7 @@
    {
     "src": "boat-orbit",
     "poster": "poster-boat-orbit",
-    "max": 1080,
+    "max": 2160,
     "alt": "航拍环绕停泊中的 Tiffany Blanc 14",
     "cap": "午后，停泊"
    },
@@ -771,7 +764,7 @@
   "onRequest": "价格面议",
   "none": "无",
   "siteBy": "网站制作",
-  "nudge": "打开声音",
+  "nudge": "轻触一下，音乐即刻响起",
   "language": "语言",
   "required": "请填写此项",
   "invalidEmail": "请检查邮箱地址"

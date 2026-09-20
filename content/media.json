@@ -118,7 +118,7 @@
   "clips": [
     {
       "name": "anchor",
-      "max": 1080,
+      "max": 2160,
       "poster": "poster-anchor"
     },
     {
@@ -138,17 +138,17 @@
     },
     {
       "name": "boat-harbour",
-      "max": 1080,
+      "max": 2160,
       "poster": "poster-boat-harbour"
     },
     {
       "name": "boat-orbit",
-      "max": 1080,
+      "max": 2160,
       "poster": "poster-boat-orbit"
     },
     {
       "name": "boat-reef",
-      "max": 1080,
+      "max": 2160,
       "poster": "poster-boat-reef"
     },
     {
@@ -165,6 +165,11 @@
       "name": "nurse-shark",
       "max": 1080,
       "poster": "poster-nurse-shark"
+    },
+    {
+      "name": "ocean",
+      "max": 2160,
+      "poster": "poster-ocean"
     },
     {
       "name": "ray",
@@ -213,7 +218,7 @@
     },
     {
       "name": "vessel",
-      "max": 1080,
+      "max": 2160,
       "poster": "poster-vessel"
     }
   ],
