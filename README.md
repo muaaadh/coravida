@@ -154,6 +154,14 @@ until you open it. It plays four Creative Commons tracks chosen for the room the
 | Across pages | Track, position, playing state and whether the panel was open all persist in `sessionStorage` and resume on the next page. |
 | While playing | The button pulses a slow marine ring and the equaliser bars move. |
 
+**Six tracks** (2026-09-21): two long mixes the office supplied — *Maldives Summer Mix* (39
+min) and *Ocean Therapy* (a 30-minute opening cut from a two-hour mix; GitHub refuses a file
+over 100 MB, and the excerpt is a stream copy, so nothing was re-encoded) — then the four
+Creative Commons pieces. The player opens on the first mix; the rest are a press of ▶︎▶︎
+away, and it walks the whole list. A track with no `by`/`lic` shows no credit line; the CC
+ones still credit their artist and licence. **The office must confirm it holds the rights to
+the two mixes** — they are compilation rips, not licensed stock like the rest of the media.
+
 **The music starts by itself** (client's request, 2026-09-20) — as far as a browser allows.
 No browser lets a page make a sound before the visitor has touched it, so `autoStart()`
 tries at once (a visitor who has already been on another page of the site is usually

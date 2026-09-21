@@ -133,6 +133,20 @@
   "line": "感受马尔代夫的气息",
   "tracks": [
    {
+    "file": "summer-mix",
+    "title": "Maldives Summer Mix",
+    "by": "",
+    "lic": "",
+    "at": ""
+   },
+   {
+    "file": "ocean-therapy",
+    "title": "Ocean Therapy",
+    "by": "",
+    "lic": "",
+    "at": ""
+   },
+   {
     "at": "https://www.jamendo.com/track/1365397",
     "by": "Blue Dot Sessions",
     "lic": "CC BY 4.0",

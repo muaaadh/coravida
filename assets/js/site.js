@@ -20,6 +20,7 @@
   /* every string this file writes onto the page; English is the fallback */
   var UI = CV.ui || {};
   function t(k, en) { return UI[k] || en; }
+  function esc(x) { return String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
   var SLOW = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var SAVE = (navigator.connection && (navigator.connection.saveData ||
               /^([23]g|slow-2g)$/.test(navigator.connection.effectiveType || ""))) || false;
@@ -559,7 +560,10 @@
     function paint() {
       var t = M.tracks[i];
       elT.textContent = t.title;
-      elBy.innerHTML = t.by + ' &middot; <a href="' + t.at + '" target="_blank" rel="noopener">' + t.lic + "</a>";
+      /* a track the office supplied carries no credit line; a licensed one does */
+      elBy.innerHTML = t.by && t.lic
+        ? esc(t.by) + ' &middot; ' + (t.at ? '<a href="' + esc(t.at) + '" target="_blank" rel="noopener">' + esc(t.lic) + "</a>" : esc(t.lic))
+        : t.by ? esc(t.by) : "";
     }
     function cue(n, autoplay) {
       i = (n + M.tracks.length) % M.tracks.length;
