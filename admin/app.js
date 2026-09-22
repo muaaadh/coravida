@@ -172,7 +172,10 @@ window.Admin = (function () {
     });
   }
 
-  /* the site is rebuilt by Vercel; /api/publish holds the hook and checks the login */
+  /* The site reads the content straight from the database, so publishing is
+     saving: the next visitor gets the new words. /api/publish exists for the
+     rare case that the code itself changed and the deployment must be redone —
+     it is not needed for content, and a failure there is not a failure to publish. */
   function rebuild() {
     return DB.auth.token().then(function (tok) {
       return fetch("../api/publish", { method: "POST", headers: { Authorization: "Bearer " + tok } }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok || !j.ok) throw new Error(j.error || ("The rebuild could not be started (HTTP " + r.status + ")")); return j; }); });
@@ -182,13 +185,8 @@ window.Admin = (function () {
   function watchBuild() {
     clearTimeout(buildT);
     var t0 = Date.now();
-    status("Publishing — the site rebuilds in about two minutes…", "busy");
-    (function tick() {
-      var s = Math.round((Date.now() - t0) / 1000);
-      if (s > 150) { status("Live · published " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), "ok"); toast("The site should be live with your changes.", "ok"); loadMedia(); return; }
-      status("Publishing — the site rebuilds in about two minutes… (" + s + "s)", "busy");
-      buildT = setTimeout(tick, 5000);
-    })();
+    status("Live · published " + new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), "ok");
+    buildT = setTimeout(function () { loadMedia(); }, 2000);
   }
 
   function publish() {
@@ -197,7 +195,7 @@ window.Admin = (function () {
     if (bad) return toast("Fix the highlighted fields first.", "err");
     var secs = changedSections(), ups = C.uploads.slice();
     var node = E("div", {}, [
-      E("p", { text: "This saves your changes and rebuilds the website. It is live in about two minutes." }),
+      E("p", { text: "This saves your changes to the website. They are live within a minute — no rebuild, nothing to wait for." }),
       secs.length ? E("p", { class: "small body", text: "Changed: " + secs.join(", ") + "." }) : null,
       ups.length ? E("p", { class: "small body", text: ups.length + " new photograph" + (ups.length > 1 ? "s" : "") + " will be uploaded first: " + ups.map(function (u) { return u.name; }).join(", ") + "." }) : null,
       secs.length ? E("p", { class: "note small", text: "Other languages keep their existing translations. Text you changed shows in English on the Russian, Chinese and German pages until Dheemi translates it." }) : null
@@ -215,10 +213,10 @@ window.Admin = (function () {
         });
       });
       chain.then(function () { status("Saving content…", "busy"); return DB.content.set("site", JSON.parse(JSON.stringify(C.draft, function (k, v) { return k.charAt(0) === "_" ? undefined : v; }))); })   // editor-only keys stay here
-        .then(function () { return rebuild(); })
+        .then(function () { return rebuild().catch(function () { /* content is published either way */ }); })
         .then(function () {
           C.baseline = clone(C.draft); C.uploads = []; lsSet(KEY.uploads, []); localStorage.removeItem(KEY.draft);
-          setDirty(false); toast("Saved. Rebuilding the site…", "ok"); watchBuild(); render();
+          setDirty(false); toast("Published. The site shows it within a minute.", "ok"); watchBuild(); render();
         })
         .catch(function (e) { status(e.message, "err"); toast(e.message, "err"); btn.disabled = false; });
     });

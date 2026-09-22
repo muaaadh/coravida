@@ -3,13 +3,26 @@
   "outputDirectory": "_site",
   "framework": null,
   "functions": {
-    "api/*.js": {
+    "api/page.js": {
+      "maxDuration": 10,
+      "includeFiles": "{tools/**,content/**,*.html,ru/**,zh/**,de/**,excursions/**}"
+    },
+    "api/publish.js": {
       "maxDuration": 10
     }
   },
   "headers": [
     {
       "source": "/media/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)\\.(webp|mp4|mp3|woff2)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -25,21 +38,24 @@
           "value": "no-store"
         }
       ]
-    },
-    {
-      "source": "/assets/(.*)\\.(webp|mp4|mp3|woff2)",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=31536000, immutable"
-        }
-      ]
     }
   ],
   "rewrites": [
     {
       "source": "/media/(.*)",
       "destination": "https://hkzseexkxufrqbngzqdk.supabase.co/storage/v1/object/public/media/$1"
+    },
+    {
+      "source": "/assets/js/data.js",
+      "destination": "/api/page?p=assets/js/data.js"
+    },
+    {
+      "source": "/assets/js/data.:lang.js",
+      "destination": "/api/page?p=assets/js/data.:lang.js"
+    },
+    {
+      "source": "/((?!api/|assets/|admin|content/|media/|robots\\.txt|sitemap\\.xml|favicon).*)",
+      "destination": "/api/page?p=$1"
     }
   ]
 }
