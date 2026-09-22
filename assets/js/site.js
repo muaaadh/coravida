@@ -22,8 +22,12 @@
   function t(k, en) { return UI[k] || en; }
   function esc(x) { return String(x == null ? "" : x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
   var SLOW = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  /* only a visitor who has asked to save data, or a genuinely slow connection,
+     goes without the film. A phone reporting "3g" usually is not slow — Chrome
+     says it on any high-latency network — and treating that as save-data left
+     phones with still photographs where the film should be. */
   var SAVE = (navigator.connection && (navigator.connection.saveData ||
-              /^([23]g|slow-2g)$/.test(navigator.connection.effectiveType || ""))) || false;
+              /^(2g|slow-2g)$/.test(navigator.connection.effectiveType || ""))) || false;
   var TOUCH = window.matchMedia("(hover: none)").matches;
 
   /* an asset, from the site root — or from the media library, when the
@@ -292,7 +296,11 @@
   var TIERS = [720, 1080, 1440, 2160];
   function tier(max) {
     var dpr = window.devicePixelRatio || 1, need = Math.max(window.innerWidth, window.innerHeight * 16 / 9) * dpr;
-    var top = TOUCH && window.innerWidth < 900 ? 1440 : TIERS[TIERS.length - 1], t = top;
+    /* A phone is at most about 1300 physical pixels across, so a 1080 cut is
+       effectively one-to-one there, while the next one up is twice the bytes
+       over somebody's cellular data for no difference anyone can see. Measured
+       in real pixels, not CSS ones, so a tablet is not mistaken for a phone. */
+    var top = TOUCH && window.innerWidth * dpr <= 1400 ? 1080 : TIERS[TIERS.length - 1], t = top;
     for (var i = 0; i < TIERS.length; i++) if (TIERS[i] * 16 / 9 >= need) { t = TIERS[i]; break; }
     return Math.min(t, top, max || 1080);
   }
@@ -329,11 +337,26 @@
     if (!still || v.hasAttribute("data-raw")) return;
     setTimeout(function () { if (v.classList.contains("on")) still.style.visibility = "hidden"; }, 1500);
   }
+  /* A phone may refuse to start a film until it has been touched — Low Power
+     Mode does, and so does any browser that has not seen a gesture yet. Rather
+     than give up and leave a still photograph, remember what wanted to play and
+     start it all on the first touch, tap or key. */
+  var waitingForTouch = [];
+  function onFirstTouch() {
+    ["pointerdown", "touchstart", "keydown"].forEach(function (e) { document.removeEventListener(e, onFirstTouch, true); });
+    var q = waitingForTouch; waitingForTouch = [];
+    q.forEach(function (v) { if (v.isConnected) show(v); });
+  }
+  function askLater(v) {
+    if (waitingForTouch.indexOf(v) > -1) return;
+    if (!waitingForTouch.length) ["pointerdown", "touchstart", "keydown"].forEach(function (e) { document.addEventListener(e, onFirstTouch, { passive: true, capture: true }); });
+    waitingForTouch.push(v);
+  }
   function show(v) {
     v.classList.add("on");
     control(v);
     var p = v.play();
-    if (p && p.catch) p.catch(function () { v.classList.remove("on"); });
+    if (p && p.catch) p.catch(function () { v.classList.remove("on"); askLater(v); });
     else retire(v);
     if (p && p.then) p.then(function () { retire(v); }, function () {});
   }
