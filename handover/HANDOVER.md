@@ -1,10 +1,17 @@
 # Moving Coravida to the client's Vercel and Supabase
 
-Everything the site needs is either in this repository or in the database, and nothing in
-the code names an account any more: the Supabase address the browser uses is written at
-build time from `SUPABASE_URL` / `SUPABASE_ANON_KEY`, and the canonical/sitemap host comes
-from `SITE_URL`. So the move is: create their two projects, copy the data across, point the
-build at them, then close the old ones.
+Everything the site needs is either in this repository or in the database. The move is:
+create their two projects, copy the data across, point the build at them, then close the
+old ones.
+
+One thing to understand before you start. `assets/js/env.js` — the file that tells every
+visitor's browser which database to talk to — is **committed with the current project's
+address and publishable key**, and the build overwrites it only when `SUPABASE_URL` *and*
+`SUPABASE_ANON_KEY` are both set. Set one alone and the build stops; set neither on a Vercel
+project and the build stops too, rather than falling back. Locally, neither set means the
+committed values are used, which is what you want for development. The canonical host works
+the same way: `SITE_URL`, else the host Vercel is building for, else the address it has
+always had. Step 2.2 and the checks in step 4 exist for exactly this.
 
 Allow about an hour, plus DNS time if a domain is involved.
 
@@ -101,7 +108,10 @@ Send it out of band; do not leave it in a shell history or a chat.
 
 ## 2. The new Vercel project
 
-1. Import `coravida` from GitHub into the client's team (or `vercel link` from the clone).
+1. Import `coravida` from GitHub into the client's team, **from the dashboard**. Do not
+   `vercel link` from this clone without first `rm -rf .vercel` and re-authenticating — it
+   is still linked to the agency's project, and this machine's CLI has at times been signed
+   in to a different client's team.
    Framework **Other**; the rest comes from `vercel.json` — build `node tools/vercel-build.js`,
    output `_site`. Set **Node 22.x** in *Settings → Build*, so a future default cannot move
    under the build.
@@ -110,9 +120,13 @@ Send it out of band; do not leave it in a shell history or a chat.
 | Key | Value |
 |---|---|
 | `SUPABASE_URL` | `https://<NEW_REF>.supabase.co` |
-| `SUPABASE_ANON_KEY` | the new **publishable** key |
+| `SUPABASE_ANON_KEY` | the new **publishable** key — never the service key; the build refuses one |
 | `SITE_URL` | `https://<THEIR-DOMAIN>/` — with the trailing slash |
 | `DEPLOY_HOOK` | created in step 3 |
+
+Set all four for **Production, Preview and Development**: a preview build with
+production-only variables is the one case that used to publish a site pointing at the old
+database.
 
 3. *Settings → Git → Deploy Hooks* → create one named `admin-publish` on `main`, copy the
    URL into `DEPLOY_HOOK`, then redeploy. Until that variable exists, the admin's
@@ -156,6 +170,9 @@ supabase db query --linked "select 'content' t, count(*) from public.content uni
 
 # 3. the admin will hear about changes made on another device
 supabase db query --linked "select tablename from pg_publication_tables where pubname='supabase_realtime'"
+
+# 4. nothing internal is published
+for f in CLAUDE.md README.md handover/HANDOVER.md; do echo "$f $(curl -s -o /dev/null -w '%{http_code}' https://<THEIR-DOMAIN>/$f)"; done   # all 404
 ```
 
 If step 1 still shows `hkzseexkxufrqbngzqdk`, the environment variables are missing and the
@@ -199,11 +216,20 @@ Once the new address has been live for a few days:
 - Supabase: in the old project, *Authentication → Users* → sign out all users, then rotate
   or disable its API keys, then pause or delete the project. Until you do, an admin tab left
   open on a laptop keeps reading and writing the old database quite happily.
-- Revoke the GitHub fine-grained token that was pasted into chat on 16 September 2026, if
-  it still exists: github.com/settings/personal-access-tokens.
+- **Rotate the old project's credentials.** They were briefly inside a shared OneDrive
+  library: Supabase → *Settings → API* → roll the `service_role` key; *Settings → Database*
+  → reset the database password; change the office's admin password. Do it even though the
+  old project is being retired — the same passwords may be reused elsewhere.
+- Revoke any personal access token created for this project:
+  github.com/settings/personal-access-tokens.
+- **The repository is public** — this runbook and the developer notes can be read by anyone
+  until that changes:
+  `gh repo edit muaaadh/coravida --visibility private --accept-visibility-change-consequences`
 - Point the agency's own `.env.local` at the client's project (`SUPABASE_URL`,
-  `SUPABASE_SERVICE_KEY`) — otherwise `tools/deploy.sh` keeps pushing content into the old
-  database and the developer will wonder why nothing changes. Then delete the old key.
+  `SUPABASE_SERVICE_KEY`). `tools/content-up.sh` refuses to run without `SUPABASE_URL`
+  rather than guessing, and prints the project it wrote to — read that line after the first
+  deploy. Then delete the old key.
+- `rm -rf .vercel` in the clone so the CLI stops pointing at the agency's project.
 - Delete `handover/data` and `handover/gap`: they contain customer names, e-mail addresses
   and telephone numbers. They are gitignored and the mirror excludes them, but they are
   still sitting on the machine.

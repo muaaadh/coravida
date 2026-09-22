@@ -26,6 +26,12 @@ function env() {
     }
     return { url: u, key: k };
   }
+  /* On a build server the committed env.js is whoever owned this repo last.
+     Falling back to it would publish a working site wired to their database. */
+  if (process.env.VERCEL || process.env.CI) {
+    console.error("build: SUPABASE_URL and SUPABASE_ANON_KEY are not set on this project — refusing to fall back to the address committed in assets/js/env.js.");
+    process.exit(1);
+  }
   if (!fs.existsSync(ENVJS)) return null;
   const m = /SUPABASE_URL:\s*"([^"]+)"[\s\S]*?SUPABASE_ANON_KEY:\s*"([^"]+)"/.exec(fs.readFileSync(ENVJS, "utf8"));
   return m ? { url: m[1], key: m[2] } : null;
@@ -36,7 +42,8 @@ function env() {
 function writeEnvJs(e) {
   const want = `/* Public address of the Coravida database and its publishable key — safe to\n   ship: row-level security decides what the key may read or write.\n   Written by tools/vercel-build.js from SUPABASE_URL / SUPABASE_ANON_KEY. */\nwindow.CV_ENV = { SUPABASE_URL: ${JSON.stringify(e.url)}, SUPABASE_ANON_KEY: ${JSON.stringify(e.key)} };\n`;
   const had = fs.existsSync(ENVJS) ? fs.readFileSync(ENVJS, "utf8") : "";
-  if (had !== want) { fs.writeFileSync(ENVJS, want); console.log("build: assets/js/env.js points at " + e.url); }
+  if (had !== want) fs.writeFileSync(ENVJS, want);
+  console.log("build: assets/js/env.js points at " + e.url);   // every build says which database, not only a build that changes it
 }
 async function get(url, key, init) {
   const r = await fetch(url, Object.assign({ headers: { apikey: key, Authorization: "Bearer " + key } }, init || {}));

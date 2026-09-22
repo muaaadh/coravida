@@ -1011,7 +1011,11 @@ function notfound() {
   });
 }
 
-const SITE = (process.env.SITE_URL || "https://coravida.vercel.app/").replace(/\/?$/, "/");
+/* the address this build is for: what the project says, else the host Vercel
+   is building for, else the address it has always had */
+const SITE = (process.env.SITE_URL
+  || (process.env.VERCEL_PROJECT_PRODUCTION_URL ? "https://" + process.env.VERCEL_PROJECT_PRODUCTION_URL : null)
+  || "https://coravida.vercel.app/").replace(/\/?$/, "/");
 
 /* the English data file the pages load (classic script, so file:// works) */
 fs.mkdirSync(path.join(ROOT, "assets/js"), { recursive: true });

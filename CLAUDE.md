@@ -93,6 +93,10 @@ handover/HANDOVER.md     moving the site to another Vercel + Supabase account
 - OneDrive dehydrates files mid-session and `rsync` dies on it; the mirror uses `tar` — and
   excludes `.env*`, `handover/` and the rest, because that OneDrive is a **shared library**.
   It once copied `.env.local` into it.
+- `assets/js/env.js` is committed with a project address and publishable key. The build
+  overwrites it only when `SUPABASE_URL` and `SUPABASE_ANON_KEY` are *both* set, refuses to
+  fall back on a build server, and prints which database every build points at. Read that
+  line.
 - The published site is deny-by-default: `tools/vercel-build.js` keeps `README.md`,
   `CLAUDE.md`, `handover/`, `supabase/`, `tools/` and every `.md/.sql/.sh/.toml` out of
   `_site`. Both of these notes were briefly world-readable on the live site.
