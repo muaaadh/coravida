@@ -599,7 +599,7 @@ window.Books = (function (A) {
       ])]));
     var paper = E("div", { class: "paper" });
     paper.appendChild(E("div", { class: "paper__top" }, [
-      E("div", { class: "paper__brand" }, [E("img", { src: "../assets/img/logo-full.webp", alt: B.name || "Coravida" }), E("div", {}, [E("span", { text: (B.legal || "") + (B.address ? " · " + B.address.join(", ") : "") }), E("br"), E("span", { text: [B.phone, B.email].filter(Boolean).join(" · ") })])]),
+      E("div", { class: "paper__brand" }, [E("img", { src: ((window.CV_ENV && window.CV_ENV.MEDIA_URL) || "../") + "assets/img/logo-full.webp", alt: B.name || "Coravida" }), E("div", {}, [E("span", { text: (B.legal || "") + (B.address ? " · " + B.address.join(", ") : "") }), E("br"), E("span", { text: [B.phone, B.email].filter(Boolean).join(" · ") })])]),
       E("div", { class: "paper__meta" }, [E("strong", { text: "Invoice " + inv.no }), "Date " + fmtDate(inv.date), E("br"), "Due " + fmtDate(inv.due)])
     ]));
     paper.appendChild(E("div", { class: "paper__cols" }, [

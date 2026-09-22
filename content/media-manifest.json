@@ -1,0 +1,925 @@
+{
+ "at": "2026-09-22T09:47:05.181Z",
+ "files": [
+  "aerial-anchor-1200.webp",
+  "aerial-anchor-1600.webp",
+  "aerial-anchor-1920.webp",
+  "aerial-anchor-900.webp",
+  "aerial-bow-1200.webp",
+  "aerial-bow-1600.webp",
+  "aerial-bow-1920.webp",
+  "aerial-bow-900.webp",
+  "aerial-close-1200.webp",
+  "aerial-close-1600.webp",
+  "aerial-close-1920.webp",
+  "aerial-close-900.webp",
+  "aerial-marina-1200.webp",
+  "aerial-marina-1600.webp",
+  "aerial-marina-1920.webp",
+  "aerial-marina-900.webp",
+  "aerial-underway-1200.webp",
+  "aerial-underway-1600.webp",
+  "aerial-underway-1920.webp",
+  "aerial-underway-900.webp",
+  "atoll-pair-1200.webp",
+  "atoll-pair-1600.webp",
+  "atoll-pair-2800.webp",
+  "atoll-pair-900.webp",
+  "boarding-1200.webp",
+  "boarding-1600.webp",
+  "boarding-2800.webp",
+  "boarding-900.webp",
+  "caustics.webp",
+  "favicon.png",
+  "fins-1200.webp",
+  "fins-1600.webp",
+  "fins-2200.webp",
+  "fins-2800.webp",
+  "fins-900.webp",
+  "float-blue-1200.webp",
+  "float-blue-1600.webp",
+  "float-blue-2800.webp",
+  "float-blue-900.webp",
+  "floats-1200.webp",
+  "floats-1600.webp",
+  "floats-1616.webp",
+  "floats-900.webp",
+  "logo-full-white.webp",
+  "logo-full.webp",
+  "logo-mark-white.webp",
+  "logo-mark.webp",
+  "palm-beach-1200.webp",
+  "palm-beach-1600.webp",
+  "palm-beach-2200.webp",
+  "palm-beach-2800.webp",
+  "palm-beach-900.webp",
+  "palm-shore-1200.webp",
+  "palm-shore-1600.webp",
+  "palm-shore-2800.webp",
+  "palm-shore-900.webp",
+  "platter-1200.webp",
+  "platter-1600.webp",
+  "platter-1616.webp",
+  "platter-900.webp",
+  "poster-anchor-1200.webp",
+  "poster-anchor-1600.webp",
+  "poster-anchor-1920.webp",
+  "poster-anchor-2400.webp",
+  "poster-anchor-900.webp",
+  "poster-anchorage-1200.webp",
+  "poster-anchorage-1600.webp",
+  "poster-anchorage-2400.webp",
+  "poster-anchorage-900.webp",
+  "poster-boat-blue-1200.webp",
+  "poster-boat-blue-1600.webp",
+  "poster-boat-blue-2400.webp",
+  "poster-boat-blue-900.webp",
+  "poster-boat-drift-1200.webp",
+  "poster-boat-drift-1600.webp",
+  "poster-boat-drift-2400.webp",
+  "poster-boat-drift-900.webp",
+  "poster-boat-harbour-1200.webp",
+  "poster-boat-harbour-1600.webp",
+  "poster-boat-harbour-2400.webp",
+  "poster-boat-harbour-900.webp",
+  "poster-boat-orbit-1200.webp",
+  "poster-boat-orbit-1600.webp",
+  "poster-boat-orbit-2400.webp",
+  "poster-boat-orbit-900.webp",
+  "poster-boat-reef-1200.webp",
+  "poster-boat-reef-1600.webp",
+  "poster-boat-reef-2400.webp",
+  "poster-boat-reef-900.webp",
+  "poster-jetty-1200.webp",
+  "poster-jetty-1600.webp",
+  "poster-jetty-2400.webp",
+  "poster-jetty-900.webp",
+  "poster-local-island-1200.webp",
+  "poster-local-island-1600.webp",
+  "poster-local-island-2400.webp",
+  "poster-local-island-900.webp",
+  "poster-nurse-shark-1200.webp",
+  "poster-nurse-shark-1600.webp",
+  "poster-nurse-shark-2400.webp",
+  "poster-nurse-shark-900.webp",
+  "poster-ocean-1200.webp",
+  "poster-ocean-1600.webp",
+  "poster-ocean-2400.webp",
+  "poster-ocean-900.webp",
+  "poster-ray-1200.webp",
+  "poster-ray-1600.webp",
+  "poster-ray-2400.webp",
+  "poster-ray-2800.webp",
+  "poster-ray-900.webp",
+  "poster-reef-split-1200.webp",
+  "poster-reef-split-1600.webp",
+  "poster-reef-split-2400.webp",
+  "poster-reef-split-900.webp",
+  "poster-sandbank-palms-1200.webp",
+  "poster-sandbank-palms-1600.webp",
+  "poster-sandbank-palms-2400.webp",
+  "poster-sandbank-palms-900.webp",
+  "poster-shallows-1200.webp",
+  "poster-shallows-1600.webp",
+  "poster-shallows-2400.webp",
+  "poster-shallows-900.webp",
+  "poster-shark-1200.webp",
+  "poster-shark-1600.webp",
+  "poster-shark-2400.webp",
+  "poster-shark-900.webp",
+  "poster-snorkel-pair-1200.webp",
+  "poster-snorkel-pair-1600.webp",
+  "poster-snorkel-pair-2400.webp",
+  "poster-snorkel-pair-900.webp",
+  "poster-sunbeams-1200.webp",
+  "poster-sunbeams-1600.webp",
+  "poster-sunbeams-2400.webp",
+  "poster-sunbeams-900.webp",
+  "poster-sunset-1200.webp",
+  "poster-sunset-1600.webp",
+  "poster-sunset-2400.webp",
+  "poster-sunset-900.webp",
+  "poster-turtle-1200.webp",
+  "poster-turtle-1600.webp",
+  "poster-turtle-2400.webp",
+  "poster-turtle-900.webp",
+  "poster-vessel-1200.webp",
+  "poster-vessel-1600.webp",
+  "poster-vessel-2400.webp",
+  "poster-vessel-900.webp",
+  "ray-1200.webp",
+  "ray-1600.webp",
+  "ray-2200.webp",
+  "ray-900.webp",
+  "ray-sand-1200.webp",
+  "ray-sand-1600.webp",
+  "ray-sand-2200.webp",
+  "ray-sand-900.webp",
+  "salon-1200.webp",
+  "salon-1600.webp",
+  "salon-2800.webp",
+  "salon-900.webp",
+  "snorkellers-1200.webp",
+  "snorkellers-1600.webp",
+  "snorkellers-900.webp",
+  "swim-boat-1200.webp",
+  "swim-boat-1600.webp",
+  "swim-boat-2800.webp",
+  "swim-boat-900.webp",
+  "vessel-guests-1200.webp",
+  "vessel-guests-1600.webp",
+  "vessel-guests-2800.webp",
+  "vessel-guests-900.webp"
+ ],
+ "video": [
+  "anchor-1080.mp4",
+  "anchor-1440.mp4",
+  "anchor-2160.mp4",
+  "anchorage-1080.mp4",
+  "anchorage-1440.mp4",
+  "anchorage-2160.mp4",
+  "anchorage-720.mp4",
+  "boat-blue-1080.mp4",
+  "boat-drift-1080.mp4",
+  "boat-harbour-1080.mp4",
+  "boat-harbour-1440.mp4",
+  "boat-harbour-2160.mp4",
+  "boat-orbit-1080.mp4",
+  "boat-orbit-1440.mp4",
+  "boat-orbit-2160.mp4",
+  "boat-reef-1080.mp4",
+  "boat-reef-1440.mp4",
+  "boat-reef-2160.mp4",
+  "jetty-1080.mp4",
+  "jetty-1440.mp4",
+  "jetty-2160.mp4",
+  "jetty-720.mp4",
+  "local-island-1080.mp4",
+  "local-island-1440.mp4",
+  "local-island-2160.mp4",
+  "local-island-720.mp4",
+  "nurse-shark-1080.mp4",
+  "nurse-shark-720.mp4",
+  "ocean-1080.mp4",
+  "ocean-1440.mp4",
+  "ocean-2160.mp4",
+  "ocean-720.mp4",
+  "ray-1080.mp4",
+  "ray-1440.mp4",
+  "ray-2160.mp4",
+  "ray-720.mp4",
+  "reef-split-1080.mp4",
+  "reef-split-720.mp4",
+  "sandbank-palms-1080.mp4",
+  "sandbank-palms-1440.mp4",
+  "sandbank-palms-2160.mp4",
+  "sandbank-palms-720.mp4",
+  "shallows-1080.mp4",
+  "shallows-1440.mp4",
+  "shallows-2160.mp4",
+  "shallows-720.mp4",
+  "shark-1080.mp4",
+  "shark-1440.mp4",
+  "shark-2160.mp4",
+  "shark-720.mp4",
+  "snorkel-pair-1080.mp4",
+  "snorkel-pair-1440.mp4",
+  "snorkel-pair-2160.mp4",
+  "snorkel-pair-720.mp4",
+  "sunbeams-1080.mp4",
+  "sunbeams-1440.mp4",
+  "sunbeams-2160.mp4",
+  "sunbeams-720.mp4",
+  "sunset-1080.mp4",
+  "sunset-720.mp4",
+  "turtle-1080.mp4",
+  "turtle-1440.mp4",
+  "turtle-2160.mp4",
+  "turtle-720.mp4",
+  "vessel-1080.mp4",
+  "vessel-1440.mp4",
+  "vessel-2160.mp4"
+ ],
+ "audio": [
+  "essence.mp3",
+  "horizon.mp3",
+  "lagoon.mp3",
+  "ocean-therapy.mp3",
+  "summer-mix.mp3",
+  "trade-winds.mp3"
+ ],
+ "dims": {
+  "aerial-anchor-1200.webp": {
+   "w": 1200,
+   "h": 675
+  },
+  "aerial-anchor-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "aerial-anchor-1920.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "aerial-anchor-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "aerial-bow-1200.webp": {
+   "w": 1200,
+   "h": 675
+  },
+  "aerial-bow-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "aerial-bow-1920.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "aerial-bow-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "aerial-close-1200.webp": {
+   "w": 1200,
+   "h": 675
+  },
+  "aerial-close-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "aerial-close-1920.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "aerial-close-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "aerial-marina-1200.webp": {
+   "w": 1200,
+   "h": 675
+  },
+  "aerial-marina-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "aerial-marina-1920.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "aerial-marina-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "aerial-underway-1200.webp": {
+   "w": 1200,
+   "h": 675
+  },
+  "aerial-underway-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "aerial-underway-1920.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "aerial-underway-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "atoll-pair-1200.webp": {
+   "w": 1200,
+   "h": 801
+  },
+  "atoll-pair-1600.webp": {
+   "w": 1600,
+   "h": 1067
+  },
+  "atoll-pair-2800.webp": {
+   "w": 2800,
+   "h": 1867
+  },
+  "atoll-pair-900.webp": {
+   "w": 900,
+   "h": 600
+  },
+  "boarding-1200.webp": {
+   "w": 1200,
+   "h": 900
+  },
+  "boarding-1600.webp": {
+   "w": 1600,
+   "h": 1200
+  },
+  "boarding-2800.webp": {
+   "w": 2800,
+   "h": 2100
+  },
+  "boarding-900.webp": {
+   "w": 900,
+   "h": 675
+  },
+  "caustics.webp": {
+   "w": 512,
+   "h": 512
+  },
+  "fins-1200.webp": {
+   "w": 1200,
+   "h": 900
+  },
+  "fins-1600.webp": {
+   "w": 1600,
+   "h": 1200
+  },
+  "fins-2200.webp": {
+   "w": 2200,
+   "h": 1650
+  },
+  "fins-2800.webp": {
+   "w": 2800,
+   "h": 2100
+  },
+  "fins-900.webp": {
+   "w": 900,
+   "h": 675
+  },
+  "float-blue-1200.webp": {
+   "w": 1200,
+   "h": 900
+  },
+  "float-blue-1600.webp": {
+   "w": 1600,
+   "h": 1200
+  },
+  "float-blue-2800.webp": {
+   "w": 2800,
+   "h": 2100
+  },
+  "float-blue-900.webp": {
+   "w": 900,
+   "h": 675
+  },
+  "floats-1200.webp": {
+   "w": 1200,
+   "h": 802
+  },
+  "floats-1600.webp": {
+   "w": 1600,
+   "h": 1069
+  },
+  "floats-1616.webp": {
+   "w": 1616,
+   "h": 1080
+  },
+  "floats-900.webp": {
+   "w": 900,
+   "h": 601
+  },
+  "logo-full-white.webp": {
+   "w": 420,
+   "h": 218
+  },
+  "logo-full.webp": {
+   "w": 1552,
+   "h": 828
+  },
+  "logo-mark-white.webp": {
+   "w": 420,
+   "h": 178
+  },
+  "logo-mark.webp": {
+   "w": 420,
+   "h": 178
+  },
+  "palm-beach-1200.webp": {
+   "w": 1200,
+   "h": 801
+  },
+  "palm-beach-1600.webp": {
+   "w": 1600,
+   "h": 1068
+  },
+  "palm-beach-2200.webp": {
+   "w": 2200,
+   "h": 1468
+  },
+  "palm-beach-2800.webp": {
+   "w": 2800,
+   "h": 1869
+  },
+  "palm-beach-900.webp": {
+   "w": 900,
+   "h": 601
+  },
+  "palm-shore-1200.webp": {
+   "w": 1200,
+   "h": 801
+  },
+  "palm-shore-1600.webp": {
+   "w": 1600,
+   "h": 1067
+  },
+  "palm-shore-2800.webp": {
+   "w": 2800,
+   "h": 1867
+  },
+  "palm-shore-900.webp": {
+   "w": 900,
+   "h": 600
+  },
+  "platter-1200.webp": {
+   "w": 1200,
+   "h": 802
+  },
+  "platter-1600.webp": {
+   "w": 1600,
+   "h": 1069
+  },
+  "platter-1616.webp": {
+   "w": 1616,
+   "h": 1080
+  },
+  "platter-900.webp": {
+   "w": 900,
+   "h": 601
+  },
+  "poster-anchor-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-anchor-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-anchor-1920.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "poster-anchor-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-anchor-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-anchorage-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-anchorage-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-anchorage-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-anchorage-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-boat-blue-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-boat-blue-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-boat-blue-2400.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "poster-boat-blue-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-boat-drift-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-boat-drift-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-boat-drift-2400.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "poster-boat-drift-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-boat-harbour-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-boat-harbour-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-boat-harbour-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-boat-harbour-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-boat-orbit-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-boat-orbit-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-boat-orbit-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-boat-orbit-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-boat-reef-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-boat-reef-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-boat-reef-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-boat-reef-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-jetty-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-jetty-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-jetty-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-jetty-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-local-island-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-local-island-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-local-island-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-local-island-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-nurse-shark-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-nurse-shark-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-nurse-shark-2400.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "poster-nurse-shark-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-ocean-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-ocean-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-ocean-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-ocean-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-ray-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-ray-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-ray-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-ray-2800.webp": {
+   "w": 2800,
+   "h": 1576
+  },
+  "poster-ray-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-reef-split-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-reef-split-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-reef-split-2400.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "poster-reef-split-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-sandbank-palms-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-sandbank-palms-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-sandbank-palms-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-sandbank-palms-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-shallows-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-shallows-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-shallows-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-shallows-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-shark-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-shark-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-shark-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-shark-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-snorkel-pair-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-snorkel-pair-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-snorkel-pair-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-snorkel-pair-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-sunbeams-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-sunbeams-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-sunbeams-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-sunbeams-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-sunset-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-sunset-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-sunset-2400.webp": {
+   "w": 1920,
+   "h": 1080
+  },
+  "poster-sunset-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-turtle-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-turtle-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-turtle-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-turtle-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "poster-vessel-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "poster-vessel-1600.webp": {
+   "w": 1600,
+   "h": 900
+  },
+  "poster-vessel-2400.webp": {
+   "w": 2400,
+   "h": 1350
+  },
+  "poster-vessel-900.webp": {
+   "w": 900,
+   "h": 506
+  },
+  "ray-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "ray-1600.webp": {
+   "w": 1600,
+   "h": 901
+  },
+  "ray-2200.webp": {
+   "w": 2200,
+   "h": 1238
+  },
+  "ray-900.webp": {
+   "w": 900,
+   "h": 507
+  },
+  "ray-sand-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "ray-sand-1600.webp": {
+   "w": 1600,
+   "h": 901
+  },
+  "ray-sand-2200.webp": {
+   "w": 2200,
+   "h": 1238
+  },
+  "ray-sand-900.webp": {
+   "w": 900,
+   "h": 507
+  },
+  "salon-1200.webp": {
+   "w": 1200,
+   "h": 801
+  },
+  "salon-1600.webp": {
+   "w": 1600,
+   "h": 1067
+  },
+  "salon-2800.webp": {
+   "w": 2800,
+   "h": 1867
+  },
+  "salon-900.webp": {
+   "w": 900,
+   "h": 600
+  },
+  "snorkellers-1200.webp": {
+   "w": 1200,
+   "h": 676
+  },
+  "snorkellers-1600.webp": {
+   "w": 1600,
+   "h": 901
+  },
+  "snorkellers-900.webp": {
+   "w": 900,
+   "h": 507
+  },
+  "swim-boat-1200.webp": {
+   "w": 1200,
+   "h": 900
+  },
+  "swim-boat-1600.webp": {
+   "w": 1600,
+   "h": 1200
+  },
+  "swim-boat-2800.webp": {
+   "w": 2800,
+   "h": 2100
+  },
+  "swim-boat-900.webp": {
+   "w": 900,
+   "h": 675
+  },
+  "vessel-guests-1200.webp": {
+   "w": 1200,
+   "h": 900
+  },
+  "vessel-guests-1600.webp": {
+   "w": 1600,
+   "h": 1200
+  },
+  "vessel-guests-2800.webp": {
+   "w": 2800,
+   "h": 2100
+  },
+  "vessel-guests-900.webp": {
+   "w": 900,
+   "h": 675
+  }
+ }
+}

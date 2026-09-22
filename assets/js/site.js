@@ -26,7 +26,12 @@
               /^([23]g|slow-2g)$/.test(navigator.connection.effectiveType || ""))) || false;
   var TOUCH = window.matchMedia("(hover: none)").matches;
 
-  function u(p) { return ROOT + p; }                    // an asset, from the site root
+  /* an asset, from the site root — or from the media library, when the
+     photographs, film and music live in Supabase Storage rather than beside
+     the pages. Everything else (the stylesheet, this script, the fonts) is
+     always served with the site. */
+  var MEDIA = (window.CV_ENV && window.CV_ENV.MEDIA_URL) || "";
+  function u(p) { return (MEDIA && /^assets\/(img|video|audio)\//.test(p) ? MEDIA : ROOT) + p; }
   function pg(p) { return BASE + p; }                   // a page, in the current language
   function inLang(code) {                               // this same page, in another language
     var l = LANGS.filter(function (x) { return x.code === code; })[0];

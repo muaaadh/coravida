@@ -40,7 +40,10 @@ function env() {
    environment, so a different Supabase project needs no edit to the repo —
    set SUPABASE_URL and SUPABASE_ANON_KEY and this file follows. */
 function writeEnvJs(e) {
-  const want = `/* Public address of the Coravida database and its publishable key — safe to\n   ship: row-level security decides what the key may read or write.\n   Written by tools/vercel-build.js from SUPABASE_URL / SUPABASE_ANON_KEY. */\nwindow.CV_ENV = { SUPABASE_URL: ${JSON.stringify(e.url)}, SUPABASE_ANON_KEY: ${JSON.stringify(e.key)} };\n`;
+  /* where the photographs, film and music are. Set MEDIA_URL and they come from
+     Supabase Storage; leave it and they are served beside the pages. */
+  const media = (process.env.MEDIA_URL || "").trim().replace(/\/*$/, "");
+  const want = `/* Public address of the Coravida database and its publishable key — safe to\n   ship: row-level security decides what the key may read or write.\n   Written by tools/vercel-build.js from SUPABASE_URL / SUPABASE_ANON_KEY. */\nwindow.CV_ENV = { SUPABASE_URL: ${JSON.stringify(e.url)}, SUPABASE_ANON_KEY: ${JSON.stringify(e.key)}${media ? ", MEDIA_URL: " + JSON.stringify(media + "/") : ""} };\n`;
   const had = fs.existsSync(ENVJS) ? fs.readFileSync(ENVJS, "utf8") : "";
   if (had !== want) fs.writeFileSync(ENVJS, want);
   console.log("build: assets/js/env.js points at " + e.url);   // every build says which database, not only a build that changes it
@@ -104,6 +107,18 @@ async function get(url, key, init) {
   for (const name of fs.readdirSync(ROOT)) {
     if (SKIP.has(name) || name.startsWith(".") || DEV.test(name)) continue;
     fs.cpSync(path.join(ROOT, name), path.join(OUT, name), { recursive: true, filter: p => !/assets\/src(\/|$)/.test(p.replace(ROOT, "")) });
+  }
+  /* when the media library lives in Supabase there is nothing to publish here:
+     a gigabyte of film need not travel through the build at all */
+  if ((process.env.MEDIA_URL || "").trim()) {
+    let freed = 0;
+    for (const d of ["img", "video", "audio"]) {
+      const p = path.join(OUT, "assets", d);
+      if (!fs.existsSync(p)) continue;
+      for (const f of fs.readdirSync(p)) freed += fs.statSync(path.join(p, f)).size;
+      fs.rmSync(p, { recursive: true, force: true });
+    }
+    console.log("build: media comes from " + process.env.MEDIA_URL.trim() + " — " + Math.round(freed / 1048576) + " MB left out of the deployment");
   }
   console.log("build: _site assembled");
 })().catch(e => { console.error(e); process.exit(1); });

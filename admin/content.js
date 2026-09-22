@@ -6,7 +6,8 @@
 (function (A) {
   "use strict";
   var E = A.E, $ = A.$, $$ = A.$$, esc = A.esc, C = A.C, svg = A.svg, iconBtn = A.iconBtn, toast = A.toast;
-  var IMG = "../assets/img/", VID = "../assets/video/";
+  var MEDIA = (window.CV_ENV && window.CV_ENV.MEDIA_URL) || "../";
+  var IMG = MEDIA + "assets/img/", VID = MEDIA + "assets/video/";
 
   /* ---------------------------------------------------------------- field builders */
   function field(label, obj, key, opts) {

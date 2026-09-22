@@ -81,8 +81,17 @@ const TP = s => {
   return r.replace(/\{n\}/g, paxWord());
 };
 
+/* Where the photographs, the film and the music are.
+   MEDIA_URL set  → they live in Supabase Storage and the pages point straight at
+                    it; the repository holds no media at all.
+   MEDIA_URL unset → they are on disk beside this script, as they always were.
+   Either way the paths are the same ("assets/img/…"), only the prefix differs. */
+const MEDIA = (process.env.MEDIA_URL || "").trim().replace(/\/*$/, m => (process.env.MEDIA_URL || "").trim() ? "/" : "");
 const IMGDIR = path.join(ROOT, "assets/img");
-const have = new Set(fs.readdirSync(IMGDIR));
+/* what exists: the manifest the upload tool writes, else the files on disk */
+const MANIFEST = path.join(ROOT, "content/media-manifest.json");
+const LIB = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, "utf8")) : null;
+const have = new Set(LIB ? LIB.files : fs.readdirSync(IMGDIR));
 const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const money = n => (CV.rates.currency || "USD") + " " +
   Number(n).toLocaleString(LOC.code === "zh" ? "en-US" : LOC.code === "en" ? "en-US" : LOC.code);
@@ -104,6 +113,7 @@ const dimCache = new Map();
 function dims(file) {
   if (dimCache.has(file)) return dimCache.get(file);
   let d = null;
+  if (LIB && LIB.dims && LIB.dims[file]) { dimCache.set(file, LIB.dims[file]); return LIB.dims[file]; }
   try {
     const b = fs.readFileSync(path.join(IMGDIR, file));
     const fmt = b.toString("ascii", 12, 16);
@@ -129,6 +139,8 @@ tiers.forEach(a => a.sort((x, y) => x - y));
 
 /* the address a page is known by: a home page is its directory, not index.html */
 const pub = (dir, file) => SITE + dir + (file === "index.html" ? "" : file);
+/* a photograph, a clip or a track — wherever the media library is */
+const m = p => MEDIA ? MEDIA + p : AR + p;
 /* the largest tier not wider than `want` — or the largest there is — for the
    places that name one file rather than a srcset */
 function tier(name, want) {
@@ -145,8 +157,8 @@ function img(name, alt, { sizes = "100vw", eager = false, cap = 0 } = {}) {
   // a still the film replaces within a second does not need the largest tier
   if (cap) { const under = set.filter(w => w <= cap); if (under.length) set = under; }
   const pick = set[Math.min(1, set.length - 1)];
-  const src = `${AR}assets/img/${name}-${pick}.webp`;
-  const srcset = set.map(w => `${AR}assets/img/${name}-${w}.webp ${w}w`).join(", ");
+  const src = m(`assets/img/${name}-${pick}.webp`);
+  const srcset = set.map(w => m(`assets/img/${name}-${w}.webp`) + ` ${w}w`).join(", ");
   const d = dims(`${name}-${pick}.webp`);
   return `<img src="${src}" srcset="${srcset}" sizes="${sizes}"` +
     (d ? ` width="${d.w}" height="${d.h}"` : "") + ` alt="${esc(alt)}"` +
@@ -193,10 +205,10 @@ function head({ title, desc, og, r, path: pagePath }) {
 <meta name="description" content="${esc(desc)}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${SITE}assets/img/${tier(og, 1600)}">
+<meta property="og:image" content="${MEDIA ? MEDIA + "assets/img/" + tier(og, 1600) : SITE + "assets/img/" + tier(og, 1600)}">
 <meta property="og:url" content="${pub(LOC.dir, pagePath)}">
 <meta property="og:type" content="website">
-<link rel="icon" href="${r}assets/img/favicon.png" type="image/png">
+<link rel="icon" href="${MEDIA ? MEDIA + "assets/img/favicon.png" : r + "assets/img/favicon.png"}" type="image/png">
 <link rel="preload" href="${r}assets/fonts/montserrat-300.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="${r}assets/fonts/inter-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="${r}assets/css/site.css">
@@ -449,7 +461,7 @@ ${cta()}`;
 /* ------------------------------------------------------------- VOYAGES -- */
 function excursions() {
   at(0);
-  const rows = CV.voyages.map((v, i) => `        <a class="vx__row" href="excursions/${v.slug}.html" data-thumb="assets/img/${tier(v.img, 900)}" data-alt="${esc(v.alt)}" data-a="up" style="--i:${Math.min(i,4)}">
+  const rows = CV.voyages.map((v, i) => `        <a class="vx__row" href="excursions/${v.slug}.html" data-thumb="${m("assets/img/" + tier(v.img, 900))}" data-alt="${esc(v.alt)}" data-a="up" style="--i:${Math.min(i,4)}">
           <span class="vx__n">${String(i + 1).padStart(2, "0")}</span>
           <span class="vx__t">${v.title}</span>
           <span class="vx__m">${v.kind} &middot; ${v.duration} &middot; ${v.area}</span>
@@ -650,7 +662,7 @@ function gallery() {
     const set = CV.gallery.filter(g => g.cat === cat);
     if (!set.length) return "";
     const items = set.map((g, i) => `          <figure data-a="up" style="--i:${i % 3}">
-            <button type="button" data-lb="assets/img/${tier(g.img, 1600)}" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="${T("Open")}: ${esc(g.cap)}">
+            <button type="button" data-lb="${m("assets/img/" + tier(g.img, 1600))}" data-cap="${esc(g.cap)}" data-alt="${esc(g.cap)}" aria-label="${T("Open")}: ${esc(g.cap)}">
               ${img(g.img, g.cap, { sizes: "(min-width:1200px) 560px, (min-width:560px) 50vw, 100vw", eager: k++ < 2 })}
             </button>
             <figcaption>${g.cap}</figcaption>
@@ -1029,13 +1041,14 @@ fs.writeFileSync(path.join(ROOT, "assets/js/data.js"),
 {
   const VID = path.join(ROOT, "assets/video"), AUD = path.join(ROOT, "assets/audio");
   const clips = new Map();
-  for (const f of fs.existsSync(VID) ? fs.readdirSync(VID) : []) {
-    const m = /^(.+)-(\d+)\.mp4$/.exec(f); if (!m) continue;
-    (clips.get(m[1]) || clips.set(m[1], []).get(m[1])).push(+m[2]);
+  const vfiles = LIB ? LIB.video : (fs.existsSync(VID) ? fs.readdirSync(VID) : []);
+  for (const f of vfiles) {
+    const mm = /^(.+)-(\d+)\.mp4$/.exec(f); if (!mm) continue;
+    (clips.get(mm[1]) || clips.set(mm[1], []).get(mm[1])).push(+mm[2]);
   }
   const images = [...tiers.keys()].filter(n => !/^poster-/.test(n) && !/^logo|^favicon|^caustics/.test(n)).sort()
     .map(n => { const ws = tiers.get(n), d = dims(`${n}-${ws[ws.length - 1]}.webp`); return { name: n, max: ws[ws.length - 1], w: d && d.w, h: d && d.h }; });
-  const tracks = (fs.existsSync(AUD) ? fs.readdirSync(AUD) : []).filter(f => /\.(mp3|m4a|ogg)$/.test(f)).map(f => f.replace(/\.[^.]+$/, ""));
+  const tracks = (LIB ? LIB.audio : (fs.existsSync(AUD) ? fs.readdirSync(AUD) : [])).filter(f => /\.(mp3|m4a|ogg)$/.test(f)).map(f => f.replace(/\.[^.]+$/, ""));
   fs.writeFileSync(path.join(ROOT, "content/media.json"), JSON.stringify({
     images,
     clips: [...clips.keys()].sort().map(n => ({ name: n, max: Math.max(...clips.get(n)), poster: tiers.has("poster-" + n) ? "poster-" + n : null })),

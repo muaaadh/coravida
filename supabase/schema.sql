@@ -107,6 +107,27 @@ do $$ begin
   end if;
 end $$;
 
+-- ---- storage: the media library ----------------------------------------------
+-- Every photograph, clip and track the site shows. Public to read — it is what
+-- visitors download — and written only by the office or by tools/media-push.sh
+-- with the service key. This is what lets the repository hold no media at all.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+  values ('media', 'media', true, 524288000, array['image/webp','image/png','image/jpeg','video/mp4','audio/mpeg','audio/mp4','audio/ogg'])
+  on conflict (id) do update set public = excluded.public,
+    file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
+drop policy if exists "the media library is public to read" on storage.objects;
+create policy "the media library is public to read" on storage.objects
+  for select to anon, authenticated using (bucket_id = 'media');
+drop policy if exists "staff write the media library" on storage.objects;
+create policy "staff write the media library" on storage.objects
+  for insert to authenticated with check (bucket_id = 'media');
+drop policy if exists "staff replace media" on storage.objects;
+create policy "staff replace media" on storage.objects
+  for update to authenticated using (bucket_id = 'media') with check (bucket_id = 'media');
+drop policy if exists "staff remove media" on storage.objects;
+create policy "staff remove media" on storage.objects
+  for delete to authenticated using (bucket_id = 'media');
+
 -- ---- storage: photographs the admin uploads ---------------------------------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
   values ('uploads', 'uploads', true, 15728640, array['image/jpeg','image/png','image/webp'])
@@ -201,6 +222,7 @@ begin
   if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'records') then missing := missing || ' records-realtime'; end if;
   if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'inbox') then missing := missing || ' inbox-realtime'; end if;
   if not exists (select 1 from storage.buckets where id = 'uploads') then missing := missing || ' uploads-bucket'; end if;
+  if not exists (select 1 from storage.buckets where id = 'media') then missing := missing || ' media-bucket'; end if;
   if not exists (select 1 from pg_trigger where tgname = 'records_keep_newer') then missing := missing || ' keep_newer'; end if;
   if not exists (select 1 from pg_trigger where tgname = 'inbox_budget') then missing := missing || ' inbox_budget'; end if;
   if missing <> '' then raise exception 'schema incomplete —%', missing; end if;

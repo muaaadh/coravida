@@ -14,25 +14,33 @@ client-side build. Live at **https://coravida.vercel.app/**, admin at `/admin/`.
    `main`) and mirrors the built site into the client's OneDrive folder. A plain `git push`
    skips the content step and the next build then rebuilds from the *database*, silently
    discarding the repo edit — or failing if it names a picture that no longer exists.
-3. **Content lives in the database, not in the repo.** The Vercel build overwrites
+3. **The information lives in Supabase; GitHub holds the website.** Content is the
+   `content.site` row, the books and enquiries are tables, and the media library —
+   every photograph, clip and track — is the public `media` bucket. With `MEDIA_URL`
+   set, the pages point straight at that bucket, the build leaves media out of the
+   deployment entirely, and `content/media-manifest.json` (small, committed) is all the
+   build needs to know what exists and how big each photograph is. Without it, media is
+   read from `assets/img|video|audio` on disk exactly as before — which is how you work
+   locally. `bash tools/media-push.sh` uploads and rewrites the manifest.
+4. **Content lives in the database, not in the repo.** The Vercel build overwrites
    `content/site.json` from the `content.site` row before building, because the office edits
    it through the admin. `tools/content-up.sh` is what keeps the repo's copy authoritative
    when a developer changes it.
-4. **Every visible string goes through `T("…")`** and must be translated in
+5. **Every visible string goes through `T("…")`** and must be translated in
    `tools/i18n/{ru,zh,de}.js`. `node tools/build.js` prints anything untranslated and, for
    content, warns when a positional list has drifted. Array overrides match by
    `slug` / `id` / `img` / `file` / `src` — never by position if the item has one of those.
-5. **Know which database you are pointed at.** `tools/export.sh`, `tools/import.sh` and
+6. **Know which database you are pointed at.** `tools/export.sh`, `tools/import.sh` and
    `tools/content-up.sh` act on `SUPABASE_URL` — export it, or set it in `.env.local`; the
    file never overrides what you exported. `import.sh` refuses to run unless the Supabase
    CLI is linked to that same project, because the schema goes through the CLI and the rows
    go through REST. After a handover, repoint `.env.local` or `deploy.sh` keeps writing
    content into the old project.
-6. **Secrets stay in `.env.local`** (gitignored): `SUPABASE_SERVICE_KEY`,
+7. **Secrets stay in `.env.local`** (gitignored): `SUPABASE_SERVICE_KEY`,
    `SUPABASE_DB_PASSWORD`, `ADMIN_FIRST_PASSWORD`. The *publishable* key in
    `assets/js/env.js` is meant to be public — row-level security decides what it may do —
    and that file is rewritten at build time from `SUPABASE_URL` / `SUPABASE_ANON_KEY`.
-7. **Check the result in a browser, not by reading the diff.** There is a headless harness
+8. **Check the result in a browser, not by reading the diff.** There is a headless harness
    (below); layout, film and the calendar have all broken in ways that only a screenshot
    showed.
 
@@ -45,6 +53,7 @@ bash tools/deploy.sh "message"       # the only way to ship
 bash tools/content-up.sh             # push content/site.json into the database
 bash tools/export.sh handover/data   # take the whole database out
 bash tools/import.sh handover/data   # fill a fresh database (schema first)
+bash tools/media-push.sh             # media library → Supabase Storage + the manifest
 ```
 
 Media (agency machine only — the sources live in OneDrive):
@@ -70,6 +79,7 @@ admin/                   db.js (the only file that touches Supabase) · app.js �
                          calendar.js · inbox.js (the enquiries board) · history.js · admin.css
 api/publish.js           Vercel function: verifies a staff JWT, fires the deploy hook
 supabase/schema.sql      tables, RLS, grants, triggers, realtime, the uploads bucket
+content/media-manifest.json  what the media library holds (written by tools/media-push.sh)
 handover/HANDOVER.md     moving the site to another Vercel + Supabase account
 .env.example             the variables a deployment needs (copy to .env.local)
 ```
