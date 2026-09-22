@@ -135,7 +135,12 @@ async function get(url, key, init) {
       }
     };
     strip(OUT);
-    console.log("build: " + n + " page(s) left out — they are rendered on demand from the published content");
+    /* the data script the header, footer and player read is generated from the
+       same content, so it has to come from the renderer too */
+    for (const f of fs.readdirSync(path.join(OUT, "assets/js"))) {
+      if (/^data(\.[a-z]{2})?\.js$/.test(f)) { fs.rmSync(path.join(OUT, "assets/js", f)); n++; }
+    }
+    console.log("build: " + n + " generated file(s) left out — they are rendered on demand from the published content");
   }
   console.log("build: _site assembled");
 })().catch(e => { console.error(e); process.exit(1); });

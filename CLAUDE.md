@@ -22,10 +22,16 @@ client-side build. Live at **https://coravida.vercel.app/**, admin at `/admin/`.
    build needs to know what exists and how big each photograph is. Without it, media is
    read from `assets/img|video|audio` on disk exactly as before — which is how you work
    locally. `bash tools/media-push.sh` uploads and rewrites the manifest.
-4. **Content lives in the database, not in the repo.** The Vercel build overwrites
-   `content/site.json` from the `content.site` row before building, because the office edits
-   it through the admin. `tools/content-up.sh` is what keeps the repo's copy authoritative
-   when a developer changes it.
+4. **Content lives in the database, not in the repo, and a content change needs no
+   deploy.** With `CV_DYNAMIC=1` the build leaves the generated pages and `data*.js` out of
+   the deployment, and `api/page.js` renders each one when it is asked for, from the
+   `content.site` row — the whole site renders in about 0.1 s, held at Vercel's edge for a
+   minute. The *same* generator does both, so a rendered page is byte-identical to a built
+   one for the same content (there is a check for this: render in memory and compare with
+   the files on disk). Without the variable, the built pages are published and shadow the
+   renderer — Vercel looks for a file before it follows a rewrite, which is the whole
+   switch. Either way `tools/content-up.sh` keeps the repo's copy authoritative when a
+   developer edits content by hand.
 5. **Every visible string goes through `T("…")`** and must be translated in
    `tools/i18n/{ru,zh,de}.js`. `node tools/build.js` prints anything untranslated and, for
    content, warns when a positional list has drifted. Array overrides match by
@@ -77,6 +83,7 @@ assets/js/site.js        the browser: header/menu/footer, the sea, hero cycle, f
 assets/css/site.css      one stylesheet
 admin/                   db.js (the only file that touches Supabase) · app.js · content.js · books.js
                          calendar.js · inbox.js (the enquiries board) · history.js · admin.css
+api/page.js              renders any page on demand from the published content (CV_DYNAMIC)
 api/publish.js           Vercel function: verifies a staff JWT, fires the deploy hook
 supabase/schema.sql      tables, RLS, grants, triggers, realtime, the uploads bucket
 content/media-manifest.json  what the media library holds (written by tools/media-push.sh)

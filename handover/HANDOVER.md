@@ -155,7 +155,8 @@ Two values work, and the difference is caching:
   edit, but Supabase answers `cache-control: no-cache` whatever the object's own metadata
   says (measured), so every visit revalidates every photograph and every video range. The
   bodies still come from cache on a 304; it is the round trips that add up.
-| `DEPLOY_HOOK` | created in step 3 |
+| `CV_DYNAMIC` | `1` — the office's changes go live without a deploy: the build leaves the generated pages out and `api/page.js` renders each one from the published content, held at the edge for a minute. Leave it out and the built pages are served, and every content change needs a rebuild. |
+| `DEPLOY_HOOK` | created in step 3 — only needed for code changes now; content no longer waits for it |
 
 Set all four for **Production, Preview and Development**: a preview build with
 production-only variables is the one case that used to publish a site pointing at the old
