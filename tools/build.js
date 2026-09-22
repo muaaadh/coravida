@@ -1070,6 +1070,9 @@ fs.writeFileSync(path.join(ROOT, "sitemap.xml"),
   }).join("\n") + "\n</urlset>\n");
 console.log(`\nsitemap.xml — ${urls.length} URLs`);
 
+/* one line for crawlers, naming the sitemap at whatever host this build is for */
+fs.writeFileSync(path.join(ROOT, "robots.txt"), `User-agent: *\nAllow: /\nDisallow: /admin/\n\nSitemap: ${SITE}sitemap.xml\n`);
+
 let gaps = 0;
 for (const [code, set] of MISSING) {
   gaps += set.size;

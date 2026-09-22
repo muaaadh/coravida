@@ -22,11 +22,17 @@ client-side build. Live at **https://coravida.vercel.app/**, admin at `/admin/`.
    `tools/i18n/{ru,zh,de}.js`. `node tools/build.js` prints anything untranslated and, for
    content, warns when a positional list has drifted. Array overrides match by
    `slug` / `id` / `img` / `file` / `src` — never by position if the item has one of those.
-5. **Secrets stay in `.env.local`** (gitignored): `SUPABASE_SERVICE_KEY`,
+5. **Know which database you are pointed at.** `tools/export.sh`, `tools/import.sh` and
+   `tools/content-up.sh` act on `SUPABASE_URL` — export it, or set it in `.env.local`; the
+   file never overrides what you exported. `import.sh` refuses to run unless the Supabase
+   CLI is linked to that same project, because the schema goes through the CLI and the rows
+   go through REST. After a handover, repoint `.env.local` or `deploy.sh` keeps writing
+   content into the old project.
+6. **Secrets stay in `.env.local`** (gitignored): `SUPABASE_SERVICE_KEY`,
    `SUPABASE_DB_PASSWORD`, `ADMIN_FIRST_PASSWORD`. The *publishable* key in
    `assets/js/env.js` is meant to be public — row-level security decides what it may do —
    and that file is rewritten at build time from `SUPABASE_URL` / `SUPABASE_ANON_KEY`.
-6. **Check the result in a browser, not by reading the diff.** There is a headless harness
+7. **Check the result in a browser, not by reading the diff.** There is a headless harness
    (below); layout, film and the calendar have all broken in ways that only a screenshot
    showed.
 
@@ -65,6 +71,7 @@ admin/                   db.js (the only file that touches Supabase) · app.js �
 api/publish.js           Vercel function: verifies a staff JWT, fires the deploy hook
 supabase/schema.sql      tables, RLS, grants, triggers, realtime, the uploads bucket
 handover/HANDOVER.md     moving the site to another Vercel + Supabase account
+.env.example             the variables a deployment needs (copy to .env.local)
 ```
 
 ## Things that have bitten before
@@ -83,7 +90,12 @@ handover/HANDOVER.md     moving the site to another Vercel + Supabase account
 - The books' sync depends on the exact `updated` stamps: only what *this* device changed is
   sent (a dirty set in the cache), a folded row is never sent back, and the database drops
   any copy that is not newer (`keep_newer`). Do not "simplify" that.
-- OneDrive dehydrates files mid-session and `rsync` dies on it; the mirror uses `tar`.
+- OneDrive dehydrates files mid-session and `rsync` dies on it; the mirror uses `tar` — and
+  excludes `.env*`, `handover/` and the rest, because that OneDrive is a **shared library**.
+  It once copied `.env.local` into it.
+- The published site is deny-by-default: `tools/vercel-build.js` keeps `README.md`,
+  `CLAUDE.md`, `handover/`, `supabase/`, `tools/` and every `.md/.sql/.sh/.toml` out of
+  `_site`. Both of these notes were briefly world-readable on the live site.
 
 ## The headless harness
 

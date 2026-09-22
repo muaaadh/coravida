@@ -14,7 +14,7 @@ Allow about an hour, plus DNS time if a domain is involved.
 
 | | |
 |---|---|
-| Vercel | The e-mail that owns their account, and which team the project should live in. Hobby is enough (100 GB bandwidth/month; this site ships ~1 GB of film, so a busy month is worth watching). |
+| Vercel | The e-mail that owns their account, and which team the project should live in. **Pro, not Hobby** — Hobby is licensed for non-commercial use only, and a team seat for Dheemi needs Pro too. Watch the bandwidth: this site ships ~1 GB of film. |
 | Supabase | The e-mail that owns their organisation. Free tier is enough. Region **ap-south-1 (Mumbai)** — nearest to Malé. |
 | Staff sign-in | The e-mail the office will actually read (password resets go there). `test@coravida.com` is a placeholder and cannot receive mail. |
 | Domain | The domain, and who controls its DNS. |
@@ -24,47 +24,70 @@ Allow about an hour, plus DNS time if a domain is involved.
 
 1. In the client's organisation: **New project** → name `coravida`, region **ap-south-1**,
    a strong database password (keep it — it is not recoverable).
-2. Note **Project URL**, **publishable (anon) key** and **service_role key** from
+2. **Close sign-ups before anything else.** A new project accepts public sign-ups, and
+   every policy in this schema trusts *any* signed-in user with the books. In the dashboard:
+   *Authentication → Sign In / Providers → Email* → turn **Allow new users to sign up** off.
+   (Step 4 sets it in `config.toml` as well; doing it by hand first closes the window.)
+3. Note **Project URL**, **publishable (anon) key** and **service_role key** from
    *Settings → API*, and the project **ref** (the subdomain).
-3. Link the CLI and apply the schema and the data:
+4. Link the CLI and apply the schema and the data. **Export immediately before you
+   switch over** — the snapshot is a moment in time, and the office is using the admin.
 
 ```bash
 cd ~/coravida
-supabase login                       # if not already
-supabase link --project-ref <NEW_REF>
+supabase login                                    # if not already
+supabase link --project-ref <NEW_REF>             # import.sh refuses if this does not match
 
-# 3a. export from the current project (writes handover/data, gitignored)
+# 3a. out of the old project (writes handover/data — gitignored, never mirrored)
 SUPABASE_URL=https://hkzseexkxufrqbngzqdk.supabase.co \
 SUPABASE_SERVICE_KEY=<OLD_SERVICE_KEY> \
 bash tools/export.sh handover/data
 
-# 3b. schema + data into the new one
+# 3b. schema + every row into the new one
 SUPABASE_URL=https://<NEW_REF>.supabase.co \
 SUPABASE_SERVICE_KEY=<NEW_SERVICE_KEY> \
-bash tools/import.sh handover/data
+bash tools/import.sh handover/data first
 ```
 
-`tools/import.sh` applies `supabase/schema.sql` (tables, row-level security, grants, the
-`keep_newer` and `inbox_budget` triggers, the realtime publication, the `uploads` bucket)
-and then upserts `content`, `records`, `inbox` and any uploaded photographs. It is safe to
-run twice.
+`first` applies `supabase/schema.sql` — tables, row-level security, grants (including the
+column-level `anon` insert on `inbox`), the `keep_newer` and `inbox_budget` triggers, the
+realtime publication and the `uploads` bucket — and ends by raising an error if any of
+those is missing. Then it loads `content`, `records`, `inbox` and any uploaded photographs
+with their exact timestamps, and prints the row counts it can see afterwards.
 
-4. Auth — edit `supabase/config.toml` so the two URL lines carry the client's address, then
+**For anything that arrives after that**, run the pair again with `gap` as the mode:
+
+```bash
+SUPABASE_URL=https://hkzseexkxufrqbngzqdk.supabase.co SUPABASE_SERVICE_KEY=<OLD> bash tools/export.sh handover/gap
+SUPABASE_URL=https://<NEW_REF>.supabase.co          SUPABASE_SERVICE_KEY=<NEW> bash tools/import.sh handover/gap gap
+```
+
+`gap` inserts only what is not there yet. Never re-run `first` against a project the office
+has started using: it would put the content, the books and the enquiry board back to the
+state of the snapshot.
+
+5. Auth — edit `supabase/config.toml` so the two URL lines carry the client's address, then
    push it. This is what closes sign-ups and makes reset links land on their admin:
 
 ```toml
 project_id = "coravida"
 [auth]
 site_url = "https://<THEIR-DOMAIN>/admin/"
-additional_redirect_urls = ["https://<THEIR-DOMAIN>/admin/", "https://<THEIR-DOMAIN>/admin/index.html", "http://127.0.0.1:8899/admin/"]
+additional_redirect_urls = ["https://<THEIR-DOMAIN>/admin/", "https://<THEIR-DOMAIN>/admin", "https://<THEIR-DOMAIN>/admin/index.html", "http://127.0.0.1:8899/admin/"]
 enable_signup = false        # keep [auth.email] enable_signup = true — that flag is the e-mail *provider*
 ```
+
+`supabase config push` sends the whole file, not those lines, so read it once for anything
+that does not belong to the client's project or their plan; if the push is rejected, set the
+same two URLs by hand in *Authentication → URL Configuration*. Password-reset e-mail goes
+through Supabase's shared sender and is rate-limited (a couple an hour) — fine for the
+office, not for anything bulk; add their own SMTP later if that matters.
 
 ```bash
 supabase config push
 ```
 
-5. Create the office's user (sign-ups are closed, so make it with the service key):
+6. Create the office's user (sign-ups are closed, so make it with the service key):
 
 ```bash
 curl -s -X POST "https://<NEW_REF>.supabase.co/auth/v1/admin/users" \
@@ -74,12 +97,14 @@ curl -s -X POST "https://<NEW_REF>.supabase.co/auth/v1/admin/users" \
 ```
 
 Tell the office to change it at *Admin → Settings → Change password* on first sign-in.
+Send it out of band; do not leave it in a shell history or a chat.
 
 ## 2. The new Vercel project
 
 1. Import `coravida` from GitHub into the client's team (or `vercel link` from the clone).
    Framework **Other**; the rest comes from `vercel.json` — build `node tools/vercel-build.js`,
-   output `_site`.
+   output `_site`. Set **Node 22.x** in *Settings → Build*, so a future default cannot move
+   under the build.
 2. Environment variables (*Settings → Environment Variables*, all environments):
 
 | Key | Value |
@@ -94,7 +119,13 @@ Tell the office to change it at *Admin → Settings → Change password* on firs
    **Publish** saves the content but cannot rebuild the site (it will say so).
 4. **Deploy**, then check the build log says
    `build: assets/js/env.js points at https://<NEW_REF>.supabase.co` and
-   `build: content from the database`.
+   `build: content from the database`. The build now refuses to run if only one of the two
+   Supabase variables is set, or if the publishable key is really a service key — so a green
+   build with those two lines means the wiring is right.
+5. **Disconnect the old project from Git** (*old project → Settings → Git → Disconnect*) as
+   soon as this one is verified. Both projects watch the same repository, so until then every
+   push republishes the old site too — and the old site still takes enquiries into the old
+   database.
 
 ## 3. Domain
 
@@ -114,19 +145,37 @@ On the new address, signed out:
 - block a day in the calendar → the public calendar shows it within a few seconds;
 - change a word in Brand & contact → **Publish** → the build runs and the word appears.
 
-`curl -s https://<THEIR-DOMAIN>/assets/js/env.js` must show the client's project — if it
-still shows `hkzseexkxufrqbngzqdk`, the env vars are missing and the site is writing to
-Dheemi's database.
+Three checks that are easy to forget:
+
+```bash
+# 1. the browser is pointed at THEIR database (not Dheemi's)
+curl -s https://<THEIR-DOMAIN>/assets/js/env.js | grep -o 'https://[a-z0-9]*\.supabase\.co'
+
+# 2. the books and the enquiries actually landed
+supabase db query --linked "select 'content' t, count(*) from public.content union all select 'records', count(*) from public.records union all select 'inbox', count(*) from public.inbox"
+
+# 3. the admin will hear about changes made on another device
+supabase db query --linked "select tablename from pg_publication_tables where pubname='supabase_realtime'"
+```
+
+If step 1 still shows `hkzseexkxufrqbngzqdk`, the environment variables are missing and the
+new site is reading and writing Dheemi's database.
 
 ## 5. Tell the office (they have been using the admin)
 
-Their browsers hold a cache of the books and the enquiries from the old project. Before
-they sign in to the new one, on each device: **Settings → Sign out** (which clears it), or
-clear site data. Otherwise a stale cache can push old rows into the new database.
+Their browsers hold a cache of the books and the enquiries from the old project, and an
+unpublished content draft lives there too. On each device, in this order:
 
-Also: enquiries sent between the export and the switch-over land in the *old* project.
-Either do the export last, or after cut-over run `tools/export.sh` against the old project
-once more and re-run `tools/import.sh` — the import upserts, so nothing is duplicated.
+1. **Publish** anything half-edited in the admin (or note that it will be lost — signing
+   out clears the draft as well as the cache);
+2. **Settings → Sign out**, which clears `cv:*` from that browser;
+3. sign in again on the new address.
+
+If a device skips this, its cache can push rows the old project held — including ones the
+office has since changed — into the new database on the next save.
+
+Enquiries sent between the export and the switch-over land in the *old* project: catch them
+with the `gap` pass in step 1.3.
 
 ## 6. The repository
 
@@ -145,13 +194,19 @@ OneDrive folder, which is harmless (and skipped if the folder is gone).
 Once the new address has been live for a few days:
 
 - Vercel: delete the old `coravida` project in `muaaadhs-projects` (or pause it), and its
-  deploy hook.
-- Supabase: pause or delete project `hkzseexkxufrqbngzqdk`. Its publishable key stops
-  working with it — nothing else uses it.
+  deploy hook. Its `*.vercel.app` address is indexed, so if the client cares about search,
+  redirect it at the new domain rather than deleting it outright.
+- Supabase: in the old project, *Authentication → Users* → sign out all users, then rotate
+  or disable its API keys, then pause or delete the project. Until you do, an admin tab left
+  open on a laptop keeps reading and writing the old database quite happily.
 - Revoke the GitHub fine-grained token that was pasted into chat on 16 September 2026, if
   it still exists: github.com/settings/personal-access-tokens.
-- Delete the agency's `.env.local` copy of the old service key, and `handover/data`
-  (it contains customer names, e-mail addresses and telephone numbers).
+- Point the agency's own `.env.local` at the client's project (`SUPABASE_URL`,
+  `SUPABASE_SERVICE_KEY`) — otherwise `tools/deploy.sh` keeps pushing content into the old
+  database and the developer will wonder why nothing changes. Then delete the old key.
+- Delete `handover/data` and `handover/gap`: they contain customer names, e-mail addresses
+  and telephone numbers. They are gitignored and the mirror excludes them, but they are
+  still sitting on the machine.
 - Keep, on purpose: a Dheemi seat on the client's Vercel team and Supabase organisation if
   Dheemi is to keep supporting the site. Without it, nobody at Dheemi can deploy.
 

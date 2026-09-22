@@ -85,8 +85,12 @@ drop policy if exists "staff delete inbox" on public.inbox;
 create policy "staff delete inbox" on public.inbox
   for delete to authenticated using (true);
 
--- the Data API needs the roles granted on the tables as well as RLS
-grant usage on schema public to anon, authenticated;
+-- the Data API needs the roles granted on the tables as well as RLS.
+-- service_role is granted explicitly: a project created today does not
+-- necessarily carry default privileges for it, and the migration, the
+-- publish route and the export/import tools all use that key.
+grant usage on schema public to anon, authenticated, service_role;
+grant all on public.content, public.records, public.inbox to service_role;
 grant select on public.content to anon, authenticated;
 grant insert, update on public.content to authenticated;
 grant select, insert, update on public.records to authenticated;
@@ -106,7 +110,8 @@ end $$;
 -- ---- storage: photographs the admin uploads ---------------------------------
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
   values ('uploads', 'uploads', true, 15728640, array['image/jpeg','image/png','image/webp'])
-  on conflict (id) do nothing;
+  on conflict (id) do update set public = excluded.public,
+    file_size_limit = excluded.file_size_limit, allowed_mime_types = excluded.allowed_mime_types;
 drop policy if exists "uploads are public to read" on storage.objects;
 create policy "uploads are public to read" on storage.objects
   for select to anon, authenticated using (bucket_id = 'uploads');
@@ -152,6 +157,11 @@ create or replace function public.inbox_budget() returns trigger
 language plpgsql security definer set search_path = '' as $$
 declare recent int; today int;
 begin
+  -- the budget is a guard on the public key, not on the office: staff, the
+  -- service key and a migration are never throttled. Inside a security-definer
+  -- function current_user is the owner, so ask for the role the caller was
+  -- given (PostgREST does SET LOCAL ROLE; a direct psql session has none).
+  if coalesce(current_setting('role', true), 'none') <> 'anon' then return new; end if;
   select count(*) into recent from public.inbox where at > now() - interval '1 hour';
   select count(*) into today  from public.inbox where at > now() - interval '1 day';
   if recent >= 30 or today >= 150 then
@@ -183,3 +193,16 @@ create policy "guests add to the inbox" on public.inbox
 alter table public.inbox drop constraint if exists inbox_status_check;
 update public.inbox set status = case when booking_ref is not null then 'booked' else 'contacted' end where status = 'handled';
 alter table public.inbox add constraint inbox_status_check check (status in ('new','contacted','quoted','booked','lost','archived'));
+
+-- ---- what a fresh project must end up with, checked out loud ------------------
+do $$
+declare missing text := '';
+begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'records') then missing := missing || ' records-realtime'; end if;
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and tablename = 'inbox') then missing := missing || ' inbox-realtime'; end if;
+  if not exists (select 1 from storage.buckets where id = 'uploads') then missing := missing || ' uploads-bucket'; end if;
+  if not exists (select 1 from pg_trigger where tgname = 'records_keep_newer') then missing := missing || ' keep_newer'; end if;
+  if not exists (select 1 from pg_trigger where tgname = 'inbox_budget') then missing := missing || ' inbox_budget'; end if;
+  if missing <> '' then raise exception 'schema incomplete —%', missing; end if;
+  raise notice 'schema: tables, policies, triggers, realtime and the uploads bucket are all in place';
+end $$;

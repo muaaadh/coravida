@@ -57,53 +57,53 @@
  "hero": {
   "clips": [
    {
-    "src": "vessel",
-    "poster": "poster-vessel",
-    "max": 2160,
     "alt": "Tiffany Blanc 14 在马累近海的深蓝海面上航行",
-    "cap": "航行中，穿越环礁"
+    "cap": "航行中，穿越环礁",
+    "max": 2160,
+    "src": "vessel",
+    "poster": "poster-vessel"
    },
    {
-    "src": "boat-reef",
-    "poster": "poster-boat-reef",
-    "max": 2160,
     "alt": "航拍 Tiffany Blanc 14 沿礁缘转向",
-    "cap": "沿着礁缘"
+    "cap": "沿着礁缘",
+    "max": 2160,
+    "src": "boat-reef",
+    "poster": "poster-boat-reef"
    },
    {
-    "src": "reef-split",
-    "poster": "poster-reef-split",
-    "max": 1080,
     "alt": "半水面半水下的礁石，云朵映在清澈的水面上",
-    "cap": "水面之下"
-   },
-   {
-    "src": "sandbank-palms",
-    "poster": "poster-sandbank-palms",
-    "max": 2160,
-    "alt": "沙洲浅滩上的棕榈树影",
-    "cap": "正午的沙洲"
-   },
-   {
-    "src": "local-island",
-    "poster": "poster-local-island",
-    "max": 2160,
-    "alt": "航拍的本地小岛与泻湖水道",
-    "cap": "登上本地小岛"
-   },
-   {
-    "src": "boat-orbit",
-    "poster": "poster-boat-orbit",
-    "max": 2160,
-    "alt": "航拍环绕停泊中的 Tiffany Blanc 14",
-    "cap": "午后，停泊"
-   },
-   {
-    "src": "sunset",
-    "poster": "poster-sunset",
+    "cap": "水面之下",
     "max": 1080,
+    "src": "reef-split",
+    "poster": "poster-reef-split"
+   },
+   {
+    "alt": "沙洲浅滩上的棕榈树影",
+    "cap": "正午的沙洲",
+    "max": 2160,
+    "src": "sandbank-palms",
+    "poster": "poster-sandbank-palms"
+   },
+   {
+    "alt": "航拍的本地小岛与泻湖水道",
+    "cap": "登上本地小岛",
+    "max": 2160,
+    "src": "local-island",
+    "poster": "poster-local-island"
+   },
+   {
+    "alt": "航拍环绕停泊中的 Tiffany Blanc 14",
+    "cap": "午后，停泊",
+    "max": 2160,
+    "src": "boat-orbit",
+    "poster": "poster-boat-orbit"
+   },
+   {
     "alt": "马尔代夫日落下静泊的船",
-    "cap": "伴着日落归航"
+    "cap": "伴着日落归航",
+    "max": 1080,
+    "src": "sunset",
+    "poster": "poster-sunset"
    }
   ],
   "interval": 8000
@@ -133,18 +133,18 @@
   "line": "感受马尔代夫的气息",
   "tracks": [
    {
-    "file": "summer-mix",
-    "title": "Maldives Summer Mix",
+    "at": "",
     "by": "",
     "lic": "",
-    "at": ""
+    "file": "summer-mix",
+    "title": "Maldives Summer Mix"
    },
    {
-    "file": "ocean-therapy",
-    "title": "Ocean Therapy",
+    "at": "",
     "by": "",
     "lic": "",
-    "at": ""
+    "file": "ocean-therapy",
+    "title": "Ocean Therapy"
    },
    {
     "at": "https://www.jamendo.com/track/1365397",
@@ -210,32 +210,6 @@
    "p": 120,
    "t": "机场与度假村接送",
    "id": "airport-and-resort-transfers"
-  }
- ],
- "arrange": [
-  {
-   "id": "lunch-aboard",
-   "t": "船上午餐或晚餐"
-  },
-  {
-   "id": "celebration",
-   "t": "生日或纪念日布置——蛋糕、装饰"
-  },
-  {
-   "id": "candlelit-dinner",
-   "t": "日落烛光晚餐"
-  },
-  {
-   "id": "party",
-   "t": "音响系统与派对灯光"
-  },
-  {
-   "id": "fishing",
-   "t": "钓具与鱼饵"
-  },
-  {
-   "id": "longer-day",
-   "t": "额外停靠点，或更长的一天"
   }
  ],
  "vessel": {
@@ -347,6 +321,32 @@
    "雷达、GPS 与甚高频电台"
   ]
  },
+ "arrange": [
+  {
+   "t": "船上午餐或晚餐",
+   "id": "lunch-aboard"
+  },
+  {
+   "t": "生日或纪念日布置——蛋糕、装饰",
+   "id": "celebration"
+  },
+  {
+   "t": "日落烛光晚餐",
+   "id": "candlelit-dinner"
+  },
+  {
+   "t": "音响系统与派对灯光",
+   "id": "party"
+  },
+  {
+   "t": "钓具与鱼饵",
+   "id": "fishing"
+  },
+  {
+   "t": "额外停靠点，或更长的一天",
+   "id": "longer-day"
+  }
+ ],
  "gallery": [
   {
    "cap": "Tiffany Blanc 14 · 北马累",
@@ -452,6 +452,12 @@
     "拍照停留"
    ],
    "img": "aerial-anchor",
+   "not": [
+    "午餐——中午停留为休息时间；请自备，或加订船上私厨",
+    "酒类",
+    "附加服务，以及按需安排的一切",
+    "小费"
+   ],
    "area": "北马累环礁",
    "clip": "local-island",
    "kind": "全日",
@@ -510,13 +516,7 @@
    "season": "全年",
    "clipMax": 2160,
    "departs": "08:30 · 胡鲁马累",
-   "duration": "9.5 小时",
-   "not": [
-    "午餐——中午停留为休息时间；请自备，或加订船上私厨",
-    "酒类",
-    "附加服务，以及按需安排的一切",
-    "小费"
-   ]
+   "duration": "9.5 小时"
   },
   {
    "alt": "客人从泳台下水，在深蓝海水中游泳",
@@ -528,6 +528,12 @@
     "风景航程返回胡鲁马累，沿途留意海豚"
    ],
    "img": "swim-boat",
+   "not": [
+    "餐食——船上备有水和软饮；可加订私厨",
+    "酒类",
+    "附加服务，以及按需安排的一切",
+    "小费"
+   ],
    "area": "北马累环礁",
    "clip": "sandbank-palms",
    "kind": "半日",
@@ -571,13 +577,7 @@
    "season": "全年",
    "clipMax": 2160,
    "departs": "09:00 · 胡鲁马累",
-   "duration": "4 小时",
-   "not": [
-    "餐食——船上备有水和软饮；可加订私厨",
-    "酒类",
-    "附加服务，以及按需安排的一切",
-    "小费"
-   ]
+   "duration": "4 小时"
   },
   {
    "alt": "南马累环礁珊瑚之上的礁鱼",
@@ -593,6 +593,11 @@
     "游泳、浮潜与拍照"
    ],
    "img": "ray-sand",
+   "not": [
+    "酒类",
+    "附加服务，以及按需安排的一切",
+    "小费"
+   ],
    "area": "南马累环礁",
    "clip": "nurse-shark",
    "kind": "全日",
@@ -656,12 +661,7 @@
    "season": "全年",
    "clipMax": 1080,
    "departs": "09:00 · 胡鲁马累",
-   "duration": "9 小时",
-   "not": [
-    "酒类",
-    "附加服务，以及按需安排的一切",
-    "小费"
-   ]
+   "duration": "9 小时"
   },
   {
    "alt": "Tiffany Blanc 14 航行在马累外的深蓝海面上",
@@ -675,6 +675,12 @@
     "拍照机会"
    ],
    "img": "aerial-underway",
+   "not": [
+    "晚餐——包含傍晚小食与饮品，不含正餐",
+    "酒类",
+    "附加服务，以及按需安排的一切",
+    "小费"
+   ],
    "area": "南马累环礁",
    "clip": "sunset",
    "kind": "半日",
@@ -723,13 +729,7 @@
    "season": "全年",
    "clipMax": 1080,
    "departs": "13:30 · 胡鲁马累",
-   "duration": "4.5 小时",
-   "not": [
-    "晚餐——包含傍晚小食与饮品，不含正餐",
-    "酒类",
-    "附加服务，以及按需安排的一切",
-    "小费"
-   ]
+   "duration": "4.5 小时"
   }
  ],
  "ui": {

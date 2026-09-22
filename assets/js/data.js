@@ -57,53 +57,53 @@
  "hero": {
   "clips": [
    {
-    "src": "vessel",
-    "poster": "poster-vessel",
-    "max": 2160,
     "alt": "Tiffany Blanc 14 underway on deep blue water off Malé",
-    "cap": "Underway, out across the atoll"
+    "cap": "Underway, out across the atoll",
+    "max": 2160,
+    "src": "vessel",
+    "poster": "poster-vessel"
    },
    {
-    "src": "boat-reef",
-    "poster": "poster-boat-reef",
-    "max": 2160,
     "alt": "Tiffany Blanc 14 turning along a reef edge, seen from the air",
-    "cap": "Along the reef edge"
+    "cap": "Along the reef edge",
+    "max": 2160,
+    "src": "boat-reef",
+    "poster": "poster-boat-reef"
    },
    {
-    "src": "reef-split",
-    "poster": "poster-reef-split",
-    "max": 1080,
     "alt": "The reef seen half above and half below the surface, clouds over clear water",
-    "cap": "Under the surface"
-   },
-   {
-    "src": "sandbank-palms",
-    "poster": "poster-sandbank-palms",
-    "max": 2160,
-    "alt": "Palm shadows across the shallows of a sandbank",
-    "cap": "A sandbank at midday"
-   },
-   {
-    "src": "local-island",
-    "poster": "poster-local-island",
-    "max": 2160,
-    "alt": "A local island and its lagoon channels, seen from the air",
-    "cap": "Ashore on a local island"
-   },
-   {
-    "src": "boat-orbit",
-    "poster": "poster-boat-orbit",
-    "max": 2160,
-    "alt": "Tiffany Blanc 14 at anchor, circled from the air",
-    "cap": "At anchor, the afternoon"
-   },
-   {
-    "src": "sunset",
-    "poster": "poster-sunset",
+    "cap": "Under the surface",
     "max": 1080,
+    "src": "reef-split",
+    "poster": "poster-reef-split"
+   },
+   {
+    "alt": "Palm shadows across the shallows of a sandbank",
+    "cap": "A sandbank at midday",
+    "max": 2160,
+    "src": "sandbank-palms",
+    "poster": "poster-sandbank-palms"
+   },
+   {
+    "alt": "A local island and its lagoon channels, seen from the air",
+    "cap": "Ashore on a local island",
+    "max": 2160,
+    "src": "local-island",
+    "poster": "poster-local-island"
+   },
+   {
+    "alt": "Tiffany Blanc 14 at anchor, circled from the air",
+    "cap": "At anchor, the afternoon",
+    "max": 2160,
+    "src": "boat-orbit",
+    "poster": "poster-boat-orbit"
+   },
+   {
     "alt": "A boat at rest under a Maldivian sunset",
-    "cap": "Home under the sunset"
+    "cap": "Home under the sunset",
+    "max": 1080,
+    "src": "sunset",
+    "poster": "poster-sunset"
    }
   ],
   "interval": 8000
@@ -133,18 +133,18 @@
   "line": "Feel the essence of the Maldives",
   "tracks": [
    {
-    "file": "summer-mix",
-    "title": "Maldives Summer Mix",
+    "at": "",
     "by": "",
     "lic": "",
-    "at": ""
+    "file": "summer-mix",
+    "title": "Maldives Summer Mix"
    },
    {
-    "file": "ocean-therapy",
-    "title": "Ocean Therapy",
+    "at": "",
     "by": "",
     "lic": "",
-    "at": ""
+    "file": "ocean-therapy",
+    "title": "Ocean Therapy"
    },
    {
     "at": "https://www.jamendo.com/track/1365397",
@@ -210,32 +210,6 @@
    "p": 120,
    "t": "Airport and resort transfers",
    "id": "airport-and-resort-transfers"
-  }
- ],
- "arrange": [
-  {
-   "id": "lunch-aboard",
-   "t": "Lunch or dinner aboard"
-  },
-  {
-   "id": "celebration",
-   "t": "Birthday or anniversary set-up — cake, decorations"
-  },
-  {
-   "id": "candlelit-dinner",
-   "t": "Candlelit dinner at sunset"
-  },
-  {
-   "id": "party",
-   "t": "Sound system and party lights"
-  },
-  {
-   "id": "fishing",
-   "t": "Fishing gear and bait"
-  },
-  {
-   "id": "longer-day",
-   "t": "Extra stops, or a longer day"
   }
  ],
  "vessel": {
@@ -347,6 +321,32 @@
    "Radar, GPS and VHF"
   ]
  },
+ "arrange": [
+  {
+   "t": "Lunch or dinner aboard",
+   "id": "lunch-aboard"
+  },
+  {
+   "t": "Birthday or anniversary set-up — cake, decorations",
+   "id": "celebration"
+  },
+  {
+   "t": "Candlelit dinner at sunset",
+   "id": "candlelit-dinner"
+  },
+  {
+   "t": "Sound system and party lights",
+   "id": "party"
+  },
+  {
+   "t": "Fishing gear and bait",
+   "id": "fishing"
+  },
+  {
+   "t": "Extra stops, or a longer day",
+   "id": "longer-day"
+  }
+ ],
  "gallery": [
   {
    "cap": "Tiffany Blanc 14 · North Malé",
@@ -452,6 +452,12 @@
     "Photo stops"
    ],
    "img": "aerial-anchor",
+   "not": [
+    "Lunch — the midday stop is a break; bring your own, or add a chef aboard",
+    "Alcohol",
+    "Add-ons, and anything arranged on request",
+    "Gratuities"
+   ],
    "area": "North Malé Atoll",
    "clip": "local-island",
    "kind": "Full day",
@@ -510,13 +516,7 @@
    "season": "Year round",
    "clipMax": 2160,
    "departs": "08:30 · Hulhumalé",
-   "duration": "9.5 hours",
-   "not": [
-    "Lunch — the midday stop is a break; bring your own, or add a chef aboard",
-    "Alcohol",
-    "Add-ons, and anything arranged on request",
-    "Gratuities"
-   ]
+   "duration": "9.5 hours"
   },
   {
    "alt": "Guests swimming off the platform in deep blue water",
@@ -528,6 +528,12 @@
     "Scenic cruise back to Hulhumalé, watching for dolphins"
    ],
    "img": "swim-boat",
+   "not": [
+    "Meals — water and soft drinks are aboard; a chef can be added",
+    "Alcohol",
+    "Add-ons, and anything arranged on request",
+    "Gratuities"
+   ],
    "area": "North Malé Atoll",
    "clip": "sandbank-palms",
    "kind": "Half day",
@@ -571,13 +577,7 @@
    "season": "Year round",
    "clipMax": 2160,
    "departs": "09:00 · Hulhumalé",
-   "duration": "4 hours",
-   "not": [
-    "Meals — water and soft drinks are aboard; a chef can be added",
-    "Alcohol",
-    "Add-ons, and anything arranged on request",
-    "Gratuities"
-   ]
+   "duration": "4 hours"
   },
   {
    "alt": "Reef fish over coral in the South Malé Atoll",
@@ -593,6 +593,11 @@
     "Swimming, snorkelling and photo opportunities"
    ],
    "img": "ray-sand",
+   "not": [
+    "Alcohol",
+    "Add-ons, and anything arranged on request",
+    "Gratuities"
+   ],
    "area": "South Malé Atoll",
    "clip": "nurse-shark",
    "kind": "Full day",
@@ -656,12 +661,7 @@
    "season": "Year round",
    "clipMax": 1080,
    "departs": "09:00 · Hulhumalé",
-   "duration": "9 hours",
-   "not": [
-    "Alcohol",
-    "Add-ons, and anything arranged on request",
-    "Gratuities"
-   ]
+   "duration": "9 hours"
   },
   {
    "alt": "Tiffany Blanc 14 underway on deep blue water off Malé",
@@ -675,6 +675,12 @@
     "Photo opportunities"
    ],
    "img": "aerial-underway",
+   "not": [
+    "Dinner — the evening snack and refreshments are included, a meal is not",
+    "Alcohol",
+    "Add-ons, and anything arranged on request",
+    "Gratuities"
+   ],
    "area": "South Malé Atoll",
    "clip": "sunset",
    "kind": "Half day",
@@ -723,13 +729,7 @@
    "season": "Year round",
    "clipMax": 1080,
    "departs": "13:30 · Hulhumalé",
-   "duration": "4.5 hours",
-   "not": [
-    "Dinner — the evening snack and refreshments are included, a meal is not",
-    "Alcohol",
-    "Add-ons, and anything arranged on request",
-    "Gratuities"
-   ]
+   "duration": "4.5 hours"
   }
  ]
 };})();

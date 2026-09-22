@@ -13,7 +13,19 @@ const ROOT = path.resolve(__dirname, "..");
 
 const ENVJS = path.join(ROOT, "assets/js/env.js");
 function env() {
-  if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) return { url: process.env.SUPABASE_URL, key: process.env.SUPABASE_ANON_KEY };
+  const u = process.env.SUPABASE_URL, k = process.env.SUPABASE_ANON_KEY;
+  /* half-set is a mistake worth stopping the build for: the alternative is a
+     site quietly wired to whatever the committed env.js still says */
+  if ((u && !k) || (k && !u)) { console.error("build: SUPABASE_URL and SUPABASE_ANON_KEY must both be set (only one is)."); process.exit(1); }
+  if (u && k) {
+    /* the key in env.js reaches every visitor's browser; a service key there
+       would hand them the whole database */
+    if (/^sb_secret_/.test(k) || /"role"\s*:\s*"service_role"/.test(Buffer.from((k.split(".")[1] || ""), "base64").toString("utf8"))) {
+      console.error("build: SUPABASE_ANON_KEY looks like a service_role key — it would be published to the browser. Use the publishable (anon) key.");
+      process.exit(1);
+    }
+    return { url: u, key: k };
+  }
   if (!fs.existsSync(ENVJS)) return null;
   const m = /SUPABASE_URL:\s*"([^"]+)"[\s\S]*?SUPABASE_ANON_KEY:\s*"([^"]+)"/.exec(fs.readFileSync(ENVJS, "utf8"));
   return m ? { url: m[1], key: m[2] } : null;
@@ -76,9 +88,14 @@ async function get(url, key, init) {
   // 4. assemble
   const OUT = path.join(ROOT, "_site");
   fs.rmSync(OUT, { recursive: true, force: true }); fs.mkdirSync(OUT);
-  const SKIP = new Set([".git", ".github", ".vercel", "_site", "node_modules", "tools", "supabase", "api", "README.md", ".gitignore", ".env.local", "package.json", "package-lock.json", "vercel.json"]);
+  /* The site is what a visitor may see. Everything a developer needs stays
+     behind: notes, the runbook, the schema, the tooling, anything secret.
+     Deny by default — a new file at the root is not published unless it is
+     named here or is one of the built pages. */
+  const SKIP = new Set([".git", ".github", ".vercel", "_site", "node_modules", "tools", "supabase", "api", "handover", "README.md", "CLAUDE.md", ".gitignore", ".env.local", "package.json", "package-lock.json", "vercel.json"]);
+  const DEV = /\.(md|sql|sh|mjs|toml|ya?ml|log|bak)$/i;
   for (const name of fs.readdirSync(ROOT)) {
-    if (SKIP.has(name) || name.startsWith(".")) continue;
+    if (SKIP.has(name) || name.startsWith(".") || DEV.test(name)) continue;
     fs.cpSync(path.join(ROOT, name), path.join(OUT, name), { recursive: true, filter: p => !/assets\/src(\/|$)/.test(p.replace(ROOT, "")) });
   }
   console.log("build: _site assembled");

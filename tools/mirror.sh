@@ -13,5 +13,10 @@ for p in index.html vessel.html excursions.html gallery.html about.html contact.
          enquire.html 404.html sitemap.xml README.md excursions ru zh de assets tools admin content .github; do
   rm -rf "$DEST/$p"
 done
-cd "$SRC" && tar cf - --exclude='.git' . | (cd "$DEST" && tar xf -)
+# only what the site is made of — never a secret, never customer data, never the tooling's
+# scratch. The exclusions are the point of this script: OneDrive here is a SHARED library.
+cd "$SRC" && tar cf - \
+  --exclude='.git' --exclude='.env*' --exclude='handover' --exclude='node_modules' \
+  --exclude='.vercel' --exclude='_site' --exclude='assets/src' --exclude='.DS_Store' \
+  . | (cd "$DEST" && tar xf -)
 echo "mirrored $(find "$SRC" -type f -not -path './.git/*' | wc -l | tr -d ' ') files into site/"
