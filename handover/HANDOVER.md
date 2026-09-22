@@ -106,6 +106,25 @@ curl -s -X POST "https://<NEW_REF>.supabase.co/auth/v1/admin/users" \
 Tell the office to change it at *Admin → Settings → Change password* on first sign-in.
 Send it out of band; do not leave it in a shell history or a chat.
 
+## 1b. The media library
+
+Every photograph, clip and track lives in the public `media` bucket, not in the repository.
+The schema in step 1.4 creates the bucket; fill it and write the manifest the build reads:
+
+```bash
+SUPABASE_URL=https://<NEW_REF>.supabase.co \
+SUPABASE_SERVICE_KEY=<NEW_SERVICE_KEY> \
+bash tools/media-push.sh
+```
+
+It prints the value to use for `MEDIA_URL` in the next step, and rewrites
+`content/media-manifest.json` — commit that file, it is what tells the build which
+photograph tiers exist and how big each one is. About 1.1 GB and a few minutes; re-running
+it only sends what changed (`--force` re-sends everything).
+
+Supabase Free gives 1 GB of storage — the library does not fit. This needs **Pro** on the
+Supabase side as well as on Vercel.
+
 ## 2. The new Vercel project
 
 1. Import `coravida` from GitHub into the client's team, **from the dashboard**. Do not
@@ -122,6 +141,20 @@ Send it out of band; do not leave it in a shell history or a chat.
 | `SUPABASE_URL` | `https://<NEW_REF>.supabase.co` |
 | `SUPABASE_ANON_KEY` | the new **publishable** key — never the service key; the build refuses one |
 | `SITE_URL` | `https://<THEIR-DOMAIN>/` — with the trailing slash |
+| `MEDIA_URL` | see below — set it and the pages read the media library from Supabase and the deployment carries no media at all (1.1 GB → 1.5 MB); leave it unset and the media in the repository is published as before. |
+
+Two values work, and the difference is caching:
+
+- **`/media/`** — recommended. The site serves the library from its own domain through the
+  rewrite in `vercel.json`, which must name the client's project:
+  `"destination": "https://<NEW_REF>.supabase.co/storage/v1/object/public/media/$1"`.
+  Responses then carry `Cache-Control: public, max-age=31536000, immutable` (measured), so a
+  returning visitor re-requests nothing. Vercel proxies rather than caches at its edge
+  (`x-vercel-cache: MISS`), so the first fetch costs one extra hop.
+- **`https://<NEW_REF>.supabase.co/storage/v1/object/public/media/`** — no `vercel.json`
+  edit, but Supabase answers `cache-control: no-cache` whatever the object's own metadata
+  says (measured), so every visit revalidates every photograph and every video range. The
+  bodies still come from cache on a 304; it is the round trips that add up.
 | `DEPLOY_HOOK` | created in step 3 |
 
 Set all four for **Production, Preview and Development**: a preview build with

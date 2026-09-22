@@ -306,6 +306,12 @@ window.Admin = (function () {
 
   /* ------------------------------------------------------------ boot */
   var booted = false;
+  /* the admin's own chrome uses the media library too, wherever it is */
+  (function () {
+    var base = (window.CV_ENV && window.CV_ENV.MEDIA_URL) || "";
+    if (base) $$("[data-media]").forEach(function (n) { n.src = base + n.getAttribute("data-media"); });
+  })();
+
   function boot() {
     if (!booted) {
       booted = true;

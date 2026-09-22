@@ -28,6 +28,7 @@ const LOCALES = [
    translation after it. Anything else merges by index. */
 const IDKEYS = ["slug", "id", "img", "file", "src"];
 const MISALIGNED = [];
+const MISSINGART = new Set();        // a picture named by a page that the library does not hold
 function idOf(o) { if (!o || typeof o !== "object") return null; for (const k of IDKEYS) if (k in o) return k + ":" + o[k]; return null; }
 function deepMerge(base, over) {
   if (Array.isArray(base)) {
@@ -141,11 +142,18 @@ tiers.forEach(a => a.sort((x, y) => x - y));
 const pub = (dir, file) => SITE + dir + (file === "index.html" ? "" : file);
 /* a photograph, a clip or a track — wherever the media library is */
 const m = p => MEDIA ? MEDIA + p : AR + p;
+/* the same picture, as an address a crawler can resolve on its own: a media
+   base may be another host (use it as it is) or a path on this one (make it whole) */
+const ogUrl = file => {
+  const p = "assets/img/" + file;
+  if (!MEDIA) return SITE + p;
+  return /^https?:\/\//.test(MEDIA) ? MEDIA + p : SITE.replace(/\/$/, "") + (MEDIA.startsWith("/") ? "" : "/") + MEDIA + p;
+};
 /* the largest tier not wider than `want` — or the largest there is — for the
    places that name one file rather than a srcset */
 function tier(name, want) {
   const set = tiers.get(name) || [];
-  if (!set.length) return `${name}-${want}.webp`;
+  if (!set.length) { MISSINGART.add(name); return `${name}-${want}.webp`; }
   const under = set.filter(w => w <= want);
   return `${name}-${under.length ? under[under.length - 1] : set[0]}.webp`;
 }
@@ -205,7 +213,7 @@ function head({ title, desc, og, r, path: pagePath }) {
 <meta name="description" content="${esc(desc)}">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
-<meta property="og:image" content="${MEDIA ? MEDIA + "assets/img/" + tier(og, 1600) : SITE + "assets/img/" + tier(og, 1600)}">
+<meta property="og:image" content="${ogUrl(tier(og, 1600))}">
 <meta property="og:url" content="${pub(LOC.dir, pagePath)}">
 <meta property="og:type" content="website">
 <link rel="icon" href="${MEDIA ? MEDIA + "assets/img/favicon.png" : r + "assets/img/favicon.png"}" type="image/png">
@@ -371,7 +379,7 @@ ${ways}
 ${cta()}`;
 
   page({
-    file: "index.html", pageAttr: "index.html", og: "poster-island",
+    file: "index.html", pageAttr: "index.html", og: "poster-vessel",
     title: T("Coravida — Private charters through the Maldivian atolls"),
     desc: T("Private day charters and overnight excursions aboard Tiffany Blanc 14, a 14-metre flybridge cruiser berthed at Hulhumalé Marina, Malé."),
     main
@@ -1105,3 +1113,4 @@ for (const loc of LOCALES) {
   if (dead.length) console.log(`${loc.code}: ${dead.length} dictionary entr${dead.length === 1 ? "y" : "ies"} this build did not need (copy for content the office may choose is fine to keep) — ` + dead.map(k => k.slice(0, 40)).join(" | "));
 }
 MISALIGNED.filter((m, i, a) => a.indexOf(m) === i).forEach(m => console.log("\n⚠ " + m));
+if (MISSINGART.size) { console.error("\n⚠ no picture in the library for: " + [...MISSINGART].join(", ") + " — a page names it (og:image, a thumbnail or the lightbox) and it would 404."); process.exitCode = 1; }
