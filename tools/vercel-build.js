@@ -120,5 +120,22 @@ async function get(url, key, init) {
     }
     console.log("build: media comes from " + process.env.MEDIA_URL.trim() + " — " + Math.round(freed / 1048576) + " MB left out of the deployment");
   }
+  /* Vercel looks for a file before it follows a rewrite, so a built page would
+     always shadow the renderer. CV_DYNAMIC=1 leaves the pages out: every page
+     is then rendered from the published content by api/page.js, and a content
+     change is live without a deploy. Remove the variable and the built pages
+     come back — that is the whole switch. */
+  if ((process.env.CV_DYNAMIC || "").trim() === "1") {
+    let n = 0;
+    const strip = dir => {
+      for (const e of fs.readdirSync(dir, { withFileTypes: true })) {
+        const f = path.join(dir, e.name);
+        if (e.isDirectory()) { if (!/^(assets|admin|content)$/.test(path.relative(OUT, f))) strip(f); }
+        else if (e.name.endsWith(".html") && !f.includes(path.join(OUT, "admin"))) { fs.rmSync(f); n++; }
+      }
+    };
+    strip(OUT);
+    console.log("build: " + n + " page(s) left out — they are rendered on demand from the published content");
+  }
   console.log("build: _site assembled");
 })().catch(e => { console.error(e); process.exit(1); });
