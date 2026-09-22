@@ -50,7 +50,17 @@ function writeEnvJs(e) {
 }
 async function get(url, key, init) {
   const r = await fetch(url, Object.assign({ headers: { apikey: key, Authorization: "Bearer " + key } }, init || {}));
-  if (!r.ok) throw new Error(url + " → " + r.status + " " + (await r.text()).slice(0, 200));
+  if (!r.ok) {
+    const body = (await r.text()).slice(0, 200);
+    /* a project that has never had the schema applied says exactly this */
+    if (/PGRST205|Could not find the table/.test(body)) {
+      throw new Error("this Supabase project has no tables yet — apply the schema and the data first:\n" +
+        "         supabase link --project-ref <ref>\n" +
+        "         SUPABASE_URL=… SUPABASE_SERVICE_KEY=… bash tools/import.sh handover/data first\n" +
+        "       (handover/HANDOVER.md, step 1.4)");
+    }
+    throw new Error(url + " → " + r.status + " " + body);
+  }
   return r;
 }
 
