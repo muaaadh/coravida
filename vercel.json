@@ -11,6 +11,13 @@
       "maxDuration": 10
     }
   },
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "/admin/",
+      "permanent": false
+    }
+  ],
   "headers": [
     {
       "source": "/media/(.*)",
