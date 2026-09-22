@@ -29,6 +29,16 @@ through it:
   still means something when it appears.
 - **Faster.** 1.2 MB on a phone, 48–76 ms to first paint. Details below.
 
+## Moving it to another account
+
+**`handover/HANDOVER.md`** is the runbook for putting this on the client's own Vercel and
+Supabase: what to collect from them first, the new Supabase project (schema and data in two
+commands — `tools/export.sh` then `tools/import.sh`), the Vercel project and its four
+environment variables, the domain, the end-to-end check, what to tell the office about the
+admin cached in their browsers, what to do with the repository, and what to close
+afterwards. Nothing in the code names an account: `assets/js/env.js` is written at build
+time from `SUPABASE_URL` / `SUPABASE_ANON_KEY`, and the canonical host comes from `SITE_URL`.
+
 ## Four languages
 
 English, **Русский**, **中文** and **Deutsch** — 48 pages, not 12. Each language is a real
@@ -153,6 +163,9 @@ until you open it. It plays four Creative Commons tracks chosen for the room the
 | Format | MP3, 96 kbps, trimmed to 2:30 with a 1.2 s fade in and a 3.5 s fade out, so the hand-off between tracks is clean. 1.8 MB each, fetched **only when you press play**. |
 | Across pages | Track, position, playing state and whether the panel was open all persist in `sessionStorage` and resume on the next page. |
 | While playing | The button pulses a slow marine ring and the equaliser bars move. |
+
+It plays **softly** — volume `0.18` — a bed under the film, not a soundtrack; loud enough
+to notice, quiet enough to talk over.
 
 **Six tracks** (2026-09-21): two long mixes the office supplied — *Maldives Summer Mix* (39
 min) and *Ocean Therapy* (a 30-minute opening cut from a two-hour mix; GitHub refuses a file

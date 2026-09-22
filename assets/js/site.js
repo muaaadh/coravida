@@ -550,7 +550,7 @@
 
     var audio = new Audio();
     audio.preload = "none";
-    audio.volume = 0.55;
+    audio.volume = 0.18;                             // a bed, not a soundtrack; the ear should have to look for it
     var i = 0, ready = false;
     var elT = $("#musT"), elBy = $("#musBy"), elFill = $("#musFill"), elPlay = $("#musPlay"), elBar = $("#musBar");
 

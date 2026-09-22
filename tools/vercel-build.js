@@ -11,11 +11,20 @@ const path = require("path");
 const { execSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "..");
 
+const ENVJS = path.join(ROOT, "assets/js/env.js");
 function env() {
   if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) return { url: process.env.SUPABASE_URL, key: process.env.SUPABASE_ANON_KEY };
-  const src = fs.readFileSync(path.join(ROOT, "assets/js/env.js"), "utf8");
-  const m = /SUPABASE_URL:\s*"([^"]+)"[\s\S]*?SUPABASE_ANON_KEY:\s*"([^"]+)"/.exec(src);
+  if (!fs.existsSync(ENVJS)) return null;
+  const m = /SUPABASE_URL:\s*"([^"]+)"[\s\S]*?SUPABASE_ANON_KEY:\s*"([^"]+)"/.exec(fs.readFileSync(ENVJS, "utf8"));
   return m ? { url: m[1], key: m[2] } : null;
+}
+/* The browser needs the same address the build used. Written here, from the
+   environment, so a different Supabase project needs no edit to the repo —
+   set SUPABASE_URL and SUPABASE_ANON_KEY and this file follows. */
+function writeEnvJs(e) {
+  const want = `/* Public address of the Coravida database and its publishable key — safe to\n   ship: row-level security decides what the key may read or write.\n   Written by tools/vercel-build.js from SUPABASE_URL / SUPABASE_ANON_KEY. */\nwindow.CV_ENV = { SUPABASE_URL: ${JSON.stringify(e.url)}, SUPABASE_ANON_KEY: ${JSON.stringify(e.key)} };\n`;
+  const had = fs.existsSync(ENVJS) ? fs.readFileSync(ENVJS, "utf8") : "";
+  if (had !== want) { fs.writeFileSync(ENVJS, want); console.log("build: assets/js/env.js points at " + e.url); }
 }
 async function get(url, key, init) {
   const r = await fetch(url, Object.assign({ headers: { apikey: key, Authorization: "Bearer " + key } }, init || {}));
@@ -27,6 +36,7 @@ async function get(url, key, init) {
   const e = env();
   if (!e) { console.log("build: no database address — building from the files in the repo"); }
   else {
+    writeEnvJs(e);
     // 1. content
     const rows = await (await get(e.url + "/rest/v1/content?key=eq.site&select=data,updated", e.key)).json();
     if (rows.length) {

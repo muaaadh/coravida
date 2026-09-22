@@ -2,8 +2,9 @@
 # Push content/site.json into the database row the Vercel build reads.
 # Needs the service key in .env.local as SUPABASE_SERVICE_KEY (never committed).
 cd "$(dirname "$0")/.."
-KEY=$(grep '^SUPABASE_SERVICE_KEY=' .env.local 2>/dev/null | cut -d= -f2-)
-URL=$(grep -o 'SUPABASE_URL: *"[^"]*"' assets/js/env.js | grep -o 'https://[^"]*')
+[ -f .env.local ] && set -a && . ./.env.local && set +a
+KEY="${SUPABASE_SERVICE_KEY:-}"
+URL="${SUPABASE_URL:-$(grep -o 'https://[a-z0-9]*\.supabase\.co' assets/js/env.js | head -1)}"
 if [ -z "$KEY" ]; then echo "content-up: no SUPABASE_SERVICE_KEY in .env.local — content/site.json NOT sent to the database (publish it from the admin instead)"; exit 0; fi
 node -e '
 const fs = require("fs"); const d = JSON.parse(fs.readFileSync("content/site.json", "utf8"));
